@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<properties resource="com/free/walker/service/itinerary/dao/config.properties">
+		<property name="username" value="root"/>
+		<property name="password" value="505050"/>
+	</properties>
+
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC"/>
+			<dataSource type="POOLED">
+				<property name="driver" value="${database_driver}"/>
+				<property name="url" value="${database_url}"/>
+				<property name="username" value="${username}"/>
+				<property name="password" value="${password}"/>
+				<property name="poolMaximumActiveConnections" value="32"/>
+				<property name="poolMaximumIdleConnections" value="32"/>
+			</dataSource>
+    	</environment>
+	</environments>
+
+	<mappers>
+		<mapper class="com.free.walker.service.itinerary.dao.map.RequirementMapper"/>
+	</mappers>
+</configuration>
