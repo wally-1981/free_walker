@@ -1,8 +1,9 @@
 package com.free.walker.service.itinerary;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
 
-public interface SerializableJSON {
-    public JSONObject toJSON() throws JSONException;
+public interface SerializableJSON extends JsonValue {
+    public JsonObject toJSON() throws JsonException;
 }

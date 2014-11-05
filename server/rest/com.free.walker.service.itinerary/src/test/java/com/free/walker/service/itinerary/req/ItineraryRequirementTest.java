@@ -7,23 +7,25 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import javax.json.JsonArray;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+
 import org.junit.Test;
 
 import com.free.walker.service.itinerary.Constants;
-import com.free.walker.service.itinerary.TravelLocation;
 import com.free.walker.service.itinerary.basic.City;
+import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.ibm.icu.util.Calendar;
 
 public class ItineraryRequirementTest {
     @Test
-    public void testToJSON() throws JSONException {
+    public void testToJSON() throws JsonException {
         TravelLocation destinationLocation = new TravelLocation(City.BEIJING);
         TravelLocation departureLocation = new TravelLocation(City.LONDON);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destinationLocation, departureLocation);
-        JSONObject jo = itineraryRequirement.toJSON();
+        JsonObject jo = itineraryRequirement.toJSON();
+        assertEquals(Constants.JSONKeys.ITINERARY, jo.getString(Constants.JSONKeys.TYPE));
         assertNotNull(jo.get(Constants.JSONKeys.DESTINATION));
         assertNotNull(jo.get(Constants.JSONKeys.DEPARTURE));
 
@@ -31,7 +33,7 @@ public class ItineraryRequirementTest {
     }
 
     @Test
-    public void testToJSON4DateTimeSelection() throws JSONException {
+    public void testToJSON4DateTimeSelection() throws JsonException {
         TravelLocation destinationLocation = new TravelLocation(City.BEIJING);
         TravelLocation departureLocation = new TravelLocation(City.LONDON);
 
@@ -45,15 +47,16 @@ public class ItineraryRequirementTest {
 
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destinationLocation, departureLocation,
             departureDateTimeSelections);
-        JSONObject jo = itineraryRequirement.toJSON();
+        JsonObject jo = itineraryRequirement.toJSON();
+        assertEquals(Constants.JSONKeys.ITINERARY, jo.getString(Constants.JSONKeys.TYPE));
         assertNotNull(jo.get(Constants.JSONKeys.DESTINATION));
         assertNotNull(jo.get(Constants.JSONKeys.DEPARTURE));
-        assertTrue(jo.get(Constants.JSONKeys.DATETIME_SELECTIONS) instanceof JSONArray);
-
-        JSONArray selections = (JSONArray) jo.get(Constants.JSONKeys.DATETIME_SELECTIONS);
-        assertEquals(2, selections.length());
-        assertEquals(departureDateTime1.getTimeInMillis(), selections.getLong(0));
-        assertEquals(departureDateTime2.getTimeInMillis(), selections.getLong(1));
+        assertTrue(jo.get(Constants.JSONKeys.DATETIME_SELECTIONS) instanceof JsonArray);
+        
+        JsonArray selections = (JsonArray) jo.get(Constants.JSONKeys.DATETIME_SELECTIONS);
+        assertEquals(2, selections.size());
+        assertEquals(departureDateTime1.getTimeInMillis(), selections.getJsonNumber(0).longValue());
+        assertEquals(departureDateTime2.getTimeInMillis(), selections.getJsonNumber(1).longValue());
 
         assertEquals(true, itineraryRequirement.isItinerary());
     }

@@ -1,14 +1,27 @@
 package com.free.walker.service.itinerary.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
+import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
+import org.apache.cxf.jaxrs.provider.jsrjsonp.JsrJsonpProvider;
 
 public class Server {
 
     protected Server() throws Exception {
         JAXRSServerFactoryBean sf = new JAXRSServerFactoryBean();
-        sf.setResourceClasses(CustomerService.class);
-        sf.setResourceProvider(CustomerService.class, new SingletonResourceProvider(new CustomerService()));
+
+        List<Class<?>> classes = new ArrayList<Class<?>>();
+        classes.add(ItineraryService.class);
+        List<ResourceProvider> providers = new ArrayList<ResourceProvider>();
+        providers.add(new SingletonResourceProvider(new ItineraryService()));
+
+        sf.setResourceClasses(classes);
+        sf.setResourceProviders(providers);
+        sf.setProvider(new JsrJsonpProvider());
+
         sf.setAddress("http://localhost:9000/");
 
         sf.create();

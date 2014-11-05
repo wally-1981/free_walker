@@ -1,13 +1,19 @@
 package com.free.walker.service.itinerary.req;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import javax.json.Json;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.traffic.TrafficToolSeatClass;
 
 public class TrafficToolSeatRequirement extends BaseTravelRequirement implements TravelRequirement {
     private TrafficToolSeatClass trafficToolSeatClass;
+
+    public TrafficToolSeatRequirement() {
+        super();
+    }
 
     public TrafficToolSeatRequirement(TrafficToolSeatClass trafficToolSeatClass) {
         super();
@@ -19,9 +25,12 @@ public class TrafficToolSeatRequirement extends BaseTravelRequirement implements
         this.trafficToolSeatClass = trafficToolSeatClass;
     }
 
-    public JSONObject toJSON() throws JSONException {
-        JSONObject res = super.toJSON();
-        res.put(Constants.JSONKeys.TRAFFIC_TOOL_SEAT_CLASS, trafficToolSeatClass.enumValue());
-        return res;
+    public JsonObject toJSON() throws JsonException {
+        JsonObjectBuilder resBuilder = Json.createObjectBuilder();
+        resBuilder.add(Constants.JSONKeys.UUID, requirementId.toString());
+        resBuilder.add(Constants.JSONKeys.TYPE, Constants.JSONKeys.REQUIREMENT);
+        resBuilder.add(Constants.JSONKeys.TRAFFIC_TOOL_SEAT_CLASS, trafficToolSeatClass.enumValue());
+
+        return resBuilder.build();
     }
 }

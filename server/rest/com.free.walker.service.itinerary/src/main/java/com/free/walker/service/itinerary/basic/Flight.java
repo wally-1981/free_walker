@@ -1,9 +1,9 @@
 package com.free.walker.service.itinerary.basic;
 
-import org.codehaus.jettison.json.JSONObject;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
 
 import com.free.walker.service.itinerary.SerializableJSON;
-import com.free.walker.service.itinerary.TravelLocation;
 import com.free.walker.service.itinerary.traffic.TrafficTool;
 import com.free.walker.service.itinerary.traffic.TrafficToolType;
 import com.ibm.icu.util.Calendar;
@@ -68,7 +68,11 @@ public class Flight extends TrafficTool implements SerializableJSON {
         this.departureDateTime = departureDateTime;
     }
 
-    public JSONObject toJSON() {
+    public JsonObject toJSON() {
         return null;
+    }
+
+    public ValueType getValueType() {
+        return JsonValue.ValueType.OBJECT;
     }
 }

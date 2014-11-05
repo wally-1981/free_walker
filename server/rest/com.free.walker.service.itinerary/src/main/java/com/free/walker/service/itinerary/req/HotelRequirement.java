@@ -1,7 +1,9 @@
 package com.free.walker.service.itinerary.req;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import javax.json.Json;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
@@ -12,6 +14,10 @@ public class HotelRequirement extends BaseTravelRequirement implements TravelReq
     private int nights;
     private HotelStar hotelStar;
     private Hotel hotel;
+
+    public HotelRequirement() {
+        super();
+    }
 
     public HotelRequirement(int nights) {
         super();
@@ -43,19 +49,21 @@ public class HotelRequirement extends BaseTravelRequirement implements TravelReq
         this.hotel = hotel;
     }
 
-    public JSONObject toJSON() throws JSONException {
-        JSONObject res = super.toJSON();
-        res.put(Constants.JSONKeys.NIGHT, nights);
+    public JsonObject toJSON() throws JsonException {
+        JsonObjectBuilder resBuilder = Json.createObjectBuilder();
+        resBuilder.add(Constants.JSONKeys.UUID, requirementId.toString());
+        resBuilder.add(Constants.JSONKeys.TYPE, Constants.JSONKeys.REQUIREMENT);
+        resBuilder.add(Constants.JSONKeys.NIGHT, nights);
 
         if (hotelStar != null) {
-            res.put(Constants.JSONKeys.STAR, hotelStar.enumValue());
+            resBuilder.add(Constants.JSONKeys.STAR, hotelStar.enumValue());
         }
 
         if (hotel != null) {
-            JSONObject hotelJSON = hotel.toJSON();
-            res.put(Constants.JSONKeys.HOTEL, hotelJSON);
+            JsonObject hotelJSON = hotel.toJSON();
+            resBuilder.add(Constants.JSONKeys.HOTEL, hotelJSON);
         }
 
-        return res;
+        return resBuilder.build();
     }
 }

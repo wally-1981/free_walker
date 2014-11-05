@@ -5,7 +5,12 @@ public class Constants {
         /*
          * JSONObject Key
          */
+        public static final String TYPE = "type";
         public static final String PROPOSAL = "proposal";
+        public static final String ITINERARY = "itinerary";
+        public static final String REQUIREMENT = "requirement";
+
+        public static final String REQUIREMENTS = "requirements";
 
         public static final String CITY = "city";
         public static final String COUNTRY = "country";
@@ -33,5 +38,10 @@ public class Constants {
         public static final String TIME_RANGE_OFFSET = "time_range_offset";
         public static final String TRAFFIC_TOOL_TYPE = "traffice_tool_type";
         public static final String TRAFFIC_TOOL_SEAT_CLASS = "traffice_tool_seat_class";
+
+        public static final String ERROR_CODE = "error_code";
+        public static final String ERROR_CNTX = "error_cntx";
+        public static final String ERROR_DESC = "error_desc";
+        public static final String ERROR_ACTN = "error_actn";
     }
 }

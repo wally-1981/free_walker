@@ -6,9 +6,10 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import javax.json.JsonArray;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+
 import org.junit.Test;
 
 import com.free.walker.service.itinerary.Constants;
@@ -17,27 +18,29 @@ import com.free.walker.service.itinerary.traffic.TrafficToolType;
 
 public class TrafficRequirementTest {
     @Test
-    public void testToJSON4ToolType() throws JSONException {
+    public void testToJSON4ToolType() throws JsonException {
         TravelRequirement trafficRequirement = new TrafficRequirement(TrafficToolType.FLIGHT);
-        JSONObject jo = trafficRequirement.toJSON();
-        assertEquals(TrafficToolType.FLIGHT.enumValue(), jo.get(Constants.JSONKeys.TRAFFIC_TOOL_TYPE));
+        JsonObject jo = trafficRequirement.toJSON();
+        assertEquals(Constants.JSONKeys.REQUIREMENT, jo.getString(Constants.JSONKeys.TYPE));
+        assertEquals(TrafficToolType.FLIGHT.enumValue(), jo.getInt(Constants.JSONKeys.TRAFFIC_TOOL_TYPE));
 
         assertEquals(false, trafficRequirement.isItinerary());
     }
 
     @Test
-    public void testToJSON4ToolTypeAndTimeRange() throws JSONException {
+    public void testToJSON4ToolTypeAndTimeRange() throws JsonException {
         TrafficRequirement trafficRequirement = new TrafficRequirement(TrafficToolType.TRAIN,
             TravelTimeRange.RANGE_06_12);
-        JSONObject jo = trafficRequirement.toJSON();
-        assertEquals(TrafficToolType.TRAIN.enumValue(), jo.get(Constants.JSONKeys.TRAFFIC_TOOL_TYPE));
-        assertTrue(jo.get(Constants.JSONKeys.DATETIME_RANGE_SELECTIONS) instanceof JSONArray);
+        JsonObject jo = trafficRequirement.toJSON();
+        assertEquals(Constants.JSONKeys.REQUIREMENT, jo.getString(Constants.JSONKeys.TYPE));
+        assertEquals(TrafficToolType.TRAIN.enumValue(), jo.getInt(Constants.JSONKeys.TRAFFIC_TOOL_TYPE));
+        assertTrue(jo.get(Constants.JSONKeys.DATETIME_RANGE_SELECTIONS) instanceof JsonArray);
 
-        JSONArray selections = ((JSONArray) jo.get(Constants.JSONKeys.DATETIME_RANGE_SELECTIONS));
-        assertEquals(1, selections.length());
-        assertTrue(selections.get(0) instanceof JSONObject);
+        JsonArray selections = ((JsonArray) jo.get(Constants.JSONKeys.DATETIME_RANGE_SELECTIONS));
+        assertEquals(1, selections.size());
+        assertTrue(selections.get(0) instanceof JsonObject);
 
-        JSONObject selection = (JSONObject) selections.get(0);
+        JsonObject selection = (JsonObject) selections.get(0);
         assertEquals(6, selection.getInt(Constants.JSONKeys.TIME_RANGE_START));
         assertEquals(12 - 6, selection.getInt(Constants.JSONKeys.TIME_RANGE_OFFSET));
 
@@ -45,24 +48,25 @@ public class TrafficRequirementTest {
     }
 
     @Test
-    public void testToJSON4ToolTypeAndTimeRanges() throws JSONException {
+    public void testToJSON4ToolTypeAndTimeRanges() throws JsonException {
         List<TravelTimeRange> timeRangeSelections = new ArrayList<TravelTimeRange>();
         timeRangeSelections.add(TravelTimeRange.RANGE_06_12);
         timeRangeSelections.add(TravelTimeRange.RANGE_12_18);
         TrafficRequirement trafficRequirement = new TrafficRequirement(TrafficToolType.TRAIN, timeRangeSelections);
-        JSONObject jo = trafficRequirement.toJSON();
-        assertEquals(TrafficToolType.TRAIN.enumValue(), jo.get(Constants.JSONKeys.TRAFFIC_TOOL_TYPE));
-        assertTrue(jo.get(Constants.JSONKeys.DATETIME_RANGE_SELECTIONS) instanceof JSONArray);
+        JsonObject jo = trafficRequirement.toJSON();
+        assertEquals(Constants.JSONKeys.REQUIREMENT, jo.getString(Constants.JSONKeys.TYPE));
+        assertEquals(TrafficToolType.TRAIN.enumValue(), jo.getInt(Constants.JSONKeys.TRAFFIC_TOOL_TYPE));
+        assertTrue(jo.get(Constants.JSONKeys.DATETIME_RANGE_SELECTIONS) instanceof JsonArray);
 
-        JSONArray selections = ((JSONArray) jo.get(Constants.JSONKeys.DATETIME_RANGE_SELECTIONS));
-        assertEquals(2, selections.length());
-        assertTrue(selections.get(0) instanceof JSONObject);
+        JsonArray selections = ((JsonArray) jo.get(Constants.JSONKeys.DATETIME_RANGE_SELECTIONS));
+        assertEquals(2, selections.size());
+        assertTrue(selections.get(0) instanceof JsonObject);
 
-        JSONObject selection1 = (JSONObject) selections.get(0);
+        JsonObject selection1 = (JsonObject) selections.get(0);
         assertEquals(6, selection1.getInt(Constants.JSONKeys.TIME_RANGE_START));
         assertEquals(12 - 6, selection1.getInt(Constants.JSONKeys.TIME_RANGE_OFFSET));
 
-        JSONObject selection2 = (JSONObject) selections.get(1);
+        JsonObject selection2 = (JsonObject) selections.get(1);
         assertEquals(12, selection2.getInt(Constants.JSONKeys.TIME_RANGE_START));
         assertEquals(18 - 12, selection2.getInt(Constants.JSONKeys.TIME_RANGE_OFFSET));
 

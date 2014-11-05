@@ -1,10 +1,10 @@
 package com.free.walker.service.itinerary;
 
 public class TravelTimeRange {
-    public static TravelTimeRange RANGE_00_06 = new TravelTimeRange(0, 6);
-    public static TravelTimeRange RANGE_06_12 = new TravelTimeRange(6, 6);
-    public static TravelTimeRange RANGE_12_18 = new TravelTimeRange(12, 6);
-    public static TravelTimeRange RANGE_18_23 = new TravelTimeRange(18, 6);
+    public static final TravelTimeRange RANGE_00_06 = new TravelTimeRange(0, 6);
+    public static final TravelTimeRange RANGE_06_12 = new TravelTimeRange(6, 6);
+    public static final TravelTimeRange RANGE_12_18 = new TravelTimeRange(12, 6);
+    public static final TravelTimeRange RANGE_18_23 = new TravelTimeRange(18, 6);
 
     private int start;
     private int offset;

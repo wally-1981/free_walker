@@ -1,8 +1,5 @@
 package com.free.walker.service.itinerary.rest;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement(name = "Customer")
 public class Customer {
     private long id;
     private String name;

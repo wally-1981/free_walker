@@ -92,6 +92,12 @@ public class MySQLTravelRequirementDAOImpl implements TravelRequirementDAO {
         return null;
     }
 
+    public List<TravelRequirement> getRequirements(UUID travelProposalId, UUID itineraryRequirementId)
+        throws InvalidTravelReqirementException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     public TravelRequirement getPrevItineraryRequirement(UUID travelProposalId, UUID travelRequirementId)
         throws InvalidTravelReqirementException {
         // TODO Auto-generated method stub

@@ -2,18 +2,24 @@ package com.free.walker.service.itinerary.req;
 
 import java.util.List;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import com.free.walker.service.itinerary.Constants;
-import com.free.walker.service.itinerary.TravelLocation;
+import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.ibm.icu.util.Calendar;
 
 public class ItineraryRequirement extends BaseTravelRequirement implements TravelRequirement {
     private TravelLocation destinationLocation;
     private TravelLocation departureLocation;
     private List<Calendar> departureDateTimeSelections;
+
+    public ItineraryRequirement() {
+        super();
+    }
 
     public ItineraryRequirement(TravelLocation destinationLocation, TravelLocation departureLocation) {
         super();
@@ -37,20 +43,22 @@ public class ItineraryRequirement extends BaseTravelRequirement implements Trave
         this.departureDateTimeSelections = departureDateTimeSelections;
     }
 
-    public JSONObject toJSON() throws JSONException {
-        JSONObject res = super.toJSON();
-        res.put(Constants.JSONKeys.DESTINATION, destinationLocation.toJSON());
-        res.put(Constants.JSONKeys.DEPARTURE, departureLocation.toJSON());
+    public JsonObject toJSON() throws JsonException {
+        JsonObjectBuilder resBuilder = Json.createObjectBuilder();
+        resBuilder.add(Constants.JSONKeys.UUID, requirementId.toString());
+        resBuilder.add(Constants.JSONKeys.TYPE, Constants.JSONKeys.ITINERARY);
+        resBuilder.add(Constants.JSONKeys.DESTINATION, destinationLocation.toJSON());
+        resBuilder.add(Constants.JSONKeys.DEPARTURE, departureLocation.toJSON());
 
         if (departureDateTimeSelections != null) {
-            JSONArray dateTimeSelections = new JSONArray();
+            JsonArrayBuilder dateTimeSelections = Json.createArrayBuilder();
             for (Calendar selection : departureDateTimeSelections) {
-                dateTimeSelections.put(selection.getTimeInMillis());
+                dateTimeSelections.add(selection.getTimeInMillis());
             }
-            res.put(Constants.JSONKeys.DATETIME_SELECTIONS, dateTimeSelections);
+            resBuilder.add(Constants.JSONKeys.DATETIME_SELECTIONS, dateTimeSelections);
         }
 
-        return res;
+        return resBuilder.build();
     }
 
     public boolean isItinerary() {

@@ -23,6 +23,9 @@ public interface TravelRequirementDAO {
     public List<TravelRequirement> getItineraryRequirements(UUID travelProposalId)
         throws InvalidTravelReqirementException;
 
+    public List<TravelRequirement> getRequirements(UUID travelProposalId, UUID itineraryRequirementId)
+        throws InvalidTravelReqirementException;
+
     public TravelRequirement getPrevItineraryRequirement(UUID travelProposalId, UUID travelRequirementId)
         throws InvalidTravelReqirementException;
 

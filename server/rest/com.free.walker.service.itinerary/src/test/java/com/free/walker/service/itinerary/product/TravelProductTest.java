@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.free.walker.service.itinerary.TravelLocation;
 import com.free.walker.service.itinerary.basic.City;
 import com.free.walker.service.itinerary.basic.Flight;
+import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.TravelProposal;
 import com.ibm.icu.util.Calendar;

@@ -2,11 +2,9 @@ package com.free.walker.service.itinerary.req;
 
 import java.util.UUID;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import javax.json.JsonValue;
 
-import com.free.walker.service.itinerary.Constants;
-import com.free.walker.service.itinerary.TravelLocation;
+import com.free.walker.service.itinerary.basic.TravelLocation;
 
 public abstract class BaseTravelRequirement implements TravelRequirement {
     protected UUID requirementId;
@@ -19,17 +17,19 @@ public abstract class BaseTravelRequirement implements TravelRequirement {
         return false;
     }
 
+    public boolean isProposal() {
+        return false;
+    }
+
     public UUID getUUID() {
         return requirementId;
     }
 
-    public JSONObject toJSON() throws JSONException {
-        JSONObject jo = new JSONObject();
-        jo.put(Constants.JSONKeys.UUID, requirementId);
-        return jo;
-    }
-
     public TravelLocation getDestination() {
         return null;
+    }
+
+    public ValueType getValueType() {
+        return JsonValue.ValueType.OBJECT;
     }
 }

@@ -13,8 +13,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.free.walker.service.itinerary.LocalMessages;
-import com.free.walker.service.itinerary.TravelLocation;
 import com.free.walker.service.itinerary.basic.City;
+import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.req.HotelRequirement;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
@@ -59,6 +59,9 @@ public class InMemoryTravelRequirementDAOImplTest {
 
         assertNotNull(travelRequirementDAO.getItineraryRequirements(proposalId));
         assertEquals(1, travelRequirementDAO.getItineraryRequirements(proposalId).size());
+
+        assertNotNull(travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()));
+        assertEquals(0, travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()).size());
 
         assertEquals(1, travelRequirementDAO.getRequirements(proposalId).size());
 
@@ -153,6 +156,11 @@ public class InMemoryTravelRequirementDAOImplTest {
         assertTrue(travelRequirementDAO.getItineraryRequirements(proposalId).get(0) instanceof ItineraryRequirement);
         assertTrue(travelRequirementDAO.getItineraryRequirements(proposalId).get(1) instanceof ItineraryRequirement);
 
+        assertNotNull(travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()));
+        assertEquals(0, travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()).size());
+        assertNotNull(travelRequirementDAO.getRequirements(proposalId, itineraryRequirement2.getUUID()));
+        assertEquals(0, travelRequirementDAO.getRequirements(proposalId, itineraryRequirement2.getUUID()).size());
+
         assertEquals(2, travelRequirementDAO.getRequirements(proposalId).size());
         assertTrue(travelRequirementDAO.getRequirements(proposalId).get(0) instanceof ItineraryRequirement);
         assertTrue(travelRequirementDAO.getRequirements(proposalId).get(1) instanceof ItineraryRequirement);
@@ -181,6 +189,9 @@ public class InMemoryTravelRequirementDAOImplTest {
         assertNotNull(travelRequirementDAO.getItineraryRequirements(proposalId));
         assertEquals(1, travelRequirementDAO.getItineraryRequirements(proposalId).size());
         assertTrue(travelRequirementDAO.getItineraryRequirements(proposalId).get(0) instanceof ItineraryRequirement);
+
+        assertNotNull(travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()));
+        assertEquals(1, travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()).size());
 
         assertEquals(2, travelRequirementDAO.getRequirements(proposalId).size());
         assertTrue(travelRequirementDAO.getRequirements(proposalId).get(0) instanceof ItineraryRequirement);
@@ -332,6 +343,9 @@ public class InMemoryTravelRequirementDAOImplTest {
         assertEquals(1, travelRequirementDAO.getItineraryRequirements(proposalId).size());
         assertTrue(travelRequirementDAO.getItineraryRequirements(proposalId).get(0) instanceof ItineraryRequirement);
 
+        assertNotNull(travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()));
+        assertEquals(1, travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()).size());
+
         assertEquals(2, travelRequirementDAO.getRequirements(proposalId).size());
         assertTrue(travelRequirementDAO.getRequirements(proposalId).get(0) instanceof ItineraryRequirement);
         assertTrue(travelRequirementDAO.getRequirements(proposalId).get(1) instanceof HotelRequirement);
@@ -379,6 +393,11 @@ public class InMemoryTravelRequirementDAOImplTest {
         assertTrue(travelRequirementDAO.getItineraryRequirements(proposalId).get(0) instanceof ItineraryRequirement);
         assertTrue(travelRequirementDAO.getItineraryRequirements(proposalId).get(1) instanceof ItineraryRequirement);
 
+        assertNotNull(travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()));
+        assertEquals(2, travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()).size());
+        assertNotNull(travelRequirementDAO.getRequirements(proposalId, itineraryRequirement2.getUUID()));
+        assertEquals(1, travelRequirementDAO.getRequirements(proposalId, itineraryRequirement2.getUUID()).size());
+
         assertEquals(5, travelRequirementDAO.getRequirements(proposalId).size());
         assertTrue(travelRequirementDAO.getRequirements(proposalId).get(0) instanceof ItineraryRequirement);
         assertTrue(travelRequirementDAO.getRequirements(proposalId).get(2) instanceof HotelRequirement);
@@ -418,6 +437,43 @@ public class InMemoryTravelRequirementDAOImplTest {
         thrown.expect(InvalidTravelReqirementException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_requirement, proposalId));
         travelRequirementDAO.getItineraryRequirements(proposalId);
+    }
+
+    @Test
+    public void testGetRequirementsByItineraryWithNullProposal() throws InvalidTravelReqirementException {
+        thrown.expect(NullPointerException.class);
+        travelRequirementDAO.getRequirements(null, UUID.randomUUID());
+    }
+
+    @Test
+    public void testGetRequirementsByItineraryWithNullItinerary() throws InvalidTravelReqirementException {
+        thrown.expect(NullPointerException.class);
+        travelRequirementDAO.getRequirements(UUID.randomUUID(), null);
+    }
+
+    @Test
+    public void testGetRequirementsByItineraryWithWrongProposal() throws InvalidTravelReqirementException {
+        UUID proposalId = UUID.randomUUID();
+
+        thrown.expect(InvalidTravelReqirementException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_requirement, proposalId));
+        travelRequirementDAO.getRequirements(proposalId, UUID.randomUUID());
+    }
+
+    @Test
+    public void testGetRequirementsByItineraryWithWrongItinerary() throws InvalidTravelReqirementException {
+        TravelLocation destination = new TravelLocation(City.BEIJING);
+        TravelLocation departure = new TravelLocation(City.BOSTON);
+        ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
+        TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
+
+        UUID proposalId = travelRequirementDAO.createTravelProposal(travelProposal);
+
+        UUID itineraryId = UUID.randomUUID();
+
+        thrown.expect(InvalidTravelReqirementException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_itinerary_requirement, itineraryId));
+        travelRequirementDAO.getRequirements(proposalId, itineraryId);
     }
 
     @Test
@@ -584,6 +640,9 @@ public class InMemoryTravelRequirementDAOImplTest {
         assertEquals(1, travelRequirementDAO.getItineraryRequirements(proposalId).size());
         assertTrue(travelRequirementDAO.getItineraryRequirements(proposalId).get(0) instanceof ItineraryRequirement);
 
+        assertNotNull(travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()));
+        assertEquals(1, travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()).size());
+
         assertEquals(2, travelRequirementDAO.getRequirements(proposalId).size());
         assertTrue(travelRequirementDAO.getRequirements(proposalId).get(0) instanceof ItineraryRequirement);
         assertTrue(travelRequirementDAO.getRequirements(proposalId).get(1) instanceof HotelRequirement);
@@ -612,6 +671,21 @@ public class InMemoryTravelRequirementDAOImplTest {
         thrown.expect(InvalidTravelReqirementException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_requirement, requirementId));
         travelRequirementDAO.removeTravelRequirement(requirementId);
+    }
+
+    @Test
+    public void testRemoveTravelRequirementWithProposal() throws InvalidTravelReqirementException {
+        TravelLocation destination = new TravelLocation(City.BEIJING);
+        TravelLocation departure = new TravelLocation(City.BOSTON);
+        ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
+        TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
+
+        UUID proposalId = travelRequirementDAO.createTravelProposal(travelProposal);
+
+        thrown.expect(InvalidTravelReqirementException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_delete_travel_requirement_operation,
+            proposalId));
+        travelRequirementDAO.removeTravelRequirement(proposalId);
     }
 
     @After

@@ -1,17 +1,20 @@
 package com.free.walker.service.itinerary.basic;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import javax.json.Json;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.SerializableJSON;
 
 public class City implements SerializableJSON {
-    public final static City BEIJING = new City("Beijing", Country.CHINA);
-    public final static City WUHAN = new City("Wuhan", Country.CHINA);
-    public final static City LONDON = new City("London", Country.UK);
-    public final static City LA = new City("LA", Country.US);
-    public final static City BOSTON = new City("BOSTON", Country.US);
+    public static final City BEIJING = new City("Beijing", Country.CHINA);
+    public static final City WUHAN = new City("Wuhan", Country.CHINA);
+    public static final City LONDON = new City("London", Country.UK);
+    public static final City LA = new City("LA", Country.US);
+    public static final City BOSTON = new City("BOSTON", Country.US);
 
     private String name;
     private Country country;
@@ -22,12 +25,17 @@ public class City implements SerializableJSON {
         }
 
         this.name = name;
+        this.country = country;
     }
 
-    public JSONObject toJSON() throws JSONException {
-        JSONObject res = new JSONObject();
-        res.put(Constants.JSONKeys.NAME, name);
-        res.put(Constants.JSONKeys.COUNTRY, country);
-        return res;
+    public JsonObject toJSON() throws JsonException {
+        JsonObjectBuilder resBuilder = Json.createObjectBuilder();
+        resBuilder.add(Constants.JSONKeys.NAME, name);
+        resBuilder.add(Constants.JSONKeys.COUNTRY, country.toJSON());
+        return resBuilder.build();
+    }
+
+    public ValueType getValueType() {
+        return JsonValue.ValueType.OBJECT;
     }
 }

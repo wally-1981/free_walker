@@ -1,7 +1,9 @@
 package com.free.walker.service.itinerary.req;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import javax.json.Json;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.TravelTimeRange;
@@ -12,6 +14,10 @@ public class ResortRequirement extends BaseTravelRequirement implements TravelRe
     private TravelTimeRange arrivalTimeRange;
     private Resort resort;
     private ResortStar resortStar;
+
+    public ResortRequirement() {
+        super();
+    }
 
     public ResortRequirement(TravelTimeRange arrivalTimeRange) {
         super();
@@ -43,19 +49,21 @@ public class ResortRequirement extends BaseTravelRequirement implements TravelRe
         this.resort = resort;
     }
 
-    public JSONObject toJSON() throws JSONException {
-        JSONObject res = super.toJSON();
-        res.put(Constants.JSONKeys.TIME_RANGE_START, arrivalTimeRange.getStart());
-        res.put(Constants.JSONKeys.TIME_RANGE_OFFSET, arrivalTimeRange.getOffset());
+    public JsonObject toJSON() throws JsonException {
+        JsonObjectBuilder resBuilder = Json.createObjectBuilder();
+        resBuilder.add(Constants.JSONKeys.UUID, requirementId.toString());
+        resBuilder.add(Constants.JSONKeys.TYPE, Constants.JSONKeys.REQUIREMENT);
+        resBuilder.add(Constants.JSONKeys.TIME_RANGE_START, arrivalTimeRange.getStart());
+        resBuilder.add(Constants.JSONKeys.TIME_RANGE_OFFSET, arrivalTimeRange.getOffset());
 
         if (resortStar != null) {
-            res.put(Constants.JSONKeys.STAR, resortStar.enumValue());
+            resBuilder.add(Constants.JSONKeys.STAR, resortStar.enumValue());
         }
 
         if (resort != null) {
-            res.put(Constants.JSONKeys.RESORT, resort.toJSON());
+            resBuilder.add(Constants.JSONKeys.RESORT, resort.toJSON());
         }
 
-        return res;
+        return resBuilder.build();
     }
 }

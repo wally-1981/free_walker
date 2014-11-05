@@ -2,13 +2,11 @@ package com.free.walker.service.itinerary.rest;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement(name = "Order")
 public class Order {
     private long id;
     private String description;

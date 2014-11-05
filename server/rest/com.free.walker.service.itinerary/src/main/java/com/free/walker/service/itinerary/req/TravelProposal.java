@@ -3,14 +3,20 @@ package com.free.walker.service.itinerary.req;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import com.free.walker.service.itinerary.Constants;
 
 public class TravelProposal extends BaseTravelRequirement implements TravelRequirement {
     private List<TravelRequirement> travelRequirements;
+
+    public TravelProposal() {
+        super();
+    }
 
     public TravelProposal(ItineraryRequirement itineraryRequirement) {
         super();
@@ -23,17 +29,24 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
         this.travelRequirements.add(itineraryRequirement);
     }
 
+    public boolean isProposal() {
+        return true;
+    }
+
     public List<TravelRequirement> getTravelRequirements() {
         return travelRequirements;
     }
 
-    public JSONObject toJSON() throws JSONException {
-        JSONObject proposal = super.toJSON();
-        JSONArray requirements = new JSONArray();
+    public JsonObject toJSON() throws JsonException {
+        JsonObjectBuilder resBuilder = Json.createObjectBuilder();
+        resBuilder.add(Constants.JSONKeys.UUID, requirementId.toString());
+        resBuilder.add(Constants.JSONKeys.TYPE, Constants.JSONKeys.PROPOSAL);
+        JsonArrayBuilder requirements = Json.createArrayBuilder();
         for (TravelRequirement travelRequirement : travelRequirements) {
-            requirements.put(travelRequirement.toJSON());
+            requirements.add(travelRequirement.toJSON());
         }
-        proposal.put(Constants.JSONKeys.PROPOSAL, requirements);
-        return proposal;
+        resBuilder.add(Constants.JSONKeys.REQUIREMENTS, requirements);
+
+        return resBuilder.build();
     }
 }

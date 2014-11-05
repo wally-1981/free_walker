@@ -1,9 +1,9 @@
 package com.free.walker.service.itinerary.traffic;
 
 public class TrafficToolSeatClass {
-    public static TrafficToolSeatClass CLASS_1ST = new TrafficToolSeatClass(30);
-    public static TrafficToolSeatClass CLASS_2ND = new TrafficToolSeatClass(20);
-    public static TrafficToolSeatClass CLASS_3RD = new TrafficToolSeatClass(10);
+    public static final TrafficToolSeatClass CLASS_1ST = new TrafficToolSeatClass(30);
+    public static final TrafficToolSeatClass CLASS_2ND = new TrafficToolSeatClass(20);
+    public static final TrafficToolSeatClass CLASS_3RD = new TrafficToolSeatClass(10);
 
     private int enumValue = 0;
 

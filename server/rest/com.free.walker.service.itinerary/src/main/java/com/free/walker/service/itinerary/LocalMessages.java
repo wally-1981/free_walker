@@ -50,22 +50,24 @@ public class LocalMessages {
         ;
     }
 
-    public static String illegal_hotel_nights = "illegal_hotel_nights";
-    public static String empty_itinerary_location = "empty_itinerary_location";
-    public static String illegal_itinerary_index = "illegal_itinerary_index";
+    public static final String illegal_hotel_nights = "illegal_hotel_nights";
+    public static final String empty_itinerary_location = "empty_itinerary_location";
+    public static final String illegal_itinerary_index = "illegal_itinerary_index";
 
-    public static String missing_travel_requirement = "missing_travel_requirement";
-    public static String existed_travel_requirement = "existed_travel_requirement";
-    public static String missing_itinerary_requirement = "missing_itinerary_requirement";
-    public static String not_found_itinerary_requirement = "not_found_itinerary_requirement";
-    public static String illegal_add_travel_requirement_operation = "illegal_add_travel_requirement_operation";
-    public static String illegal_update_travel_requirement_operation = "illegal_update_travel_requirement_operation";
+    public static final String missing_travel_requirement = "missing_travel_requirement";
+    public static final String existed_travel_requirement = "existed_travel_requirement";
+    public static final String missing_itinerary_requirement = "missing_itinerary_requirement";
+    public static final String not_found_itinerary_requirement = "not_found_itinerary_requirement";
+    public static final String illegal_add_travel_requirement_operation = "illegal_add_travel_requirement_operation";
+    public static final String illegal_update_travel_requirement_operation = "illegal_update_travel_requirement_operation";
+    public static final String illegal_delete_travel_requirement_operation = "illegal_delete_travel_requirement_operation";
 
-    public static String dao_init_failure = "dao_init_failure";
+    public static final String dao_init_failure = "dao_init_failure";
+    public static final String introspection_failure = "introspection_failure";
 
-    public static String test_message = "test_message";
-    public static String test_message_with_1_arg = "test_message_with_1_arg";
-    public static String test_message_with_2_args = "test_message_with_2_args";
-    public static String test_message_with_3_args = "test_message_with_3_args";
-    public static String test_message_with_multiple_args = "test_message_with_multiple_args";
+    public static final String test_message = "test_message";
+    public static final String test_message_with_1_arg = "test_message_with_1_arg";
+    public static final String test_message_with_2_args = "test_message_with_2_args";
+    public static final String test_message_with_3_args = "test_message_with_3_args";
+    public static final String test_message_with_multiple_args = "test_message_with_multiple_args";
 }
