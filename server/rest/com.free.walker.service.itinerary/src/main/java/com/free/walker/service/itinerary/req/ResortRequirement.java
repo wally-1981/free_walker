@@ -5,10 +5,10 @@ import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import com.free.walker.service.itinerary.Constants;
-import com.free.walker.service.itinerary.TravelTimeRange;
+import com.free.walker.service.itinerary.basic.Introspection;
 import com.free.walker.service.itinerary.basic.Resort;
-import com.free.walker.service.itinerary.resort.ResortStar;
+import com.free.walker.service.itinerary.basic.ResortStar;
+import com.free.walker.service.itinerary.basic.TravelTimeRange;
 
 public class ResortRequirement extends BaseTravelRequirement implements TravelRequirement {
     private TravelTimeRange arrivalTimeRange;
@@ -51,17 +51,18 @@ public class ResortRequirement extends BaseTravelRequirement implements TravelRe
 
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
-        resBuilder.add(Constants.JSONKeys.UUID, requirementId.toString());
-        resBuilder.add(Constants.JSONKeys.TYPE, Constants.JSONKeys.REQUIREMENT);
-        resBuilder.add(Constants.JSONKeys.TIME_RANGE_START, arrivalTimeRange.getStart());
-        resBuilder.add(Constants.JSONKeys.TIME_RANGE_OFFSET, arrivalTimeRange.getOffset());
+        resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
+        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONKeys.REQUIREMENT);
+        resBuilder.add(Introspection.JSONKeys.SUB_TYPE, getSubType());
+        resBuilder.add(Introspection.JSONKeys.TIME_RANGE_START, arrivalTimeRange.getStart());
+        resBuilder.add(Introspection.JSONKeys.TIME_RANGE_OFFSET, arrivalTimeRange.getOffset());
 
         if (resortStar != null) {
-            resBuilder.add(Constants.JSONKeys.STAR, resortStar.enumValue());
+            resBuilder.add(Introspection.JSONKeys.STAR, resortStar.enumValue());
         }
 
         if (resort != null) {
-            resBuilder.add(Constants.JSONKeys.RESORT, resort.toJSON());
+            resBuilder.add(Introspection.JSONKeys.RESORT, resort.toJSON());
         }
 
         return resBuilder.build();

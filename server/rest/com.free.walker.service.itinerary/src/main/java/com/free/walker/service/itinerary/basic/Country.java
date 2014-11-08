@@ -6,11 +6,10 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
-import com.free.walker.service.itinerary.Constants;
-import com.free.walker.service.itinerary.SerializableJSON;
+import com.free.walker.service.itinerary.Serializable;
 import com.ibm.icu.util.ULocale;
 
-public class Country implements SerializableJSON {
+public class Country implements Serializable {
     public static final Country CHINA = new Country(ULocale.CHINA);
     public static final Country US = new Country(ULocale.US);
     public static final Country UK = new Country(ULocale.UK);
@@ -28,7 +27,7 @@ public class Country implements SerializableJSON {
 
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
-        resBuilder.add(Constants.JSONKeys.NAME, locale.getCountry());
+        resBuilder.add(Introspection.JSONKeys.NAME, locale.getCountry());
         return resBuilder.build();
     }
 

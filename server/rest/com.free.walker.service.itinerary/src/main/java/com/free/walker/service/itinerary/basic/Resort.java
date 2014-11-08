@@ -5,9 +5,9 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
-import com.free.walker.service.itinerary.SerializableJSON;
+import com.free.walker.service.itinerary.Serializable;
 
-public class Resort implements SerializableJSON {
+public class Resort implements Serializable {
     public JsonObject toJSON() {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         return resBuilder.build();

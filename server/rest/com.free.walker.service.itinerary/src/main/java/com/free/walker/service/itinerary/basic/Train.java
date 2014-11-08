@@ -1,14 +1,15 @@
 package com.free.walker.service.itinerary.basic;
 
+import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
-import com.free.walker.service.itinerary.SerializableJSON;
+import com.free.walker.service.itinerary.Serializable;
 import com.free.walker.service.itinerary.traffic.TrafficTool;
-import com.free.walker.service.itinerary.traffic.TrafficToolType;
 import com.ibm.icu.util.Calendar;
 
-public class Train extends TrafficTool implements SerializableJSON {
+public class Train extends TrafficTool implements Serializable {
     private String number;
     private TravelLocation departure;
     private TravelLocation destination;
@@ -18,12 +19,20 @@ public class Train extends TrafficTool implements SerializableJSON {
     private double ticketFee = 0;
     private double taxFee = 0;
 
-    public Train(String trainNumber, TravelLocation departure, TravelLocation destination) {
-        if (trainNumber == null || departure == null || destination == null) {
+    public Train(String number) {
+        if (number == null) {
+            throw new NullPointerException();
+        }
+
+        this.number = number;
+    }
+
+    public Train(String number, TravelLocation departure, TravelLocation destination) {
+        if (number == null || departure == null || destination == null) {
             throw new IllegalArgumentException();
         }
 
-        this.number = trainNumber;
+        this.number = number;
         this.departure = departure;
         this.destination = destination;
     }
@@ -41,7 +50,7 @@ public class Train extends TrafficTool implements SerializableJSON {
     }
 
     public TrafficToolType getType() {
-        return TrafficToolType.TRAIN;
+        return Introspection.JSONValues.TRAIN;
     }
 
     public double getTicketFee() {
@@ -69,7 +78,8 @@ public class Train extends TrafficTool implements SerializableJSON {
     }
 
     public JsonObject toJSON() {
-        return null;
+        JsonObjectBuilder resBuilder = Json.createObjectBuilder();
+        return resBuilder.build();
     }
 
     public ValueType getValueType() {

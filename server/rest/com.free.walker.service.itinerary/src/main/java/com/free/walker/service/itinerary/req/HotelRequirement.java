@@ -5,11 +5,10 @@ import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
+import com.free.walker.service.itinerary.basic.Introspection;
 import com.free.walker.service.itinerary.basic.Hotel;
-import com.free.walker.service.itinerary.hotel.HotelStar;
-
+import com.free.walker.service.itinerary.basic.HotelStar;
 public class HotelRequirement extends BaseTravelRequirement implements TravelRequirement {
     private int nights;
     private HotelStar hotelStar;
@@ -51,17 +50,19 @@ public class HotelRequirement extends BaseTravelRequirement implements TravelReq
 
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
-        resBuilder.add(Constants.JSONKeys.UUID, requirementId.toString());
-        resBuilder.add(Constants.JSONKeys.TYPE, Constants.JSONKeys.REQUIREMENT);
-        resBuilder.add(Constants.JSONKeys.NIGHT, nights);
+        resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
+        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONKeys.REQUIREMENT);
+
+        resBuilder.add(Introspection.JSONKeys.SUB_TYPE, getSubType());
+        resBuilder.add(Introspection.JSONKeys.NIGHT, nights);
 
         if (hotelStar != null) {
-            resBuilder.add(Constants.JSONKeys.STAR, hotelStar.enumValue());
+            resBuilder.add(Introspection.JSONKeys.STAR, hotelStar.enumValue());
         }
 
         if (hotel != null) {
             JsonObject hotelJSON = hotel.toJSON();
-            resBuilder.add(Constants.JSONKeys.HOTEL, hotelJSON);
+            resBuilder.add(Introspection.JSONKeys.HOTEL, hotelJSON);
         }
 
         return resBuilder.build();

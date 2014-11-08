@@ -8,7 +8,7 @@ import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import com.free.walker.service.itinerary.Constants;
+import com.free.walker.service.itinerary.basic.Introspection;
 import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.ibm.icu.util.Calendar;
 
@@ -45,17 +45,17 @@ public class ItineraryRequirement extends BaseTravelRequirement implements Trave
 
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
-        resBuilder.add(Constants.JSONKeys.UUID, requirementId.toString());
-        resBuilder.add(Constants.JSONKeys.TYPE, Constants.JSONKeys.ITINERARY);
-        resBuilder.add(Constants.JSONKeys.DESTINATION, destinationLocation.toJSON());
-        resBuilder.add(Constants.JSONKeys.DEPARTURE, departureLocation.toJSON());
+        resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
+        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONKeys.ITINERARY);
+        resBuilder.add(Introspection.JSONKeys.DESTINATION, destinationLocation.toJSON());
+        resBuilder.add(Introspection.JSONKeys.DEPARTURE, departureLocation.toJSON());
 
         if (departureDateTimeSelections != null) {
             JsonArrayBuilder dateTimeSelections = Json.createArrayBuilder();
             for (Calendar selection : departureDateTimeSelections) {
                 dateTimeSelections.add(selection.getTimeInMillis());
             }
-            resBuilder.add(Constants.JSONKeys.DATETIME_SELECTIONS, dateTimeSelections);
+            resBuilder.add(Introspection.JSONKeys.DATETIME_SELECTIONS, dateTimeSelections);
         }
 
         return resBuilder.build();

@@ -33,7 +33,7 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
         return true;
     }
 
-    public UUID createTravelProposal(TravelProposal travelProposal) {
+    public UUID createProposal(TravelProposal travelProposal) {
         if (travelProposal == null) {
             throw new NullPointerException();
         }
@@ -49,7 +49,7 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
         return travelProposal.getUUID();
     }
 
-    public UUID addTravelRequirement(UUID travelProposalId, TravelRequirement travelRequirement)
+    public UUID addRequirement(UUID travelProposalId, TravelRequirement travelRequirement)
         throws InvalidTravelReqirementException {
         if (travelProposalId == null || travelRequirement == null) {
             throw new NullPointerException();
@@ -73,7 +73,7 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
         return travelRequirement.getUUID();
     }
 
-    public UUID addTravelRequirement(UUID travelProposalId, UUID itineraryRequirementId,
+    public UUID addRequirement(UUID travelProposalId, UUID itineraryRequirementId,
         TravelRequirement travelRequirement) throws InvalidTravelReqirementException {
         if (travelProposalId == null || itineraryRequirementId == null || travelRequirement == null) {
             throw new NullPointerException();
@@ -277,7 +277,7 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
             travelRequirementId);
     }
 
-    public TravelRequirement getTravelRequirement(UUID travelRequirementId) throws InvalidTravelReqirementException {
+    public TravelRequirement getRequirement(UUID travelRequirementId) throws InvalidTravelReqirementException {
         if (travelRequirementId == null) {
             throw new NullPointerException();
         }
@@ -292,7 +292,7 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
         return travelRequirement;
     }
 
-    public UUID updateTravelRequirement(UUID travelRequirementId, TravelRequirement travelRequirement)
+    public UUID updateRequirement(UUID travelRequirementId, TravelRequirement travelRequirement)
         throws InvalidTravelReqirementException {
         if (travelRequirementId == null || travelRequirement == null) {
             throw new NullPointerException();
@@ -341,7 +341,7 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
         return travelRequirement.getUUID();
     }
 
-    public UUID removeTravelRequirement(UUID travelRequirementId) throws InvalidTravelReqirementException {
+    public UUID removeRequirement(UUID travelRequirementId) throws InvalidTravelReqirementException {
         if (travelRequirementId == null) {
             throw new NullPointerException();
         }
@@ -351,9 +351,6 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
         if (travelRequirement == null) {
             throw new InvalidTravelReqirementException(LocalMessages.getMessage(
                 LocalMessages.missing_travel_requirement, travelRequirementId), travelRequirementId);
-        } else if (travelRequirement.isItinerary()) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.illegal_delete_travel_requirement_operation, travelRequirementId), travelRequirementId);
         } else if (travelRequirement.isProposal()) {
             throw new InvalidTravelReqirementException(LocalMessages.getMessage(
                 LocalMessages.illegal_delete_travel_requirement_operation, travelRequirementId), travelRequirementId);

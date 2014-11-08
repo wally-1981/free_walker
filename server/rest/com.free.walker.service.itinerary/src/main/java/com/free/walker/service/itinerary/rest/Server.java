@@ -15,8 +15,10 @@ public class Server {
 
         List<Class<?>> classes = new ArrayList<Class<?>>();
         classes.add(ItineraryService.class);
+        classes.add(PlatformAdminService.class);
         List<ResourceProvider> providers = new ArrayList<ResourceProvider>();
         providers.add(new SingletonResourceProvider(new ItineraryService()));
+        providers.add(new SingletonResourceProvider(new PlatformAdminService()));
 
         sf.setResourceClasses(classes);
         sf.setResourceProviders(providers);

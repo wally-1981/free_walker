@@ -64,18 +64,18 @@ public class MySQLTravelRequirementDAOImpl implements TravelRequirementDAO {
         }
     }
 
-    public UUID createTravelProposal(TravelProposal travelProposal) {
+    public UUID createProposal(TravelProposal travelProposal) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public UUID addTravelRequirement(UUID travelProposalId, TravelRequirement travelRequirement)
+    public UUID addRequirement(UUID travelProposalId, TravelRequirement travelRequirement)
         throws InvalidTravelReqirementException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public UUID addTravelRequirement(UUID travelProposalId, UUID itineraryRequirementId,
+    public UUID addRequirement(UUID travelProposalId, UUID itineraryRequirementId,
         TravelRequirement travelRequirement) throws InvalidTravelReqirementException {
         // TODO Auto-generated method stub
         return null;
@@ -110,18 +110,18 @@ public class MySQLTravelRequirementDAOImpl implements TravelRequirementDAO {
         return null;
     }
 
-    public TravelRequirement getTravelRequirement(UUID travelRequirementId) throws InvalidTravelReqirementException {
+    public TravelRequirement getRequirement(UUID travelRequirementId) throws InvalidTravelReqirementException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public UUID updateTravelRequirement(UUID travelRequirementId, TravelRequirement travelRequirement)
+    public UUID updateRequirement(UUID travelRequirementId, TravelRequirement travelRequirement)
         throws InvalidTravelReqirementException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public UUID removeTravelRequirement(UUID travelRequirementId) throws InvalidTravelReqirementException {
+    public UUID removeRequirement(UUID travelRequirementId) throws InvalidTravelReqirementException {
         // TODO Auto-generated method stub
         return null;
     }

@@ -1,15 +1,16 @@
 package com.free.walker.service.itinerary.basic;
 
+import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
-import com.free.walker.service.itinerary.SerializableJSON;
+import com.free.walker.service.itinerary.Serializable;
 import com.free.walker.service.itinerary.traffic.TrafficTool;
-import com.free.walker.service.itinerary.traffic.TrafficToolType;
 import com.ibm.icu.util.Calendar;
 
-public class Flight extends TrafficTool implements SerializableJSON {
-    private String mumber;
+public class Flight extends TrafficTool implements Serializable {
+    private String number;
     private TravelLocation departure;
     private TravelLocation destination;
 
@@ -18,18 +19,26 @@ public class Flight extends TrafficTool implements SerializableJSON {
     private double ticketFee = 0;
     private double taxFee = 0;
 
-    public Flight(String flightNumber, TravelLocation departure, TravelLocation destination) {
-        if (flightNumber == null || departure == null || destination == null) {
-            throw new IllegalArgumentException();
+    public Flight(String number) {
+        if (number == null) {
+            throw new NullPointerException();
         }
 
-        this.mumber = flightNumber;
+        this.number = number;
+    }
+
+    public Flight(String number, TravelLocation departure, TravelLocation destination) {
+        if (number == null || departure == null || destination == null) {
+            throw new NullPointerException();
+        }
+
+        this.number = number;
         this.departure = departure;
         this.destination = destination;
     }
 
     public String getPublicId() {
-        return mumber;
+        return number;
     }
 
     public TravelLocation getDeparture() {
@@ -41,7 +50,7 @@ public class Flight extends TrafficTool implements SerializableJSON {
     }
 
     public TrafficToolType getType() {
-        return TrafficToolType.FLIGHT;
+        return Introspection.JSONValues.FLIGHT;
     }
 
     public double getTicketFee() {
@@ -69,7 +78,8 @@ public class Flight extends TrafficTool implements SerializableJSON {
     }
 
     public JsonObject toJSON() {
-        return null;
+        JsonObjectBuilder resBuilder = Json.createObjectBuilder();
+        return resBuilder.build();
     }
 
     public ValueType getValueType() {

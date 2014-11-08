@@ -9,7 +9,7 @@ import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import com.free.walker.service.itinerary.Constants;
+import com.free.walker.service.itinerary.basic.Introspection;
 
 public class TravelProposal extends BaseTravelRequirement implements TravelRequirement {
     private List<TravelRequirement> travelRequirements;
@@ -39,13 +39,13 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
 
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
-        resBuilder.add(Constants.JSONKeys.UUID, requirementId.toString());
-        resBuilder.add(Constants.JSONKeys.TYPE, Constants.JSONKeys.PROPOSAL);
+        resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
+        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONKeys.PROPOSAL);
         JsonArrayBuilder requirements = Json.createArrayBuilder();
         for (TravelRequirement travelRequirement : travelRequirements) {
             requirements.add(travelRequirement.toJSON());
         }
-        resBuilder.add(Constants.JSONKeys.REQUIREMENTS, requirements);
+        resBuilder.add(Introspection.JSONKeys.REQUIREMENTS, requirements);
 
         return resBuilder.build();
     }

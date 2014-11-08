@@ -10,8 +10,8 @@ import javax.json.JsonObject;
 
 import org.junit.Test;
 
-import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.basic.City;
+import com.free.walker.service.itinerary.basic.Introspection;
 import com.free.walker.service.itinerary.basic.TravelLocation;
 
 public class TravelProposalTest {
@@ -22,10 +22,10 @@ public class TravelProposalTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destinationLocation, departureLocation);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
         JsonObject jo = travelProposal.toJSON();
-        assertEquals(Constants.JSONKeys.PROPOSAL, jo.getString(Constants.JSONKeys.TYPE));
-        assertTrue(jo.get(Constants.JSONKeys.REQUIREMENTS) instanceof JsonArray);
+        assertEquals(Introspection.JSONKeys.PROPOSAL, jo.getString(Introspection.JSONKeys.TYPE));
+        assertTrue(jo.get(Introspection.JSONKeys.REQUIREMENTS) instanceof JsonArray);
 
-        JsonArray requirements = (JsonArray) jo.get(Constants.JSONKeys.REQUIREMENTS);
+        JsonArray requirements = (JsonArray) jo.get(Introspection.JSONKeys.REQUIREMENTS);
         assertEquals(1, requirements.size());
         assertNotNull(requirements.get(0));
     }

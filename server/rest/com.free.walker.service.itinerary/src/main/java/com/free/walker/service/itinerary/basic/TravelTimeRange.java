@@ -1,15 +1,12 @@
-package com.free.walker.service.itinerary;
+package com.free.walker.service.itinerary.basic;
 
-public class TravelTimeRange {
-    public static final TravelTimeRange RANGE_00_06 = new TravelTimeRange(0, 6);
-    public static final TravelTimeRange RANGE_06_12 = new TravelTimeRange(6, 6);
-    public static final TravelTimeRange RANGE_12_18 = new TravelTimeRange(12, 6);
-    public static final TravelTimeRange RANGE_18_23 = new TravelTimeRange(18, 6);
+import com.free.walker.service.itinerary.Enumable;
 
+public class TravelTimeRange implements Enumable {
     private int start;
     private int offset;
 
-    private TravelTimeRange(int start, int duration) {
+    protected TravelTimeRange(int start, int duration) {
         if (start < 0 || start > 23) {
             throw new IllegalArgumentException();
         }
@@ -28,5 +25,9 @@ public class TravelTimeRange {
 
     public int getOffset() {
         return offset;
+    }
+
+    public int enumValue() {
+        return start;
     }
 }

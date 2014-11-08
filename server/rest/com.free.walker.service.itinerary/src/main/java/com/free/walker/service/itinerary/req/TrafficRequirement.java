@@ -9,11 +9,11 @@ import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import com.free.walker.service.itinerary.Constants;
-import com.free.walker.service.itinerary.TravelTimeRange;
+import com.free.walker.service.itinerary.basic.Introspection;
 import com.free.walker.service.itinerary.basic.Flight;
+import com.free.walker.service.itinerary.basic.TrafficToolType;
 import com.free.walker.service.itinerary.basic.Train;
-import com.free.walker.service.itinerary.traffic.TrafficToolType;
+import com.free.walker.service.itinerary.basic.TravelTimeRange;
 
 public class TrafficRequirement extends BaseTravelRequirement implements TravelRequirement {
     private TrafficToolType trafficToolType;
@@ -55,41 +55,42 @@ public class TrafficRequirement extends BaseTravelRequirement implements TravelR
         this.trafficToolTimeRangeSelections = trafficToolTimeRangeSelections;
     }
 
-    public TrafficRequirement(TrafficToolType trafficToolType, Flight flight) {
-        this(trafficToolType);
+    public TrafficRequirement(Flight flight) {
+        this(Introspection.JSONValues.FLIGHT);
 
         this.flight = flight;
     }
 
-    public TrafficRequirement(TrafficToolType trafficToolType, Train train) {
-        this(trafficToolType);
+    public TrafficRequirement(Train train) {
+        this(Introspection.JSONValues.TRAIN);
 
         this.train = train;
     }
 
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
-        resBuilder.add(Constants.JSONKeys.UUID, requirementId.toString());
-        resBuilder.add(Constants.JSONKeys.TYPE, Constants.JSONKeys.REQUIREMENT);
-        resBuilder.add(Constants.JSONKeys.TRAFFIC_TOOL_TYPE, trafficToolType.enumValue());
+        resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
+        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONKeys.REQUIREMENT);
+        resBuilder.add(Introspection.JSONKeys.SUB_TYPE, getSubType());
+        resBuilder.add(Introspection.JSONKeys.TRAFFIC_TOOL_TYPE, trafficToolType.enumValue());
 
         if (trafficToolTimeRangeSelections != null) {
             JsonArrayBuilder dateTimeSelections = Json.createArrayBuilder();
             for (TravelTimeRange selection : trafficToolTimeRangeSelections) {
                 JsonObjectBuilder timeRange = Json.createObjectBuilder();
-                timeRange.add(Constants.JSONKeys.TIME_RANGE_START, selection.getStart());
-                timeRange.add(Constants.JSONKeys.TIME_RANGE_OFFSET, selection.getOffset());
+                timeRange.add(Introspection.JSONKeys.TIME_RANGE_START, selection.getStart());
+                timeRange.add(Introspection.JSONKeys.TIME_RANGE_OFFSET, selection.getOffset());
                 dateTimeSelections.add(timeRange);
             }
-            resBuilder.add(Constants.JSONKeys.DATETIME_RANGE_SELECTIONS, dateTimeSelections);
+            resBuilder.add(Introspection.JSONKeys.DATETIME_RANGE_SELECTIONS, dateTimeSelections);
         }
 
         if (flight != null) {
-            resBuilder.add(Constants.JSONKeys.FLIGHT, flight.toJSON());
+            resBuilder.add(Introspection.JSONKeys.FLIGHT, flight.toJSON());
         }
 
         if (train != null) {
-            resBuilder.add(Constants.JSONKeys.TRAIN, train.toJSON());
+            resBuilder.add(Introspection.JSONKeys.TRAIN, train.toJSON());
         }
 
         return resBuilder.build();

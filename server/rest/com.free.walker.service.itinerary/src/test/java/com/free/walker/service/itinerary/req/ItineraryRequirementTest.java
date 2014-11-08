@@ -13,8 +13,8 @@ import javax.json.JsonObject;
 
 import org.junit.Test;
 
-import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.basic.City;
+import com.free.walker.service.itinerary.basic.Introspection;
 import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.ibm.icu.util.Calendar;
 
@@ -25,9 +25,9 @@ public class ItineraryRequirementTest {
         TravelLocation departureLocation = new TravelLocation(City.LONDON);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destinationLocation, departureLocation);
         JsonObject jo = itineraryRequirement.toJSON();
-        assertEquals(Constants.JSONKeys.ITINERARY, jo.getString(Constants.JSONKeys.TYPE));
-        assertNotNull(jo.get(Constants.JSONKeys.DESTINATION));
-        assertNotNull(jo.get(Constants.JSONKeys.DEPARTURE));
+        assertEquals(Introspection.JSONKeys.ITINERARY, jo.getString(Introspection.JSONKeys.TYPE));
+        assertNotNull(jo.get(Introspection.JSONKeys.DESTINATION));
+        assertNotNull(jo.get(Introspection.JSONKeys.DEPARTURE));
 
         assertEquals(true, itineraryRequirement.isItinerary());
     }
@@ -48,12 +48,12 @@ public class ItineraryRequirementTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destinationLocation, departureLocation,
             departureDateTimeSelections);
         JsonObject jo = itineraryRequirement.toJSON();
-        assertEquals(Constants.JSONKeys.ITINERARY, jo.getString(Constants.JSONKeys.TYPE));
-        assertNotNull(jo.get(Constants.JSONKeys.DESTINATION));
-        assertNotNull(jo.get(Constants.JSONKeys.DEPARTURE));
-        assertTrue(jo.get(Constants.JSONKeys.DATETIME_SELECTIONS) instanceof JsonArray);
+        assertEquals(Introspection.JSONKeys.ITINERARY, jo.getString(Introspection.JSONKeys.TYPE));
+        assertNotNull(jo.get(Introspection.JSONKeys.DESTINATION));
+        assertNotNull(jo.get(Introspection.JSONKeys.DEPARTURE));
+        assertTrue(jo.get(Introspection.JSONKeys.DATETIME_SELECTIONS) instanceof JsonArray);
         
-        JsonArray selections = (JsonArray) jo.get(Constants.JSONKeys.DATETIME_SELECTIONS);
+        JsonArray selections = (JsonArray) jo.get(Introspection.JSONKeys.DATETIME_SELECTIONS);
         assertEquals(2, selections.size());
         assertEquals(departureDateTime1.getTimeInMillis(), selections.getJsonNumber(0).longValue());
         assertEquals(departureDateTime2.getTimeInMillis(), selections.getJsonNumber(1).longValue());

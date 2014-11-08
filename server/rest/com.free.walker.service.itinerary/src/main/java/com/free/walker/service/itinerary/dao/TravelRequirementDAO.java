@@ -10,12 +10,12 @@ import com.free.walker.service.itinerary.req.TravelRequirement;
 public interface TravelRequirementDAO {
     public boolean pingPersistence();
 
-    public UUID createTravelProposal(TravelProposal travelProposal);
+    public UUID createProposal(TravelProposal travelProposal);
 
-    public UUID addTravelRequirement(UUID travelProposalId, TravelRequirement travelRequirement)
+    public UUID addRequirement(UUID travelProposalId, TravelRequirement travelRequirement)
         throws InvalidTravelReqirementException;
 
-    public UUID addTravelRequirement(UUID travelProposalId, UUID itineraryRequirementId,
+    public UUID addRequirement(UUID travelProposalId, UUID itineraryRequirementId,
         TravelRequirement travelRequirement) throws InvalidTravelReqirementException;
 
     public List<TravelRequirement> getRequirements(UUID travelProposalId) throws InvalidTravelReqirementException;
@@ -32,10 +32,10 @@ public interface TravelRequirementDAO {
     public TravelRequirement getNextItineraryRequirement(UUID travelProposalId, UUID travelRequirementId)
         throws InvalidTravelReqirementException;
 
-    public TravelRequirement getTravelRequirement(UUID travelRequirementId) throws InvalidTravelReqirementException;
+    public TravelRequirement getRequirement(UUID travelRequirementId) throws InvalidTravelReqirementException;
 
-    public UUID updateTravelRequirement(UUID travelRequirementId, TravelRequirement travelRequirement)
+    public UUID updateRequirement(UUID travelRequirementId, TravelRequirement travelRequirement)
         throws InvalidTravelReqirementException;
 
-    public UUID removeTravelRequirement(UUID travelRequirementId) throws InvalidTravelReqirementException;
+    public UUID removeRequirement(UUID travelRequirementId) throws InvalidTravelReqirementException;
 }

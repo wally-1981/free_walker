@@ -6,10 +6,9 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
-import com.free.walker.service.itinerary.Constants;
-import com.free.walker.service.itinerary.SerializableJSON;
+import com.free.walker.service.itinerary.Serializable;
 
-public class TravelLocation implements SerializableJSON {
+public class TravelLocation implements Serializable {
     private City city;
 
     public TravelLocation(City city) {
@@ -18,7 +17,7 @@ public class TravelLocation implements SerializableJSON {
 
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder res = Json.createObjectBuilder();
-        res.add(Constants.JSONKeys.CITY, city.toJSON());
+        res.add(Introspection.JSONKeys.CITY, city.toJSON());
         return res.build();
     }
 
