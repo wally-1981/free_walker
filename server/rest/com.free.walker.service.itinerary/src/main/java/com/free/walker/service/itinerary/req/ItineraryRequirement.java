@@ -8,8 +8,11 @@ import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.Introspection;
 import com.free.walker.service.itinerary.basic.TravelLocation;
+import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
+import com.free.walker.service.itinerary.util.UuidUtil;
 import com.ibm.icu.util.Calendar;
 
 public class ItineraryRequirement extends BaseTravelRequirement implements TravelRequirement {
@@ -18,7 +21,7 @@ public class ItineraryRequirement extends BaseTravelRequirement implements Trave
     private List<Calendar> departureDateTimeSelections;
 
     public ItineraryRequirement() {
-        super();
+        ;
     }
 
     public ItineraryRequirement(TravelLocation destinationLocation, TravelLocation departureLocation) {
@@ -46,7 +49,7 @@ public class ItineraryRequirement extends BaseTravelRequirement implements Trave
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
-        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONKeys.ITINERARY);
+        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.ITINERARY);
         resBuilder.add(Introspection.JSONKeys.DESTINATION, destinationLocation.toJSON());
         resBuilder.add(Introspection.JSONKeys.DEPARTURE, departureLocation.toJSON());
 
@@ -59,6 +62,42 @@ public class ItineraryRequirement extends BaseTravelRequirement implements Trave
         }
 
         return resBuilder.build();
+    }
+
+    public Object fromJSON(JsonObject jsObject) throws JsonException {
+        String requirementId = jsObject.getString(Introspection.JSONKeys.UUID);
+
+        if (requirementId != null) {
+            try {
+                this.requirementId = UuidUtil.fromUuidStr(requirementId);
+            } catch (InvalidTravelReqirementException e) {
+                throw new JsonException(e.getMessage(), e);
+            }            
+        }
+
+        String type = jsObject.getString(Introspection.JSONKeys.TYPE);
+        if (type != null && !Introspection.JSONValues.ITINERARY.equals(type)) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.TYPE, type));
+        }
+
+        JsonObject deptObj = jsObject.getJsonObject(Introspection.JSONKeys.DEPARTURE);
+        if (deptObj != null) {
+            this.departureLocation = (TravelLocation) new TravelLocation().fromJSON(deptObj);
+        } else {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.DEPARTURE, deptObj));
+        }
+
+        JsonObject destObj = jsObject.getJsonObject(Introspection.JSONKeys.DESTINATION);
+        if (destObj != null) {
+            this.destinationLocation = (TravelLocation) new TravelLocation().fromJSON(destObj);
+        } else {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.DESTINATION, destObj));
+        }
+
+        return this;
     }
 
     public boolean isItinerary() {

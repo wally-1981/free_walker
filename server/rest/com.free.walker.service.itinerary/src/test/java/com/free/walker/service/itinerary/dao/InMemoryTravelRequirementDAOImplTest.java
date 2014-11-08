@@ -37,7 +37,7 @@ public class InMemoryTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testCreateTravelProposalWithNullProposal() {
+    public void testCreateTravelProposalWithNullProposal() throws InvalidTravelReqirementException {
         TravelRequirementDAO travelRequirementDAO = DAOFactory
             .getTravelRequirementDAO(InMemoryTravelRequirementDAOImpl.class.getName());
 
@@ -277,7 +277,7 @@ public class InMemoryTravelRequirementDAOImplTest {
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement.getUUID(), hotelRequirement);
 
         TravelRequirement trafficToolSeatRequirement = new TrafficToolSeatRequirement(
-            Introspection.JSONValues.CLASS_2ND);
+            Introspection.JSONValues.SEAT_CLASS_2ND);
 
         UUID wrongRequirementId = UUID.randomUUID();
         thrown.expect(InvalidTravelReqirementException.class);
@@ -379,7 +379,7 @@ public class InMemoryTravelRequirementDAOImplTest {
 
         TravelRequirement hotelRequirement2 = new HotelRequirement(3);
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement.getUUID(), hotelRequirement2);
-        TravelRequirement trafficToolRequirement = new TrafficToolSeatRequirement(Introspection.JSONValues.CLASS_1ST);
+        TravelRequirement trafficToolRequirement = new TrafficToolSeatRequirement(Introspection.JSONValues.SEAT_CLASS_1ST);
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement.getUUID(), trafficToolRequirement);
 
         assertNotNull(travelRequirementDAO.getRequirement(proposalId));
@@ -556,7 +556,7 @@ public class InMemoryTravelRequirementDAOImplTest {
 
         TravelRequirement hotelRequirement = new HotelRequirement(12);
         TravelRequirement trafficToolSeatRequirement = new TrafficToolSeatRequirement(
-            Introspection.JSONValues.CLASS_3RD);
+            Introspection.JSONValues.SEAT_CLASS_3RD);
 
         travelRequirementDAO.addRequirement(proposalId, hotelRequirement);
         travelRequirementDAO.addRequirement(proposalId, trafficToolSeatRequirement);

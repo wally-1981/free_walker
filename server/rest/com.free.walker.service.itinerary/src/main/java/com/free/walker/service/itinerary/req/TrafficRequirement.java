@@ -9,20 +9,29 @@ import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import com.free.walker.service.itinerary.basic.Introspection;
+import org.apache.commons.lang3.StringUtils;
+
 import com.free.walker.service.itinerary.basic.Flight;
+import com.free.walker.service.itinerary.basic.Introspection;
 import com.free.walker.service.itinerary.basic.TrafficToolType;
 import com.free.walker.service.itinerary.basic.Train;
 import com.free.walker.service.itinerary.basic.TravelTimeRange;
 
 public class TrafficRequirement extends BaseTravelRequirement implements TravelRequirement {
+    public static final String SUB_TYPE;
+
+    static {
+        String[] names = StringUtils.splitByCharacterTypeCamelCase(TrafficRequirement.class.getSimpleName());
+        SUB_TYPE = StringUtils.join(names, '_', 0, names.length - 1);
+    }
+
     private TrafficToolType trafficToolType;
     private List<TravelTimeRange> trafficToolTimeRangeSelections;
     private Flight flight;
     private Train train;
 
     public TrafficRequirement() {
-        super();
+        ;
     }
 
     public TrafficRequirement(TrafficToolType trafficToolType) {
@@ -56,13 +65,13 @@ public class TrafficRequirement extends BaseTravelRequirement implements TravelR
     }
 
     public TrafficRequirement(Flight flight) {
-        this(Introspection.JSONValues.FLIGHT);
+        this(Introspection.JSONValues.TRAFFIC_TOOL_FLIGHT);
 
         this.flight = flight;
     }
 
     public TrafficRequirement(Train train) {
-        this(Introspection.JSONValues.TRAIN);
+        this(Introspection.JSONValues.TRAFFIC_TOOL_TRAIN);
 
         this.train = train;
     }
@@ -70,7 +79,7 @@ public class TrafficRequirement extends BaseTravelRequirement implements TravelR
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
-        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONKeys.REQUIREMENT);
+        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT);
         resBuilder.add(Introspection.JSONKeys.SUB_TYPE, getSubType());
         resBuilder.add(Introspection.JSONKeys.TRAFFIC_TOOL_TYPE, trafficToolType.enumValue());
 
@@ -94,5 +103,9 @@ public class TrafficRequirement extends BaseTravelRequirement implements TravelR
         }
 
         return resBuilder.build();
+    }
+
+    public Object fromJSON(JsonObject jsObject) throws JsonException {
+        return null;
     }
 }

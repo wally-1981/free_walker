@@ -6,6 +6,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
+import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.Serializable;
 
 public class City implements Serializable {
@@ -17,6 +18,10 @@ public class City implements Serializable {
 
     private String name;
     private Country country;
+
+    public City() {
+        ;
+    }
 
     private City(String name, Country country) {
         if (name == null || country == null) {
@@ -32,6 +37,26 @@ public class City implements Serializable {
         resBuilder.add(Introspection.JSONKeys.NAME, name);
         resBuilder.add(Introspection.JSONKeys.COUNTRY, country.toJSON());
         return resBuilder.build();
+    }
+
+    public City fromJSON(JsonObject jsObject) throws JsonException {
+        String cityName = jsObject.getString(Introspection.JSONKeys.NAME);
+        if (cityName == null) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.NAME, cityName));
+        } else {
+            name = cityName;
+        }
+
+        JsonObject countryObj = jsObject.getJsonObject(Introspection.JSONKeys.COUNTRY);
+        if (countryObj == null) {            
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.COUNTRY, countryObj));
+        } else {
+            country = new Country().fromJSON(countryObj);
+        }
+
+        return this;
     }
 
     public ValueType getValueType() {

@@ -1,5 +1,6 @@
 package com.free.walker.service.itinerary.rest;
 
+import javax.json.JsonObject;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -7,19 +8,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.free.walker.service.itinerary.basic.City;
-import com.free.walker.service.itinerary.basic.Country;
-import com.free.walker.service.itinerary.basic.Hotel;
-import com.free.walker.service.itinerary.basic.Resort;
-
 @Path("/service/platform/admin/")
 @Produces(MediaType.APPLICATION_JSON)
 public class PlatformAdminService {
-    private static Logger LOG = LoggerFactory.getLogger(PlatformAdminService.class);
-
     public PlatformAdminService() {
         ;
     }
@@ -32,7 +23,7 @@ public class PlatformAdminService {
 
     @POST
     @Path("/countries/")
-    public Response addCountry(Country country) {
+    public Response addCountry(JsonObject country) {
         return Response.ok().build();
     }
 
@@ -44,7 +35,7 @@ public class PlatformAdminService {
 
     @POST
     @Path("/cities/")
-    public Response addCity(City city) {
+    public Response addCity(JsonObject city) {
         return Response.ok().build();
     }
 
@@ -56,7 +47,7 @@ public class PlatformAdminService {
 
     @POST
     @Path("/resorts/")
-    public Response addResort(Resort resort) {
+    public Response addResort(JsonObject resort) {
         return Response.ok().build();
     }
 
@@ -68,7 +59,7 @@ public class PlatformAdminService {
 
     @POST
     @Path("/hotels/")
-    public Response addResort(Hotel hotel) {
+    public Response addHotel(JsonObject hotel) {
         return Response.ok().build();
     }
 

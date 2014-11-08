@@ -6,17 +6,11 @@ import javax.json.JsonValue;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.free.walker.service.itinerary.basic.TravelLocation;
-
 public abstract class BaseTravelRequirement implements TravelRequirement {
-    private UUID requirementId;
+    protected UUID requirementId;
 
     public BaseTravelRequirement() {
         this.requirementId = UUID.randomUUID();
-    }
-
-    public UUID getUUID() {
-        return requirementId;
     }
 
     public boolean isItinerary() {
@@ -27,8 +21,8 @@ public abstract class BaseTravelRequirement implements TravelRequirement {
         return false;
     }
 
-    public TravelLocation getDestination() {
-        return null;
+    public UUID getUUID() {
+        return requirementId;
     }
 
     public ValueType getValueType() {

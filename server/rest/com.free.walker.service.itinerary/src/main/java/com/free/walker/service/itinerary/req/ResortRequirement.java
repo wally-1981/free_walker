@@ -5,18 +5,27 @@ import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.free.walker.service.itinerary.basic.Introspection;
 import com.free.walker.service.itinerary.basic.Resort;
 import com.free.walker.service.itinerary.basic.ResortStar;
 import com.free.walker.service.itinerary.basic.TravelTimeRange;
 
 public class ResortRequirement extends BaseTravelRequirement implements TravelRequirement {
+    public static final String SUB_TYPE;
+
+    static {
+        String[] names = StringUtils.splitByCharacterTypeCamelCase(ResortRequirement.class.getSimpleName());
+        SUB_TYPE = StringUtils.join(names, '_', 0, names.length - 1);
+    }
+
     private TravelTimeRange arrivalTimeRange;
     private Resort resort;
     private ResortStar resortStar;
 
     public ResortRequirement() {
-        super();
+        ;
     }
 
     public ResortRequirement(TravelTimeRange arrivalTimeRange) {
@@ -52,7 +61,7 @@ public class ResortRequirement extends BaseTravelRequirement implements TravelRe
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
-        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONKeys.REQUIREMENT);
+        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT);
         resBuilder.add(Introspection.JSONKeys.SUB_TYPE, getSubType());
         resBuilder.add(Introspection.JSONKeys.TIME_RANGE_START, arrivalTimeRange.getStart());
         resBuilder.add(Introspection.JSONKeys.TIME_RANGE_OFFSET, arrivalTimeRange.getOffset());
@@ -66,5 +75,9 @@ public class ResortRequirement extends BaseTravelRequirement implements TravelRe
         }
 
         return resBuilder.build();
+    }
+
+    public Object fromJSON(JsonObject jsObject) throws JsonException {
+        return null;
     }
 }

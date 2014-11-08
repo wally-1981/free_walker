@@ -18,21 +18,23 @@ import com.free.walker.service.itinerary.basic.TravelTimeRange;
 public class TrafficRequirementTest {
     @Test
     public void testToJSON4ToolType() throws JsonException {
-        TravelRequirement trafficRequirement = new TrafficRequirement(Introspection.JSONValues.FLIGHT);
+        TravelRequirement trafficRequirement = new TrafficRequirement(Introspection.JSONValues.TRAFFIC_TOOL_FLIGHT);
         JsonObject jo = trafficRequirement.toJSON();
-        assertEquals(Introspection.JSONKeys.REQUIREMENT, jo.getString(Introspection.JSONKeys.TYPE));
-        assertEquals(Introspection.JSONValues.FLIGHT.enumValue(), jo.getInt(Introspection.JSONKeys.TRAFFIC_TOOL_TYPE));
+        assertEquals(Introspection.JSONValues.REQUIREMENT, jo.getString(Introspection.JSONKeys.TYPE));
+        assertEquals(Introspection.JSONValues.TRAFFIC_TOOL_FLIGHT.enumValue(),
+            jo.getInt(Introspection.JSONKeys.TRAFFIC_TOOL_TYPE));
 
         assertEquals(false, trafficRequirement.isItinerary());
     }
 
     @Test
     public void testToJSON4ToolTypeAndTimeRange() throws JsonException {
-        TrafficRequirement trafficRequirement = new TrafficRequirement(Introspection.JSONValues.TRAIN,
+        TrafficRequirement trafficRequirement = new TrafficRequirement(Introspection.JSONValues.TRAFFIC_TOOL_TRAIN,
             Introspection.JSONValues.RANGE_06_12);
         JsonObject jo = trafficRequirement.toJSON();
-        assertEquals(Introspection.JSONKeys.REQUIREMENT, jo.getString(Introspection.JSONKeys.TYPE));
-        assertEquals(Introspection.JSONValues.TRAIN.enumValue(), jo.getInt(Introspection.JSONKeys.TRAFFIC_TOOL_TYPE));
+        assertEquals(Introspection.JSONValues.REQUIREMENT, jo.getString(Introspection.JSONKeys.TYPE));
+        assertEquals(Introspection.JSONValues.TRAFFIC_TOOL_TRAIN.enumValue(),
+            jo.getInt(Introspection.JSONKeys.TRAFFIC_TOOL_TYPE));
         assertTrue(jo.get(Introspection.JSONKeys.DATETIME_RANGE_SELECTIONS) instanceof JsonArray);
 
         JsonArray selections = ((JsonArray) jo.get(Introspection.JSONKeys.DATETIME_RANGE_SELECTIONS));
@@ -51,10 +53,12 @@ public class TrafficRequirementTest {
         List<TravelTimeRange> timeRangeSelections = new ArrayList<TravelTimeRange>();
         timeRangeSelections.add(Introspection.JSONValues.RANGE_06_12);
         timeRangeSelections.add(Introspection.JSONValues.RANGE_12_18);
-        TrafficRequirement trafficRequirement = new TrafficRequirement(Introspection.JSONValues.TRAIN, timeRangeSelections);
+        TrafficRequirement trafficRequirement = new TrafficRequirement(Introspection.JSONValues.TRAFFIC_TOOL_TRAIN,
+            timeRangeSelections);
         JsonObject jo = trafficRequirement.toJSON();
-        assertEquals(Introspection.JSONKeys.REQUIREMENT, jo.getString(Introspection.JSONKeys.TYPE));
-        assertEquals(Introspection.JSONValues.TRAIN.enumValue(), jo.getInt(Introspection.JSONKeys.TRAFFIC_TOOL_TYPE));
+        assertEquals(Introspection.JSONValues.REQUIREMENT, jo.getString(Introspection.JSONKeys.TYPE));
+        assertEquals(Introspection.JSONValues.TRAFFIC_TOOL_TRAIN.enumValue(),
+            jo.getInt(Introspection.JSONKeys.TRAFFIC_TOOL_TYPE));
         assertTrue(jo.get(Introspection.JSONKeys.DATETIME_RANGE_SELECTIONS) instanceof JsonArray);
 
         JsonArray selections = ((JsonArray) jo.get(Introspection.JSONKeys.DATETIME_RANGE_SELECTIONS));

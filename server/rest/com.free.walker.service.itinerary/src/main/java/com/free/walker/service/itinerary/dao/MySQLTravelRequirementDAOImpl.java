@@ -64,7 +64,7 @@ public class MySQLTravelRequirementDAOImpl implements TravelRequirementDAO {
         }
     }
 
-    public UUID createProposal(TravelProposal travelProposal) {
+    public UUID createProposal(TravelProposal travelProposal) throws InvalidTravelReqirementException {
         // TODO Auto-generated method stub
         return null;
     }

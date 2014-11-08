@@ -4,18 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.Introspection;
+import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
+import com.free.walker.service.itinerary.util.JsonObjectHelper;
+import com.free.walker.service.itinerary.util.UuidUtil;
 
 public class TravelProposal extends BaseTravelRequirement implements TravelRequirement {
     private List<TravelRequirement> travelRequirements;
 
     public TravelProposal() {
-        super();
+        travelRequirements = new ArrayList<TravelRequirement>();
     }
 
     public TravelProposal(ItineraryRequirement itineraryRequirement) {
@@ -40,7 +45,7 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
-        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONKeys.PROPOSAL);
+        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.PROPOSAL);
         JsonArrayBuilder requirements = Json.createArrayBuilder();
         for (TravelRequirement travelRequirement : travelRequirements) {
             requirements.add(travelRequirement.toJSON());
@@ -48,5 +53,40 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
         resBuilder.add(Introspection.JSONKeys.REQUIREMENTS, requirements);
 
         return resBuilder.build();
+    }
+
+    public Object fromJSON(JsonObject jsObject) throws JsonException {
+        String requirementId = jsObject.getString(Introspection.JSONKeys.UUID);
+
+        if (requirementId != null) {
+            try {
+                this.requirementId = UuidUtil.fromUuidStr(requirementId);
+            } catch (InvalidTravelReqirementException e) {
+                throw new JsonException(e.getMessage(), e);
+            }            
+        }
+
+        String type = jsObject.getString(Introspection.JSONKeys.TYPE);
+        if (type != null && !Introspection.JSONValues.PROPOSAL.equals(type)) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.TYPE, type));
+        }
+
+        JsonArray requirements = jsObject.getJsonArray(Introspection.JSONKeys.REQUIREMENTS);
+        if (requirements != null && requirements.size() != 0) {
+            try {
+                for (int i = 0; i < requirements.size(); i++) {
+                    JsonObject requirement = requirements.getJsonObject(i);
+                    travelRequirements.add(JsonObjectHelper.toRequirement(requirement));
+                }
+            } catch (InvalidTravelReqirementException e) {
+                throw new JsonException(e.getMessage(), e);
+            }
+        } else {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.REQUIREMENTS, requirements));
+        }
+
+        return this;
     }
 }

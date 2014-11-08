@@ -1,6 +1,7 @@
 package com.free.walker.service.itinerary.basic;
 
 import javax.json.Json;
+import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
@@ -50,7 +51,7 @@ public class Flight extends TrafficTool implements Serializable {
     }
 
     public TrafficToolType getType() {
-        return Introspection.JSONValues.FLIGHT;
+        return Introspection.JSONValues.TRAFFIC_TOOL_FLIGHT;
     }
 
     public double getTicketFee() {
@@ -82,7 +83,12 @@ public class Flight extends TrafficTool implements Serializable {
         return resBuilder.build();
     }
 
+    public Object fromJSON(JsonObject jsObject) throws JsonException {
+        return this;
+    }
+
     public ValueType getValueType() {
         return JsonValue.ValueType.OBJECT;
     }
+
 }

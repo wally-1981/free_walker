@@ -25,7 +25,7 @@ public class ItineraryRequirementTest {
         TravelLocation departureLocation = new TravelLocation(City.LONDON);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destinationLocation, departureLocation);
         JsonObject jo = itineraryRequirement.toJSON();
-        assertEquals(Introspection.JSONKeys.ITINERARY, jo.getString(Introspection.JSONKeys.TYPE));
+        assertEquals(Introspection.JSONValues.ITINERARY, jo.getString(Introspection.JSONKeys.TYPE));
         assertNotNull(jo.get(Introspection.JSONKeys.DESTINATION));
         assertNotNull(jo.get(Introspection.JSONKeys.DEPARTURE));
 
@@ -48,7 +48,7 @@ public class ItineraryRequirementTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destinationLocation, departureLocation,
             departureDateTimeSelections);
         JsonObject jo = itineraryRequirement.toJSON();
-        assertEquals(Introspection.JSONKeys.ITINERARY, jo.getString(Introspection.JSONKeys.TYPE));
+        assertEquals(Introspection.JSONValues.ITINERARY, jo.getString(Introspection.JSONKeys.TYPE));
         assertNotNull(jo.get(Introspection.JSONKeys.DESTINATION));
         assertNotNull(jo.get(Introspection.JSONKeys.DEPARTURE));
         assertTrue(jo.get(Introspection.JSONKeys.DATETIME_SELECTIONS) instanceof JsonArray);

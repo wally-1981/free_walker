@@ -6,10 +6,15 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
+import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.Serializable;
 
 public class TravelLocation implements Serializable {
     private City city;
+
+    public TravelLocation() {
+        ;
+    }
 
     public TravelLocation(City city) {
         this.city = city;
@@ -19,6 +24,19 @@ public class TravelLocation implements Serializable {
         JsonObjectBuilder res = Json.createObjectBuilder();
         res.add(Introspection.JSONKeys.CITY, city.toJSON());
         return res.build();
+    }
+
+    public Object fromJSON(JsonObject jsObject) throws JsonException {
+        JsonObject cityObj = jsObject.getJsonObject(Introspection.JSONKeys.CITY);
+
+        if (cityObj == null) {            
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.CITY, cityObj));
+        } else {
+            city = new City().fromJSON(cityObj);
+        }
+
+        return this;
     }
 
     public ValueType getValueType() {

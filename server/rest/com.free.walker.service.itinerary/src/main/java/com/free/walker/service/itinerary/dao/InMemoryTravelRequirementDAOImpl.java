@@ -33,7 +33,7 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
         return true;
     }
 
-    public UUID createProposal(TravelProposal travelProposal) {
+    public UUID createProposal(TravelProposal travelProposal) throws InvalidTravelReqirementException {
         if (travelProposal == null) {
             throw new NullPointerException();
         }

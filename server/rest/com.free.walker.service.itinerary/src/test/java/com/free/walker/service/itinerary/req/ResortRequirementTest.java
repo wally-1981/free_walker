@@ -16,7 +16,7 @@ public class ResortRequirementTest {
     public void testToJSON4TimeRange() throws JsonException {
         TravelRequirement resortRequirement = new ResortRequirement(Introspection.JSONValues.RANGE_12_18);
         JsonObject jo = resortRequirement.toJSON();
-        assertEquals(Introspection.JSONKeys.REQUIREMENT, jo.getString(Introspection.JSONKeys.TYPE));
+        assertEquals(Introspection.JSONValues.REQUIREMENT, jo.getString(Introspection.JSONKeys.TYPE));
         assertEquals(12, jo.getInt(Introspection.JSONKeys.TIME_RANGE_START));
         assertEquals(18 - 12, jo.getInt(Introspection.JSONKeys.TIME_RANGE_OFFSET));
 
@@ -26,12 +26,12 @@ public class ResortRequirementTest {
     @Test
     public void testToJSON4TimeRangeAndStar() throws JsonException {
         TravelRequirement resortRequirement = new ResortRequirement(Introspection.JSONValues.RANGE_06_12,
-            Introspection.JSONValues.STD_4A);
+            Introspection.JSONValues.RESORT_STD_4A);
         JsonObject jo = resortRequirement.toJSON();
-        assertEquals(Introspection.JSONKeys.REQUIREMENT, jo.getString(Introspection.JSONKeys.TYPE));
+        assertEquals(Introspection.JSONValues.REQUIREMENT, jo.getString(Introspection.JSONKeys.TYPE));
         assertEquals(6, jo.getInt(Introspection.JSONKeys.TIME_RANGE_START));
         assertEquals(12 - 6, jo.getInt(Introspection.JSONKeys.TIME_RANGE_OFFSET));
-        assertEquals(Introspection.JSONValues.STD_4A.enumValue(), jo.getInt(Introspection.JSONKeys.STAR));
+        assertEquals(Introspection.JSONValues.RESORT_STD_4A.enumValue(), jo.getInt(Introspection.JSONKeys.STAR));
 
         assertEquals(false, resortRequirement.isItinerary());
     }
@@ -40,7 +40,7 @@ public class ResortRequirementTest {
     public void testToJSON4TimeRangeAndResort() throws JsonException {
         TravelRequirement resortRequirement = new ResortRequirement(Introspection.JSONValues.RANGE_06_12, new Resort());
         JsonObject jo = resortRequirement.toJSON();
-        assertEquals(Introspection.JSONKeys.REQUIREMENT, jo.getString(Introspection.JSONKeys.TYPE));
+        assertEquals(Introspection.JSONValues.REQUIREMENT, jo.getString(Introspection.JSONKeys.TYPE));
         assertEquals(6, jo.getInt(Introspection.JSONKeys.TIME_RANGE_START));
         assertEquals(12 - 6, jo.getInt(Introspection.JSONKeys.TIME_RANGE_OFFSET));
         assertNotNull(jo.get(Introspection.JSONKeys.RESORT));

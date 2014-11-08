@@ -65,6 +65,8 @@ public class LocalMessages {
     public static final String dao_init_failure = "dao_init_failure";
     public static final String introspection_failure = "introspection_failure";
 
+    public static final String invalid_parameter_with_value = "invalid_parameter_with_value";
+
     public static final String test_message = "test_message";
     public static final String test_message_with_1_arg = "test_message_with_1_arg";
     public static final String test_message_with_2_args = "test_message_with_2_args";

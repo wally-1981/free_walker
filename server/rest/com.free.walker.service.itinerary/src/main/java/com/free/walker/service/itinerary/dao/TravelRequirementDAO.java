@@ -10,7 +10,7 @@ import com.free.walker.service.itinerary.req.TravelRequirement;
 public interface TravelRequirementDAO {
     public boolean pingPersistence();
 
-    public UUID createProposal(TravelProposal travelProposal);
+    public UUID createProposal(TravelProposal travelProposal) throws InvalidTravelReqirementException;
 
     public UUID addRequirement(UUID travelProposalId, TravelRequirement travelRequirement)
         throws InvalidTravelReqirementException;

@@ -22,7 +22,7 @@ public class TravelProposalTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destinationLocation, departureLocation);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
         JsonObject jo = travelProposal.toJSON();
-        assertEquals(Introspection.JSONKeys.PROPOSAL, jo.getString(Introspection.JSONKeys.TYPE));
+        assertEquals(Introspection.JSONValues.PROPOSAL, jo.getString(Introspection.JSONKeys.TYPE));
         assertTrue(jo.get(Introspection.JSONKeys.REQUIREMENTS) instanceof JsonArray);
 
         JsonArray requirements = (JsonArray) jo.get(Introspection.JSONKeys.REQUIREMENTS);

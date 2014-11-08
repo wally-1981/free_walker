@@ -9,6 +9,7 @@ import java.util.UUID;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonException;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -28,11 +29,13 @@ import org.slf4j.LoggerFactory;
 
 import com.free.walker.service.itinerary.Enumable;
 import com.free.walker.service.itinerary.LocalMessages;
+import com.free.walker.service.itinerary.basic.City;
 import com.free.walker.service.itinerary.basic.Flight;
 import com.free.walker.service.itinerary.basic.Hotel;
 import com.free.walker.service.itinerary.basic.Introspection;
 import com.free.walker.service.itinerary.basic.Resort;
 import com.free.walker.service.itinerary.basic.Train;
+import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.InMemoryTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.dao.TravelRequirementDAO;
@@ -43,10 +46,12 @@ import com.free.walker.service.itinerary.req.ResortRequirement;
 import com.free.walker.service.itinerary.req.TrafficRequirement;
 import com.free.walker.service.itinerary.req.TravelProposal;
 import com.free.walker.service.itinerary.req.TravelRequirement;
+import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
 @Path("/service/itinerary/")
 @Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class ItineraryService {
     private static Logger LOG = LoggerFactory.getLogger(ItineraryService.class);
 
@@ -86,8 +91,12 @@ public class ItineraryService {
             for (Field field : fields) {
                 if (Modifier.isStatic(field.getModifiers())) {
                     try {
-                        valueDataBuilder.add(field.getName(),
-                            ((Enumable) field.get(Introspection.JSONValues.class)).enumValue());
+                        if (field.get(Introspection.JSONValues.class) instanceof Enumable) {
+                            valueDataBuilder.add(field.getName(),
+                                ((Enumable) field.get(Introspection.JSONValues.class)).enumValue());
+                        } else {
+                            valueDataBuilder.add(field.getName(), (String) field.get(Introspection.JSONKeys.class));
+                        }
                     } catch (JsonException e) {
                         LOG.error(LocalMessages.introspection_failure, e);
                         return Response.status(Status.INTERNAL_SERVER_ERROR).build();
@@ -102,9 +111,15 @@ public class ItineraryService {
 
         {            
             JsonArrayBuilder sampleDataBuilder = Json.createArrayBuilder();
-            
+
+            TravelLocation dept = new TravelLocation(City.BEIJING);
+            TravelLocation dest = new TravelLocation(City.BOSTON);
+            ItineraryRequirement itineraryRequirement = new ItineraryRequirement(dept, dest);
+            TravelProposal proposal = new TravelProposal(itineraryRequirement);
+            sampleDataBuilder.add(proposal.toJSON());
+
             TravelRequirement hotelRequirementA = new HotelRequirement(6);
-            TravelRequirement hotelRequirementB = new HotelRequirement(6, Introspection.JSONValues.STD_5);
+            TravelRequirement hotelRequirementB = new HotelRequirement(6, Introspection.JSONValues.HOTEL_STD_5);
             TravelRequirement hotelRequirementC = new HotelRequirement(6, new Hotel());
             sampleDataBuilder.add(hotelRequirementA.toJSON());
             sampleDataBuilder.add(hotelRequirementB.toJSON());
@@ -112,18 +127,19 @@ public class ItineraryService {
             
             TravelRequirement resortRequirementA = new ResortRequirement(Introspection.JSONValues.RANGE_12_18);
             TravelRequirement resortRequirementB = new ResortRequirement(Introspection.JSONValues.RANGE_12_18,
-                Introspection.JSONValues.STD_2A);
+                Introspection.JSONValues.RESORT_STD_2A);
             TravelRequirement resortRequirementC = new ResortRequirement(Introspection.JSONValues.RANGE_12_18,
                 new Resort());
             sampleDataBuilder.add(resortRequirementA.toJSON());
             sampleDataBuilder.add(resortRequirementB.toJSON());
             sampleDataBuilder.add(resortRequirementC.toJSON());
             
-            TravelRequirement trafficRequirementA = new TrafficRequirement(Introspection.JSONValues.TRAIN);
-            TravelRequirement trafficRequirementB = new TrafficRequirement(Introspection.JSONValues.FLIGHT,
-                Introspection.JSONValues.RANGE_18_23);
-            TravelRequirement trafficRequirementC = new TrafficRequirement(Introspection.JSONValues.FLIGHT,
-                Arrays.asList(Introspection.JSONValues.RANGE_00_06, Introspection.JSONValues.RANGE_18_23));
+            TravelRequirement trafficRequirementA = new TrafficRequirement(Introspection.JSONValues.TRAFFIC_TOOL_TRAIN);
+            TravelRequirement trafficRequirementB = new TrafficRequirement(
+                Introspection.JSONValues.TRAFFIC_TOOL_FLIGHT, Introspection.JSONValues.RANGE_18_23);
+            TravelRequirement trafficRequirementC = new TrafficRequirement(
+                Introspection.JSONValues.TRAFFIC_TOOL_FLIGHT, Arrays.asList(Introspection.JSONValues.RANGE_00_06,
+                    Introspection.JSONValues.RANGE_18_23));
             TravelRequirement trafficRequirementD = new TrafficRequirement(new Flight("CA1981"));
             TravelRequirement trafficRequirementE = new TrafficRequirement(new Train("Z38"));            
             sampleDataBuilder.add(trafficRequirementA.toJSON());
@@ -168,7 +184,7 @@ public class ItineraryService {
     @Path("/itineraries/{requirementId}/")
     public Response getItinerary(@PathParam("requirementId") String requirementId,
         @QueryParam("requirementType") String requirementType) {
-        if (Introspection.JSONKeys.PROPOSAL.equals(requirementType)) {
+        if (Introspection.JSONValues.PROPOSAL.equals(requirementType)) {
             List<TravelRequirement> itineraries;
             try {
                 UUID reqId = UuidUtil.fromUuidStr(requirementId);
@@ -237,8 +253,7 @@ public class ItineraryService {
     @Path("/requirements/{requirementId}/")
     public Response deleteRequirement(@PathParam("requirementId") String requirementId) {
         try {
-            UUID reqId = UuidUtil.fromUuidStr(requirementId);
-            travelRequirementDAO.removeRequirement(reqId);
+            travelRequirementDAO.removeRequirement(UuidUtil.fromUuidStr(requirementId));
             return Response.ok().build();
         } catch (InvalidTravelReqirementException e) {
             return Response.ok(e.toJSON()).build();
@@ -247,11 +262,12 @@ public class ItineraryService {
 
     @PUT
     @Path("/requirements/")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateRequirement(TravelRequirement travelRequirement) {
+    public Response updateRequirement(JsonObject travelRequirement) {
         try {
-            travelRequirementDAO.updateRequirement(travelRequirement.getUUID(), travelRequirement);
-            return Response.notModified().build();
+            UUID requirementId = UuidUtil.fromUuidStr(travelRequirement.getString(Introspection.JSONKeys.UUID));
+            TravelRequirement requirement = JsonObjectHelper.toRequirement(travelRequirement);
+            travelRequirementDAO.updateRequirement(requirementId, requirement);
+            return Response.ok().build();
         } catch (InvalidTravelReqirementException e) {
             return Response.ok(e.toJSON()).build();
         }
@@ -259,24 +275,57 @@ public class ItineraryService {
 
     @POST
     @Path("/proposals/")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response addProposal(TravelProposal travelProposal) {
-        return Response.ok().build();
+    public Response addProposal(JsonObject travelProposal) {
+        try {
+            TravelRequirement proposal = JsonObjectHelper.toRequirement(travelProposal);
+            String proposalId = travelRequirementDAO.createProposal((TravelProposal) proposal).toString();
+            JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, proposalId).build();
+            return Response.ok(res).build();
+        } catch (InvalidTravelReqirementException e) {
+            return Response.ok(e.toJSON()).build();
+        }
     }
 
     @POST
     @Path("/itineraries/{proposalId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response addItinerary(@PathParam("proposalId") String proposalId,
-        ItineraryRequirement itineraryRequirement) {
-        return Response.ok().build();
+    public Response addItinerary(@PathParam("proposalId") String proposalId, JsonObject itineraryRequirement) {
+        try {
+            TravelRequirement itinerary = JsonObjectHelper.toRequirement(itineraryRequirement);
+            String itineraryId = travelRequirementDAO.addRequirement(UuidUtil.fromUuidStr(proposalId), itinerary)
+                .toString();
+            JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, itineraryId).build();
+            return Response.ok(res).build();
+        } catch (InvalidTravelReqirementException e) {
+            return Response.ok(e.toJSON()).build();
+        }
     }
 
     @POST
-    @Path("/requirements/{itineraryId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response addRequirement(@PathParam("itineraryId") String itineraryId,
-        TravelRequirement travelRequirement) {
-        return Response.ok().build();
+    @Path("/requirements/{proposalId}")
+    public Response addRequirement(@PathParam("proposalId") String proposalId, JsonObject travelRequirement) {
+        try {
+            TravelRequirement requirement = JsonObjectHelper.toRequirement(travelRequirement);
+            String requirementId = travelRequirementDAO.addRequirement(UuidUtil.fromUuidStr(proposalId), requirement)
+                .toString();
+            JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, requirementId).build();
+            return Response.ok(res).build();
+        } catch (InvalidTravelReqirementException e) {
+            return Response.ok(e.toJSON()).build();
+        }
+    }
+
+    @POST
+    @Path("/requirements/{proposalId}/{itineraryId}")
+    public Response addRequirement(@PathParam("proposalId") String proposalId,
+        @PathParam("itineraryId") String itineraryId, JsonObject travelRequirement) {
+        try {
+            TravelRequirement requirement = JsonObjectHelper.toRequirement(travelRequirement);
+            String requirementId = travelRequirementDAO.addRequirement(UuidUtil.fromUuidStr(proposalId), UuidUtil.fromUuidStr(itineraryId),
+                requirement).toString();
+            JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, requirementId).build();
+            return Response.ok(res).build();
+        } catch (InvalidTravelReqirementException e) {
+            return Response.ok(e.toJSON()).build();
+        }
     }
 }

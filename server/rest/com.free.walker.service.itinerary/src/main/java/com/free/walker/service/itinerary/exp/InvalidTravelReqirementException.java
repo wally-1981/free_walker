@@ -17,6 +17,10 @@ public class InvalidTravelReqirementException extends IllegalAccessException imp
     private String context;
     private ErrorCode errorCode;
 
+    public InvalidTravelReqirementException(String message) {
+        super(message);
+    }
+
     public InvalidTravelReqirementException(String message, UUID travelRequirementId) {
         super(message);
         this.context = travelRequirementId.toString();
@@ -49,6 +53,10 @@ public class InvalidTravelReqirementException extends IllegalAccessException imp
         }
 
         return res.build();
+    }
+
+    public InvalidTravelReqirementException fromJSON(JsonObject jsObject) throws JsonException {
+        throw new UnsupportedOperationException();
     }
     
     public ValueType getValueType() {
