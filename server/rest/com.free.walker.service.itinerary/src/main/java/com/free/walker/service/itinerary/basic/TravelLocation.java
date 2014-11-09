@@ -8,6 +8,7 @@ import javax.json.JsonValue;
 
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.Serializable;
+import com.free.walker.service.itinerary.primitive.Introspection;
 
 public class TravelLocation implements Serializable {
     private City city;

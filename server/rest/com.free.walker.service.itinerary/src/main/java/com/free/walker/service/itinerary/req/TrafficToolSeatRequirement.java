@@ -7,8 +7,8 @@ import javax.json.JsonObjectBuilder;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.free.walker.service.itinerary.basic.Introspection;
-import com.free.walker.service.itinerary.basic.TrafficToolSeatClass;
+import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.primitive.TrafficToolSeatClass;
 
 public class TrafficToolSeatRequirement extends BaseTravelRequirement implements TravelRequirement {
     public static final String SUB_TYPE;

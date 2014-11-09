@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.free.walker.service.itinerary.basic.City;
+import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.basic.Flight;
 import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
@@ -17,8 +17,8 @@ import com.ibm.icu.util.Calendar;
 public class TravelProductTest {
     @Test
     public void testMe() {
-        TravelLocation departure = new TravelLocation(City.BEIJING);
-        TravelLocation destination = new TravelLocation(City.BOSTON);
+        TravelLocation departure = new TravelLocation(Constants.BEIJING);
+        TravelLocation destination = new TravelLocation(Constants.BOSTON);
         List<Calendar> departureDateTimeSelections = new ArrayList<Calendar>();
 
         Calendar departureDateTime1 = Calendar.getInstance();
@@ -34,8 +34,8 @@ public class TravelProductTest {
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
         TravelProduct aTravelProduct = new NoneTravelProduct(travelProposal);
 
-        TravelLocation departure1 = new TravelLocation(City.BOSTON);
-        TravelLocation destination1 = new TravelLocation(City.LA);
+        TravelLocation departure1 = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination1 = new TravelLocation(Constants.LA);
         Flight flight1 = new Flight("CA1981", departure1, destination1);
         flight1.setDepartureDateTime(Calendar.getInstance());
         flight1.setTicketFee(1.1);
@@ -44,8 +44,8 @@ public class TravelProductTest {
         aTravelProduct.getCost();
         assertEquals(199.1, aTravelProduct.getCost(), 0.1);
 
-        TravelLocation departure2 = new TravelLocation(City.LA);
-        TravelLocation destination2 = new TravelLocation(City.BEIJING);
+        TravelLocation departure2 = new TravelLocation(Constants.LA);
+        TravelLocation destination2 = new TravelLocation(Constants.BEIJING);
         Flight flight2 = new Flight("CA1982", departure2, destination2);
         flight2.setDepartureDateTime(Calendar.getInstance());
         flight2.setTicketFee(2.8);

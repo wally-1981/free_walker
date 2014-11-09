@@ -8,21 +8,17 @@ import javax.json.JsonValue;
 
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.Serializable;
+import com.free.walker.service.itinerary.primitive.Introspection;
 import com.ibm.icu.util.ULocale;
 
 public class Country implements Serializable {
-    public static final Country CHINA = new Country(ULocale.CHINA);
-    public static final Country US = new Country(ULocale.US);
-    public static final Country UK = new Country(ULocale.UK);
-    public static final Country CANADA = new Country(ULocale.CANADA);
-
     private ULocale locale;
 
     public Country() {
         ;
     }
 
-    private Country(ULocale locale) {
+    public Country(ULocale locale) {
         if (locale == null) {
             throw new NullPointerException();
         }

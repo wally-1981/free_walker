@@ -9,7 +9,7 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
 import com.free.walker.service.itinerary.Serializable;
-import com.free.walker.service.itinerary.basic.Introspection;
+import com.free.walker.service.itinerary.primitive.Introspection;
 
 public class InvalidTravelReqirementException extends IllegalAccessException implements Serializable {
     private static final long serialVersionUID = -8526202664364439050L;

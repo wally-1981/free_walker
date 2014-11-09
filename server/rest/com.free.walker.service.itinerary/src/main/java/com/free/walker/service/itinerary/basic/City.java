@@ -8,14 +8,9 @@ import javax.json.JsonValue;
 
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.Serializable;
+import com.free.walker.service.itinerary.primitive.Introspection;
 
 public class City implements Serializable {
-    public static final City BEIJING = new City("Beijing", Country.CHINA);
-    public static final City WUHAN = new City("Wuhan", Country.CHINA);
-    public static final City LONDON = new City("London", Country.UK);
-    public static final City LA = new City("LA", Country.US);
-    public static final City BOSTON = new City("BOSTON", Country.US);
-
     private String name;
     private Country country;
 
@@ -23,7 +18,7 @@ public class City implements Serializable {
         ;
     }
 
-    private City(String name, Country country) {
+    public City(String name, Country country) {
         if (name == null || country == null) {
             throw new NullPointerException();
         }

@@ -7,7 +7,7 @@ import javax.json.JsonObject;
 
 import org.junit.Test;
 
-import com.free.walker.service.itinerary.basic.Introspection;
+import com.free.walker.service.itinerary.primitive.Introspection;
 
 public class TrafficToolSeatRequirementTest {
     @Test

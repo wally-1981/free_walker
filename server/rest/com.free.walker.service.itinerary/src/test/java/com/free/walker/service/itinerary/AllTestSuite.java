@@ -5,6 +5,7 @@ import org.junit.runners.Suite;
 
 import com.free.walker.service.itinerary.dao.DAOFactoryTest;
 import com.free.walker.service.itinerary.dao.InMemoryTravelRequirementDAOImplTest;
+import com.free.walker.service.itinerary.primitive.IntrospectionTest;
 import com.free.walker.service.itinerary.product.TravelProductTest;
 import com.free.walker.service.itinerary.req.HotelRequirementTest;
 import com.free.walker.service.itinerary.req.ItineraryRequirementTest;
@@ -17,6 +18,8 @@ import com.free.walker.service.itinerary.req.TravelRequirementTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     LocalMessagesTest.class,
+    IntrospectionTest.class,
+
     DAOFactoryTest.class,
     InMemoryTravelRequirementDAOImplTest.class,
 

@@ -13,16 +13,16 @@ import javax.json.JsonObject;
 
 import org.junit.Test;
 
-import com.free.walker.service.itinerary.basic.City;
-import com.free.walker.service.itinerary.basic.Introspection;
+import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.basic.TravelLocation;
+import com.free.walker.service.itinerary.primitive.Introspection;
 import com.ibm.icu.util.Calendar;
 
 public class ItineraryRequirementTest {
     @Test
     public void testToJSON() throws JsonException {
-        TravelLocation destinationLocation = new TravelLocation(City.BEIJING);
-        TravelLocation departureLocation = new TravelLocation(City.LONDON);
+        TravelLocation destinationLocation = new TravelLocation(Constants.BEIJING);
+        TravelLocation departureLocation = new TravelLocation(Constants.LONDON);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destinationLocation, departureLocation);
         JsonObject jo = itineraryRequirement.toJSON();
         assertEquals(Introspection.JSONValues.ITINERARY, jo.getString(Introspection.JSONKeys.TYPE));
@@ -34,8 +34,8 @@ public class ItineraryRequirementTest {
 
     @Test
     public void testToJSON4DateTimeSelection() throws JsonException {
-        TravelLocation destinationLocation = new TravelLocation(City.BEIJING);
-        TravelLocation departureLocation = new TravelLocation(City.LONDON);
+        TravelLocation destinationLocation = new TravelLocation(Constants.BEIJING);
+        TravelLocation departureLocation = new TravelLocation(Constants.LONDON);
 
         List<Calendar> departureDateTimeSelections = new ArrayList<Calendar>();
         Calendar departureDateTime1 = Calendar.getInstance();

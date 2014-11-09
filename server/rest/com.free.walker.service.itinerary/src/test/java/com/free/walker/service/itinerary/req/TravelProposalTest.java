@@ -10,15 +10,15 @@ import javax.json.JsonObject;
 
 import org.junit.Test;
 
-import com.free.walker.service.itinerary.basic.City;
-import com.free.walker.service.itinerary.basic.Introspection;
+import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.basic.TravelLocation;
+import com.free.walker.service.itinerary.primitive.Introspection;
 
 public class TravelProposalTest {
     @Test
     public void testToJSON() throws JsonException {
-        TravelLocation destinationLocation = new TravelLocation(City.BEIJING);
-        TravelLocation departureLocation = new TravelLocation(City.LONDON);
+        TravelLocation destinationLocation = new TravelLocation(Constants.BEIJING);
+        TravelLocation departureLocation = new TravelLocation(Constants.LONDON);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destinationLocation, departureLocation);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
         JsonObject jo = travelProposal.toJSON();

@@ -1,11 +1,11 @@
-package com.free.walker.service.itinerary.basic;
+package com.free.walker.service.itinerary.primitive;
 
 import com.free.walker.service.itinerary.Enumable;
 
-public class TrafficToolSeatClass implements Enumable {
+public class HotelStar implements Enumable {
     private int enumValue = 0;
 
-    protected TrafficToolSeatClass(int enumValue) {
+    protected HotelStar(int enumValue) {
         if (enumValue <= 0) {
             throw new IllegalArgumentException();
         }

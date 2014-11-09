@@ -9,7 +9,7 @@ import javax.json.JsonObject;
 import org.junit.Test;
 
 import com.free.walker.service.itinerary.basic.Hotel;
-import com.free.walker.service.itinerary.basic.Introspection;
+import com.free.walker.service.itinerary.primitive.Introspection;
 
 public class HotelRequirementTest {
     @Test
@@ -28,7 +28,7 @@ public class HotelRequirementTest {
         JsonObject jo = hotelRequirement.toJSON();
         assertEquals(Introspection.JSONValues.REQUIREMENT, jo.getString(Introspection.JSONKeys.TYPE));
         assertEquals(4, jo.getInt(Introspection.JSONKeys.NIGHT));
-        assertEquals(5, jo.getInt(Introspection.JSONKeys.STAR));
+        assertEquals(50, jo.getInt(Introspection.JSONKeys.STAR));
 
         assertEquals(false, hotelRequirement.isItinerary());
     }

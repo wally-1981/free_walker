@@ -3,8 +3,8 @@ package com.free.walker.service.itinerary.util;
 import javax.json.JsonObject;
 
 import com.free.walker.service.itinerary.LocalMessages;
-import com.free.walker.service.itinerary.basic.Introspection;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
+import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.req.HotelRequirement;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.ResortRequirement;

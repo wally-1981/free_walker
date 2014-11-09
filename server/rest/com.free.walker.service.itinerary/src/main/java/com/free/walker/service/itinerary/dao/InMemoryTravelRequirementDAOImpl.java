@@ -38,6 +38,11 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
             throw new NullPointerException();
         }
 
+        if (travelRequirements.containsKey(travelProposal.getUUID())) {
+            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
+                LocalMessages.existed_travel_requirement, travelProposal.getUUID()), travelProposal.getUUID());
+        }
+
         List<TravelRequirement> requirements = new LinkedList<TravelRequirement>();
         travelProposals.put(travelProposal.getUUID(), requirements);
         travelRequirements.put(travelProposal.getUUID(), travelProposal);

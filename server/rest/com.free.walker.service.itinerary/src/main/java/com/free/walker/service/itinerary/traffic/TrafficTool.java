@@ -1,7 +1,7 @@
 package com.free.walker.service.itinerary.traffic;
 
-import com.free.walker.service.itinerary.basic.TrafficToolType;
 import com.free.walker.service.itinerary.basic.TravelLocation;
+import com.free.walker.service.itinerary.primitive.TrafficToolType;
 import com.ibm.icu.util.Calendar;
 
 public abstract class TrafficTool {

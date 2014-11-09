@@ -9,9 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.Hotel;
-import com.free.walker.service.itinerary.basic.HotelStar;
-import com.free.walker.service.itinerary.basic.Introspection;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
+import com.free.walker.service.itinerary.primitive.HotelStar;
+import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.UuidUtil;
 public class HotelRequirement extends BaseTravelRequirement implements TravelRequirement {
     public static final String SUB_TYPE;

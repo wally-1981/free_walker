@@ -7,6 +7,8 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
 import com.free.walker.service.itinerary.Serializable;
+import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.primitive.TrafficToolType;
 import com.free.walker.service.itinerary.traffic.TrafficTool;
 import com.ibm.icu.util.Calendar;
 

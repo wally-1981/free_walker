@@ -27,12 +27,11 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.Enumable;
 import com.free.walker.service.itinerary.LocalMessages;
-import com.free.walker.service.itinerary.basic.City;
 import com.free.walker.service.itinerary.basic.Flight;
 import com.free.walker.service.itinerary.basic.Hotel;
-import com.free.walker.service.itinerary.basic.Introspection;
 import com.free.walker.service.itinerary.basic.Resort;
 import com.free.walker.service.itinerary.basic.Train;
 import com.free.walker.service.itinerary.basic.TravelLocation;
@@ -40,6 +39,7 @@ import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.InMemoryTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.dao.TravelRequirementDAO;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
+import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.req.HotelRequirement;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.ResortRequirement;
@@ -112,8 +112,8 @@ public class ItineraryService {
         {            
             JsonArrayBuilder sampleDataBuilder = Json.createArrayBuilder();
 
-            TravelLocation dept = new TravelLocation(City.BEIJING);
-            TravelLocation dest = new TravelLocation(City.BOSTON);
+            TravelLocation dept = new TravelLocation(Constants.BEIJING);
+            TravelLocation dest = new TravelLocation(Constants.BOSTON);
             ItineraryRequirement itineraryRequirement = new ItineraryRequirement(dept, dest);
             TravelProposal proposal = new TravelProposal(itineraryRequirement);
             sampleDataBuilder.add(proposal.toJSON());

@@ -9,9 +9,9 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import com.free.walker.service.itinerary.LocalMessages;
-import com.free.walker.service.itinerary.basic.Introspection;
 import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
+import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.UuidUtil;
 import com.ibm.icu.util.Calendar;
 

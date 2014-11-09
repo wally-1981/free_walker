@@ -7,10 +7,10 @@ import javax.json.JsonObjectBuilder;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.free.walker.service.itinerary.basic.Introspection;
 import com.free.walker.service.itinerary.basic.Resort;
-import com.free.walker.service.itinerary.basic.ResortStar;
-import com.free.walker.service.itinerary.basic.TravelTimeRange;
+import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.primitive.ResortStar;
+import com.free.walker.service.itinerary.primitive.TravelTimeRange;
 
 public class ResortRequirement extends BaseTravelRequirement implements TravelRequirement {
     public static final String SUB_TYPE;
@@ -63,8 +63,8 @@ public class ResortRequirement extends BaseTravelRequirement implements TravelRe
         resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
         resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT);
         resBuilder.add(Introspection.JSONKeys.SUB_TYPE, getSubType());
-        resBuilder.add(Introspection.JSONKeys.TIME_RANGE_START, arrivalTimeRange.getStart());
-        resBuilder.add(Introspection.JSONKeys.TIME_RANGE_OFFSET, arrivalTimeRange.getOffset());
+        resBuilder.add(Introspection.JSONKeys.TIME_RANGE_START, arrivalTimeRange.realValue());
+        resBuilder.add(Introspection.JSONKeys.TIME_RANGE_OFFSET, arrivalTimeRange.imaginaryValue());
 
         if (resortStar != null) {
             resBuilder.add(Introspection.JSONKeys.STAR, resortStar.enumValue());

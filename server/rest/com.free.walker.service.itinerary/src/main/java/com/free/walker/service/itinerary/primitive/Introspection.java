@@ -1,4 +1,4 @@
-package com.free.walker.service.itinerary.basic;
+package com.free.walker.service.itinerary.primitive;
 
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
@@ -52,25 +52,25 @@ public class Introspection {
         public static final String ITINERARY = "itinerary";
         public static final String REQUIREMENT = "requirement";
 
-        public static final HotelStar HOTEL_STD_5 = new HotelStar(50);
-        public static final HotelStar HOTEL_STD_4 = new HotelStar(40);
-        public static final HotelStar HOTEL_STD_3 = new HotelStar(30);
-        public static final HotelStar HOTEL_STD_2 = new HotelStar(20);
-        public static final HotelStar HOTEL_LST_5 = new HotelStar(5);
-        public static final HotelStar HOTEL_LST_4 = new HotelStar(4);
-        public static final HotelStar HOTEL_LST_3 = new HotelStar(3);
+        public static final HotelStar HOTEL_STD_5 = new HotelStar(500);
+        public static final HotelStar HOTEL_STD_4 = new HotelStar(400);
+        public static final HotelStar HOTEL_STD_3 = new HotelStar(300);
+        public static final HotelStar HOTEL_STD_2 = new HotelStar(200);
+        public static final HotelStar HOTEL_LST_5 = new HotelStar(50);
+        public static final HotelStar HOTEL_LST_4 = new HotelStar(40);
+        public static final HotelStar HOTEL_LST_3 = new HotelStar(30);
 
-        public static final ResortStar RESORT_STD_5A = new ResortStar(5);
-        public static final ResortStar RESORT_STD_4A = new ResortStar(4);
-        public static final ResortStar RESORT_STD_3A = new ResortStar(3);
-        public static final ResortStar RESORT_STD_2A = new ResortStar(2);
+        public static final ResortStar RESORT_STD_5A = new ResortStar(500);
+        public static final ResortStar RESORT_STD_4A = new ResortStar(400);
+        public static final ResortStar RESORT_STD_3A = new ResortStar(300);
+        public static final ResortStar RESORT_STD_2A = new ResortStar(200);
 
-        public static final TrafficToolSeatClass SEAT_CLASS_1ST = new TrafficToolSeatClass(30);
-        public static final TrafficToolSeatClass SEAT_CLASS_2ND = new TrafficToolSeatClass(20);
-        public static final TrafficToolSeatClass SEAT_CLASS_3RD = new TrafficToolSeatClass(10);
+        public static final TrafficToolSeatClass SEAT_CLASS_1ST = new TrafficToolSeatClass(100);
+        public static final TrafficToolSeatClass SEAT_CLASS_2ND = new TrafficToolSeatClass(200);
+        public static final TrafficToolSeatClass SEAT_CLASS_3RD = new TrafficToolSeatClass(300);
 
-        public static final TrafficToolType TRAFFIC_TOOL_FLIGHT = new TrafficToolType(60);
-        public static final TrafficToolType TRAFFIC_TOOL_TRAIN = new TrafficToolType(50);
+        public static final TrafficToolType TRAFFIC_TOOL_FLIGHT = new TrafficToolType(1);
+        public static final TrafficToolType TRAFFIC_TOOL_TRAIN = new TrafficToolType(2);
 
         public static final TravelTimeRange RANGE_00_06 = new TravelTimeRange(0, 6);
         public static final TravelTimeRange RANGE_06_12 = new TravelTimeRange(6, 6);
@@ -120,8 +120,8 @@ public class Introspection {
                 return JSONValues.SEAT_CLASS_1ST;
             } else if (seatClass == JSONValues.SEAT_CLASS_2ND.enumValue()) {
                 return JSONValues.SEAT_CLASS_2ND;
-            } else if (seatClass == JSONValues.SEAT_CLASS_1ST.enumValue()) {
-                return JSONValues.SEAT_CLASS_1ST;
+            } else if (seatClass == JSONValues.SEAT_CLASS_3RD.enumValue()) {
+                return JSONValues.SEAT_CLASS_3RD;
             } else {
                 throw new InvalidTravelReqirementException(LocalMessages.getMessage(
                     LocalMessages.invalid_parameter_with_value, JSONKeys.TRAFFIC_TOOL_SEAT_CLASS, seatClass));
@@ -136,6 +136,26 @@ public class Introspection {
             } else {
                 throw new InvalidTravelReqirementException(LocalMessages.getMessage(
                     LocalMessages.invalid_parameter_with_value, JSONKeys.TRAFFIC_TOOL_TYPE, toolType));
+            }
+        }
+
+        public static TravelTimeRange getTravelTimeRange(int start, int duration)
+            throws InvalidTravelReqirementException {
+            if (start == JSONValues.RANGE_00_06.realValue() && duration == JSONValues.RANGE_00_06.imaginaryValue()) {
+                return JSONValues.RANGE_00_06;
+            } else if (start == JSONValues.RANGE_06_12.realValue()
+                && duration == JSONValues.RANGE_06_12.imaginaryValue()) {
+                return JSONValues.RANGE_06_12;
+            } else if (start == JSONValues.RANGE_12_18.realValue()
+                && duration == JSONValues.RANGE_12_18.imaginaryValue()) {
+                return JSONValues.RANGE_12_18;
+            } else if (start == JSONValues.RANGE_18_23.realValue()
+                && duration == JSONValues.RANGE_18_23.imaginaryValue()) {
+                return JSONValues.RANGE_18_23;
+            } else {
+                throw new InvalidTravelReqirementException(LocalMessages.getMessage(
+                    LocalMessages.invalid_parameter_with_value, JSONKeys.TIME_RANGE_START + ":"
+                        + JSONKeys.TIME_RANGE_OFFSET, start + ":" + duration));
             }
         }
     }

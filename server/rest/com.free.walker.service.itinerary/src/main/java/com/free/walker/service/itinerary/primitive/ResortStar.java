@@ -1,11 +1,11 @@
-package com.free.walker.service.itinerary.basic;
+package com.free.walker.service.itinerary.primitive;
 
 import com.free.walker.service.itinerary.Enumable;
 
-public class HotelStar implements Enumable {
+public class ResortStar implements Enumable {
     private int enumValue = 0;
 
-    protected HotelStar(int enumValue) {
+    protected ResortStar(int enumValue) {
         if (enumValue <= 0) {
             throw new IllegalArgumentException();
         }

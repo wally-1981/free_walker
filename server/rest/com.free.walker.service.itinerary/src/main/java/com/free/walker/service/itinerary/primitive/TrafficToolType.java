@@ -1,4 +1,4 @@
-package com.free.walker.service.itinerary.basic;
+package com.free.walker.service.itinerary.primitive;
 
 import com.free.walker.service.itinerary.Enumable;
 

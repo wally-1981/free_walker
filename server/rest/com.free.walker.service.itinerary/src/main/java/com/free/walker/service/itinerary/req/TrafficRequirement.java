@@ -12,10 +12,10 @@ import javax.json.JsonObjectBuilder;
 import org.apache.commons.lang3.StringUtils;
 
 import com.free.walker.service.itinerary.basic.Flight;
-import com.free.walker.service.itinerary.basic.Introspection;
-import com.free.walker.service.itinerary.basic.TrafficToolType;
 import com.free.walker.service.itinerary.basic.Train;
-import com.free.walker.service.itinerary.basic.TravelTimeRange;
+import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.primitive.TrafficToolType;
+import com.free.walker.service.itinerary.primitive.TravelTimeRange;
 
 public class TrafficRequirement extends BaseTravelRequirement implements TravelRequirement {
     public static final String SUB_TYPE;
@@ -87,8 +87,8 @@ public class TrafficRequirement extends BaseTravelRequirement implements TravelR
             JsonArrayBuilder dateTimeSelections = Json.createArrayBuilder();
             for (TravelTimeRange selection : trafficToolTimeRangeSelections) {
                 JsonObjectBuilder timeRange = Json.createObjectBuilder();
-                timeRange.add(Introspection.JSONKeys.TIME_RANGE_START, selection.getStart());
-                timeRange.add(Introspection.JSONKeys.TIME_RANGE_OFFSET, selection.getOffset());
+                timeRange.add(Introspection.JSONKeys.TIME_RANGE_START, selection.realValue());
+                timeRange.add(Introspection.JSONKeys.TIME_RANGE_OFFSET, selection.imaginaryValue());
                 dateTimeSelections.add(timeRange);
             }
             resBuilder.add(Introspection.JSONKeys.DATETIME_RANGE_SELECTIONS, dateTimeSelections);

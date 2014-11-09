@@ -1,8 +1,8 @@
-package com.free.walker.service.itinerary.basic;
+package com.free.walker.service.itinerary.primitive;
 
-import com.free.walker.service.itinerary.Enumable;
+import com.free.walker.service.itinerary.Imaginable;
 
-public class TravelTimeRange implements Enumable {
+public class TravelTimeRange implements Imaginable {
     private int start;
     private int offset;
 
@@ -19,15 +19,11 @@ public class TravelTimeRange implements Enumable {
         this.offset = duration;
     }
 
-    public int getStart() {
+    public int realValue() {
         return start;
     }
 
-    public int getOffset() {
+    public int imaginaryValue() {
         return offset;
-    }
-
-    public int enumValue() {
-        return start;
     }
 }
