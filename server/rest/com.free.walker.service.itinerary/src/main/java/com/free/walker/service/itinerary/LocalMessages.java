@@ -67,6 +67,13 @@ public class LocalMessages {
 
     public static final String invalid_parameter_with_value = "invalid_parameter_with_value";
 
+    public static final String load_country_failed = "load_country_failed";
+    public static final String load_province_failed = "load_province_failed";
+    public static final String load_city_failed = "load_city_failed";
+    public static final String load_country_success = "load_country_success";
+    public static final String load_province_success = "load_province_success";
+    public static final String load_city_success = "load_city_success";
+
     public static final String test_message = "test_message";
     public static final String test_message_with_1_arg = "test_message_with_1_arg";
     public static final String test_message_with_2_args = "test_message_with_2_args";

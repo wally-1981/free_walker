@@ -1,4 +1,4 @@
-package com.free.walker.service.itinerary.dao;
+package com.free.walker.service.itinerary.dao.memo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -15,7 +15,10 @@ import org.junit.rules.ExpectedException;
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.TravelLocation;
+import com.free.walker.service.itinerary.dao.DAOFactory;
+import com.free.walker.service.itinerary.dao.TravelRequirementDAO;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
+import com.free.walker.service.itinerary.infra.PlatformInitializer;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.req.HotelRequirement;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
@@ -32,6 +35,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Before
     public void before() {
+        PlatformInitializer.init();
+
         travelRequirementDAO = DAOFactory.getTravelRequirementDAO(InMemoryTravelRequirementDAOImpl.class.getName());
         memoImpl = ((InMemoryTravelRequirementDAOImpl) travelRequirementDAO);
     }
@@ -47,8 +52,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testCreateTravelProposal() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
@@ -77,8 +82,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testAddTravelRequirementWithNullProposal() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
 
         thrown.expect(NullPointerException.class);
@@ -87,8 +92,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testAddTravelRequirementWithNullRequirement() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
@@ -100,15 +105,15 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testAddTravelRequirementWithWrongProposalId() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
         travelRequirementDAO.createProposal(travelProposal);
 
-        TravelLocation destination2 = new TravelLocation(Constants.BOSTON);
-        TravelLocation departure2 = new TravelLocation(Constants.LONDON);
+        TravelLocation destination2 = new TravelLocation(Constants.BARCELONA);
+        TravelLocation departure2 = new TravelLocation(Constants.WUHAN);
         ItineraryRequirement itineraryRequirement2 = new ItineraryRequirement(destination2, departure2);
 
         UUID wrongProposalId = UUID.randomUUID();
@@ -119,8 +124,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testAddTravelRequirementWithDuplicateRequirement() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
@@ -134,15 +139,15 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testAddTravelRequirementWithNewItineraryRequirement() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
         UUID proposalId = travelRequirementDAO.createProposal(travelProposal);
 
-        TravelLocation destination2 = new TravelLocation(Constants.BOSTON);
-        TravelLocation departure2 = new TravelLocation(Constants.LONDON);
+        TravelLocation destination2 = new TravelLocation(Constants.BARCELONA);
+        TravelLocation departure2 = new TravelLocation(Constants.WUHAN);
         ItineraryRequirement itineraryRequirement2 = new ItineraryRequirement(destination2, departure2);
 
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement2);
@@ -171,8 +176,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testAddTravelRequirementWithNewTravelRequirement() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
@@ -209,8 +214,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testInsertTravelRequirementWithNullProposal() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
 
         TravelRequirement hotelRequirement = new HotelRequirement(12);
@@ -221,8 +226,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testInsertTravelRequirementWithNullItinerary() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
@@ -236,8 +241,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testInsertTravelRequirementWithNullRequirement() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
@@ -249,8 +254,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testInsertTravelRequirementWithWrongProposalId() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
@@ -266,8 +271,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testInsertTravelRequirementWithWrongRequirementId() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
@@ -277,7 +282,7 @@ public class InMemoryTravelRequirementDAOImplTest {
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement.getUUID(), hotelRequirement);
 
         TravelRequirement trafficToolSeatRequirement = new TrafficToolSeatRequirement(
-            Introspection.JSONValues.SEAT_CLASS_2ND);
+            Introspection.JSONValues.TRAFFIC_TOOL_SEAT_CLASS_2ND);
 
         UUID wrongRequirementId = UUID.randomUUID();
         thrown.expect(InvalidTravelReqirementException.class);
@@ -288,8 +293,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testInsertTravelRequirementWithDuplicateRequirement() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
@@ -306,15 +311,15 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testInsertTravelRequirementWithItineraryRequirement() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
         UUID proposalId = travelRequirementDAO.createProposal(travelProposal);
 
-        TravelLocation destination2 = new TravelLocation(Constants.BOSTON);
-        TravelLocation departure2 = new TravelLocation(Constants.BEIJING);
+        TravelLocation destination2 = new TravelLocation(Constants.BARCELONA);
+        TravelLocation departure2 = new TravelLocation(Constants.TAIBEI);
         ItineraryRequirement itineraryRequirement2 = new ItineraryRequirement(destination2, departure2);
 
         thrown.expect(InvalidTravelReqirementException.class);
@@ -325,8 +330,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testInsertTravelRequirement() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
@@ -363,15 +368,15 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testInsertTravelRequirementInTheMiddle() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
         UUID proposalId = travelRequirementDAO.createProposal(travelProposal);
 
-        TravelLocation destination2 = new TravelLocation(Constants.BOSTON);
-        TravelLocation departure2 = new TravelLocation(Constants.LA);
+        TravelLocation destination2 = new TravelLocation(Constants.BARCELONA);
+        TravelLocation departure2 = new TravelLocation(Constants.GENEVA);
         ItineraryRequirement itineraryRequirement2 = new ItineraryRequirement(destination2, departure2);
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement2);
         TravelRequirement hotelRequirement = new HotelRequirement(12);
@@ -379,7 +384,7 @@ public class InMemoryTravelRequirementDAOImplTest {
 
         TravelRequirement hotelRequirement2 = new HotelRequirement(3);
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement.getUUID(), hotelRequirement2);
-        TravelRequirement trafficToolRequirement = new TrafficToolSeatRequirement(Introspection.JSONValues.SEAT_CLASS_1ST);
+        TravelRequirement trafficToolRequirement = new TrafficToolSeatRequirement(Introspection.JSONValues.TRAFFIC_TOOL_SEAT_CLASS_1ST);
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement.getUUID(), trafficToolRequirement);
 
         assertNotNull(travelRequirementDAO.getRequirement(proposalId));
@@ -463,8 +468,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testGetRequirementsByItineraryWithWrongItinerary() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
@@ -497,8 +502,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testGetPrevItineraryRequirementWithWrongRequirement() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
@@ -547,8 +552,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testUpdateTravelRequirementWithDiffClass() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
@@ -556,7 +561,7 @@ public class InMemoryTravelRequirementDAOImplTest {
 
         TravelRequirement hotelRequirement = new HotelRequirement(12);
         TravelRequirement trafficToolSeatRequirement = new TrafficToolSeatRequirement(
-            Introspection.JSONValues.SEAT_CLASS_3RD);
+            Introspection.JSONValues.TRAFFIC_TOOL_SEAT_CLASS_3RD);
 
         travelRequirementDAO.addRequirement(proposalId, hotelRequirement);
         travelRequirementDAO.addRequirement(proposalId, trafficToolSeatRequirement);
@@ -567,8 +572,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testUpdateTravelRequirementWithItinerary() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
 
         thrown.expect(InvalidTravelReqirementException.class);
@@ -579,8 +584,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testUpdateTravelRequirementWithProposal() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
@@ -602,8 +607,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testUpdateTravelRequirementWithProposalId() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
@@ -621,8 +626,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testUpdateTravelRequirement() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
@@ -677,8 +682,8 @@ public class InMemoryTravelRequirementDAOImplTest {
 
     @Test
     public void testRemoveTravelRequirementWithProposal() throws InvalidTravelReqirementException {
-        TravelLocation destination = new TravelLocation(Constants.BEIJING);
-        TravelLocation departure = new TravelLocation(Constants.BOSTON);
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 

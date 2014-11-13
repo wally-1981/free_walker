@@ -49,7 +49,7 @@ public class ItineraryRequirement extends BaseTravelRequirement implements Trave
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
-        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.ITINERARY);
+        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY);
         resBuilder.add(Introspection.JSONKeys.DESTINATION, destinationLocation.toJSON());
         resBuilder.add(Introspection.JSONKeys.DEPARTURE, departureLocation.toJSON());
 
@@ -76,7 +76,7 @@ public class ItineraryRequirement extends BaseTravelRequirement implements Trave
         }
 
         String type = jsObject.getString(Introspection.JSONKeys.TYPE);
-        if (type != null && !Introspection.JSONValues.ITINERARY.equals(type)) {
+        if (type != null && !Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY.equals(type)) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.TYPE, type));
         }

@@ -15,7 +15,7 @@ public class TrafficToolSeatRequirement extends BaseTravelRequirement implements
 
     static {
         String[] names = StringUtils.splitByCharacterTypeCamelCase(TrafficToolSeatRequirement.class.getSimpleName());
-        SUB_TYPE = StringUtils.join(names, '_', 0, names.length - 1);
+        SUB_TYPE = StringUtils.join(names, '_', 0, names.length - 1).toLowerCase();
     }
 
     private TrafficToolSeatClass trafficToolSeatClass;
@@ -37,8 +37,8 @@ public class TrafficToolSeatRequirement extends BaseTravelRequirement implements
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
-        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT);
-        resBuilder.add(Introspection.JSONKeys.SUB_TYPE, getSubType());
+        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT);
+        resBuilder.add(Introspection.JSONKeys.SUB_TYPE, SUB_TYPE);
         resBuilder.add(Introspection.JSONKeys.TRAFFIC_TOOL_SEAT_CLASS, trafficToolSeatClass.enumValue());
 
         return resBuilder.build();

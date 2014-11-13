@@ -4,8 +4,6 @@ import java.util.UUID;
 
 import javax.json.JsonValue;
 
-import org.apache.commons.lang3.StringUtils;
-
 public abstract class BaseTravelRequirement implements TravelRequirement {
     protected UUID requirementId;
 
@@ -27,9 +25,5 @@ public abstract class BaseTravelRequirement implements TravelRequirement {
 
     public ValueType getValueType() {
         return JsonValue.ValueType.OBJECT;
-    }
-
-    protected String getSubType() {
-        return StringUtils.splitByCharacterTypeCamelCase(this.getClass().getSimpleName())[0].toLowerCase();
     }
 }

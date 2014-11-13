@@ -53,7 +53,7 @@ public class Flight extends TrafficTool implements Serializable {
     }
 
     public TrafficToolType getType() {
-        return Introspection.JSONValues.TRAFFIC_TOOL_FLIGHT;
+        return Introspection.JSONValues.TRAFFIC_TOOL_TYPE_FLIGHT;
     }
 
     public double getTicketFee() {

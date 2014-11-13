@@ -18,7 +18,7 @@ public class HotelRequirement extends BaseTravelRequirement implements TravelReq
 
     static {
         String[] names = StringUtils.splitByCharacterTypeCamelCase(HotelRequirement.class.getSimpleName());
-        SUB_TYPE = StringUtils.join(names, '_', 0, names.length - 1);
+        SUB_TYPE = StringUtils.join(names, '_', 0, names.length - 1).toLowerCase();
     }
 
     private int nights;
@@ -62,9 +62,9 @@ public class HotelRequirement extends BaseTravelRequirement implements TravelReq
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
-        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT);
+        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT);
 
-        resBuilder.add(Introspection.JSONKeys.SUB_TYPE, getSubType());
+        resBuilder.add(Introspection.JSONKeys.SUB_TYPE, SUB_TYPE);
         resBuilder.add(Introspection.JSONKeys.NIGHT, nights);
 
         if (star != null) {
@@ -91,13 +91,13 @@ public class HotelRequirement extends BaseTravelRequirement implements TravelReq
         }
 
         String type = jsObject.getString(Introspection.JSONKeys.TYPE);
-        if (type != null && !Introspection.JSONValues.REQUIREMENT.equals(type)) {
+        if (type != null && !Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT.equals(type)) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.TYPE, type));
         }
 
         String subType = jsObject.getString(Introspection.JSONKeys.SUB_TYPE);
-        if (subType != null && !getSubType().equals(subType)) {
+        if (subType != null && !SUB_TYPE.equals(subType)) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.SUB_TYPE, subType));
         }

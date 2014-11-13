@@ -25,9 +25,9 @@ import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
-public class Country implements Serializable, Loadable {
-    private static Logger LOG = LoggerFactory.getLogger(Country.class);
-    private static Map<UUID, Country> countries = new HashMap<UUID, Country>();
+public class Province  implements Serializable, Loadable {
+    private static Logger LOG = LoggerFactory.getLogger(Province.class);
+    private static Map<UUID, Province> provinces = new HashMap<UUID, Province>();
     private static TravelBasicDAO travelBasicDAO;
 
     static {
@@ -39,7 +39,7 @@ public class Country implements Serializable, Loadable {
     private String chineseName;
     private String pinyinName;
 
-    public Country() {
+    public Province() {
         ;
     }
 
@@ -52,18 +52,18 @@ public class Country implements Serializable, Loadable {
         return resBuilder.build();
     }
 
-    public Country fromJSON(JsonObject jsObject) throws JsonException {
+    public Province fromJSON(JsonObject jsObject) throws JsonException {
         String id = jsObject.getString(Introspection.JSONKeys.UUID, null);
 
-        Country country;
+        Province province;
         try {
-            country = countries.get(UuidUtil.fromUuidStr(id));
+            province = provinces.get(UuidUtil.fromUuidStr(id));
         } catch (InvalidTravelReqirementException e) {
             throw new JsonException(e.getMessage(), e);
         }
 
-        if (country != null) {
-            return country;
+        if (province != null) {
+            return province;
         } else {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.UUID, id));
@@ -75,33 +75,32 @@ public class Country implements Serializable, Loadable {
     }
 
     public boolean load() {
-        if (!countries.isEmpty()) {
-            LOG.debug(LocalMessages.getMessage(LocalMessages.load_country_success, 0));
+        if (!provinces.isEmpty()) {
+            LOG.debug(LocalMessages.getMessage(LocalMessages.load_province_success, 0));
             return true;
         }
 
         try {
-            List<Country> countries = travelBasicDAO.getAllCountries();
+            List<Province> provinces = travelBasicDAO.getAllProvinces();
 
-            if (countries == null || countries.size() == 0) {
+            if (provinces == null || provinces.size() == 0) {
                 LOG.error(LocalMessages.getMessage(LocalMessages.load_country_failed));
                 return false;
             }
 
-            for (int i = 0; i < countries.size(); i++) {
-                Country country = countries.get(i);
-                Country.countries.put(country.uuid, country);
+            for (int i = 0; i < provinces.size(); i++) {
+                Province province = provinces.get(i);
+                Province.provinces.put(province.uuid, province);
             }
-
-            LOG.info(LocalMessages.getMessage(LocalMessages.load_country_success, countries.size()));
+            LOG.info(LocalMessages.getMessage(LocalMessages.load_province_success, provinces.size()));
             return true;
         } catch (DatabaseAccessException e) {
-            LOG.error(LocalMessages.getMessage(LocalMessages.load_country_failed), e);
-            countries.clear();
+            LOG.error(LocalMessages.getMessage(LocalMessages.load_province_failed), e);
+            provinces.clear();
             return false;
         } catch (Exception e) {
-            LOG.error(LocalMessages.getMessage(LocalMessages.load_country_failed), e);
-            countries.clear();
+            LOG.error(LocalMessages.getMessage(LocalMessages.load_province_failed), e);
+            provinces.clear();
             return false;
         }
     }

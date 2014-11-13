@@ -17,7 +17,7 @@ public class ResortRequirement extends BaseTravelRequirement implements TravelRe
 
     static {
         String[] names = StringUtils.splitByCharacterTypeCamelCase(ResortRequirement.class.getSimpleName());
-        SUB_TYPE = StringUtils.join(names, '_', 0, names.length - 1);
+        SUB_TYPE = StringUtils.join(names, '_', 0, names.length - 1).toLowerCase();
     }
 
     private TravelTimeRange arrivalTimeRange;
@@ -61,8 +61,8 @@ public class ResortRequirement extends BaseTravelRequirement implements TravelRe
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
-        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT);
-        resBuilder.add(Introspection.JSONKeys.SUB_TYPE, getSubType());
+        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT);
+        resBuilder.add(Introspection.JSONKeys.SUB_TYPE, SUB_TYPE);
         resBuilder.add(Introspection.JSONKeys.TIME_RANGE_START, arrivalTimeRange.realValue());
         resBuilder.add(Introspection.JSONKeys.TIME_RANGE_OFFSET, arrivalTimeRange.imaginaryValue());
 

@@ -17,19 +17,19 @@ public class JsonObjectHelper {
     public static TravelRequirement toRequirement(JsonObject travelRequirement) throws InvalidTravelReqirementException {
         if (!travelRequirement.containsKey(Introspection.JSONKeys.TYPE)) {
             throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.invalid_parameter_with_value, Introspection.JSONKeys.TYPE, ""),
+                LocalMessages.invalid_parameter_with_value, Introspection.JSONKeys.TYPE, null),
                 UuidUtil.fromUuidStr(travelRequirement.getString(Introspection.JSONKeys.UUID)));
         }
         String requirementType = travelRequirement.getString(Introspection.JSONKeys.TYPE);
 
-        if (Introspection.JSONValues.PROPOSAL.equals(requirementType)) {
+        if (Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL.equals(requirementType)) {
             return (TravelProposal) new TravelProposal().fromJSON(travelRequirement);
-        } else if (Introspection.JSONValues.ITINERARY.equals(requirementType)) {
+        } else if (Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY.equals(requirementType)) {
             return (ItineraryRequirement) new ItineraryRequirement().fromJSON(travelRequirement);
         } else {
             if (!travelRequirement.containsKey(Introspection.JSONKeys.SUB_TYPE)) {
                 throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                    LocalMessages.invalid_parameter_with_value, Introspection.JSONKeys.SUB_TYPE, ""),
+                    LocalMessages.invalid_parameter_with_value, Introspection.JSONKeys.SUB_TYPE, null),
                     UuidUtil.fromUuidStr(travelRequirement.getString(Introspection.JSONKeys.UUID)));
             }
             String requirementSubType = travelRequirement.getString(Introspection.JSONKeys.SUB_TYPE);

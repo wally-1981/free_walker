@@ -11,21 +11,28 @@ import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.basic.TravelLocation;
+import com.free.walker.service.itinerary.infra.PlatformInitializer;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.ibm.icu.util.Calendar;
 
 public class ItineraryRequirementTest {
+    @Before
+    public void before() {
+        PlatformInitializer.init();
+    }
+
     @Test
     public void testToJSON() throws JsonException {
-        TravelLocation destinationLocation = new TravelLocation(Constants.BEIJING);
-        TravelLocation departureLocation = new TravelLocation(Constants.LONDON);
+        TravelLocation destinationLocation = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departureLocation = new TravelLocation(Constants.WUHAN);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destinationLocation, departureLocation);
         JsonObject jo = itineraryRequirement.toJSON();
-        assertEquals(Introspection.JSONValues.ITINERARY, jo.getString(Introspection.JSONKeys.TYPE));
+        assertEquals(Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY, jo.getString(Introspection.JSONKeys.TYPE));
         assertNotNull(jo.get(Introspection.JSONKeys.DESTINATION));
         assertNotNull(jo.get(Introspection.JSONKeys.DEPARTURE));
 
@@ -34,8 +41,8 @@ public class ItineraryRequirementTest {
 
     @Test
     public void testToJSON4DateTimeSelection() throws JsonException {
-        TravelLocation destinationLocation = new TravelLocation(Constants.BEIJING);
-        TravelLocation departureLocation = new TravelLocation(Constants.LONDON);
+        TravelLocation destinationLocation = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departureLocation = new TravelLocation(Constants.WUHAN);
 
         List<Calendar> departureDateTimeSelections = new ArrayList<Calendar>();
         Calendar departureDateTime1 = Calendar.getInstance();
@@ -48,7 +55,7 @@ public class ItineraryRequirementTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destinationLocation, departureLocation,
             departureDateTimeSelections);
         JsonObject jo = itineraryRequirement.toJSON();
-        assertEquals(Introspection.JSONValues.ITINERARY, jo.getString(Introspection.JSONKeys.TYPE));
+        assertEquals(Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY, jo.getString(Introspection.JSONKeys.TYPE));
         assertNotNull(jo.get(Introspection.JSONKeys.DESTINATION));
         assertNotNull(jo.get(Introspection.JSONKeys.DEPARTURE));
         assertTrue(jo.get(Introspection.JSONKeys.DATETIME_SELECTIONS) instanceof JsonArray);

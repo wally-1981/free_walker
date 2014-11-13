@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.Enumable;
+import com.free.walker.service.itinerary.Imaginable;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.Flight;
 import com.free.walker.service.itinerary.basic.Hotel;
@@ -36,8 +37,8 @@ import com.free.walker.service.itinerary.basic.Resort;
 import com.free.walker.service.itinerary.basic.Train;
 import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.dao.DAOFactory;
-import com.free.walker.service.itinerary.dao.InMemoryTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.dao.TravelRequirementDAO;
+import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.req.HotelRequirement;
@@ -94,6 +95,10 @@ public class ItineraryService {
                         if (field.get(Introspection.JSONValues.class) instanceof Enumable) {
                             valueDataBuilder.add(field.getName(),
                                 ((Enumable) field.get(Introspection.JSONValues.class)).enumValue());
+                        } else if (field.get(Introspection.JSONValues.class) instanceof Imaginable) {
+                            valueDataBuilder.add(field.getName(),
+                                ((Imaginable) field.get(Introspection.JSONValues.class)).realValue() + ":" +
+                                ((Imaginable) field.get(Introspection.JSONValues.class)).imaginaryValue());
                         } else {
                             valueDataBuilder.add(field.getName(), (String) field.get(Introspection.JSONKeys.class));
                         }
@@ -112,34 +117,34 @@ public class ItineraryService {
         {            
             JsonArrayBuilder sampleDataBuilder = Json.createArrayBuilder();
 
-            TravelLocation dept = new TravelLocation(Constants.BEIJING);
-            TravelLocation dest = new TravelLocation(Constants.BOSTON);
+            TravelLocation dept = new TravelLocation(Constants.TAIBEI);
+            TravelLocation dest = new TravelLocation(Constants.BARCELONA);
             ItineraryRequirement itineraryRequirement = new ItineraryRequirement(dept, dest);
             TravelProposal proposal = new TravelProposal(itineraryRequirement);
             sampleDataBuilder.add(proposal.toJSON());
 
             TravelRequirement hotelRequirementA = new HotelRequirement(6);
-            TravelRequirement hotelRequirementB = new HotelRequirement(6, Introspection.JSONValues.HOTEL_STD_5);
+            TravelRequirement hotelRequirementB = new HotelRequirement(6, Introspection.JSONValues.HOTEL_STAR_STD_5);
             TravelRequirement hotelRequirementC = new HotelRequirement(6, new Hotel());
             sampleDataBuilder.add(hotelRequirementA.toJSON());
             sampleDataBuilder.add(hotelRequirementB.toJSON());
             sampleDataBuilder.add(hotelRequirementC.toJSON());
             
-            TravelRequirement resortRequirementA = new ResortRequirement(Introspection.JSONValues.RANGE_12_18);
-            TravelRequirement resortRequirementB = new ResortRequirement(Introspection.JSONValues.RANGE_12_18,
-                Introspection.JSONValues.RESORT_STD_2A);
-            TravelRequirement resortRequirementC = new ResortRequirement(Introspection.JSONValues.RANGE_12_18,
+            TravelRequirement resortRequirementA = new ResortRequirement(Introspection.JSONValues.TIME_RANGE_12_18);
+            TravelRequirement resortRequirementB = new ResortRequirement(Introspection.JSONValues.TIME_RANGE_12_18,
+                Introspection.JSONValues.RESORT_STAR_STD_2A);
+            TravelRequirement resortRequirementC = new ResortRequirement(Introspection.JSONValues.TIME_RANGE_12_18,
                 new Resort());
             sampleDataBuilder.add(resortRequirementA.toJSON());
             sampleDataBuilder.add(resortRequirementB.toJSON());
             sampleDataBuilder.add(resortRequirementC.toJSON());
             
-            TravelRequirement trafficRequirementA = new TrafficRequirement(Introspection.JSONValues.TRAFFIC_TOOL_TRAIN);
+            TravelRequirement trafficRequirementA = new TrafficRequirement(Introspection.JSONValues.TRAFFIC_TOOL_TYPE_TRAIN);
             TravelRequirement trafficRequirementB = new TrafficRequirement(
-                Introspection.JSONValues.TRAFFIC_TOOL_FLIGHT, Introspection.JSONValues.RANGE_18_23);
+                Introspection.JSONValues.TRAFFIC_TOOL_TYPE_FLIGHT, Introspection.JSONValues.TIME_RANGE_18_23);
             TravelRequirement trafficRequirementC = new TrafficRequirement(
-                Introspection.JSONValues.TRAFFIC_TOOL_FLIGHT, Arrays.asList(Introspection.JSONValues.RANGE_00_06,
-                    Introspection.JSONValues.RANGE_18_23));
+                Introspection.JSONValues.TRAFFIC_TOOL_TYPE_FLIGHT, Arrays.asList(Introspection.JSONValues.TIME_RANGE_00_06,
+                    Introspection.JSONValues.TIME_RANGE_18_23));
             TravelRequirement trafficRequirementD = new TrafficRequirement(new Flight("CA1981"));
             TravelRequirement trafficRequirementE = new TrafficRequirement(new Train("Z38"));            
             sampleDataBuilder.add(trafficRequirementA.toJSON());
@@ -184,7 +189,7 @@ public class ItineraryService {
     @Path("/itineraries/{requirementId}/")
     public Response getItinerary(@PathParam("requirementId") String requirementId,
         @QueryParam("requirementType") String requirementType) {
-        if (Introspection.JSONValues.PROPOSAL.equals(requirementType)) {
+        if (Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL.equals(requirementType)) {
             List<TravelRequirement> itineraries;
             try {
                 UUID reqId = UuidUtil.fromUuidStr(requirementId);

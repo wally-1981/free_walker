@@ -7,9 +7,7 @@ import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.req.TravelProposal;
 import com.free.walker.service.itinerary.req.TravelRequirement;
 
-public interface TravelRequirementDAO {
-    public boolean pingPersistence();
-
+public interface TravelRequirementDAO extends HealthyDAO {
     public UUID createProposal(TravelProposal travelProposal) throws InvalidTravelReqirementException;
 
     public UUID addRequirement(UUID travelProposalId, TravelRequirement travelRequirement)

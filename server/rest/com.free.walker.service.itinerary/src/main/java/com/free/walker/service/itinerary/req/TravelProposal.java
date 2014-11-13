@@ -45,7 +45,7 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
-        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.PROPOSAL);
+        resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL);
         JsonArrayBuilder requirements = Json.createArrayBuilder();
         for (TravelRequirement travelRequirement : travelRequirements) {
             requirements.add(travelRequirement.toJSON());
@@ -67,7 +67,7 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
         }
 
         String type = jsObject.getString(Introspection.JSONKeys.TYPE);
-        if (type != null && !Introspection.JSONValues.PROPOSAL.equals(type)) {
+        if (type != null && !Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL.equals(type)) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.TYPE, type));
         }

@@ -1,4 +1,4 @@
-package com.free.walker.service.itinerary.dao;
+package com.free.walker.service.itinerary.dao.memo;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.free.walker.service.itinerary.LocalMessages;
+import com.free.walker.service.itinerary.dao.TravelRequirementDAO;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.req.TravelProposal;
 import com.free.walker.service.itinerary.req.TravelRequirement;

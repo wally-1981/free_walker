@@ -8,9 +8,13 @@ import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
 import org.apache.cxf.jaxrs.provider.jsrjsonp.JsrJsonpProvider;
 
+import com.free.walker.service.itinerary.infra.PlatformInitializer;
+
 public class Server {
 
     protected Server() throws Exception {
+        PlatformInitializer.init(); 
+
         JAXRSServerFactoryBean sf = new JAXRSServerFactoryBean();
 
         List<Class<?>> classes = new ArrayList<Class<?>>();

@@ -1,18 +1,27 @@
 package com.free.walker.service.itinerary;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.free.walker.service.itinerary.basic.City;
-import com.free.walker.service.itinerary.basic.Country;
-import com.ibm.icu.util.ULocale;
+import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
+import com.free.walker.service.itinerary.util.UuidUtil;
 
 public class Constants {
-    public static final Country CHINA = new Country(ULocale.CHINA);
-    public static final Country US = new Country(ULocale.US);
-    public static final Country UK = new Country(ULocale.UK);
-    public static final Country CANADA = new Country(ULocale.CANADA);
+    public static City TAIBEI;
+    public static City BARCELONA;
+    public static City WUHAN;
+    public static City GENEVA;
 
-    public static final City BEIJING = new City("Beijing", CHINA);
-    public static final City WUHAN = new City("Wuhan", CHINA);
-    public static final City LONDON = new City("London", UK);
-    public static final City LA = new City("LA", US);
-    public static final City BOSTON = new City("BOSTON", US);
+    static {
+        Logger LOG = LoggerFactory.getLogger(City.class);
+        try {
+            TAIBEI = new City(UuidUtil.fromUuidStr("02515d41-f141-4175-9a11-9e68b9cfe687"));
+            BARCELONA = new City(UuidUtil.fromUuidStr("84844276-3036-47dd-90e0-f095cfa98da5"));
+            WUHAN = new City(UuidUtil.fromUuidStr("79fd8642-a11d-4811-887d-ec4268097a82"));
+            GENEVA = new City(UuidUtil.fromUuidStr("46e46912-f856-49ce-b9f8-cac99fe9211e"));
+        } catch (InvalidTravelReqirementException e) {
+            LOG.error(e.getMessage(), e);
+        }
+    }
 }

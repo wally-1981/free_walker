@@ -53,7 +53,7 @@ public class Train extends TrafficTool implements Serializable {
     }
 
     public TrafficToolType getType() {
-        return Introspection.JSONValues.TRAFFIC_TOOL_TRAIN;
+        return Introspection.JSONValues.TRAFFIC_TOOL_TYPE_TRAIN;
     }
 
     public double getTicketFee() {

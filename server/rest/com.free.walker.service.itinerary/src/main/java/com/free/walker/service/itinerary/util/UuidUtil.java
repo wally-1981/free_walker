@@ -12,4 +12,28 @@ public class UuidUtil {
             throw new InvalidTravelReqirementException(e.getMessage(), uuidStr);
         }
     }
+
+    public static boolean isCmpUuidStr(String uuidStr) {
+        if (uuidStr.charAt(8) == '-' && uuidStr.charAt(13) == '-' && uuidStr.charAt(18) == '-'
+            && uuidStr.charAt(23) == '-') {
+            return false;
+        } else {
+            if (uuidStr.contains("-")) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    public static UUID fromCmpUuidStr(String uuidCmpStr) throws InvalidTravelReqirementException {
+        try {
+            uuidCmpStr = new StringBuffer(uuidCmpStr.substring(0, 8)).append("-").append(uuidCmpStr.substring(8, 12))
+                .append("-").append(uuidCmpStr.substring(12, 16)).append("-").append(uuidCmpStr.substring(16, 20))
+                .append("-").append(uuidCmpStr.substring(20)).toString();
+            return UUID.fromString(uuidCmpStr);
+        } catch (Exception e) {
+            throw new InvalidTravelReqirementException(e.getMessage(), uuidCmpStr);
+        }
+    }
 }

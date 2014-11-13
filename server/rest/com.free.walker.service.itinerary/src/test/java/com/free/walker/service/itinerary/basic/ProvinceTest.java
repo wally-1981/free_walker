@@ -19,27 +19,27 @@ import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
-public class CountryTest {
+public class ProvinceTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void before() {
-        new Country().load();
+        new Province().load();
     }
 
     @Test
     public void testFromToJSON() throws InvalidTravelReqirementException {
         JsonObjectBuilder builder = Json.createObjectBuilder();
-        builder.add(Introspection.JSONKeys.UUID, UuidUtil.fromCmpUuidStr("af70a55ceb4c415c837588081716f8b8").toString());
-        Country country = new Country().fromJSON(builder.build());
+        builder.add(Introspection.JSONKeys.UUID, UuidUtil.fromCmpUuidStr("8a1dc8fe34c04380b241c19a61ad07be").toString());
+        Province province = new Province().fromJSON(builder.build());
 
-        JsonObject countryObj = country.toJSON();
-        assertEquals(UuidUtil.fromCmpUuidStr("af70a55ceb4c415c837588081716f8b8").toString(),
-            countryObj.getString(Introspection.JSONKeys.UUID));
-        assertEquals("China", countryObj.getString(Introspection.JSONKeys.NAME));
-        assertEquals("中国", countryObj.getString(Introspection.JSONKeys.CHINESE_NAME));
-        assertEquals("zhongguo", countryObj.getString(Introspection.JSONKeys.PINYIN_NAME));
+        JsonObject provinceObj = province.toJSON();
+        assertEquals(UuidUtil.fromCmpUuidStr("8a1dc8fe34c04380b241c19a61ad07be").toString(),
+            provinceObj.getString(Introspection.JSONKeys.UUID));
+        assertEquals("Hongkong", provinceObj.getString(Introspection.JSONKeys.NAME));
+        assertEquals("香港", provinceObj.getString(Introspection.JSONKeys.CHINESE_NAME));
+        assertEquals("xianggang", provinceObj.getString(Introspection.JSONKeys.PINYIN_NAME));
     }
 
     @Test
@@ -50,15 +50,15 @@ public class CountryTest {
         thrown.expect(JsonException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
             Introspection.JSONKeys.UUID, invalidUuidStr));
-        new Country().fromJSON(builder.build());
+        new Province().fromJSON(builder.build());
     }
 
     @Test
     public void testFromToJSONWithCmpUuid() {
         JsonObjectBuilder builder = Json.createObjectBuilder();
-        String cmpUuidStr = "af70a55ceb4c415c837588081716f8b8";
+        String cmpUuidStr = "8a1dc8fe34c04380b241c19a61ad07be";
         builder.add(Introspection.JSONKeys.UUID, cmpUuidStr);
         thrown.expect(JsonException.class);
-        new Country().fromJSON(builder.build());
+        new Province().fromJSON(builder.build());
     }
 }
