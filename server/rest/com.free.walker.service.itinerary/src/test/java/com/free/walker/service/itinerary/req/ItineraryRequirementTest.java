@@ -67,4 +67,9 @@ public class ItineraryRequirementTest {
 
         assertEquals(true, itineraryRequirement.isItinerary());
     }
+
+    @Test
+    public void testFromJSON() throws JsonException {
+        ;
+    }
 }

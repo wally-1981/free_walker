@@ -62,6 +62,10 @@ public class LocalMessages {
     public static final String illegal_update_travel_requirement_operation = "illegal_update_travel_requirement_operation";
     public static final String illegal_delete_travel_requirement_operation = "illegal_delete_travel_requirement_operation";
 
+    public static final String requirement_not_found = "requirement_not_found";
+    public static final String itinerary_not_found = "itinerary_not_found";
+    public static final String proposal_not_found = "proposal_not_found";
+
     public static final String dao_init_failure = "dao_init_failure";
     public static final String introspection_failure = "introspection_failure";
 

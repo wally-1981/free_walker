@@ -1,0 +1,1 @@
+java -jar ./com.free.walker.service.itinerary-0.0.1.jar

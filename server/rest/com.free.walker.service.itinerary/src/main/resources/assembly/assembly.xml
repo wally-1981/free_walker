@@ -24,5 +24,12 @@
 				<include>com.free.walker.service.itinerary-*.jar</include>
 			</includes>
 		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}\src\main\resources</directory>
+			<outputDirectory>\</outputDirectory>
+			<includes>
+				<include>startServer.*</include>
+			</includes>
+		</fileSet>
 	</fileSets>
 </assembly>

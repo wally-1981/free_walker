@@ -2,6 +2,8 @@ package com.free.walker.service.itinerary.primitive;
 
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
+import com.free.walker.service.itinerary.req.HotelRequirement;
+import com.free.walker.service.itinerary.req.TrafficRequirement;
 
 
 public class Introspection {
@@ -86,6 +88,9 @@ public class Introspection {
         public static final ContinentID CONTINENT_ID_OCEANIA = new ContinentID(5);
         public static final ContinentID CONTINENT_ID_AFRICA = new ContinentID(6);
         public static final ContinentID CONTINENT_ID_ANTARCTICA = new ContinentID(7);
+
+        public static final String SUB_TYPE_HOTEL = HotelRequirement.SUB_TYPE;
+        public static final String SUB_TYPE_TRAFFIC = TrafficRequirement.SUB_TYPE;
     }
 
     public static class JsonValueHelper {

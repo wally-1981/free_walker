@@ -79,7 +79,7 @@ public class HotelRequirement extends BaseTravelRequirement implements TravelReq
         return resBuilder.build();
     }
 
-    public Object fromJSON(JsonObject jsObject) throws JsonException {
+    public HotelRequirement fromJSON(JsonObject jsObject) throws JsonException {
         String requirementId = jsObject.getString(Introspection.JSONKeys.UUID);
 
         if (requirementId != null) {
@@ -90,6 +90,10 @@ public class HotelRequirement extends BaseTravelRequirement implements TravelReq
             }            
         }
 
+        return newFromJSON(jsObject);
+    }
+
+    public HotelRequirement newFromJSON(JsonObject jsObject) throws JsonException {
         String type = jsObject.getString(Introspection.JSONKeys.TYPE);
         if (type != null && !Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT.equals(type)) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
@@ -120,7 +124,7 @@ public class HotelRequirement extends BaseTravelRequirement implements TravelReq
         }
 
         JsonObject hotelObj = jsObject.getJsonObject(Introspection.JSONKeys.HOTEL);
-        if (hotel != null) {
+        if (hotelObj != null) {
             this.hotel = (Hotel) new Hotel().fromJSON(hotelObj);
         }
 

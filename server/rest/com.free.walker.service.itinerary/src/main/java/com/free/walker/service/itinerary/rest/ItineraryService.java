@@ -139,12 +139,13 @@ public class ItineraryService {
             sampleDataBuilder.add(resortRequirementB.toJSON());
             sampleDataBuilder.add(resortRequirementC.toJSON());
             
-            TravelRequirement trafficRequirementA = new TrafficRequirement(Introspection.JSONValues.TRAFFIC_TOOL_TYPE_TRAIN);
+            TravelRequirement trafficRequirementA = new TrafficRequirement(
+                Introspection.JSONValues.TRAFFIC_TOOL_TYPE_TRAIN);
             TravelRequirement trafficRequirementB = new TrafficRequirement(
                 Introspection.JSONValues.TRAFFIC_TOOL_TYPE_FLIGHT, Introspection.JSONValues.TIME_RANGE_18_23);
             TravelRequirement trafficRequirementC = new TrafficRequirement(
-                Introspection.JSONValues.TRAFFIC_TOOL_TYPE_FLIGHT, Arrays.asList(Introspection.JSONValues.TIME_RANGE_00_06,
-                    Introspection.JSONValues.TIME_RANGE_18_23));
+                Introspection.JSONValues.TRAFFIC_TOOL_TYPE_FLIGHT, Arrays.asList(
+                    Introspection.JSONValues.TIME_RANGE_00_06, Introspection.JSONValues.TIME_RANGE_18_23));
             TravelRequirement trafficRequirementD = new TrafficRequirement(new Flight("CA1981"));
             TravelRequirement trafficRequirementE = new TrafficRequirement(new Train("Z38"));            
             sampleDataBuilder.add(trafficRequirementA.toJSON());
@@ -178,10 +179,11 @@ public class ItineraryService {
             if (proposal.isProposal()) {
                 return Response.ok(proposal.toJSON()).build();
             } else {
-                return Response.status(Status.NOT_FOUND).build();
+                throw new InvalidTravelReqirementException(LocalMessages.getMessage(
+                    LocalMessages.proposal_not_found, propId), propId);
             }
         } catch (InvalidTravelReqirementException e) {
-            return Response.ok(e.toJSON()).build();
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
         }
     }
 
@@ -200,9 +202,9 @@ public class ItineraryService {
                 }
                 return Response.ok(resBuilder.build()).build();
             } catch (InvalidTravelReqirementException e) {
-                return Response.ok(e.toJSON()).build();
+                return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
             }
-        } else {
+        } else if (Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY.equals(requirementType)) {
             TravelRequirement itinerary;
             try {
                 UUID reqId = UuidUtil.fromUuidStr(requirementId);
@@ -210,11 +212,14 @@ public class ItineraryService {
                 if (itinerary.isItinerary()) {
                     return Response.ok(itinerary.toJSON()).build();
                 } else {
-                    return Response.status(Status.NOT_FOUND).build();
+                    throw new InvalidTravelReqirementException(LocalMessages.getMessage(
+                        LocalMessages.itinerary_not_found, reqId), reqId);
                 }
             } catch (InvalidTravelReqirementException e) {
-                return Response.ok(e.toJSON()).build();
+                return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
             }
+        } else {
+            return Response.status(Status.BAD_REQUEST).entity(Json.createObjectBuilder().build()).build();
         }
     }
 
@@ -228,10 +233,11 @@ public class ItineraryService {
             if (!requirement.isProposal() && !requirement.isItinerary()) {
                 return Response.ok(requirement.toJSON()).build();
             } else {
-                return Response.status(Status.NOT_FOUND).build();
+                throw new InvalidTravelReqirementException(LocalMessages.getMessage(
+                    LocalMessages.requirement_not_found, reqId), reqId);
             }
         } catch (InvalidTravelReqirementException e) {
-            return Response.ok(e.toJSON()).build();
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
         }
     }
 
@@ -250,7 +256,7 @@ public class ItineraryService {
             }
             return Response.ok(resBuilder.build()).build();
         } catch (InvalidTravelReqirementException e) {
-            return Response.ok(e.toJSON()).build();
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
         }
     }
 
@@ -258,10 +264,12 @@ public class ItineraryService {
     @Path("/requirements/{requirementId}/")
     public Response deleteRequirement(@PathParam("requirementId") String requirementId) {
         try {
-            travelRequirementDAO.removeRequirement(UuidUtil.fromUuidStr(requirementId));
-            return Response.ok().build();
+            UUID deletedRequirementId = travelRequirementDAO.removeRequirement(UuidUtil.fromUuidStr(requirementId));
+            JsonObject res = Json.createObjectBuilder()
+                .add(Introspection.JSONKeys.UUID, deletedRequirementId.toString()).build();
+            return Response.ok(res).build();
         } catch (InvalidTravelReqirementException e) {
-            return Response.ok(e.toJSON()).build();
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
         }
     }
 
@@ -271,10 +279,12 @@ public class ItineraryService {
         try {
             UUID requirementId = UuidUtil.fromUuidStr(travelRequirement.getString(Introspection.JSONKeys.UUID));
             TravelRequirement requirement = JsonObjectHelper.toRequirement(travelRequirement);
-            travelRequirementDAO.updateRequirement(requirementId, requirement);
-            return Response.ok().build();
+            UUID updatedRequirementId = travelRequirementDAO.updateRequirement(requirementId, requirement);
+            JsonObject res = Json.createObjectBuilder()
+                .add(Introspection.JSONKeys.UUID, updatedRequirementId.toString()).build();
+            return Response.ok(res).build();
         } catch (InvalidTravelReqirementException e) {
-            return Response.ok(e.toJSON()).build();
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
         }
     }
 
@@ -287,7 +297,7 @@ public class ItineraryService {
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, proposalId).build();
             return Response.ok(res).build();
         } catch (InvalidTravelReqirementException e) {
-            return Response.ok(e.toJSON()).build();
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
         }
     }
 
@@ -301,7 +311,7 @@ public class ItineraryService {
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, itineraryId).build();
             return Response.ok(res).build();
         } catch (InvalidTravelReqirementException e) {
-            return Response.ok(e.toJSON()).build();
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
         }
     }
 
@@ -315,7 +325,7 @@ public class ItineraryService {
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, requirementId).build();
             return Response.ok(res).build();
         } catch (InvalidTravelReqirementException e) {
-            return Response.ok(e.toJSON()).build();
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
         }
     }
 
@@ -325,12 +335,12 @@ public class ItineraryService {
         @PathParam("itineraryId") String itineraryId, JsonObject travelRequirement) {
         try {
             TravelRequirement requirement = JsonObjectHelper.toRequirement(travelRequirement);
-            String requirementId = travelRequirementDAO.addRequirement(UuidUtil.fromUuidStr(proposalId), UuidUtil.fromUuidStr(itineraryId),
-                requirement).toString();
+            String requirementId = travelRequirementDAO.addRequirement(UuidUtil.fromUuidStr(proposalId),
+                UuidUtil.fromUuidStr(itineraryId), requirement).toString();
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, requirementId).build();
             return Response.ok(res).build();
         } catch (InvalidTravelReqirementException e) {
-            return Response.ok(e.toJSON()).build();
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
         }
     }
 }

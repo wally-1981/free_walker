@@ -55,7 +55,7 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
         return resBuilder.build();
     }
 
-    public Object fromJSON(JsonObject jsObject) throws JsonException {
+    public TravelProposal fromJSON(JsonObject jsObject) throws JsonException {
         String requirementId = jsObject.getString(Introspection.JSONKeys.UUID);
 
         if (requirementId != null) {
@@ -66,6 +66,10 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
             }            
         }
 
+        return newFromJSON(jsObject);
+    }
+
+    public TravelProposal newFromJSON(JsonObject jsObject) throws JsonException {
         String type = jsObject.getString(Introspection.JSONKeys.TYPE);
         if (type != null && !Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL.equals(type)) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,

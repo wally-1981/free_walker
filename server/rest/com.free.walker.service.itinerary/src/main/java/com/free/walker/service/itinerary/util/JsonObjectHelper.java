@@ -23,9 +23,9 @@ public class JsonObjectHelper {
         String requirementType = travelRequirement.getString(Introspection.JSONKeys.TYPE);
 
         if (Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL.equals(requirementType)) {
-            return (TravelProposal) new TravelProposal().fromJSON(travelRequirement);
+            return (TravelProposal) new TravelProposal().newFromJSON(travelRequirement);
         } else if (Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY.equals(requirementType)) {
-            return (ItineraryRequirement) new ItineraryRequirement().fromJSON(travelRequirement);
+            return (ItineraryRequirement) new ItineraryRequirement().newFromJSON(travelRequirement);
         } else {
             if (!travelRequirement.containsKey(Introspection.JSONKeys.SUB_TYPE)) {
                 throw new InvalidTravelReqirementException(LocalMessages.getMessage(
@@ -35,13 +35,13 @@ public class JsonObjectHelper {
             String requirementSubType = travelRequirement.getString(Introspection.JSONKeys.SUB_TYPE);
 
             if (HotelRequirement.SUB_TYPE.equals(requirementSubType)) {
-                return (HotelRequirement) new HotelRequirement().fromJSON(travelRequirement);
+                return (HotelRequirement) new HotelRequirement().newFromJSON(travelRequirement);
             } else if (ResortRequirement.SUB_TYPE.equals(requirementSubType)) {
-                return (ResortRequirement) new ResortRequirement().fromJSON(travelRequirement);
+                return (ResortRequirement) new ResortRequirement().newFromJSON(travelRequirement);
             } else if (TrafficRequirement.SUB_TYPE.equals(requirementSubType)) {
-                return (TrafficRequirement) new TrafficRequirement().fromJSON(travelRequirement);
+                return (TrafficRequirement) new TrafficRequirement().newFromJSON(travelRequirement);
             } else if (TrafficToolSeatRequirement.SUB_TYPE.equals(requirementSubType)) {
-                return (TrafficRequirement) new TrafficToolSeatRequirement().fromJSON(travelRequirement);
+                return (TrafficToolSeatRequirement) new TrafficToolSeatRequirement().newFromJSON(travelRequirement);
             } else {
                 throw new InvalidTravelReqirementException(LocalMessages.getMessage(
                     LocalMessages.invalid_parameter_with_value, Introspection.JSONKeys.TYPE + ":"

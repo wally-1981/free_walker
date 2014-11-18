@@ -3,8 +3,12 @@ package com.free.walker.service.itinerary.req;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.UUID;
+
+import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import org.junit.Test;
 
@@ -42,5 +46,19 @@ public class HotelRequirementTest {
         assertNotNull(jo.get(Introspection.JSONKeys.HOTEL));
 
         assertEquals(false, hotelRequirement.isItinerary());
+    }
+
+    @Test
+    public void testFromJSON() throws JsonException {
+        JsonObjectBuilder requirement = Json.createObjectBuilder();
+        UUID uuid = UUID.randomUUID();
+        requirement.add(Introspection.JSONKeys.UUID, uuid.toString());
+        requirement.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT);
+        requirement.add(Introspection.JSONKeys.SUB_TYPE, HotelRequirement.SUB_TYPE);
+        requirement.add(Introspection.JSONKeys.NIGHT, 12);
+        requirement.add(Introspection.JSONKeys.STAR, Introspection.JSONValues.HOTEL_STAR_LST_4.enumValue());
+        TravelRequirement hotelRequirement = new HotelRequirement().fromJSON(requirement.build());
+        assertNotNull(hotelRequirement);
+        assertEquals(uuid.toString(), hotelRequirement.getUUID().toString());
     }
 }

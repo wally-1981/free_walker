@@ -7,8 +7,11 @@ import javax.json.JsonObjectBuilder;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.free.walker.service.itinerary.LocalMessages;
+import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.primitive.TrafficToolSeatClass;
+import com.free.walker.service.itinerary.util.UuidUtil;
 
 public class TrafficToolSeatRequirement extends BaseTravelRequirement implements TravelRequirement {
     public static final String SUB_TYPE;
@@ -44,7 +47,45 @@ public class TrafficToolSeatRequirement extends BaseTravelRequirement implements
         return resBuilder.build();
     }
 
-    public Object fromJSON(JsonObject jsObject) throws JsonException {
-        return null;
+    public TrafficToolSeatRequirement fromJSON(JsonObject jsObject) throws JsonException {
+        String requirementId = jsObject.getString(Introspection.JSONKeys.UUID);
+
+        if (requirementId != null) {
+            try {
+                this.requirementId = UuidUtil.fromUuidStr(requirementId);
+            } catch (InvalidTravelReqirementException e) {
+                throw new JsonException(e.getMessage(), e);
+            }            
+        }
+
+        return newFromJSON(jsObject);
+    }
+
+    public TrafficToolSeatRequirement newFromJSON(JsonObject jsObject) throws JsonException {
+        String type = jsObject.getString(Introspection.JSONKeys.TYPE);
+        if (type != null && !Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT.equals(type)) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.TYPE, type));
+        }
+
+        String subType = jsObject.getString(Introspection.JSONKeys.SUB_TYPE);
+        if (subType != null && !SUB_TYPE.equals(subType)) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.SUB_TYPE, subType));
+        }
+
+        int trafficToolSeatClass = jsObject.getInt(Introspection.JSONKeys.TRAFFIC_TOOL_SEAT_CLASS, 0);
+        if (trafficToolSeatClass > 0) {
+            try {
+                this.trafficToolSeatClass = Introspection.JsonValueHelper.getTrafficSeatClass(trafficToolSeatClass);
+            } catch (InvalidTravelReqirementException e) {
+                throw new JsonException(e.getMessage(), e);
+            }
+        } else {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.TRAFFIC_TOOL_SEAT_CLASS, trafficToolSeatClass));
+        }
+
+        return this;
     }
 }

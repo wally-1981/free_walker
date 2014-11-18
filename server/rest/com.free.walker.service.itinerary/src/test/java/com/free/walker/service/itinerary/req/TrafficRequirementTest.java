@@ -1,14 +1,19 @@
 package com.free.walker.service.itinerary.req;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonException;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import org.junit.Test;
 
@@ -74,5 +79,33 @@ public class TrafficRequirementTest {
         assertEquals(18 - 12, selection2.getInt(Introspection.JSONKeys.TIME_RANGE_OFFSET));
 
         assertEquals(false, trafficRequirement.isItinerary());
+    }
+
+    @Test
+    public void testFromJSON() throws JsonException {
+        JsonObjectBuilder requirement = Json.createObjectBuilder();
+        UUID uuid = UUID.randomUUID();
+        requirement.add(Introspection.JSONKeys.UUID, uuid.toString());
+        requirement.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT);
+        requirement.add(Introspection.JSONKeys.SUB_TYPE, TrafficRequirement.SUB_TYPE);
+        requirement.add(Introspection.JSONKeys.TRAFFIC_TOOL_TYPE,
+            Introspection.JSONValues.TRAFFIC_TOOL_TYPE_TRAIN.enumValue());
+        JsonArrayBuilder datetimeRangeSelections = Json.createArrayBuilder();
+        JsonObjectBuilder datetimeRange1 = Json.createObjectBuilder();
+        datetimeRange1.add(Introspection.JSONKeys.TIME_RANGE_START,
+            Introspection.JSONValues.TIME_RANGE_06_12.realValue());
+        datetimeRange1.add(Introspection.JSONKeys.TIME_RANGE_OFFSET,
+            Introspection.JSONValues.TIME_RANGE_06_12.imaginaryValue());
+        JsonObjectBuilder datetimeRange2 = Json.createObjectBuilder();
+        datetimeRange2.add(Introspection.JSONKeys.TIME_RANGE_START,
+            Introspection.JSONValues.TIME_RANGE_12_18.realValue());
+        datetimeRange2.add(Introspection.JSONKeys.TIME_RANGE_OFFSET,
+            Introspection.JSONValues.TIME_RANGE_12_18.imaginaryValue());
+        datetimeRangeSelections.add(datetimeRange1);
+        datetimeRangeSelections.add(datetimeRange2);
+        requirement.add(Introspection.JSONKeys.DATETIME_RANGE_SELECTIONS, datetimeRangeSelections);
+        TravelRequirement trafficRequirement = new TrafficRequirement().fromJSON(requirement.build());
+        assertNotNull(trafficRequirement);
+        assertEquals(uuid.toString(), trafficRequirement.getUUID().toString());
     }
 }

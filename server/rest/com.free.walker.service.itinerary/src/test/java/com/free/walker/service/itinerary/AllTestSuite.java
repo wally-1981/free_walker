@@ -19,6 +19,7 @@ import com.free.walker.service.itinerary.req.TrafficRequirementTest;
 import com.free.walker.service.itinerary.req.TrafficToolSeatRequirementTest;
 import com.free.walker.service.itinerary.req.TravelProposalTest;
 import com.free.walker.service.itinerary.req.TravelRequirementTest;
+import com.free.walker.service.itinerary.rest.ItineraryServiceTest;
 import com.free.walker.service.itinerary.util.JsonObjectHelperTest;
 import com.free.walker.service.itinerary.util.UuidUtilTest;
 
@@ -40,14 +41,16 @@ import com.free.walker.service.itinerary.util.UuidUtilTest;
     InMemoryTravelRequirementDAOImplTest.class,
 
     HotelRequirementTest.class,
-    ItineraryRequirementTest.class,
     ResortRequirementTest.class,
     TrafficRequirementTest.class,
     TrafficToolSeatRequirementTest.class,
 
+    ItineraryRequirementTest.class,
     TravelProposalTest.class,
 
     TravelProductTest.class,
     TravelRequirementTest.class,
+
+    ItineraryServiceTest.class,
 })
 public class AllTestSuite {}

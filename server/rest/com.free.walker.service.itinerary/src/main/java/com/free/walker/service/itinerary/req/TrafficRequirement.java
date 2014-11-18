@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonException;
 import javax.json.JsonObject;
@@ -11,11 +12,14 @@ import javax.json.JsonObjectBuilder;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.Flight;
 import com.free.walker.service.itinerary.basic.Train;
+import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.primitive.TrafficToolType;
 import com.free.walker.service.itinerary.primitive.TravelTimeRange;
+import com.free.walker.service.itinerary.util.UuidUtil;
 
 public class TrafficRequirement extends BaseTravelRequirement implements TravelRequirement {
     public static final String SUB_TYPE;
@@ -105,7 +109,58 @@ public class TrafficRequirement extends BaseTravelRequirement implements TravelR
         return resBuilder.build();
     }
 
-    public Object fromJSON(JsonObject jsObject) throws JsonException {
-        return null;
+    public TrafficRequirement fromJSON(JsonObject jsObject) throws JsonException {
+        String requirementId = jsObject.getString(Introspection.JSONKeys.UUID);
+
+        if (requirementId != null) {
+            try {
+                this.requirementId = UuidUtil.fromUuidStr(requirementId);
+            } catch (InvalidTravelReqirementException e) {
+                throw new JsonException(e.getMessage(), e);
+            }            
+        }
+
+        return newFromJSON(jsObject);
+    }
+
+    public TrafficRequirement newFromJSON(JsonObject jsObject) throws JsonException {
+        String type = jsObject.getString(Introspection.JSONKeys.TYPE);
+        if (type != null && !Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT.equals(type)) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.TYPE, type));
+        }
+
+        String subType = jsObject.getString(Introspection.JSONKeys.SUB_TYPE);
+        if (subType != null && !SUB_TYPE.equals(subType)) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.SUB_TYPE, subType));
+        }
+
+        int trafficToolType = jsObject.getInt(Introspection.JSONKeys.TRAFFIC_TOOL_TYPE, 0);
+        if (trafficToolType > 0) {
+            try {
+                this.trafficToolType = Introspection.JsonValueHelper.getTrafficToolType(trafficToolType);
+            } catch (InvalidTravelReqirementException e) {
+                throw new JsonException(e.getMessage(), e);
+            }
+        } else {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.TRAFFIC_TOOL_TYPE, trafficToolType));
+        }
+
+        JsonArray dateTimeSelections = jsObject.getJsonArray(Introspection.JSONKeys.DATETIME_RANGE_SELECTIONS);
+        trafficToolTimeRangeSelections = new ArrayList<TravelTimeRange>();
+        try {
+            for (int i = 0; i < dateTimeSelections.size(); i++) {
+                JsonObject dateTime = dateTimeSelections.getJsonObject(i);
+                int start = dateTime.getInt(Introspection.JSONKeys.TIME_RANGE_START, -1);
+                int offset = dateTime.getInt(Introspection.JSONKeys.TIME_RANGE_OFFSET, -1);
+                trafficToolTimeRangeSelections.add(Introspection.JsonValueHelper.getTravelTimeRange(start, offset));
+            }
+        } catch (InvalidTravelReqirementException e) {
+            throw new JsonException(e.getMessage(), e);
+        }
+
+        return this;
     }
 }

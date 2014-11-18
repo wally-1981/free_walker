@@ -36,4 +36,9 @@ public class TravelProposalTest {
         assertEquals(1, requirements.size());
         assertNotNull(requirements.get(0));
     }
+
+    @Test
+    public void testFromJSON() throws JsonException {
+        ;
+    }
 }

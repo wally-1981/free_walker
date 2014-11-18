@@ -3,8 +3,12 @@ package com.free.walker.service.itinerary.req;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.UUID;
+
+import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import org.junit.Test;
 
@@ -47,5 +51,21 @@ public class ResortRequirementTest {
         assertNotNull(jo.get(Introspection.JSONKeys.RESORT));
 
         assertEquals(false, resortRequirement.isItinerary());
+    }
+
+    @Test
+    public void testFromJSON() throws JsonException {
+        JsonObjectBuilder requirement = Json.createObjectBuilder();
+        UUID uuid = UUID.randomUUID();
+        requirement.add(Introspection.JSONKeys.UUID, uuid.toString());
+        requirement.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT);
+        requirement.add(Introspection.JSONKeys.SUB_TYPE, ResortRequirement.SUB_TYPE);
+        requirement.add(Introspection.JSONKeys.STAR, Introspection.JSONValues.RESORT_STAR_STD_4A.enumValue());
+        requirement.add(Introspection.JSONKeys.TIME_RANGE_START, Introspection.JSONValues.TIME_RANGE_12_18.realValue());
+        requirement.add(Introspection.JSONKeys.TIME_RANGE_OFFSET,
+            Introspection.JSONValues.TIME_RANGE_12_18.imaginaryValue());
+        TravelRequirement resortRequirement = new ResortRequirement().fromJSON(requirement.build());
+        assertNotNull(resortRequirement);
+        assertEquals(uuid.toString(), resortRequirement.getUUID().toString());
     }
 }

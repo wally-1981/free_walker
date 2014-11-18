@@ -7,10 +7,13 @@ import javax.json.JsonObjectBuilder;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.Resort;
+import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.primitive.ResortStar;
 import com.free.walker.service.itinerary.primitive.TravelTimeRange;
+import com.free.walker.service.itinerary.util.UuidUtil;
 
 public class ResortRequirement extends BaseTravelRequirement implements TravelRequirement {
     public static final String SUB_TYPE;
@@ -22,7 +25,7 @@ public class ResortRequirement extends BaseTravelRequirement implements TravelRe
 
     private TravelTimeRange arrivalTimeRange;
     private Resort resort;
-    private ResortStar resortStar;
+    private ResortStar star;
 
     public ResortRequirement() {
         ;
@@ -38,14 +41,14 @@ public class ResortRequirement extends BaseTravelRequirement implements TravelRe
         this.arrivalTimeRange = arrivalTimeRange;
     }
 
-    public ResortRequirement(TravelTimeRange arrivalTimeRange, ResortStar resortStar) {
+    public ResortRequirement(TravelTimeRange arrivalTimeRange, ResortStar star) {
         this(arrivalTimeRange);
 
-        if (resortStar == null) {
+        if (star == null) {
             throw new NullPointerException();
         }
 
-        this.resortStar = resortStar;
+        this.star = star;
     }
 
     public ResortRequirement(TravelTimeRange arrivalTimeRange, Resort resort) {
@@ -66,8 +69,8 @@ public class ResortRequirement extends BaseTravelRequirement implements TravelRe
         resBuilder.add(Introspection.JSONKeys.TIME_RANGE_START, arrivalTimeRange.realValue());
         resBuilder.add(Introspection.JSONKeys.TIME_RANGE_OFFSET, arrivalTimeRange.imaginaryValue());
 
-        if (resortStar != null) {
-            resBuilder.add(Introspection.JSONKeys.STAR, resortStar.enumValue());
+        if (star != null) {
+            resBuilder.add(Introspection.JSONKeys.STAR, star.enumValue());
         }
 
         if (resort != null) {
@@ -77,7 +80,57 @@ public class ResortRequirement extends BaseTravelRequirement implements TravelRe
         return resBuilder.build();
     }
 
-    public Object fromJSON(JsonObject jsObject) throws JsonException {
-        return null;
+    public ResortRequirement fromJSON(JsonObject jsObject) throws JsonException {
+        String requirementId = jsObject.getString(Introspection.JSONKeys.UUID);
+
+        if (requirementId != null) {
+            try {
+                this.requirementId = UuidUtil.fromUuidStr(requirementId);
+            } catch (InvalidTravelReqirementException e) {
+                throw new JsonException(e.getMessage(), e);
+            }            
+        }
+
+        return newFromJSON(jsObject);
+    }
+
+    public ResortRequirement newFromJSON(JsonObject jsObject) throws JsonException {
+        String type = jsObject.getString(Introspection.JSONKeys.TYPE);
+        if (type != null && !Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT.equals(type)) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.TYPE, type));
+        }
+
+        String subType = jsObject.getString(Introspection.JSONKeys.SUB_TYPE);
+        if (subType != null && !SUB_TYPE.equals(subType)) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.SUB_TYPE, subType));
+        }
+
+        int star = jsObject.getInt(Introspection.JSONKeys.STAR, 0);
+        if (star > 0) {
+            try {
+                this.star = Introspection.JsonValueHelper.getResortStar(star);
+            } catch (InvalidTravelReqirementException e) {
+                throw new JsonException(e.getMessage(), e);
+            }
+        }
+
+        int start = jsObject.getInt(Introspection.JSONKeys.TIME_RANGE_START, -1);
+        int offset = jsObject.getInt(Introspection.JSONKeys.TIME_RANGE_OFFSET, -1);
+        if (start >= 0 && offset >= 0) {
+            try {
+                this.arrivalTimeRange = Introspection.JsonValueHelper.getTravelTimeRange(start, offset);
+            } catch (InvalidTravelReqirementException e) {
+                throw new JsonException(e.getMessage(), e);
+            }
+        }
+
+        JsonObject resortObj = jsObject.getJsonObject(Introspection.JSONKeys.RESORT);
+        if (resortObj != null) {
+            this.resort = (Resort) new Resort().fromJSON(resortObj);
+        }
+
+        return this;
     }
 }
