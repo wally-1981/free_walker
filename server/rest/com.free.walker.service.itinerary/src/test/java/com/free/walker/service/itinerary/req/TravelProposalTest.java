@@ -4,19 +4,29 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.UUID;
+
+import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import com.free.walker.service.itinerary.Constants;
+import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
 import com.free.walker.service.itinerary.primitive.Introspection;
 
 public class TravelProposalTest {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Before
     public void before() {
         PlatformInitializer.init();
@@ -39,6 +49,16 @@ public class TravelProposalTest {
 
     @Test
     public void testFromJSON() throws JsonException {
-        ;
+        JsonObjectBuilder proposal = Json.createObjectBuilder();
+        UUID uuid = UUID.randomUUID();
+        proposal.add(Introspection.JSONKeys.UUID, uuid.toString());
+        proposal.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL);
+        JsonArray requirements = Json.createArrayBuilder().build();
+        proposal.add(Introspection.JSONKeys.REQUIREMENTS, requirements);
+
+        thrown.expect(JsonException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+            Introspection.JSONKeys.REQUIREMENTS, requirements));
+        new TravelProposal().fromJSON(proposal.build());
     }
 }

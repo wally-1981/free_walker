@@ -6,21 +6,30 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import com.free.walker.service.itinerary.Constants;
+import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.ibm.icu.util.Calendar;
 
 public class ItineraryRequirementTest {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Before
     public void before() {
         PlatformInitializer.init();
@@ -70,6 +79,14 @@ public class ItineraryRequirementTest {
 
     @Test
     public void testFromJSON() throws JsonException {
-        ;
+        JsonObjectBuilder itinerary = Json.createObjectBuilder();
+        UUID uuid = UUID.randomUUID();
+        itinerary.add(Introspection.JSONKeys.UUID, uuid.toString());
+        itinerary.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY);
+
+        thrown.expect(JsonException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+            Introspection.JSONKeys.DEPARTURE, null));
+        new ItineraryRequirement().fromJSON(itinerary.build());
     }
 }

@@ -1,8 +1,10 @@
 package com.free.walker.service.itinerary.req;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonException;
 import javax.json.JsonObject;
@@ -99,6 +101,14 @@ public class ItineraryRequirement extends BaseTravelRequirement implements Trave
         } else {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.DESTINATION, destObj));
+        }
+
+        JsonArray datetimeSelections = jsObject.getJsonArray(Introspection.JSONKeys.DATETIME_SELECTIONS);
+        departureDateTimeSelections = new ArrayList<Calendar>();
+        for (int i = 0; datetimeSelections != null && i < datetimeSelections.size(); i++) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(datetimeSelections.getJsonNumber(0).longValue());
+            departureDateTimeSelections.add(cal);
         }
 
         return this;
