@@ -59,6 +59,6 @@ public class HotelRequirementTest {
         requirement.add(Introspection.JSONKeys.STAR, Introspection.JSONValues.HOTEL_STAR_LST_4.enumValue());
         TravelRequirement hotelRequirement = new HotelRequirement().fromJSON(requirement.build());
         assertNotNull(hotelRequirement);
-        assertEquals(uuid.toString(), hotelRequirement.getUUID().toString());
+        assertEquals(uuid, hotelRequirement.getUUID());
     }
 }

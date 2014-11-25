@@ -1,5 +1,7 @@
 package com.free.walker.service.itinerary;
 
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +15,9 @@ public class Constants {
     public static City WUHAN;
     public static City GENEVA;
 
+    // TODO: Replace this with the data from user account system.
+    public static final UUID MockAdminUser;
+
     static {
         Logger LOG = LoggerFactory.getLogger(City.class);
         try {
@@ -23,5 +28,7 @@ public class Constants {
         } catch (InvalidTravelReqirementException e) {
             LOG.error(e.getMessage(), e);
         }
+
+        MockAdminUser = UUID.fromString("8eeeeca9-a27c-46c1-a38f-30372d44fa70");
     }
 }

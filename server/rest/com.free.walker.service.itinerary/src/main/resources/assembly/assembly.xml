@@ -29,6 +29,7 @@
 			<outputDirectory>\</outputDirectory>
 			<includes>
 				<include>startServer.*</include>
+				<include>startServerDevo.*</include>
 			</includes>
 		</fileSet>
 	</fileSets>

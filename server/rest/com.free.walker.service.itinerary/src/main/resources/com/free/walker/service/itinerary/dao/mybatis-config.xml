@@ -13,8 +13,8 @@
 		<environment id="development">
 			<transactionManager type="JDBC"/>
 			<dataSource type="POOLED">
-				<property name="driver" value="${database_driver}"/>
-				<property name="url" value="${database_url}"/>
+				<property name="driver" value="${mysql_database_driver}"/>
+				<property name="url" value="${mysql_database_url}"/>
 				<property name="username" value="${username}"/>
 				<property name="password" value="${password}"/>
 				<property name="poolMaximumActiveConnections" value="32"/>

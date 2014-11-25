@@ -66,6 +66,6 @@ public class ResortRequirementTest {
             Introspection.JSONValues.TIME_RANGE_12_18.imaginaryValue());
         TravelRequirement resortRequirement = new ResortRequirement().fromJSON(requirement.build());
         assertNotNull(resortRequirement);
-        assertEquals(uuid.toString(), resortRequirement.getUUID().toString());
+        assertEquals(uuid, resortRequirement.getUUID());
     }
 }

@@ -3,14 +3,14 @@ package com.free.walker.service.itinerary.dao;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelBasicDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.dao.mysql.MySQLTravelBasicDAOImpl;
-import com.free.walker.service.itinerary.dao.mysql.MySQLTravelRequirementDAOImpl;
+import com.free.walker.service.itinerary.dao.mysql.MyMongoSQLTravelRequirementDAOImpl;
 
 public class DAOFactory {
     public static TravelRequirementDAO getTravelRequirementDAO(String className) {
         if (InMemoryTravelRequirementDAOImpl.class.getName().equals(className)) {
             return InMemoryTravelRequirementDAOImpl.getInstance();
-        } else if (MySQLTravelRequirementDAOImpl.class.getName().equals(className)) {
-            return MySQLTravelRequirementDAOImpl.getInstance();
+        } else if (MyMongoSQLTravelRequirementDAOImpl.class.getName().equals(className)) {
+            return MyMongoSQLTravelRequirementDAOImpl.getInstance();
         } else {
             return null;
         }

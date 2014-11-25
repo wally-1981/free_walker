@@ -14,6 +14,10 @@ public class UuidUtil {
     }
 
     public static boolean isCmpUuidStr(String uuidStr) {
+        if (uuidStr == null) {
+            throw new NullPointerException();
+        }
+
         if (uuidStr.charAt(8) == '-' && uuidStr.charAt(13) == '-' && uuidStr.charAt(18) == '-'
             && uuidStr.charAt(23) == '-') {
             return false;
@@ -27,6 +31,10 @@ public class UuidUtil {
     }
 
     public static UUID fromCmpUuidStr(String uuidCmpStr) throws InvalidTravelReqirementException {
+        if (uuidCmpStr == null) {
+            throw new NullPointerException();
+        }
+
         try {
             uuidCmpStr = new StringBuffer(uuidCmpStr.substring(0, 8)).append("-").append(uuidCmpStr.substring(8, 12))
                 .append("-").append(uuidCmpStr.substring(12, 16)).append("-").append(uuidCmpStr.substring(16, 20))
@@ -35,5 +43,13 @@ public class UuidUtil {
         } catch (Exception e) {
             throw new InvalidTravelReqirementException(e.getMessage(), uuidCmpStr);
         }
+    }
+
+    public static String toCmpUuidStr(String uuidStr) {
+        if (uuidStr == null) {
+            throw new NullPointerException();
+        }
+
+        return uuidStr.replaceAll("-", "");
     }
 }

@@ -10,6 +10,7 @@ import javax.json.JsonValue;
 
 import com.free.walker.service.itinerary.Serializable;
 import com.free.walker.service.itinerary.primitive.Introspection;
+import com.mongodb.MongoException;
 
 public class InvalidTravelReqirementException extends IllegalAccessException implements Serializable {
     private static final long serialVersionUID = -8526202664364439050L;
@@ -31,6 +32,12 @@ public class InvalidTravelReqirementException extends IllegalAccessException imp
         this.context = context;
     }
 
+    public InvalidTravelReqirementException(UUID travelRequirementId, MongoException e) {
+        super(e.getMessage());
+        this.context = travelRequirementId.toString();
+        this.errorCode = new ErrorCode(ErrorCode.ErrorCodeType.MONGO_DB_ERROR, e.getCode());
+    }
+
     public InvalidTravelReqirementException(UUID travelRequirementId, ErrorCode errorCode) {
         super();
         this.context = travelRequirementId.toString();
@@ -42,6 +49,10 @@ public class InvalidTravelReqirementException extends IllegalAccessException imp
 
         if (errorCode != null) {
             res.add(Introspection.JSONKeys.ERROR_CODE, errorCode.getCode());
+
+            if (errorCode.getType() != null) {
+                res.add(Introspection.JSONKeys.ERROR_TYPE, errorCode.getType().enumValue());
+            }
         }
 
         if (context != null) {

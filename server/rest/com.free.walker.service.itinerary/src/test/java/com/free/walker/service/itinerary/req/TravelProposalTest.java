@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.free.walker.service.itinerary.Constants;
-import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
 import com.free.walker.service.itinerary.primitive.Introspection;
@@ -56,9 +55,11 @@ public class TravelProposalTest {
         JsonArray requirements = Json.createArrayBuilder().build();
         proposal.add(Introspection.JSONKeys.REQUIREMENTS, requirements);
 
-        thrown.expect(JsonException.class);
-        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
-            Introspection.JSONKeys.REQUIREMENTS, requirements));
-        new TravelProposal().fromJSON(proposal.build());
+        TravelProposal travelProposal = new TravelProposal().fromJSON(proposal.build());
+        assertNotNull(travelProposal);
+        assertEquals(uuid, travelProposal.getUUID());
+        assertNotNull(travelProposal.getTravelRequirements());
+        assertEquals(0, travelProposal.getTravelRequirements().size());
+        
     }
 }

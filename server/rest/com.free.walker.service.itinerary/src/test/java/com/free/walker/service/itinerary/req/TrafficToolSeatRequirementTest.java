@@ -39,6 +39,6 @@ public class TrafficToolSeatRequirementTest {
         TravelRequirement trafficToolSeatClassRequirement = new TrafficToolSeatRequirement().fromJSON(requirement
             .build());
         assertNotNull(trafficToolSeatClassRequirement);
-        assertEquals(uuid.toString(), trafficToolSeatClassRequirement.getUUID().toString());
+        assertEquals(uuid, trafficToolSeatClassRequirement.getUUID());
     }
 }

@@ -1,0 +1,22 @@
+package com.free.walker.service.itinerary.dao.memo;
+
+import org.junit.After;
+import org.junit.Before;
+
+import com.free.walker.service.itinerary.dao.DAOFactory;
+import com.free.walker.service.itinerary.dao.mysql.MyMongoSQLTravelRequirementDAOImpl;
+import com.free.walker.service.itinerary.infra.PlatformInitializer;
+
+public class MyMongoSQLTravelRequirementDAOImplTest extends AbstractTravelRequirementDAOImplTest {
+    @Before
+    public void before() {
+        PlatformInitializer.init();
+
+        travelRequirementDAO = DAOFactory.getTravelRequirementDAO(MyMongoSQLTravelRequirementDAOImpl.class.getName());
+    }
+
+    @After
+    public void after() {
+        ;
+    }
+}

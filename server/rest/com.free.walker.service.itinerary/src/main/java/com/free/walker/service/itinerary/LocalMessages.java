@@ -56,9 +56,13 @@ public class LocalMessages {
 
     public static final String missing_travel_requirement = "missing_travel_requirement";
     public static final String existed_travel_requirement = "existed_travel_requirement";
-    public static final String missing_itinerary_requirement = "missing_itinerary_requirement";
-    public static final String not_found_itinerary_requirement = "not_found_itinerary_requirement";
-    public static final String illegal_add_travel_requirement_operation = "illegal_add_travel_requirement_operation";
+    public static final String missing_travel_proposal = "missing_travel_proposal";
+    public static final String existed_travel_proposal = "existed_travel_proposal";
+    public static final String missing_travel_itinerary = "missing_travel_itinerary";
+    public static final String existed_travel_itinerary = "existed_travel_itinerary";
+
+    public static final String illegal_add_proposal_as_requirement = "illegal_add_proposal_as_requirement";
+    public static final String illegal_add_itinerary_as_requirement = "illegal_add_itinerary_as_requirement";
     public static final String illegal_update_travel_requirement_operation = "illegal_update_travel_requirement_operation";
     public static final String illegal_delete_travel_requirement_operation = "illegal_delete_travel_requirement_operation";
 
@@ -66,8 +70,10 @@ public class LocalMessages {
     public static final String itinerary_not_found = "itinerary_not_found";
     public static final String proposal_not_found = "proposal_not_found";
 
-    public static final String dao_init_failure = "dao_init_failure";
     public static final String introspection_failure = "introspection_failure";
+    public static final String dao_init_failure = "dao_init_failure";
+    public static final String dao_operation_failure = "dao_operation_failure";
+    public static final String invalid_db_host_address = "invalid_db_host_address";
 
     public static final String invalid_parameter_with_value = "invalid_parameter_with_value";
 

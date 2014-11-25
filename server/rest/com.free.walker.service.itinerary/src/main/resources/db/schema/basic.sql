@@ -1,5 +1,20 @@
-CREATE DATABASE  IF NOT EXISTS `itinerary`;
+CREATE DATABASE IF NOT EXISTS `itinerary`;
 USE `itinerary`;
+
+--
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `itinerary`.`user` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uuid` BINARY(16) NOT NULL,
+  `login` VARCHAR(48) NOT NULL,
+  `nick_name` VARCHAR(48) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  UNIQUE INDEX `uuid_UNIQUE` (`uuid` ASC),
+  UNIQUE INDEX `login_UNIQUE` (`login` ASC));
 
 --
 -- Table structure for table `country`

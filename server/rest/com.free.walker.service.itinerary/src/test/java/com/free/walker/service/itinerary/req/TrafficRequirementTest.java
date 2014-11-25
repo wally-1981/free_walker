@@ -106,6 +106,6 @@ public class TrafficRequirementTest {
         requirement.add(Introspection.JSONKeys.DATETIME_RANGE_SELECTIONS, datetimeRangeSelections);
         TravelRequirement trafficRequirement = new TrafficRequirement().fromJSON(requirement.build());
         assertNotNull(trafficRequirement);
-        assertEquals(uuid.toString(), trafficRequirement.getUUID().toString());
+        assertEquals(uuid, trafficRequirement.getUUID());
     }
 }

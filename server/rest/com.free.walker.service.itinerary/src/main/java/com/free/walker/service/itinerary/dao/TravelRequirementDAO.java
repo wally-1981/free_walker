@@ -3,37 +3,176 @@ package com.free.walker.service.itinerary.dao;
 import java.util.List;
 import java.util.UUID;
 
+import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
+import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.TravelProposal;
 import com.free.walker.service.itinerary.req.TravelRequirement;
 
 public interface TravelRequirementDAO extends HealthyDAO {
-    public UUID createProposal(TravelProposal travelProposal) throws InvalidTravelReqirementException;
+    /**
+     * Create the specified proposal, and all attached initial itineraries will
+     * be created either as ordered.
+     * 
+     * @param travelProposal
+     * @return
+     * @throws InvalidTravelReqirementException
+     * @throws DatabaseAccessException
+     */
+    public UUID createProposal(TravelProposal travelProposal) throws InvalidTravelReqirementException,
+        DatabaseAccessException;
 
+    /**
+     * Add the itinerary to the specified proposal and make it as the next of
+     * the specified itinerary.
+     * 
+     * @param travelProposalId
+     * @param itineraryRequirementId
+     * @param itineraryRequirement
+     * @return
+     * @throws InvalidTravelReqirementException
+     * @throws DatabaseAccessException
+     */
+    public UUID addItinerary(UUID travelProposalId, UUID itineraryRequirementId,
+        ItineraryRequirement itineraryRequirement) throws InvalidTravelReqirementException, DatabaseAccessException;
+
+    /**
+     * Add the requirement to the specified proposal and make it as an ordinary
+     * requirement to the specified itinerary.
+     * 
+     * @param travelProposalId
+     * @param itineraryRequirementId
+     * @param travelRequirement
+     * @return
+     * @throws InvalidTravelReqirementException
+     * @throws DatabaseAccessException
+     */
+    public UUID addRequirement(UUID travelProposalId, UUID itineraryRequirementId, TravelRequirement travelRequirement)
+        throws InvalidTravelReqirementException, DatabaseAccessException;
+
+    /**
+     * Add the requirement to the specified proposal. The requirement can be an
+     * itinernary or an ordinary requirement. If the requirement is an
+     * itinerary, it will be made as the last itinerary of the proposal. If the
+     * requiremnt is an ordinary requirement, it will be made as an ordinary
+     * requirement to the latest itinerary.
+     * 
+     * @param travelProposalId
+     * @param travelRequirement
+     * @return
+     * @throws InvalidTravelReqirementException
+     * @throws DatabaseAccessException
+     */
     public UUID addRequirement(UUID travelProposalId, TravelRequirement travelRequirement)
-        throws InvalidTravelReqirementException;
+        throws InvalidTravelReqirementException, DatabaseAccessException;
 
-    public UUID addRequirement(UUID travelProposalId, UUID itineraryRequirementId,
-        TravelRequirement travelRequirement) throws InvalidTravelReqirementException;
+    /**
+     * Retrieve all requirements of the specified proposal. It will include both
+     * itineraries and ordinary requirements, and all itineraries are ordered.
+     * The ordinary requirements of an itinerary will follow its itinerary until
+     * the next itinerary or the end of the list.
+     * 
+     * @param travelProposalId
+     * @return
+     * @throws InvalidTravelReqirementException
+     * @throws DatabaseAccessException
+     */
+    public List<TravelRequirement> getRequirements(UUID travelProposalId) throws InvalidTravelReqirementException,
+        DatabaseAccessException;
 
-    public List<TravelRequirement> getRequirements(UUID travelProposalId) throws InvalidTravelReqirementException;
-
+    /**
+     * Retrieve all itineraries of the specified proposal, and all itineraries
+     * are ordered.
+     * 
+     * @param travelProposalId
+     * @return
+     * @throws InvalidTravelReqirementException
+     * @throws DatabaseAccessException
+     */
     public List<TravelRequirement> getItineraryRequirements(UUID travelProposalId)
-        throws InvalidTravelReqirementException;
+        throws InvalidTravelReqirementException, DatabaseAccessException;
 
+    /**
+     * Retrieve all ordinary requirements of the specified proposal and
+     * itinerary.
+     * 
+     * @param travelProposalId
+     * @param itineraryRequirementId
+     * @return
+     * @throws InvalidTravelReqirementException
+     * @throws DatabaseAccessException
+     */
     public List<TravelRequirement> getRequirements(UUID travelProposalId, UUID itineraryRequirementId)
-        throws InvalidTravelReqirementException;
+        throws InvalidTravelReqirementException, DatabaseAccessException;
 
+    /**
+     * Retrieve the previous itinerary of the specified proposal and
+     * requirement. The requirement id must not point to a proposal. null will
+     * be retunred if there is no more itinerary backwards;
+     * 
+     * @param travelProposalId
+     * @param travelRequirementId
+     * @return
+     * @throws InvalidTravelReqirementException
+     * @throws DatabaseAccessException
+     */
     public TravelRequirement getPrevItineraryRequirement(UUID travelProposalId, UUID travelRequirementId)
-        throws InvalidTravelReqirementException;
+        throws InvalidTravelReqirementException, DatabaseAccessException;
 
+    /**
+     * Retrieve the next itinerary of the specified proposal and requirement.
+     * The requirement id must not point to a proposal. null will be retunred if
+     * there is no more itinerary forwards.
+     * 
+     * @param travelProposalId
+     * @param travelRequirementId
+     * @return
+     * @throws InvalidTravelReqirementException
+     * @throws DatabaseAccessException
+     */
     public TravelRequirement getNextItineraryRequirement(UUID travelProposalId, UUID travelRequirementId)
-        throws InvalidTravelReqirementException;
+        throws InvalidTravelReqirementException, DatabaseAccessException;
 
-    public TravelRequirement getRequirement(UUID travelRequirementId) throws InvalidTravelReqirementException;
+    /**
+     * Retrieve the specified requirement by identifier and type. The type could
+     * be "proposal", "itinerary", "requirement" or null. null type means the
+     * retrieval process will go through to check all the possible types. null
+     * will be returned if not found the requirement.
+     * 
+     * @param travelRequirementId
+     * @param requirementType
+     * @return
+     * @throws InvalidTravelReqirementException
+     * @throws DatabaseAccessException
+     */
+    public TravelRequirement getRequirement(UUID travelRequirementId, String requirementType)
+        throws InvalidTravelReqirementException, DatabaseAccessException;
 
-    public UUID updateRequirement(UUID travelRequirementId, TravelRequirement travelRequirement)
-        throws InvalidTravelReqirementException;
+    /**
+     * Update the specified requirement by identifier with the specified
+     * requirement. The proposal and itinerary are immutable, so they are not
+     * allowed to be updated.
+     * 
+     * @param travelRequirement
+     * @return
+     * @throws InvalidTravelReqirementException
+     * @throws DatabaseAccessException
+     */
+    public UUID updateRequirement(TravelRequirement travelRequirement) throws InvalidTravelReqirementException,
+        DatabaseAccessException;
 
-    public UUID removeRequirement(UUID travelRequirementId) throws InvalidTravelReqirementException;
+    /**
+     * Remove the specified requirement by identifier. Removing an itinerary
+     * will remove all of its ordinary requirements. A proposal can not be
+     * removed and the last itinerary in the proposal can not be removed. null
+     * will be returned if the removal does not found the removing requirement.
+     * 
+     * @param travelProposalId
+     * @param travelRequirementId
+     * @return
+     * @throws InvalidTravelReqirementException
+     * @throws DatabaseAccessException
+     */
+    public UUID removeRequirement(UUID travelProposalId, UUID travelRequirementId)
+        throws InvalidTravelReqirementException, DatabaseAccessException;
 }

@@ -86,9 +86,6 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
             } catch (InvalidTravelReqirementException e) {
                 throw new JsonException(e.getMessage(), e);
             }
-        } else {
-            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
-                Introspection.JSONKeys.REQUIREMENTS, requirements));
         }
 
         return this;

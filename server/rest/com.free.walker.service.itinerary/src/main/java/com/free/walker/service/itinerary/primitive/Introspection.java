@@ -46,6 +46,7 @@ public class Introspection {
         public static final String TRAFFIC_TOOL_SEAT_CLASS = "traffice_tool_seat_class";
 
         public static final String ERROR_CODE = "error_code";
+        public static final String ERROR_TYPE = "error_type";
         public static final String ERROR_CNTX = "error_cntx";
         public static final String ERROR_DESC = "error_desc";
         public static final String ERROR_ACTN = "error_actn";

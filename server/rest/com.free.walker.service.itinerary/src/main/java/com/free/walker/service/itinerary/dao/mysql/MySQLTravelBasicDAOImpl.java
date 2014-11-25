@@ -16,15 +16,17 @@ import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.City;
 import com.free.walker.service.itinerary.basic.Country;
 import com.free.walker.service.itinerary.basic.Province;
+import com.free.walker.service.itinerary.dao.DAOConstants;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
 import com.free.walker.service.itinerary.dao.map.BasicMapper;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 
 public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
     private static Logger LOG = LoggerFactory.getLogger(MySQLTravelBasicDAOImpl.class);
+
     private SqlSessionFactory sqlSessionFactory;
-    private String databaseUrl;
-    private String databaseDriver;
+    private String mysqlDatabaseUrl;
+    private String mysqlDatabaseDriver;
 
     private static class SingletonHolder {
         private static final TravelBasicDAO INSTANCE = new MySQLTravelBasicDAOImpl();
@@ -43,8 +45,10 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
             throw new IllegalStateException(e);
         }
         sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-        databaseUrl = sqlSessionFactory.getConfiguration().getVariables().getProperty("database_url");
-        databaseDriver = sqlSessionFactory.getConfiguration().getVariables().getProperty("database_driver");
+        mysqlDatabaseUrl = sqlSessionFactory.getConfiguration().getVariables()
+            .getProperty(DAOConstants.mysql_database_url);
+        mysqlDatabaseDriver = sqlSessionFactory.getConfiguration().getVariables()
+            .getProperty(DAOConstants.mysql_database_driver);
     }
 
     public boolean pingPersistence() {
@@ -58,7 +62,7 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
                 return false;
             }
         } catch(Exception e) {
-            LOG.error(LocalMessages.getMessage(LocalMessages.dao_init_failure, databaseUrl, databaseDriver), e);
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_init_failure, mysqlDatabaseUrl, mysqlDatabaseDriver), e);
             return false;
         } finally {
             session.close();
@@ -72,7 +76,7 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
             List<Country> countries = basicMapper.getAllCounties();
             return countries;
         }  catch(Exception e) {
-            LOG.error(LocalMessages.getMessage(LocalMessages.dao_init_failure, databaseUrl, databaseDriver), e);
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);
         } finally {
             session.close();
@@ -86,7 +90,7 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
             List<Province> provinces = basicMapper.getAllProvinces();
             return provinces;
         }  catch(Exception e) {
-            LOG.error(LocalMessages.getMessage(LocalMessages.dao_init_failure, databaseUrl, databaseDriver), e);
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);
         } finally {
             session.close();
@@ -100,7 +104,7 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
             List<City> cities = basicMapper.getAllCities();
             return cities;
         }  catch(Exception e) {
-            LOG.error(LocalMessages.getMessage(LocalMessages.dao_init_failure, databaseUrl, databaseDriver), e);
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);
         } finally {
             session.close();

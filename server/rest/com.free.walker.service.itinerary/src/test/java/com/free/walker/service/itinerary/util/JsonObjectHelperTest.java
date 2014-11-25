@@ -20,4 +20,13 @@ public class JsonObjectHelperTest {
         JsonObject jo = itineraryRequirement.toJSON();
         assertNotNull(JsonObjectHelper.toRequirement(jo));
     }
+
+    @Test
+    public void testToRequirementStrict() throws InvalidTravelReqirementException {
+        TravelLocation destinationLocation = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departureLocation = new TravelLocation(Constants.WUHAN);
+        ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destinationLocation, departureLocation);
+        JsonObject jo = itineraryRequirement.toJSON();
+        assertNotNull(JsonObjectHelper.toRequirement(jo, true));
+    }
 }

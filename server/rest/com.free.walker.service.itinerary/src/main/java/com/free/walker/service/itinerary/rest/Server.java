@@ -8,33 +8,59 @@ import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
 import org.apache.cxf.jaxrs.provider.jsrjsonp.JsrJsonpProvider;
 
+import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImpl;
+import com.free.walker.service.itinerary.dao.mysql.MyMongoSQLTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
 
 public class Server {
+    private static final String MODE_SINGLE_DEVO = "Devo";
+    private static final String MODE_SINGLE_PROD = "Prod";
 
-    protected Server() throws Exception {
+    protected Server(String mode) throws Exception {
         PlatformInitializer.init(); 
 
         JAXRSServerFactoryBean sf = new JAXRSServerFactoryBean();
+
+        ItineraryService itinerarySvr = null;
+        if (mode.equals(MODE_SINGLE_DEVO)) {
+            itinerarySvr = new ItineraryService(InMemoryTravelRequirementDAOImpl.class);
+        } else if (mode.equals(MODE_SINGLE_PROD)) {
+            itinerarySvr = new ItineraryService(MyMongoSQLTravelRequirementDAOImpl.class);
+        } else {
+            throw new IllegalArgumentException();
+        }
 
         List<Class<?>> classes = new ArrayList<Class<?>>();
         classes.add(ItineraryService.class);
         classes.add(PlatformAdminService.class);
         List<ResourceProvider> providers = new ArrayList<ResourceProvider>();
-        providers.add(new SingletonResourceProvider(new ItineraryService()));
+        providers.add(new SingletonResourceProvider(itinerarySvr));
         providers.add(new SingletonResourceProvider(new PlatformAdminService()));
 
         sf.setResourceClasses(classes);
         sf.setResourceProviders(providers);
         sf.setProvider(new JsrJsonpProvider());
 
-        sf.setAddress("http://localhost:9000/");
+        if (mode.equals(MODE_SINGLE_DEVO)) {
+            sf.setAddress("http://localhost:9000/");
+        } else if (mode.equals(MODE_SINGLE_PROD)) {
+            sf.setAddress("http://localhost:9200/");
+        } else {
+            throw new IllegalArgumentException();
+        }
 
         sf.create();
     }
 
     public static void main(String args[]) throws Exception {
-        new Server();
+        String mode = null;
+        if (args.length == 1) {
+            mode = args[0].substring(1);
+        } else {
+            mode = MODE_SINGLE_DEVO;
+        }
+
+        new Server(mode);
         System.out.println("Server ready...");
 
         Thread.sleep(5 * 6000 * 1000);

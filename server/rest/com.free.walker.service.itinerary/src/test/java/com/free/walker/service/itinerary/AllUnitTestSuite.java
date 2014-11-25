@@ -10,6 +10,7 @@ import com.free.walker.service.itinerary.basic.ProvinceTest;
 import com.free.walker.service.itinerary.basic.ResortTest;
 import com.free.walker.service.itinerary.dao.DAOFactoryTest;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImplTest;
+import com.free.walker.service.itinerary.dao.memo.MyMongoSQLTravelRequirementDAOImplTest;
 import com.free.walker.service.itinerary.primitive.IntrospectionTest;
 import com.free.walker.service.itinerary.product.TravelProductTest;
 import com.free.walker.service.itinerary.req.HotelRequirementTest;
@@ -19,7 +20,6 @@ import com.free.walker.service.itinerary.req.TrafficRequirementTest;
 import com.free.walker.service.itinerary.req.TrafficToolSeatRequirementTest;
 import com.free.walker.service.itinerary.req.TravelProposalTest;
 import com.free.walker.service.itinerary.req.TravelRequirementTest;
-import com.free.walker.service.itinerary.rest.ItineraryServiceTest;
 import com.free.walker.service.itinerary.util.JsonObjectHelperTest;
 import com.free.walker.service.itinerary.util.UuidUtilTest;
 
@@ -39,6 +39,7 @@ import com.free.walker.service.itinerary.util.UuidUtilTest;
 
     DAOFactoryTest.class,
     InMemoryTravelRequirementDAOImplTest.class,
+    MyMongoSQLTravelRequirementDAOImplTest.class,
 
     HotelRequirementTest.class,
     ResortRequirementTest.class,
@@ -50,7 +51,5 @@ import com.free.walker.service.itinerary.util.UuidUtilTest;
 
     TravelProductTest.class,
     TravelRequirementTest.class,
-
-    ItineraryServiceTest.class,
 })
-public class AllTestSuite {}
+public class AllUnitTestSuite {}

@@ -34,7 +34,7 @@ import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
-public class ItineraryServiceTest {
+public abstract class AbstractItineraryServiceTest {
     private HttpClient httpClient;
     private String itineraryServiceUrlStr;
 
@@ -56,7 +56,7 @@ public class ItineraryServiceTest {
     @Before
     public void before() throws InvalidTravelReqirementException {
         httpClient = HttpClientBuilder.create().build();
-        itineraryServiceUrlStr = "http://localhost:9000/service/itinerary/";
+        itineraryServiceUrlStr = getServiceUrl();
 
         {
             JsonObjectBuilder requirementBuilder = Json.createObjectBuilder();
@@ -147,6 +147,9 @@ public class ItineraryServiceTest {
 
     @Test
     public void testAll() throws URISyntaxException {
+        /*
+         * Retrieve service introspection.
+         */
         {
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "introspection/"));
@@ -169,6 +172,9 @@ public class ItineraryServiceTest {
             }
         }
 
+        /*
+         * Create a proposal with an initial itinerary.
+         */
         {
             HttpPost post = new HttpPost();
             post.setEntity(new StringEntity(proposal.toString(), ContentType.APPLICATION_JSON));
@@ -193,6 +199,9 @@ public class ItineraryServiceTest {
             }
         }
 
+        /*
+         * Get the newly created proposal.
+         */
         {
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "proposals/" + proposalId));
@@ -208,29 +217,7 @@ public class ItineraryServiceTest {
                         proposal.getString(Introspection.JSONKeys.TYPE));
 
                     JsonArray requirements = proposal.getJsonArray(Introspection.JSONKeys.REQUIREMENTS);
-                    assertEquals(1, requirements.size());
-
-                    JsonObject itineraryRequirement = requirements.getJsonObject(0);
-                    assertNotNull(itineraryRequirement);
-
-                    itineraryId1st = itineraryRequirement.getString(Introspection.JSONKeys.UUID);
-                    assertNotNull(itineraryId1st);
-
-                    JsonObject departure = itineraryRequirement.getJsonObject(Introspection.JSONKeys.DEPARTURE);
-                    assertNotNull(departure);
-                    JsonObject departureCity = departure.getJsonObject(Introspection.JSONKeys.CITY);
-                    assertNotNull(departureCity);
-                    assertEquals("Barcelona", departureCity.getString(Introspection.JSONKeys.NAME));
-                    assertEquals("巴塞罗纳", departureCity.getString(Introspection.JSONKeys.CHINESE_NAME));
-                    assertEquals("basailuona", departureCity.getString(Introspection.JSONKeys.PINYIN_NAME));
-
-                    JsonObject destination = itineraryRequirement.getJsonObject(Introspection.JSONKeys.DESTINATION);
-                    assertNotNull(destination);
-                    JsonObject destinationCity = destination.getJsonObject(Introspection.JSONKeys.CITY);
-                    assertNotNull(destinationCity);
-                    assertEquals("Taibei", destinationCity.getString(Introspection.JSONKeys.NAME));
-                    assertEquals("台北", destinationCity.getString(Introspection.JSONKeys.CHINESE_NAME));
-                    assertEquals("taibei", destinationCity.getString(Introspection.JSONKeys.PINYIN_NAME));
+                    assertEquals(0, requirements.size());
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -242,6 +229,52 @@ public class ItineraryServiceTest {
             }
         }
 
+        /*
+         * Get all itineraries by proposal id. Only the initial one will be
+         * retrieved at this case moment.
+         */
+        {
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(itineraryServiceUrlStr + "itineraries/" + proposalId + "?requirementType=proposal"));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonArray itineries = Json.createReader(response.getEntity().getContent()).readArray();
+                    assertNotNull(itineries);
+                    assertEquals(1, itineries.size());
+
+                    JsonObject itineraryRequirement = itineries.getJsonObject(0);
+                    assertNotNull(itineraryRequirement);
+                    itineraryId1st = itineraryRequirement.getString(Introspection.JSONKeys.UUID);
+                    
+                    JsonObject departure = itineraryRequirement.getJsonObject(Introspection.JSONKeys.DEPARTURE);
+                    assertNotNull(departure);
+                    JsonObject departureCity = departure.getJsonObject(Introspection.JSONKeys.CITY);
+                    assertNotNull(departureCity);
+                    assertEquals("Barcelona", departureCity.getString(Introspection.JSONKeys.NAME));
+                    assertEquals("巴塞罗纳", departureCity.getString(Introspection.JSONKeys.CHINESE_NAME));
+                    assertEquals("basailuona", departureCity.getString(Introspection.JSONKeys.PINYIN_NAME));
+                    
+                    JsonObject destination = itineraryRequirement.getJsonObject(Introspection.JSONKeys.DESTINATION);
+                    assertNotNull(destination);
+                    JsonObject destinationCity = destination.getJsonObject(Introspection.JSONKeys.CITY);
+                    assertNotNull(destinationCity);
+                    assertEquals("Taibei", destinationCity.getString(Introspection.JSONKeys.NAME));
+                    assertEquals("台北", destinationCity.getString(Introspection.JSONKeys.CHINESE_NAME));
+                    assertEquals("taibei", destinationCity.getString(Introspection.JSONKeys.PINYIN_NAME));
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
+        }
+
+        /*
+         * Add a new itinerary.
+         */
         {
             HttpPost post = new HttpPost();
             post.setEntity(new StringEntity(itinerary.toString(), ContentType.APPLICATION_JSON));
@@ -266,6 +299,9 @@ public class ItineraryServiceTest {
             }
         }
 
+        /*
+         * Get the newly added itinerary by itinerary id.
+         */
         {
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "itineraries/" + itineraryId2nd + "?requirementType=itinerary"));
@@ -306,6 +342,9 @@ public class ItineraryServiceTest {
             }
         }
 
+        /*
+         * Add a requirement to the last itinerary of the proposal.
+         */
         {
             HttpPost post = new HttpPost();
             post.setEntity(new StringEntity(hotelReq.toString(), ContentType.APPLICATION_JSON));
@@ -330,6 +369,9 @@ public class ItineraryServiceTest {
             }
         }
 
+        /*
+         * Get the newly added requirement.
+         */
         {
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "requirements/" + requirementId1st));
@@ -357,79 +399,10 @@ public class ItineraryServiceTest {
             }
         }
 
-        {
-            HttpGet get = new HttpGet();
-            get.setURI(new URI(itineraryServiceUrlStr + "proposals/" + proposalId));
-            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            try {
-                HttpResponse response = httpClient.execute(get);
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == HttpStatus.OK_200) {
-                    JsonObject proposal = Json.createReader(response.getEntity().getContent()).readObject();
-                    assertNotNull(proposal);
-                    assertEquals(proposalId, proposal.getString(Introspection.JSONKeys.UUID));
-                    assertEquals(Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL,
-                        proposal.getString(Introspection.JSONKeys.TYPE));
-
-                    JsonArray requirements = proposal.getJsonArray(Introspection.JSONKeys.REQUIREMENTS);
-                    assertEquals(2, requirements.size());
-
-                    {
-                        JsonObject itineraryRequirement = requirements.getJsonObject(0);
-                        assertNotNull(itineraryRequirement);
-
-                        assertEquals(itineraryId1st, itineraryRequirement.getString(Introspection.JSONKeys.UUID));
-
-                        JsonObject departure = itineraryRequirement.getJsonObject(Introspection.JSONKeys.DEPARTURE);
-                        assertNotNull(departure);
-                        JsonObject departureCity = departure.getJsonObject(Introspection.JSONKeys.CITY);
-                        assertNotNull(departureCity);
-                        assertEquals("Barcelona", departureCity.getString(Introspection.JSONKeys.NAME));
-                        assertEquals("巴塞罗纳", departureCity.getString(Introspection.JSONKeys.CHINESE_NAME));
-                        assertEquals("basailuona", departureCity.getString(Introspection.JSONKeys.PINYIN_NAME));
-
-                        JsonObject destination = itineraryRequirement.getJsonObject(Introspection.JSONKeys.DESTINATION);
-                        assertNotNull(destination);
-                        JsonObject destinationCity = destination.getJsonObject(Introspection.JSONKeys.CITY);
-                        assertNotNull(destinationCity);
-                        assertEquals("Taibei", destinationCity.getString(Introspection.JSONKeys.NAME));
-                        assertEquals("台北", destinationCity.getString(Introspection.JSONKeys.CHINESE_NAME));
-                        assertEquals("taibei", destinationCity.getString(Introspection.JSONKeys.PINYIN_NAME));
-                    }
-
-                    {
-                        JsonObject itineraryRequirement = requirements.getJsonObject(1);
-                        assertNotNull(itineraryRequirement);
-
-                        assertEquals(itineraryId2nd, itineraryRequirement.getString(Introspection.JSONKeys.UUID));
-
-                        JsonObject departure = itineraryRequirement.getJsonObject(Introspection.JSONKeys.DEPARTURE);
-                        assertNotNull(departure);
-                        JsonObject departureCity = departure.getJsonObject(Introspection.JSONKeys.CITY);
-                        assertNotNull(departureCity);
-                        assertEquals("Geneva", departureCity.getString(Introspection.JSONKeys.NAME));
-                        assertEquals("日内瓦", departureCity.getString(Introspection.JSONKeys.CHINESE_NAME));
-                        assertEquals("rineiwa", departureCity.getString(Introspection.JSONKeys.PINYIN_NAME));
-
-                        JsonObject destination = itineraryRequirement.getJsonObject(Introspection.JSONKeys.DESTINATION);
-                        assertNotNull(destination);
-                        JsonObject destinationCity = destination.getJsonObject(Introspection.JSONKeys.CITY);
-                        assertNotNull(destinationCity);
-                        assertEquals("Wuhan", destinationCity.getString(Introspection.JSONKeys.NAME));
-                        assertEquals("武汉", destinationCity.getString(Introspection.JSONKeys.CHINESE_NAME));
-                        assertEquals("wuhan", destinationCity.getString(Introspection.JSONKeys.PINYIN_NAME));
-                    }
-                } else {
-                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
-                    throw new ProcessingException(error.toString());
-                }
-            } catch (IOException e) {
-                throw new ProcessingException(e);
-            } finally {
-                get.abort();
-            }
-        }
-
+        /*
+         * Get all itineraries by proposal id again. There should be two
+         * itineraries at this case moment.
+         */
         {
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "itineraries/" + proposalId + "?requirementType=proposal"));
@@ -495,6 +468,9 @@ public class ItineraryServiceTest {
             }
         }
 
+        /*
+         * Add a requirement to the first itinerary of the proposal.
+         */
         {
             HttpPost post = new HttpPost();
             post.setEntity(new StringEntity(trafficReq.toString(), ContentType.APPLICATION_JSON));
@@ -519,6 +495,9 @@ public class ItineraryServiceTest {
             }
         }
 
+        /*
+         * Get the newly added requirement.
+         */
         {
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "requirements/" + requirementId2nd));
@@ -560,6 +539,9 @@ public class ItineraryServiceTest {
             }
         }
 
+        /*
+         * Update an existing requirement.
+         */
         {
             updatedRequirementBuilder.add(Introspection.JSONKeys.UUID, requirementId1st);
             HttpPut put = new HttpPut();
@@ -585,6 +567,9 @@ public class ItineraryServiceTest {
             }
         }
 
+        /*
+         * Retrieve all requirments of the proposal and itinerary.
+         */
         {
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "requirements/" + proposalId + "/" + itineraryId2nd));
@@ -615,9 +600,12 @@ public class ItineraryServiceTest {
             }
         }
 
+        /*
+         * Delete a requirement.
+         */
         {
             HttpDelete delete = new HttpDelete();
-            delete.setURI(new URI(itineraryServiceUrlStr + "requirements/" + requirementId1st));
+            delete.setURI(new URI(itineraryServiceUrlStr + "requirements/" + proposalId + "/" + requirementId1st));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             try {
                 HttpResponse response = httpClient.execute(delete);
@@ -637,6 +625,9 @@ public class ItineraryServiceTest {
             }
         }
 
+        /*
+         * Retrieve the deleted requirement. It can not be found at this case moment.
+         */
         {
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "requirements/" + proposalId + "/" + itineraryId2nd));
@@ -644,14 +635,7 @@ public class ItineraryServiceTest {
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == HttpStatus.OK_200) {
-                    JsonArray requirements = Json.createReader(response.getEntity().getContent()).readArray();
-                    assertNotNull(requirements);
-                    assertEquals(0, requirements.size());
-                } else {
-                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
-                    throw new ProcessingException(error.toString());
-                }
+                assertEquals(HttpStatus.NOT_FOUND_404, statusCode);
             } catch (IOException e) {
                 throw new ProcessingException(e);
             } finally {
@@ -659,9 +643,12 @@ public class ItineraryServiceTest {
             }
         }
 
+        /*
+         * Delete an itinerary.
+         */
         {
             HttpDelete delete = new HttpDelete();
-            delete.setURI(new URI(itineraryServiceUrlStr + "requirements/" + itineraryId1st));
+            delete.setURI(new URI(itineraryServiceUrlStr + "itineraries/" + proposalId + "/" + itineraryId1st));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             try {
                 HttpResponse response = httpClient.execute(delete);
@@ -681,6 +668,10 @@ public class ItineraryServiceTest {
             }
         }
 
+        /*
+         * Get all itineraries by proposal id. There is remain at this case
+         * moment.
+         */
         {
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "itineraries/" + proposalId + "?requirementType=proposal"));
@@ -723,4 +714,6 @@ public class ItineraryServiceTest {
             }
         }
     }
+
+    protected abstract String getServiceUrl();
 }
