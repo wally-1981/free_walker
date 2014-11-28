@@ -42,9 +42,9 @@ public class Server {
         sf.setProvider(new JsrJsonpProvider());
 
         if (mode.equals(MODE_SINGLE_DEVO)) {
-            sf.setAddress("http://localhost:9000/");
+            sf.setAddress("http://localhost:9010/");
         } else if (mode.equals(MODE_SINGLE_PROD)) {
-            sf.setAddress("http://localhost:9200/");
+            sf.setAddress("http://localhost:9000/");
         } else {
             throw new IllegalArgumentException();
         }

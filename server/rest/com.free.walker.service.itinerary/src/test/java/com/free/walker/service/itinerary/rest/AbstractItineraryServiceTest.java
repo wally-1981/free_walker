@@ -160,7 +160,6 @@ public abstract class AbstractItineraryServiceTest {
                 if (statusCode == HttpStatus.OK_200) {
                     JsonObject introspection = Json.createReader(response.getEntity().getContent()).readObject();
                     assertNotNull(introspection);
-                    get.abort();
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
