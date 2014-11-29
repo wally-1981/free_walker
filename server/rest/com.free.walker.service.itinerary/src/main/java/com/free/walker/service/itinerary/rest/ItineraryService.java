@@ -120,7 +120,7 @@ public class ItineraryService {
             TravelLocation dept = new TravelLocation(Constants.TAIBEI);
             TravelLocation dest = new TravelLocation(Constants.BARCELONA);
             ItineraryRequirement itineraryRequirement = new ItineraryRequirement(dept, dest);
-            TravelProposal proposal = new TravelProposal(itineraryRequirement);
+            TravelProposal proposal = new TravelProposal("台北到巴萨看梅西", itineraryRequirement);
             sampleDataBuilder.add(proposal.toJSON());
 
             TravelRequirement hotelRequirementA = new HotelRequirement(6);

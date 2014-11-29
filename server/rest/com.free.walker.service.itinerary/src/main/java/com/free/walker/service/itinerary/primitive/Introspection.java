@@ -15,6 +15,7 @@ public class Introspection {
         public static final String SUB_TYPE = "sub_type";
 
         public static final String REQUIREMENTS = "requirements";
+        public static final String TAGS = "tags";
 
         public static final String CITY = "city";
         public static final String COUNTRY = "country";
@@ -34,6 +35,7 @@ public class Introspection {
          */
         public static final String UUID = "uuid";
         public static final String NAME = "name";
+        public static final String TITLE = "title";
         public static final String CHINESE_NAME = "chinese_name";
         public static final String PINYIN_NAME = "pinyin_name";
         public static final String STAR = "star";
@@ -44,6 +46,7 @@ public class Introspection {
         public static final String TIME_RANGE_OFFSET = "time_range_offset";
         public static final String TRAFFIC_TOOL_TYPE = "traffice_tool_type";
         public static final String TRAFFIC_TOOL_SEAT_CLASS = "traffice_tool_seat_class";
+        public static final String GROUP_SIZE = "group_size";
 
         public static final String ERROR_CODE = "error_code";
         public static final String ERROR_TYPE = "error_type";

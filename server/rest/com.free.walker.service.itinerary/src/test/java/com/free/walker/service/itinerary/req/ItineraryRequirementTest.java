@@ -78,7 +78,21 @@ public class ItineraryRequirementTest {
     }
 
     @Test
-    public void testFromJSON() throws JsonException {
+    public void testToJSONWithGroupSize() throws JsonException {
+        TravelLocation destinationLocation = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departureLocation = new TravelLocation(Constants.WUHAN);
+        ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destinationLocation, departureLocation, 8);
+        JsonObject jo = itineraryRequirement.toJSON();
+        assertEquals(Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY, jo.getString(Introspection.JSONKeys.TYPE));
+        assertNotNull(jo.get(Introspection.JSONKeys.DESTINATION));
+        assertNotNull(jo.get(Introspection.JSONKeys.DEPARTURE));
+        assertEquals(8, jo.getInt(Introspection.JSONKeys.GROUP_SIZE));
+
+        assertEquals(true, itineraryRequirement.isItinerary());
+    }
+
+    @Test
+    public void testFromJSONWithoutDeparture() throws JsonException {
         JsonObjectBuilder itinerary = Json.createObjectBuilder();
         UUID uuid = UUID.randomUUID();
         itinerary.add(Introspection.JSONKeys.UUID, uuid.toString());

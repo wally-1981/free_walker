@@ -21,6 +21,7 @@ public class ItineraryRequirement extends BaseTravelRequirement implements Trave
     private TravelLocation destinationLocation;
     private TravelLocation departureLocation;
     private List<Calendar> departureDateTimeSelections;
+    private Integer groupSize;
 
     public ItineraryRequirement() {
         ;
@@ -48,6 +49,17 @@ public class ItineraryRequirement extends BaseTravelRequirement implements Trave
         this.departureDateTimeSelections = departureDateTimeSelections;
     }
 
+    public ItineraryRequirement(TravelLocation destinationLocation, TravelLocation departureLocation,
+        Integer groupSize) {
+        this(destinationLocation, departureLocation);
+
+        if (groupSize == null || groupSize <= 0) {
+            throw new IllegalArgumentException();
+        }
+
+        this.groupSize = groupSize;
+    }
+
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
@@ -61,6 +73,10 @@ public class ItineraryRequirement extends BaseTravelRequirement implements Trave
                 dateTimeSelections.add(selection.getTimeInMillis());
             }
             resBuilder.add(Introspection.JSONKeys.DATETIME_SELECTIONS, dateTimeSelections);
+        }
+
+        if (groupSize != null) {
+            resBuilder.add(Introspection.JSONKeys.GROUP_SIZE, groupSize);
         }
 
         return resBuilder.build();
@@ -111,6 +127,11 @@ public class ItineraryRequirement extends BaseTravelRequirement implements Trave
             departureDateTimeSelections.add(cal);
         }
 
+        int groupSize = jsObject.getInt(Introspection.JSONKeys.GROUP_SIZE, 0);
+        if (groupSize > 0) {
+            this.groupSize = groupSize;
+        }
+
         return this;
     }
 
@@ -120,5 +141,13 @@ public class ItineraryRequirement extends BaseTravelRequirement implements Trave
 
     public TravelLocation getDestination() {
         return destinationLocation;
+    }
+
+    public TravelLocation getDeparture() {
+        return this.departureLocation;
+    } 
+
+    public int getGroupSize() {
+        return groupSize;
     }
 }

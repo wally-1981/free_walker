@@ -40,6 +40,10 @@ public class TravelLocation implements Serializable {
         return this;
     }
 
+    public City getCity() {
+        return city;
+    }
+
     public ValueType getValueType() {
         return JsonValue.ValueType.OBJECT;
     }

@@ -78,6 +78,7 @@ public abstract class AbstractItineraryServiceTest {
 
             JsonObjectBuilder proposalBuilder = Json.createObjectBuilder();
             proposalBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL);
+            proposalBuilder.add(Introspection.JSONKeys.TITLE, "测试提议");
             JsonArrayBuilder requirementsBuilder = Json.createArrayBuilder();
             requirementsBuilder.add(requirementBuilder);
             proposalBuilder.add(Introspection.JSONKeys.REQUIREMENTS, requirementsBuilder);
@@ -148,7 +149,7 @@ public abstract class AbstractItineraryServiceTest {
     @Test
     public void testAll() throws URISyntaxException {
         /*
-         * Retrieve service introspection.
+         * 获取Web服务自省。
          */
         {
             HttpGet get = new HttpGet();
@@ -172,7 +173,7 @@ public abstract class AbstractItineraryServiceTest {
         }
 
         /*
-         * Create a proposal with an initial itinerary.
+         * 新建一个Proposal，同时添加一个初始的Itinerary。
          */
         {
             HttpPost post = new HttpPost();
@@ -199,7 +200,7 @@ public abstract class AbstractItineraryServiceTest {
         }
 
         /*
-         * Get the newly created proposal.
+         * 获取刚新建的Proposal。
          */
         {
             HttpGet get = new HttpGet();
@@ -229,8 +230,7 @@ public abstract class AbstractItineraryServiceTest {
         }
 
         /*
-         * Get all itineraries by proposal id. Only the initial one will be
-         * retrieved at this case moment.
+         * 获取Proposal中的所有Itinerary。此时，Proposal中包含初始的Itinerary。
          */
         {
             HttpGet get = new HttpGet();
@@ -272,7 +272,7 @@ public abstract class AbstractItineraryServiceTest {
         }
 
         /*
-         * Add a new itinerary.
+         * 添加一个Itinerary。此时，为刚新建的Proposal添加一个Itinerary。
          */
         {
             HttpPost post = new HttpPost();
@@ -299,7 +299,7 @@ public abstract class AbstractItineraryServiceTest {
         }
 
         /*
-         * Get the newly added itinerary by itinerary id.
+         * 获取一个Itinerary。此时，即获取刚新建的Itinerary。
          */
         {
             HttpGet get = new HttpGet();
@@ -342,7 +342,7 @@ public abstract class AbstractItineraryServiceTest {
         }
 
         /*
-         * Add a requirement to the last itinerary of the proposal.
+         * 为Proposal中的最后一个Itinerary添加一个Requirement。此时，即为刚新添的Itinerary添加一个Requirement。
          */
         {
             HttpPost post = new HttpPost();
@@ -369,7 +369,7 @@ public abstract class AbstractItineraryServiceTest {
         }
 
         /*
-         * Get the newly added requirement.
+         * 获取一个Requirement。此时，即获取刚添加的Requirement。
          */
         {
             HttpGet get = new HttpGet();
@@ -399,8 +399,7 @@ public abstract class AbstractItineraryServiceTest {
         }
 
         /*
-         * Get all itineraries by proposal id again. There should be two
-         * itineraries at this case moment.
+         * 获取Proposal中的所有Itinerary。此时，Proposal中包含两个Itinerary。
          */
         {
             HttpGet get = new HttpGet();
@@ -468,7 +467,7 @@ public abstract class AbstractItineraryServiceTest {
         }
 
         /*
-         * Add a requirement to the first itinerary of the proposal.
+         * 为Proposal中的第一个Itinerary添加一个Requirement。此时，即为初始的Itinerary添加一个Requirement。
          */
         {
             HttpPost post = new HttpPost();
@@ -495,7 +494,7 @@ public abstract class AbstractItineraryServiceTest {
         }
 
         /*
-         * Get the newly added requirement.
+         * 获取一个Requirement。此时，即获取刚添加的Requirement。
          */
         {
             HttpGet get = new HttpGet();
@@ -539,7 +538,7 @@ public abstract class AbstractItineraryServiceTest {
         }
 
         /*
-         * Update an existing requirement.
+         * 更新一个Requirement。此时，即更新第一个添加的Requirement。
          */
         {
             updatedRequirementBuilder.add(Introspection.JSONKeys.UUID, requirementId1st);
@@ -567,7 +566,7 @@ public abstract class AbstractItineraryServiceTest {
         }
 
         /*
-         * Retrieve all requirments of the proposal and itinerary.
+         * 获取指定Proposal和Itinerary的所有Requirement。此时，即获取第二个Itinerary的所有Requirement。
          */
         {
             HttpGet get = new HttpGet();
@@ -600,7 +599,7 @@ public abstract class AbstractItineraryServiceTest {
         }
 
         /*
-         * Delete a requirement.
+         * 删除一个Requirement。
          */
         {
             HttpDelete delete = new HttpDelete();
@@ -625,7 +624,7 @@ public abstract class AbstractItineraryServiceTest {
         }
 
         /*
-         * Retrieve the deleted requirement. It can not be found at this case moment.
+         * 获取刚删除的Requirement。此时，需求已删除，无法获取。
          */
         {
             HttpGet get = new HttpGet();
@@ -643,7 +642,7 @@ public abstract class AbstractItineraryServiceTest {
         }
 
         /*
-         * Delete an itinerary.
+         * 删除一个Itinerary,Itinerary所包含的所有Requirement也会被删除。此时，初始的Itinerary被删除。
          */
         {
             HttpDelete delete = new HttpDelete();
@@ -668,8 +667,7 @@ public abstract class AbstractItineraryServiceTest {
         }
 
         /*
-         * Get all itineraries by proposal id. There is remain at this case
-         * moment.
+         * 获取Proposal中的所有Itinerary。此时，Proposal中仅剩一个Itinerary。
          */
         {
             HttpGet get = new HttpGet();
