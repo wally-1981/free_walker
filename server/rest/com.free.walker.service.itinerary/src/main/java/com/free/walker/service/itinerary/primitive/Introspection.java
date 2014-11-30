@@ -83,7 +83,7 @@ public class Introspection {
         public static final TravelTimeRange TIME_RANGE_00_06 = new TravelTimeRange(0, 6);
         public static final TravelTimeRange TIME_RANGE_06_12 = new TravelTimeRange(6, 6);
         public static final TravelTimeRange TIME_RANGE_12_18 = new TravelTimeRange(12, 6);
-        public static final TravelTimeRange TIME_RANGE_18_23 = new TravelTimeRange(18, 6);
+        public static final TravelTimeRange TIME_RANGE_18_24 = new TravelTimeRange(18, 6);
 
         public static final ContinentID CONTINENT_ID_ASIA = new ContinentID(1);
         public static final ContinentID CONTINENT_ID_EUROPE = new ContinentID(2);
@@ -169,9 +169,9 @@ public class Introspection {
             } else if (start == JSONValues.TIME_RANGE_12_18.realValue()
                 && duration == JSONValues.TIME_RANGE_12_18.imaginaryValue()) {
                 return JSONValues.TIME_RANGE_12_18;
-            } else if (start == JSONValues.TIME_RANGE_18_23.realValue()
-                && duration == JSONValues.TIME_RANGE_18_23.imaginaryValue()) {
-                return JSONValues.TIME_RANGE_18_23;
+            } else if (start == JSONValues.TIME_RANGE_18_24.realValue()
+                && duration == JSONValues.TIME_RANGE_18_24.imaginaryValue()) {
+                return JSONValues.TIME_RANGE_18_24;
             } else {
                 throw new InvalidTravelReqirementException(LocalMessages.getMessage(
                     LocalMessages.invalid_parameter_with_value, JSONKeys.TIME_RANGE_START + ":"

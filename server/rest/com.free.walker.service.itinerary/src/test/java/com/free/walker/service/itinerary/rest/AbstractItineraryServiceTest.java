@@ -128,9 +128,9 @@ public abstract class AbstractItineraryServiceTest {
                 Introspection.JSONValues.TIME_RANGE_06_12.imaginaryValue());
             JsonObjectBuilder dateTime2 = Json.createObjectBuilder();
             dateTime2.add(Introspection.JSONKeys.TIME_RANGE_START,
-                Introspection.JSONValues.TIME_RANGE_18_23.realValue());
+                Introspection.JSONValues.TIME_RANGE_18_24.realValue());
             dateTime2.add(Introspection.JSONKeys.TIME_RANGE_OFFSET,
-                Introspection.JSONValues.TIME_RANGE_18_23.imaginaryValue());
+                Introspection.JSONValues.TIME_RANGE_18_24.imaginaryValue());
             dateTimeSelections.add(dateTime1);
             dateTimeSelections.add(dateTime2);
             requirementBuilder.add(Introspection.JSONKeys.DATETIME_RANGE_SELECTIONS, dateTimeSelections);
@@ -628,7 +628,7 @@ public abstract class AbstractItineraryServiceTest {
          */
         {
             HttpGet get = new HttpGet();
-            get.setURI(new URI(itineraryServiceUrlStr + "requirements/" + proposalId + "/" + itineraryId2nd));
+            get.setURI(new URI(itineraryServiceUrlStr + "requirements/" + requirementId1st));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             try {
                 HttpResponse response = httpClient.execute(get);

@@ -143,10 +143,10 @@ public class ItineraryService {
             TravelRequirement trafficRequirementA = new TrafficRequirement(
                 Introspection.JSONValues.TRAFFIC_TOOL_TYPE_TRAIN);
             TravelRequirement trafficRequirementB = new TrafficRequirement(
-                Introspection.JSONValues.TRAFFIC_TOOL_TYPE_FLIGHT, Introspection.JSONValues.TIME_RANGE_18_23);
+                Introspection.JSONValues.TRAFFIC_TOOL_TYPE_FLIGHT, Introspection.JSONValues.TIME_RANGE_18_24);
             TravelRequirement trafficRequirementC = new TrafficRequirement(
                 Introspection.JSONValues.TRAFFIC_TOOL_TYPE_FLIGHT, Arrays.asList(
-                    Introspection.JSONValues.TIME_RANGE_00_06, Introspection.JSONValues.TIME_RANGE_18_23));
+                    Introspection.JSONValues.TIME_RANGE_00_06, Introspection.JSONValues.TIME_RANGE_18_24));
             TravelRequirement trafficRequirementD = new TrafficRequirement(new Flight("CA1981"));
             TravelRequirement trafficRequirementE = new TrafficRequirement(new Train("Z38"));
             sampleDataBuilder.add(trafficRequirementA.toJSON());

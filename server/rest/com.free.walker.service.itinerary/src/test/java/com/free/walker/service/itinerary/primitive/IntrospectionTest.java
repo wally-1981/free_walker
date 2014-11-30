@@ -84,9 +84,9 @@ public class IntrospectionTest {
         assertEquals(Introspection.JSONValues.TIME_RANGE_12_18.imaginaryValue(), Introspection.JsonValueHelper
             .getTravelTimeRange(12, 6).imaginaryValue());
 
-        assertEquals(Introspection.JSONValues.TIME_RANGE_18_23.realValue(), Introspection.JsonValueHelper
+        assertEquals(Introspection.JSONValues.TIME_RANGE_18_24.realValue(), Introspection.JsonValueHelper
             .getTravelTimeRange(18, 6).realValue());
-        assertEquals(Introspection.JSONValues.TIME_RANGE_18_23.imaginaryValue(), Introspection.JsonValueHelper
+        assertEquals(Introspection.JSONValues.TIME_RANGE_18_24.imaginaryValue(), Introspection.JsonValueHelper
             .getTravelTimeRange(18, 6).imaginaryValue());
 
         thrown.expect(InvalidTravelReqirementException.class);
