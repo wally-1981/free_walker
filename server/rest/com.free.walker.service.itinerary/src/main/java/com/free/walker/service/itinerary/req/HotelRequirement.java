@@ -2,6 +2,7 @@ package com.free.walker.service.itinerary.req;
 
 import javax.json.Json;
 import javax.json.JsonException;
+import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
@@ -13,6 +14,8 @@ import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.HotelStar;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.UuidUtil;
+import com.ibm.icu.util.Calendar;
+
 public class HotelRequirement extends BaseTravelRequirement implements TravelRequirement {
     public static final String SUB_TYPE;
 
@@ -24,6 +27,7 @@ public class HotelRequirement extends BaseTravelRequirement implements TravelReq
     private int nights;
     private HotelStar star;
     private Hotel hotel;
+    private Calendar arrivalDateTime;
 
     public HotelRequirement() {
         ;
@@ -49,14 +53,15 @@ public class HotelRequirement extends BaseTravelRequirement implements TravelReq
         this.star = star;
     }
 
-    public HotelRequirement(int nights, Hotel hotel) {
+    public HotelRequirement(int nights, Hotel hotel, Calendar arrivalDateTime) {
         this(nights);
 
-        if (hotel == null) {
+        if (hotel == null || arrivalDateTime == null) {
             throw new NullPointerException();
         }
 
         this.hotel = hotel;
+        this.arrivalDateTime = arrivalDateTime;
     }
 
     public JsonObject toJSON() throws JsonException {
@@ -76,6 +81,10 @@ public class HotelRequirement extends BaseTravelRequirement implements TravelReq
             resBuilder.add(Introspection.JSONKeys.HOTEL, hotelJSON);
         }
 
+        if (arrivalDateTime != null) {
+            resBuilder.add(Introspection.JSONKeys.ARRIVAL_DATETIME, arrivalDateTime.getTimeInMillis());
+        }
+
         return resBuilder.build();
     }
 
@@ -87,7 +96,7 @@ public class HotelRequirement extends BaseTravelRequirement implements TravelReq
                 this.requirementId = UuidUtil.fromUuidStr(requirementId);
             } catch (InvalidTravelReqirementException e) {
                 throw new JsonException(e.getMessage(), e);
-            }            
+            }
         }
 
         return newFromJSON(jsObject);
@@ -126,6 +135,12 @@ public class HotelRequirement extends BaseTravelRequirement implements TravelReq
         JsonObject hotelObj = jsObject.getJsonObject(Introspection.JSONKeys.HOTEL);
         if (hotelObj != null) {
             this.hotel = (Hotel) new Hotel().fromJSON(hotelObj);
+        }
+
+        JsonNumber arrivalDateTime = jsObject.getJsonNumber(Introspection.JSONKeys.ARRIVAL_DATETIME);
+        if (arrivalDateTime != null) {
+            this.arrivalDateTime = Calendar.getInstance();
+            this.arrivalDateTime.setTimeInMillis(arrivalDateTime.longValue());
         }
 
         return this;

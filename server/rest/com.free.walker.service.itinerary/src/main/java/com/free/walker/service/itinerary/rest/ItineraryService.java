@@ -49,6 +49,7 @@ import com.free.walker.service.itinerary.req.TravelProposal;
 import com.free.walker.service.itinerary.req.TravelRequirement;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.UuidUtil;
+import com.ibm.icu.util.Calendar;
 
 @Path("/service/itinerary/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -125,7 +126,7 @@ public class ItineraryService {
 
             TravelRequirement hotelRequirementA = new HotelRequirement(6);
             TravelRequirement hotelRequirementB = new HotelRequirement(6, Introspection.JSONValues.HOTEL_STAR_STD_5);
-            TravelRequirement hotelRequirementC = new HotelRequirement(6, new Hotel());
+            TravelRequirement hotelRequirementC = new HotelRequirement(6, new Hotel(), Calendar.getInstance());
             sampleDataBuilder.add(hotelRequirementA.toJSON());
             sampleDataBuilder.add(hotelRequirementB.toJSON());
             sampleDataBuilder.add(hotelRequirementC.toJSON());

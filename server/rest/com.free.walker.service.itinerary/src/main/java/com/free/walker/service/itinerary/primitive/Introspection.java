@@ -5,7 +5,6 @@ import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.req.HotelRequirement;
 import com.free.walker.service.itinerary.req.TrafficRequirement;
 
-
 public class Introspection {
     public static class JSONKeys {
         /*
@@ -40,6 +39,7 @@ public class Introspection {
         public static final String PINYIN_NAME = "pinyin_name";
         public static final String STAR = "star";
         public static final String NIGHT = "night";
+        public static final String ARRIVAL_DATETIME = "arrival_datetime";
         public static final String DESTINATION = "destination";
         public static final String DEPARTURE = "departure";
         public static final String TIME_RANGE_START = "time_range_start";
@@ -160,7 +160,8 @@ public class Introspection {
 
         public static TravelTimeRange getTravelTimeRange(int start, int duration)
             throws InvalidTravelReqirementException {
-            if (start == JSONValues.TIME_RANGE_00_06.realValue() && duration == JSONValues.TIME_RANGE_00_06.imaginaryValue()) {
+            if (start == JSONValues.TIME_RANGE_00_06.realValue()
+                && duration == JSONValues.TIME_RANGE_00_06.imaginaryValue()) {
                 return JSONValues.TIME_RANGE_00_06;
             } else if (start == JSONValues.TIME_RANGE_06_12.realValue()
                 && duration == JSONValues.TIME_RANGE_06_12.imaginaryValue()) {

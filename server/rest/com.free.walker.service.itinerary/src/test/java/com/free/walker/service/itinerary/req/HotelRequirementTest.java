@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import com.free.walker.service.itinerary.basic.Hotel;
 import com.free.walker.service.itinerary.primitive.Introspection;
+import com.ibm.icu.util.Calendar;
 
 public class HotelRequirementTest {
     @Test
@@ -39,11 +40,14 @@ public class HotelRequirementTest {
 
     @Test
     public void testToJSON4NightsAndHotel() throws JsonException {
-        TravelRequirement hotelRequirement = new HotelRequirement(5, new Hotel());
+        Calendar now = Calendar.getInstance();
+        TravelRequirement hotelRequirement = new HotelRequirement(5, new Hotel(), now);
         JsonObject jo = hotelRequirement.toJSON();
         assertEquals(Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT, jo.getString(Introspection.JSONKeys.TYPE));
         assertEquals(5, jo.getInt(Introspection.JSONKeys.NIGHT));
         assertNotNull(jo.get(Introspection.JSONKeys.HOTEL));
+        assertNotNull(jo.getJsonNumber(Introspection.JSONKeys.ARRIVAL_DATETIME));
+        assertEquals(now.getTimeInMillis(), jo.getJsonNumber(Introspection.JSONKeys.ARRIVAL_DATETIME).longValue());
 
         assertEquals(false, hotelRequirement.isItinerary());
     }
