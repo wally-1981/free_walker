@@ -8,8 +8,10 @@ import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
 import org.apache.cxf.jaxrs.provider.jsrjsonp.JsrJsonpProvider;
 
+import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelProductDAOImpl;
+import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOImpl;
+import com.free.walker.service.itinerary.dao.memo.InMemoryTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImpl;
-import com.free.walker.service.itinerary.dao.mysql.MyMongoSQLTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
 
 public class Server {
@@ -30,11 +32,22 @@ public class Server {
             throw new IllegalArgumentException();
         }
 
+        ProductService productSvr = null;
+        if (mode.equals(MODE_SINGLE_DEVO)) {
+            productSvr = new ProductService(InMemoryTravelProductDAOImpl.class);
+        } else if (mode.equals(MODE_SINGLE_PROD)) {
+            productSvr = new ProductService(MyMongoSQLTravelProductDAOImpl.class);
+        } else {
+            throw new IllegalArgumentException();
+        }
+
         List<Class<?>> classes = new ArrayList<Class<?>>();
         classes.add(ItineraryService.class);
+        classes.add(ProductService.class);
         classes.add(PlatformAdminService.class);
         List<ResourceProvider> providers = new ArrayList<ResourceProvider>();
         providers.add(new SingletonResourceProvider(itinerarySvr));
+        providers.add(new SingletonResourceProvider(productSvr));
         providers.add(new SingletonResourceProvider(new PlatformAdminService()));
 
         sf.setResourceClasses(classes);

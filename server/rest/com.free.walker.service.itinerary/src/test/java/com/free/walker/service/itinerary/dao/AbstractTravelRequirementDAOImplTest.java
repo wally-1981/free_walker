@@ -1,4 +1,4 @@
-package com.free.walker.service.itinerary.dao.memo;
+package com.free.walker.service.itinerary.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -14,8 +16,6 @@ import org.junit.rules.ExpectedException;
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.TravelLocation;
-import com.free.walker.service.itinerary.dao.DAOFactory;
-import com.free.walker.service.itinerary.dao.TravelRequirementDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
@@ -31,12 +31,14 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+    @Before
+    public void before() {
+        ;
+    }
+
     @Test
     public void testCreateTravelProposalWithNullProposal() throws InvalidTravelReqirementException,
         DatabaseAccessException {
-        TravelRequirementDAO travelRequirementDAO = DAOFactory
-            .getTravelRequirementDAO(InMemoryTravelRequirementDAOImpl.class.getName());
-
         thrown.expect(NullPointerException.class);
         travelRequirementDAO.createProposal(null);
     }
@@ -826,5 +828,10 @@ public abstract class AbstractTravelRequirementDAOImplTest {
 
         assertNull(travelRequirementDAO.getNextItineraryRequirement(proposalId, itineraryRequirement2.getUUID()));
         assertNull(travelRequirementDAO.getPrevItineraryRequirement(proposalId, itineraryRequirement2.getUUID()));
+    }
+
+    @After
+    public void after() {
+        ;
     }
 }

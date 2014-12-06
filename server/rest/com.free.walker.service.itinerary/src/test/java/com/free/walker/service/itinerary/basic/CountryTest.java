@@ -58,7 +58,8 @@ public class CountryTest {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         String cmpUuidStr = "af70a55ceb4c415c837588081716f8b8";
         builder.add(Introspection.JSONKeys.UUID, cmpUuidStr);
-        thrown.expect(JsonException.class);
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage(cmpUuidStr);
         new Country().fromJSON(builder.build());
     }
 }

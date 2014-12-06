@@ -19,7 +19,7 @@ import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.Serializable;
 import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
-import com.free.walker.service.itinerary.dao.mysql.MySQLTravelBasicDAOImpl;
+import com.free.walker.service.itinerary.dao.db.MySQLTravelBasicDAOImpl;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
@@ -55,13 +55,12 @@ public class Country implements Serializable, Loadable {
     public Country fromJSON(JsonObject jsObject) throws JsonException {
         String id = jsObject.getString(Introspection.JSONKeys.UUID, null);
 
-        Country country;
-        try {
-            country = countries.get(UuidUtil.fromUuidStr(id));
-        } catch (InvalidTravelReqirementException e) {
-            throw new JsonException(e.getMessage(), e);
+        if (id == null) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.UUID, id));
         }
 
+        Country country = countries.get(UuidUtil.fromUuidStr(id));
         if (country != null) {
             return country;
         } else {
@@ -71,7 +70,7 @@ public class Country implements Serializable, Loadable {
     }
 
     public ValueType getValueType() {
-        return JsonValue.ValueType.OBJECT;
+        return JsonValue.ValueType.NULL;
     }
 
     public boolean load() {

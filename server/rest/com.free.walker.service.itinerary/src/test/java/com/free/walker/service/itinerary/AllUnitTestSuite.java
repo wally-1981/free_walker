@@ -3,14 +3,17 @@ package com.free.walker.service.itinerary;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+import com.free.walker.service.itinerary.basic.BiddingTest;
 import com.free.walker.service.itinerary.basic.CityTest;
 import com.free.walker.service.itinerary.basic.ContinentTest;
 import com.free.walker.service.itinerary.basic.CountryTest;
 import com.free.walker.service.itinerary.basic.ProvinceTest;
 import com.free.walker.service.itinerary.basic.ResortTest;
 import com.free.walker.service.itinerary.dao.DAOFactoryTest;
+import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelProductDAOImplTest;
+import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOImplTest;
+import com.free.walker.service.itinerary.dao.memo.InMemoryTravelProductDAOImplTest;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImplTest;
-import com.free.walker.service.itinerary.dao.memo.MyMongoSQLTravelRequirementDAOImplTest;
 import com.free.walker.service.itinerary.primitive.IntrospectionTest;
 import com.free.walker.service.itinerary.product.TravelProductTest;
 import com.free.walker.service.itinerary.req.HotelRequirementTest;
@@ -36,10 +39,13 @@ import com.free.walker.service.itinerary.util.UuidUtilTest;
     ProvinceTest.class,
     CityTest.class,
     ResortTest.class,
+    BiddingTest.class,
 
     DAOFactoryTest.class,
     InMemoryTravelRequirementDAOImplTest.class,
     MyMongoSQLTravelRequirementDAOImplTest.class,
+    InMemoryTravelProductDAOImplTest.class,
+    MyMongoSQLTravelProductDAOImplTest.class,
 
     HotelRequirementTest.class,
     ResortRequirementTest.class,

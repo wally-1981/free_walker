@@ -35,5 +35,4 @@ public class InMemoryTravelBasicDAOImpl implements TravelBasicDAO {
     public List<City> getAllCities() throws DatabaseAccessException {
         throw new UnsupportedOperationException();
     }
-
 }

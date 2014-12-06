@@ -74,4 +74,10 @@ public class PlatformAdminService {
     public Response getTrain() {
         return Response.ok().build();
     }
+
+    @GET
+    @Path("/tags")
+    public Response getTags() {
+        return Response.ok().build();
+    }
 }

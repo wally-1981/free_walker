@@ -1,4 +1,4 @@
-package com.free.walker.service.itinerary.dao.mysql;
+package com.free.walker.service.itinerary.dao.db;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,9 +16,9 @@ import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.City;
 import com.free.walker.service.itinerary.basic.Country;
 import com.free.walker.service.itinerary.basic.Province;
+import com.free.walker.service.itinerary.dao.BasicMapper;
 import com.free.walker.service.itinerary.dao.DAOConstants;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
-import com.free.walker.service.itinerary.dao.map.BasicMapper;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 
 public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {

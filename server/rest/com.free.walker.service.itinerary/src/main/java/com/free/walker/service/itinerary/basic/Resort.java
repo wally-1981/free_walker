@@ -9,16 +9,25 @@ import javax.json.JsonValue;
 import com.free.walker.service.itinerary.Serializable;
 
 public class Resort implements Serializable {
+    private double price;
+
     public JsonObject toJSON() {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         return resBuilder.build();
     }
 
-    public Object fromJSON(JsonObject jsObject) throws JsonException {
+    public Resort fromJSON(JsonObject jsObject) throws JsonException {
         return this;
     }
 
+    public double getPrice() {
+        return price;
+    }
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     public ValueType getValueType() {
-        return JsonValue.ValueType.OBJECT;
+        return JsonValue.ValueType.NULL;
     }
 }

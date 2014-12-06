@@ -4,12 +4,28 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelProductDAOImpl;
+import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOImpl;
+import com.free.walker.service.itinerary.dao.db.MySQLTravelBasicDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelBasicDAOImpl;
+import com.free.walker.service.itinerary.dao.memo.InMemoryTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImpl;
-import com.free.walker.service.itinerary.dao.mysql.MySQLTravelBasicDAOImpl;
-import com.free.walker.service.itinerary.dao.mysql.MyMongoSQLTravelRequirementDAOImpl;
 
 public class DAOFactoryTest {
+    @Test
+    public void testBasicDAOFactoryByInMemory() {
+        TravelBasicDAO travelBasicDAO = DAOFactory.getTravelBasicDAO(InMemoryTravelBasicDAOImpl.class.getName());
+        assertTrue(travelBasicDAO instanceof InMemoryTravelBasicDAOImpl);
+        assertTrue(travelBasicDAO.pingPersistence());
+    }
+
+    @Test
+    public void testBasicDAOFactoryByDb() {
+        TravelBasicDAO travelBasicDAO = DAOFactory.getTravelBasicDAO(MySQLTravelBasicDAOImpl.class.getName());
+        assertTrue(travelBasicDAO instanceof MySQLTravelBasicDAOImpl);
+        assertTrue(travelBasicDAO.pingPersistence());
+    }
+
     @Test
     public void testRequirementDAOFactoryByInMemory() {
         TravelRequirementDAO travelRequirementDAO = DAOFactory
@@ -19,7 +35,7 @@ public class DAOFactoryTest {
     }
 
     @Test
-    public void testRequirementDAOFactoryByMySQL() {
+    public void testRequirementDAOFactoryByDb() {
         TravelRequirementDAO travelRequirementDAO = DAOFactory
             .getTravelRequirementDAO(MyMongoSQLTravelRequirementDAOImpl.class.getName());
         assertTrue(travelRequirementDAO instanceof MyMongoSQLTravelRequirementDAOImpl);
@@ -27,18 +43,18 @@ public class DAOFactoryTest {
     }
 
     @Test
-    public void testBasicDAOFactoryByInMemory() {
-        TravelBasicDAO travelBasicDAO = DAOFactory
-            .getTravelBasicDAO(InMemoryTravelBasicDAOImpl.class.getName());
-        assertTrue(travelBasicDAO instanceof InMemoryTravelBasicDAOImpl);
-        assertTrue(travelBasicDAO.pingPersistence());
+    public void testProductDAOFactoryByInMemory() {
+        TravelProductDAO travelProductDAO = DAOFactory
+            .getTravelProductDAO(InMemoryTravelProductDAOImpl.class.getName());
+        assertTrue(travelProductDAO instanceof InMemoryTravelProductDAOImpl);
+        assertTrue(travelProductDAO.pingPersistence());
     }
 
     @Test
-    public void testBasicDAOFactoryByMySQL() {
-        TravelBasicDAO travelBasicDAO = DAOFactory
-            .getTravelBasicDAO(MySQLTravelBasicDAOImpl.class.getName());
-        assertTrue(travelBasicDAO instanceof MySQLTravelBasicDAOImpl);
-        assertTrue(travelBasicDAO.pingPersistence());
+    public void testProductDAOFactoryByDb() {
+        TravelProductDAO travelProductDAO = DAOFactory.getTravelProductDAO(MyMongoSQLTravelProductDAOImpl.class
+            .getName());
+        assertTrue(travelProductDAO instanceof MyMongoSQLTravelProductDAOImpl);
+        assertTrue(travelProductDAO.pingPersistence());
     }
 }

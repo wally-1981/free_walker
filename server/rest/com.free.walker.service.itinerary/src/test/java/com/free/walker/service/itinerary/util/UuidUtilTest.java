@@ -28,7 +28,7 @@ public class UuidUtilTest {
     public void testFromUuidStr() throws InvalidTravelReqirementException {
         assertNotNull(UuidUtil.fromUuidStr("02515d41-f141-4175-9a11-9e68b9cfe687"));
 
-        thrown.expect(InvalidTravelReqirementException.class);
+        thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("02515d41f14141759a119e68b9cfe687");
         assertNotNull(UuidUtil.fromUuidStr("02515d41f14141759a119e68b9cfe687"));
 
@@ -39,7 +39,8 @@ public class UuidUtilTest {
 
     @Test
     public void testFromCmpUuidStr() throws InvalidTravelReqirementException {
-        thrown.expect(InvalidTravelReqirementException.class);
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("02515d41-f141-4175-9a11-9e68b9cfe687");
         assertNotNull(UuidUtil.fromCmpUuidStr("02515d41-f141-4175-9a11-9e68b9cfe687"));
 
         assertNotNull(UuidUtil.fromCmpUuidStr("02515d41f14141759a119e68b9cfe687"));

@@ -1,6 +1,7 @@
 package com.free.walker.service.itinerary.product;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.junit.Test;
 
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.basic.Flight;
+import com.free.walker.service.itinerary.basic.Hotel;
 import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
@@ -39,7 +41,7 @@ public class TravelProductTest {
             departureDateTimeSelections);
 
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
-        TravelProduct aTravelProduct = new NoneTravelProduct(travelProposal);
+        TravelProduct aTravelProduct = new SimpleTravelProduct(travelProposal.getUUID());
 
         TravelLocation departure1 = new TravelLocation(Constants.BARCELONA);
         TravelLocation destination1 = new TravelLocation(Constants.GENEVA);
@@ -47,17 +49,19 @@ public class TravelProductTest {
         flight1.setDepartureDateTime(Calendar.getInstance());
         flight1.setTicketFee(1.1);
         flight1.setTaxFee(198);
-        aTravelProduct = new TrafficDecorator(aTravelProduct, flight1);
-        aTravelProduct.getCost();
+        aTravelProduct = new TrafficItem(aTravelProduct, flight1, Calendar.getInstance());
         assertEquals(199.1, aTravelProduct.getCost(), 0.1);
+        assertEquals(1, aTravelProduct.getTravelProductItems().size());
+        assertTrue(aTravelProduct.getTravelProductItems().get(0) instanceof TrafficItem);
 
-        TravelLocation departure2 = new TravelLocation(Constants.GENEVA);
-        TravelLocation destination2 = new TravelLocation(Constants.TAIBEI);
-        Flight flight2 = new Flight("CA1982", departure2, destination2);
-        flight2.setDepartureDateTime(Calendar.getInstance());
-        flight2.setTicketFee(2.8);
-        flight2.setTaxFee(190);
-        aTravelProduct = new TrafficDecorator(aTravelProduct, flight2);
-        assertEquals(391.9, aTravelProduct.getCost(), 0.1);
+        Calendar arrival = Calendar.getInstance();
+        arrival.set(2014, Calendar.NOVEMBER, 30);
+        Calendar depart = Calendar.getInstance();
+        depart.set(2014, Calendar.DECEMBER, 1);
+        aTravelProduct = new HotelItem(aTravelProduct, new Hotel(), arrival, depart);
+        assertEquals(199.1, aTravelProduct.getCost(), 0.1);
+        assertEquals(2, aTravelProduct.getTravelProductItems().size());
+        assertTrue(aTravelProduct.getTravelProductItems().get(0) instanceof TrafficItem);
+        assertTrue(aTravelProduct.getTravelProductItems().get(1) instanceof HotelItem);
     }
 }

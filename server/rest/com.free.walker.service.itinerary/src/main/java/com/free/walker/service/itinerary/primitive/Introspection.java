@@ -2,7 +2,11 @@ package com.free.walker.service.itinerary.primitive;
 
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
+import com.free.walker.service.itinerary.product.HotelItem;
+import com.free.walker.service.itinerary.product.ResortItem;
+import com.free.walker.service.itinerary.product.TrafficItem;
 import com.free.walker.service.itinerary.req.HotelRequirement;
+import com.free.walker.service.itinerary.req.ResortRequirement;
 import com.free.walker.service.itinerary.req.TrafficRequirement;
 
 public class Introspection {
@@ -14,14 +18,16 @@ public class Introspection {
         public static final String SUB_TYPE = "sub_type";
 
         public static final String REQUIREMENTS = "requirements";
+        public static final String ITEMS = "items";
         public static final String TAGS = "tags";
 
         public static final String CITY = "city";
         public static final String COUNTRY = "country";
-        public static final String FLIGHT = "flight";
         public static final String HOTEL = "hotel";
         public static final String RESORT = "resort";
+        public static final String TRAFFIC = "traffic";
         public static final String TRAIN = "train";
+        public static final String FLIGHT = "flight";
 
         /*
          * JSONArray Keys
@@ -33,13 +39,17 @@ public class Introspection {
          * Primitive Keys
          */
         public static final String UUID = "uuid";
+        public static final String REF_UUID = "ref_uuid";
         public static final String NAME = "name";
         public static final String TITLE = "title";
+        public static final String DATE = "date";
         public static final String CHINESE_NAME = "chinese_name";
         public static final String PINYIN_NAME = "pinyin_name";
         public static final String STAR = "star";
         public static final String NIGHT = "night";
+        public static final String DEADLINE_DATETIME = "deadline_datetime";
         public static final String ARRIVAL_DATETIME = "arrival_datetime";
+        public static final String DEPARTURE_DATETIME = "departure_datetime";
         public static final String DESTINATION = "destination";
         public static final String DEPARTURE = "departure";
         public static final String TIME_RANGE_START = "time_range_start";
@@ -47,6 +57,10 @@ public class Introspection {
         public static final String TRAFFIC_TOOL_TYPE = "traffice_tool_type";
         public static final String TRAFFIC_TOOL_SEAT_CLASS = "traffice_tool_seat_class";
         public static final String GROUP_SIZE = "group_size";
+        public static final String MIN = "min";
+        public static final String MAX = "max";
+        public static final String PRICE = "price";
+        public static final String BIDDING = "bidding";
 
         public static final String ERROR_CODE = "error_code";
         public static final String ERROR_TYPE = "error_type";
@@ -95,6 +109,11 @@ public class Introspection {
 
         public static final String SUB_TYPE_HOTEL = HotelRequirement.SUB_TYPE;
         public static final String SUB_TYPE_TRAFFIC = TrafficRequirement.SUB_TYPE;
+        public static final String SUB_TYPE_RESORT = ResortRequirement.SUB_TYPE;
+
+        public static final String SUB_TYPE_HOTEL_ITEM = HotelItem.SUB_TYPE;
+        public static final String SUB_TYPE_TRAFFIC_ITEM = TrafficItem.SUB_TYPE;
+        public static final String SUB_TYPE_RESORT_ITEM = ResortItem.SUB_TYPE;
     }
 
     public static class JsonValueHelper {

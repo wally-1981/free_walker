@@ -24,6 +24,6 @@ public abstract class BaseTravelRequirement implements TravelRequirement {
     }
 
     public ValueType getValueType() {
-        return JsonValue.ValueType.OBJECT;
+        return JsonValue.ValueType.NULL;
     }
 }

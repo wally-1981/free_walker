@@ -20,7 +20,7 @@ public class DatabaseAccessException extends Exception implements Serializable {
     }
 
     public ValueType getValueType() {
-        return JsonValue.ValueType.OBJECT;
+        return JsonValue.ValueType.NULL;
     }
 
     public JsonObject toJSON() throws JsonException {

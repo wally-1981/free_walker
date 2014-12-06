@@ -80,7 +80,8 @@ public class CityTest {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         String cmpUuidStr = "34057abf82764f12808a5e62ced36233";
         builder.add(Introspection.JSONKeys.UUID, cmpUuidStr);
-        thrown.expect(JsonException.class);
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage(cmpUuidStr);
         new City().fromJSON(builder.build());
     }
 }

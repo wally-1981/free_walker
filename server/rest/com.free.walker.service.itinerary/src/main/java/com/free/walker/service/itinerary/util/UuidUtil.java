@@ -2,18 +2,19 @@ package com.free.walker.service.itinerary.util;
 
 import java.util.UUID;
 
+import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 
 public class UuidUtil {
-    public static UUID fromUuidStr(String uuidStr) throws InvalidTravelReqirementException {
+    public static UUID fromUuidStr(final String uuidStr) {
         try {
             return UUID.fromString(uuidStr);
         } catch (Exception e) {
-            throw new InvalidTravelReqirementException(e.getMessage(), uuidStr);
+            throw new IllegalArgumentException(LocalMessages.getMessage(LocalMessages.illegal_uuid, uuidStr), e);
         }
     }
 
-    public static boolean isCmpUuidStr(String uuidStr) {
+    public static boolean isCmpUuidStr(final String uuidStr) {
         if (uuidStr == null) {
             throw new NullPointerException();
         }
@@ -30,22 +31,23 @@ public class UuidUtil {
         }
     }
 
-    public static UUID fromCmpUuidStr(String uuidCmpStr) throws InvalidTravelReqirementException {
+    public static UUID fromCmpUuidStr(final String uuidCmpStr) throws InvalidTravelReqirementException {
         if (uuidCmpStr == null) {
             throw new NullPointerException();
         }
 
         try {
-            uuidCmpStr = new StringBuffer(uuidCmpStr.substring(0, 8)).append("-").append(uuidCmpStr.substring(8, 12))
+            String uuidCmp = new StringBuffer(uuidCmpStr.substring(0, 8)).append("-").append(uuidCmpStr.substring(8, 12))
                 .append("-").append(uuidCmpStr.substring(12, 16)).append("-").append(uuidCmpStr.substring(16, 20))
                 .append("-").append(uuidCmpStr.substring(20)).toString();
-            return UUID.fromString(uuidCmpStr);
+            return UUID.fromString(uuidCmp);
         } catch (Exception e) {
-            throw new InvalidTravelReqirementException(e.getMessage(), uuidCmpStr);
+            throw new IllegalArgumentException(
+                LocalMessages.getMessage(LocalMessages.illegal_compact_uuid, uuidCmpStr), e);
         }
     }
 
-    public static String toCmpUuidStr(String uuidStr) {
+    public static String toCmpUuidStr(final String uuidStr) {
         if (uuidStr == null) {
             throw new NullPointerException();
         }

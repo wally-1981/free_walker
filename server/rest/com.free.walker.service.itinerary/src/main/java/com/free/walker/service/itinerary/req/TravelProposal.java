@@ -112,27 +112,26 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
     }
 
     public TravelProposal fromJSON(JsonObject jsObject) throws JsonException {
-        String requirementId = jsObject.getString(Introspection.JSONKeys.UUID);
+        String requirementId = jsObject.getString(Introspection.JSONKeys.UUID, null);
 
         if (requirementId != null) {
-            try {
-                this.requirementId = UuidUtil.fromUuidStr(requirementId);
-            } catch (InvalidTravelReqirementException e) {
-                throw new JsonException(e.getMessage(), e);
-            }            
+            this.requirementId = UuidUtil.fromUuidStr(requirementId);
+        } else {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.UUID, requirementId));
         }
 
         return newFromJSON(jsObject);
     }
 
     public TravelProposal newFromJSON(JsonObject jsObject) throws JsonException {
-        String type = jsObject.getString(Introspection.JSONKeys.TYPE);
+        String type = jsObject.getString(Introspection.JSONKeys.TYPE, null);
         if (type != null && !Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL.equals(type)) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.TYPE, type));
         }
 
-        String title = jsObject.getString(Introspection.JSONKeys.TITLE);
+        String title = jsObject.getString(Introspection.JSONKeys.TITLE, null);
         if (title == null || title.trim().length() == 0) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.TITLE, title));

@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.free.walker.service.itinerary.basic.City;
-import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
 public class Constants {
@@ -25,7 +24,7 @@ public class Constants {
             BARCELONA = new City(UuidUtil.fromUuidStr("84844276-3036-47dd-90e0-f095cfa98da5"));
             WUHAN = new City(UuidUtil.fromUuidStr("79fd8642-a11d-4811-887d-ec4268097a82"));
             GENEVA = new City(UuidUtil.fromUuidStr("46e46912-f856-49ce-b9f8-cac99fe9211e"));
-        } catch (InvalidTravelReqirementException e) {
+        } catch (IllegalArgumentException e) {
             LOG.error(e.getMessage(), e);
         }
 

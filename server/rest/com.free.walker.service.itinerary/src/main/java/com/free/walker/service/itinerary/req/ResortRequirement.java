@@ -81,27 +81,26 @@ public class ResortRequirement extends BaseTravelRequirement implements TravelRe
     }
 
     public ResortRequirement fromJSON(JsonObject jsObject) throws JsonException {
-        String requirementId = jsObject.getString(Introspection.JSONKeys.UUID);
+        String requirementId = jsObject.getString(Introspection.JSONKeys.UUID, null);
 
         if (requirementId != null) {
-            try {
-                this.requirementId = UuidUtil.fromUuidStr(requirementId);
-            } catch (InvalidTravelReqirementException e) {
-                throw new JsonException(e.getMessage(), e);
-            }            
+            this.requirementId = UuidUtil.fromUuidStr(requirementId);
+        } else {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.UUID, requirementId));
         }
 
         return newFromJSON(jsObject);
     }
 
     public ResortRequirement newFromJSON(JsonObject jsObject) throws JsonException {
-        String type = jsObject.getString(Introspection.JSONKeys.TYPE);
+        String type = jsObject.getString(Introspection.JSONKeys.TYPE, null);
         if (type != null && !Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT.equals(type)) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.TYPE, type));
         }
 
-        String subType = jsObject.getString(Introspection.JSONKeys.SUB_TYPE);
+        String subType = jsObject.getString(Introspection.JSONKeys.SUB_TYPE, null);
         if (subType != null && !SUB_TYPE.equals(subType)) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.SUB_TYPE, subType));

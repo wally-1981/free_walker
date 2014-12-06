@@ -1,10 +1,11 @@
-package com.free.walker.service.itinerary.dao.memo;
+package com.free.walker.service.itinerary.dao.db;
 
 import org.junit.After;
 import org.junit.Before;
 
+import com.free.walker.service.itinerary.dao.AbstractTravelRequirementDAOImplTest;
 import com.free.walker.service.itinerary.dao.DAOFactory;
-import com.free.walker.service.itinerary.dao.mysql.MyMongoSQLTravelRequirementDAOImpl;
+import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
 
 public class MyMongoSQLTravelRequirementDAOImplTest extends AbstractTravelRequirementDAOImplTest {
@@ -13,10 +14,12 @@ public class MyMongoSQLTravelRequirementDAOImplTest extends AbstractTravelRequir
         PlatformInitializer.init();
 
         travelRequirementDAO = DAOFactory.getTravelRequirementDAO(MyMongoSQLTravelRequirementDAOImpl.class.getName());
+
+        super.before();
     }
 
     @After
     public void after() {
-        ;
+        super.after();
     }
 }

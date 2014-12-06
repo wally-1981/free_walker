@@ -24,7 +24,6 @@
 	</environments>
 
 	<mappers>
-		<mapper class="com.free.walker.service.itinerary.dao.map.RequirementMapper"/>
-		<mapper class="com.free.walker.service.itinerary.dao.map.BasicMapper"/>
+		<mapper class="com.free.walker.service.itinerary.dao.BasicMapper"/>
 	</mappers>
 </configuration>

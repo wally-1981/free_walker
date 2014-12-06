@@ -1,4 +1,4 @@
-package com.free.walker.service.itinerary.dao.map;
+package com.free.walker.service.itinerary.dao;
 
 import java.util.List;
 

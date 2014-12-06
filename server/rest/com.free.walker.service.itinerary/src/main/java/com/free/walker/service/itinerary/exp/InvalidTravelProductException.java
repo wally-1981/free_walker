@@ -12,33 +12,33 @@ import com.free.walker.service.itinerary.Serializable;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.mongodb.MongoException;
 
-public class InvalidTravelReqirementException extends IllegalAccessException implements Serializable {
+public class InvalidTravelProductException extends IllegalAccessException implements Serializable {
     private static final long serialVersionUID = -8526202664364439050L;
 
     private String context;
     private ErrorCode errorCode;
 
-    public InvalidTravelReqirementException(String message) {
+    public InvalidTravelProductException(String message) {
         super(message);
     }
 
-    public InvalidTravelReqirementException(String message, UUID travelRequirementId) {
+    public InvalidTravelProductException(String message, UUID travelRequirementId) {
         super(message);
         this.context = travelRequirementId.toString();
     }
 
-    public InvalidTravelReqirementException(String message, String context) {
+    public InvalidTravelProductException(String message, String context) {
         super(message);
         this.context = context;
     }
 
-    public InvalidTravelReqirementException(UUID travelRequirementId, MongoException e) {
+    public InvalidTravelProductException(UUID travelRequirementId, MongoException e) {
         super(e.getMessage());
         this.context = travelRequirementId.toString();
         this.errorCode = new ErrorCode(ErrorCode.ErrorCodeType.MONGO_DB_ERROR, e.getCode());
     }
 
-    public InvalidTravelReqirementException(UUID travelRequirementId, ErrorCode errorCode) {
+    public InvalidTravelProductException(UUID travelRequirementId, ErrorCode errorCode) {
         super();
         this.context = travelRequirementId.toString();
         this.errorCode = errorCode;
@@ -66,7 +66,7 @@ public class InvalidTravelReqirementException extends IllegalAccessException imp
         return res.build();
     }
 
-    public InvalidTravelReqirementException fromJSON(JsonObject jsObject) throws JsonException {
+    public InvalidTravelProductException fromJSON(JsonObject jsObject) throws JsonException {
         throw new UnsupportedOperationException();
     }
     

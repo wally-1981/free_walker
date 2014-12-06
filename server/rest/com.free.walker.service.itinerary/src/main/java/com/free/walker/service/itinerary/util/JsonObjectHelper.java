@@ -1,10 +1,16 @@
 package com.free.walker.service.itinerary.util;
 
+import java.util.UUID;
+
 import javax.json.JsonObject;
 
 import com.free.walker.service.itinerary.LocalMessages;
+import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.product.SimpleTravelProduct;
+import com.free.walker.service.itinerary.product.TravelProduct;
+import com.free.walker.service.itinerary.product.TravelProductItem;
 import com.free.walker.service.itinerary.req.HotelRequirement;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.ResortRequirement;
@@ -20,12 +26,14 @@ public class JsonObjectHelper {
 
     public static TravelRequirement toRequirement(JsonObject travelRequirement, boolean strict)
         throws InvalidTravelReqirementException {
+        String uuidStr = strict ? travelRequirement.getString(Introspection.JSONKeys.UUID, null) : null;
+        UUID uuid = uuidStr == null ? null : UuidUtil.fromUuidStr(uuidStr);
+
         if (!travelRequirement.containsKey(Introspection.JSONKeys.TYPE)) {
             throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.invalid_parameter_with_value, Introspection.JSONKeys.TYPE, null),
-                UuidUtil.fromUuidStr(travelRequirement.getString(Introspection.JSONKeys.UUID)));
+                LocalMessages.invalid_parameter_with_value, Introspection.JSONKeys.TYPE, null), uuid);
         }
-        String requirementType = travelRequirement.getString(Introspection.JSONKeys.TYPE);
+        String requirementType = travelRequirement.getString(Introspection.JSONKeys.TYPE, null);
 
         if (Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL.equals(requirementType)) {
             return strict ? (TravelProposal) new TravelProposal().fromJSON(travelRequirement)
@@ -36,10 +44,9 @@ public class JsonObjectHelper {
         } else {
             if (!travelRequirement.containsKey(Introspection.JSONKeys.SUB_TYPE)) {
                 throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                    LocalMessages.invalid_parameter_with_value, Introspection.JSONKeys.SUB_TYPE, null),
-                    UuidUtil.fromUuidStr(travelRequirement.getString(Introspection.JSONKeys.UUID)));
+                    LocalMessages.invalid_parameter_with_value, Introspection.JSONKeys.SUB_TYPE, null), uuid);
             }
-            String requirementSubType = travelRequirement.getString(Introspection.JSONKeys.SUB_TYPE);
+            String requirementSubType = travelRequirement.getString(Introspection.JSONKeys.SUB_TYPE, null);
 
             if (HotelRequirement.SUB_TYPE.equals(requirementSubType)) {
                 return strict ? (HotelRequirement) new HotelRequirement().fromJSON(travelRequirement)
@@ -57,9 +64,22 @@ public class JsonObjectHelper {
             } else {
                 throw new InvalidTravelReqirementException(LocalMessages.getMessage(
                     LocalMessages.invalid_parameter_with_value, Introspection.JSONKeys.TYPE + ":"
-                        + Introspection.JSONKeys.SUB_TYPE, requirementType + ":" + requirementSubType),
-                    UuidUtil.fromUuidStr(travelRequirement.getString(Introspection.JSONKeys.UUID)));
+                        + Introspection.JSONKeys.SUB_TYPE, requirementType + ":" + requirementSubType), uuid);
             }
         }
+    }
+
+    public static TravelProduct toProduct(JsonObject travelProduct) throws InvalidTravelProductException {
+        return toProduct(travelProduct, false);
+    }
+
+    public static TravelProduct toProduct(JsonObject travelProduct, boolean strict)
+        throws InvalidTravelProductException {
+        return strict ? (TravelProduct) new SimpleTravelProduct().fromJSON(travelProduct)
+            : (TravelProduct) new SimpleTravelProduct().newFromJSON(travelProduct);
+    }
+
+    public static TravelProductItem toProductItem(JsonObject travelProductItem) throws InvalidTravelProductException {
+        return null;
     }
 }

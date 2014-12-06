@@ -21,7 +21,7 @@ import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.Serializable;
 import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
-import com.free.walker.service.itinerary.dao.mysql.MySQLTravelBasicDAOImpl;
+import com.free.walker.service.itinerary.dao.db.MySQLTravelBasicDAOImpl;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
@@ -81,31 +81,30 @@ public class City implements Serializable, Loadable {
     }
 
     public City fromJSON(JsonObject jsObject) throws JsonException {
-        String uuid = jsObject.getString(Introspection.JSONKeys.UUID, null);
-        if (uuid == null) {
+        String id = jsObject.getString(Introspection.JSONKeys.UUID, null);
+        if (id == null) {
             JsonArray uuidArray = jsObject.getJsonArray(Introspection.JSONKeys.UUID);
             if (uuidArray != null && uuidArray.size() >= 1) {
-                uuid = uuidArray.getString(0);
+                id = uuidArray.getString(0, null);
             }
         }
 
-        City city;
-        try {
-            city = cities.get(UuidUtil.fromUuidStr(uuid));
-        } catch (InvalidTravelReqirementException e) {
-            throw new JsonException(e.getMessage(), e);
+        if (id == null) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.UUID, id));
         }
 
+        City city = cities.get(UuidUtil.fromUuidStr(id));
         if (city != null) {
             return city;
         } else {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
-                Introspection.JSONKeys.UUID, uuid));
+                Introspection.JSONKeys.UUID, id));
         }
     }
 
     public ValueType getValueType() {
-        return JsonValue.ValueType.OBJECT;
+        return JsonValue.ValueType.NULL;
     }
 
     public boolean load() {

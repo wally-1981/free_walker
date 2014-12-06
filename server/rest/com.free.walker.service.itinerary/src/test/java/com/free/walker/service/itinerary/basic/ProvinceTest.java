@@ -58,7 +58,8 @@ public class ProvinceTest {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         String cmpUuidStr = "8a1dc8fe34c04380b241c19a61ad07be";
         builder.add(Introspection.JSONKeys.UUID, cmpUuidStr);
-        thrown.expect(JsonException.class);
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage(cmpUuidStr);
         new Province().fromJSON(builder.build());
     }
 }

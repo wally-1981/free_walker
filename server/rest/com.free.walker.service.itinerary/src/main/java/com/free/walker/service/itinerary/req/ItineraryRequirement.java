@@ -12,7 +12,6 @@ import javax.json.JsonObjectBuilder;
 
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.TravelLocation;
-import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.UuidUtil;
 import com.ibm.icu.util.Calendar;
@@ -83,21 +82,20 @@ public class ItineraryRequirement extends BaseTravelRequirement implements Trave
     }
 
     public ItineraryRequirement fromJSON(JsonObject jsObject) throws JsonException {
-        String requirementId = jsObject.getString(Introspection.JSONKeys.UUID);
+        String requirementId = jsObject.getString(Introspection.JSONKeys.UUID, null);
 
         if (requirementId != null) {
-            try {
-                this.requirementId = UuidUtil.fromUuidStr(requirementId);
-            } catch (InvalidTravelReqirementException e) {
-                throw new JsonException(e.getMessage(), e);
-            }            
+            this.requirementId = UuidUtil.fromUuidStr(requirementId);
+        } else {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.UUID, requirementId));
         }
 
         return newFromJSON(jsObject);
     }
 
     public ItineraryRequirement newFromJSON(JsonObject jsObject) throws JsonException {
-        String type = jsObject.getString(Introspection.JSONKeys.TYPE);
+        String type = jsObject.getString(Introspection.JSONKeys.TYPE, null);
         if (type != null && !Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY.equals(type)) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.TYPE, type));

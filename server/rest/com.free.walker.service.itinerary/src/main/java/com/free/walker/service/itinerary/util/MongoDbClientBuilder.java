@@ -25,14 +25,14 @@ public class MongoDbClientBuilder {
 
     private MongoClient client;
 
-    public DB build(Properties config) throws UnknownHostException {
-        if (config == null || config.getProperty(DAOConstants.mongo_database_url) == null) {
+    public DB build(String dbName, Properties config) throws UnknownHostException {
+        if (config == null || config.getProperty(DAOConstants.mongo_database_url) == null || dbName == null
+            || dbName.trim().length() == 0) {
             throw new NullPointerException();
         }
 
         String mongoDatabaseUrl = config.getProperty(DAOConstants.mongo_database_url);
-
-        String dbName = mongoDatabaseUrl.substring(0, mongoDatabaseUrl.indexOf(AT));
+        mongoDatabaseUrl = new StringBuffer(dbName).append(mongoDatabaseUrl).toString();
 
         List<ServerAddress> hostAddresses = new ArrayList<ServerAddress>();
         String dbHosts = mongoDatabaseUrl.substring(mongoDatabaseUrl.indexOf(AT) + AT.length());

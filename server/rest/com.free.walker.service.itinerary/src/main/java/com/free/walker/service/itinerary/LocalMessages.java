@@ -50,9 +50,13 @@ public class LocalMessages {
         ;
     }
 
+    public static final String illegal_uuid = "illegal_uuid";
+    public static final String illegal_compact_uuid = "illegal_compact_uuid";
     public static final String illegal_hotel_nights = "illegal_hotel_nights";
     public static final String empty_itinerary_location = "empty_itinerary_location";
     public static final String illegal_itinerary_index = "illegal_itinerary_index";
+    public static final String invalid_bidding_item_range = "invalid_bidding_item_range";
+    public static final String conflict_bidding_item_range = "conflict_bidding_item_range";
 
     public static final String missing_travel_requirement = "missing_travel_requirement";
     public static final String existed_travel_requirement = "existed_travel_requirement";
@@ -69,6 +73,9 @@ public class LocalMessages {
     public static final String requirement_not_found = "requirement_not_found";
     public static final String itinerary_not_found = "itinerary_not_found";
     public static final String proposal_not_found = "proposal_not_found";
+
+    public static final String missing_travel_product = "missing_travel_product";
+    public static final String existed_travel_product = "existed_travel_product";
 
     public static final String introspection_failure = "introspection_failure";
     public static final String dao_init_failure = "dao_init_failure";

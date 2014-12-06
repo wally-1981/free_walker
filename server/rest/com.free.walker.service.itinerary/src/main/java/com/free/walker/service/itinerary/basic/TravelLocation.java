@@ -45,6 +45,6 @@ public class TravelLocation implements Serializable {
     }
 
     public ValueType getValueType() {
-        return JsonValue.ValueType.OBJECT;
+        return JsonValue.ValueType.NULL;
     }
 }

@@ -6,21 +6,25 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
-import com.free.walker.service.itinerary.Serializable;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.primitive.TrafficToolType;
 import com.free.walker.service.itinerary.traffic.TrafficTool;
 import com.ibm.icu.util.Calendar;
 
-public class Flight extends TrafficTool implements Serializable {
+public class Flight extends TrafficTool {
     private String number;
     private TravelLocation departure;
     private TravelLocation destination;
 
     private Calendar departureDateTime;
+    private Calendar arrivalDateTime;
 
     private double ticketFee = 0;
     private double taxFee = 0;
+
+    public Flight() {
+        ;
+    }
 
     public Flight(String number) {
         if (number == null) {
@@ -80,17 +84,25 @@ public class Flight extends TrafficTool implements Serializable {
         this.departureDateTime = departureDateTime;
     }
 
+    public Calendar getArrivalDateTime() {
+        return arrivalDateTime;
+    }
+
+    public void setArrivalDateTime(Calendar arrivalDateTime) {
+        this.arrivalDateTime = arrivalDateTime;
+    }
+
     public JsonObject toJSON() {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         return resBuilder.build();
     }
 
-    public Object fromJSON(JsonObject jsObject) throws JsonException {
+    public Flight fromJSON(JsonObject jsObject) throws JsonException {
         return this;
     }
 
     public ValueType getValueType() {
-        return JsonValue.ValueType.OBJECT;
+        return JsonValue.ValueType.NULL;
     }
 
 }
