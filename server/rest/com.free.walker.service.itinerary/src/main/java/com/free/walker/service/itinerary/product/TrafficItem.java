@@ -1,6 +1,7 @@
 package com.free.walker.service.itinerary.product;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.json.Json;
 import javax.json.JsonException;
@@ -29,6 +30,10 @@ public class TrafficItem extends TravelProductItem {
     private TrafficTool trafficTool;
     private Calendar date;
 
+    public TrafficItem() {
+        super();
+    }
+
     public TrafficItem(TravelProduct travelProduct, TrafficTool trafficTool, Calendar date) {
         super(travelProduct);
 
@@ -48,6 +53,10 @@ public class TrafficItem extends TravelProductItem {
         return SUB_TYPE;
     }
 
+    public UUID getUUID() {
+        return uuid;
+    }
+
     public List<TravelProductItem> getTravelProductItems() {
         return travelProduct.getTravelProductItems();
     }
@@ -55,18 +64,29 @@ public class TrafficItem extends TravelProductItem {
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, uuid.toString());
+        resBuilder.add(Introspection.JSONKeys.SUB_TYPE, SUB_TYPE);
         resBuilder.add(Introspection.JSONKeys.DATE, date.getTimeInMillis());
         resBuilder.add(Introspection.JSONKeys.TRAFFIC, trafficTool.toJSON());
         return resBuilder.build();
     }
 
-    public Object fromJSON(JsonObject jsObject) throws JsonException {
+    public TrafficItem newFromJSON(JsonObject jsObject) throws JsonException {
         String uuidStr = jsObject.getString(Introspection.JSONKeys.UUID, null);
         if (uuidStr == null) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.UUID, uuidStr));
         } else {
             uuid = UuidUtil.fromUuidStr(uuidStr);
+        }
+
+        return fromJSON(jsObject);
+    }
+
+    public TrafficItem fromJSON(JsonObject jsObject) throws JsonException {
+        String subType = jsObject.getString(Introspection.JSONKeys.SUB_TYPE, null);
+        if (subType == null || !SUB_TYPE.equals(subType)) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.SUB_TYPE, subType));
         }
 
         JsonNumber dateJs = jsObject.getJsonNumber(Introspection.JSONKeys.DATE);
@@ -84,13 +104,14 @@ public class TrafficItem extends TravelProductItem {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.TRAFFIC, trafficJs));
         } else {
-            if (Introspection.JSONValues.TRAFFIC_TOOL_TYPE_FLIGHT.equals(trafficTool.getType())) {
+            int trafficToolType = trafficJs.getInt(Introspection.JSONKeys.TRAFFIC_TOOL_TYPE, 0);
+            if (Introspection.JSONValues.TRAFFIC_TOOL_TYPE_FLIGHT.enumValue() == trafficToolType) {
                 this.trafficTool = new Flight().fromJSON(trafficJs);
-            } else if (Introspection.JSONValues.TRAFFIC_TOOL_TYPE_TRAIN.equals(trafficTool.getType())) {
+            } else if (Introspection.JSONValues.TRAFFIC_TOOL_TYPE_TRAIN.enumValue() == trafficToolType) {
                 this.trafficTool = new Train().fromJSON(trafficJs);
             } else {
                 throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
-                    Introspection.JSONKeys.TRAFFIC, trafficJs));
+                    Introspection.JSONKeys.TRAFFIC_TOOL_TYPE, trafficToolType));
             }
         }
 

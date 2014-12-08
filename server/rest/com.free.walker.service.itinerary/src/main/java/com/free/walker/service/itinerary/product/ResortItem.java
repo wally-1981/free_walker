@@ -1,6 +1,7 @@
 package com.free.walker.service.itinerary.product;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.json.Json;
 import javax.json.JsonException;
@@ -27,6 +28,10 @@ public class ResortItem extends TravelProductItem {
     private Resort resort;
     private Calendar date;
 
+    public ResortItem() {
+        super();
+    }
+
     public ResortItem(TravelProduct travelProduct, Resort resort, Calendar date) {
         super(travelProduct);
 
@@ -46,6 +51,10 @@ public class ResortItem extends TravelProductItem {
         return SUB_TYPE;
     }
 
+    public UUID getUUID() {
+        return uuid;
+    }
+
     public List<TravelProductItem> getTravelProductItems() {
         return travelProduct.getTravelProductItems();
     }
@@ -53,18 +62,29 @@ public class ResortItem extends TravelProductItem {
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, uuid.toString());
+        resBuilder.add(Introspection.JSONKeys.SUB_TYPE, SUB_TYPE);
         resBuilder.add(Introspection.JSONKeys.DATE, date.getTimeInMillis());
         resBuilder.add(Introspection.JSONKeys.RESORT, resort.toJSON());
         return resBuilder.build();
     }
 
-    public Object fromJSON(JsonObject jsObject) throws JsonException {
+    public ResortItem newFromJSON(JsonObject jsObject) throws JsonException {
         String uuidStr = jsObject.getString(Introspection.JSONKeys.UUID, null);
         if (uuidStr == null) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.UUID, uuidStr));
         } else {
             uuid = UuidUtil.fromUuidStr(uuidStr);
+        }
+
+        return fromJSON(jsObject);
+    }
+
+    public ResortItem fromJSON(JsonObject jsObject) throws JsonException {
+        String subType = jsObject.getString(Introspection.JSONKeys.SUB_TYPE, null);
+        if (subType == null || !SUB_TYPE.equals(subType)) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.SUB_TYPE, subType));
         }
 
         JsonNumber dateJs = jsObject.getJsonNumber(Introspection.JSONKeys.DATE);

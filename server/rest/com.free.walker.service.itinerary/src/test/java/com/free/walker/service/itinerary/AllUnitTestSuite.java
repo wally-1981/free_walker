@@ -3,7 +3,6 @@ package com.free.walker.service.itinerary;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import com.free.walker.service.itinerary.basic.BiddingTest;
 import com.free.walker.service.itinerary.basic.CityTest;
 import com.free.walker.service.itinerary.basic.ContinentTest;
 import com.free.walker.service.itinerary.basic.CountryTest;
@@ -15,6 +14,7 @@ import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOIm
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelProductDAOImplTest;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImplTest;
 import com.free.walker.service.itinerary.primitive.IntrospectionTest;
+import com.free.walker.service.itinerary.product.BiddingTest;
 import com.free.walker.service.itinerary.product.TravelProductTest;
 import com.free.walker.service.itinerary.req.HotelRequirementTest;
 import com.free.walker.service.itinerary.req.ItineraryRequirementTest;

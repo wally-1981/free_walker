@@ -1,6 +1,7 @@
-package com.free.walker.service.itinerary.basic;
+package com.free.walker.service.itinerary.product;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -14,11 +15,13 @@ import javax.json.JsonValue;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.Serializable;
 import com.free.walker.service.itinerary.primitive.Introspection;
-import com.free.walker.service.itinerary.product.TravelProduct;
-import com.free.walker.service.itinerary.product.TravelProductItem;
 
 public class Bidding extends TravelProductItem {
     private BiddingItem[] biddingItems;
+
+    public Bidding(){
+        super();
+    }
 
     public Bidding(TravelProduct travelProduct) {
         super(travelProduct);
@@ -49,6 +52,14 @@ public class Bidding extends TravelProductItem {
         return JsonValue.ValueType.NULL;
     }
 
+    public String getType() {
+        return "";
+    }
+
+    public UUID getUUID() {
+        return null;
+    }
+
     public List<TravelProductItem> getTravelProductItems() {
         return travelProduct.getTravelProductItems();
     }
@@ -63,6 +74,10 @@ public class Bidding extends TravelProductItem {
         resBuilder.add(Introspection.JSONKeys.BIDDING, itemsBuilder);
 
         return resBuilder.build();
+    }
+
+    public Bidding newFromJSON(JsonObject jsObject) throws JsonException {
+        return fromJSON(jsObject);
     }
 
     public Bidding fromJSON(JsonObject jsObject) throws JsonException {

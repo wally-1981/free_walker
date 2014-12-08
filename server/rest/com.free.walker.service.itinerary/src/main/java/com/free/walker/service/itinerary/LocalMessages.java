@@ -69,6 +69,7 @@ public class LocalMessages {
     public static final String illegal_add_itinerary_as_requirement = "illegal_add_itinerary_as_requirement";
     public static final String illegal_update_travel_requirement_operation = "illegal_update_travel_requirement_operation";
     public static final String illegal_delete_travel_requirement_operation = "illegal_delete_travel_requirement_operation";
+    public static final String illegal_remove_product_item_operation = "illegal_remove_product_item_operation";
 
     public static final String requirement_not_found = "requirement_not_found";
     public static final String itinerary_not_found = "itinerary_not_found";
@@ -76,6 +77,7 @@ public class LocalMessages {
 
     public static final String missing_travel_product = "missing_travel_product";
     public static final String existed_travel_product = "existed_travel_product";
+    public static final String existed_product_bidding = "existed_product_bidding";
 
     public static final String introspection_failure = "introspection_failure";
     public static final String dao_init_failure = "dao_init_failure";

@@ -4,9 +4,15 @@ import java.util.UUID;
 
 import javax.json.JsonValue;
 
-public abstract class TravelProductItem implements TravelProduct {
-    protected final TravelProduct travelProduct;
+import com.free.walker.service.itinerary.Renewable;
+
+public abstract class TravelProductItem implements TravelProduct, Renewable {
+    protected TravelProduct travelProduct;
     protected UUID uuid;
+
+    public TravelProductItem() {
+        ;
+    }
 
     public TravelProductItem(TravelProduct travelProduct) {
         if (travelProduct == null) {
@@ -30,15 +36,15 @@ public abstract class TravelProductItem implements TravelProduct {
         return false;
     }
 
-    public UUID getUUID() {
-        return travelProduct.getUUID();
-    }
-
-    public String getType() {
-        return null;
+    public UUID getProductUUID() {
+        return travelProduct.getProductUUID();
     }
 
     public ValueType getValueType() {
         return JsonValue.ValueType.NULL;
     }
+
+    public abstract String getType();
+
+    public abstract UUID getUUID();
 }

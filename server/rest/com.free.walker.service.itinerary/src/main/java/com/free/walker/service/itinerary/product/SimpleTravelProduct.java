@@ -82,7 +82,7 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
         return resBuilder.build();
     }
 
-    public Object fromJSON(JsonObject jsObject) throws JsonException {
+    public TravelProduct fromJSON(JsonObject jsObject) throws JsonException {
         String productId = jsObject.getString(Introspection.JSONKeys.UUID, null);
 
         if (productId != null) {
@@ -95,7 +95,7 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
         return newFromJSON(jsObject);
     }
 
-    public Object newFromJSON(JsonObject jsObject) throws JsonException {
+    public TravelProduct newFromJSON(JsonObject jsObject) throws JsonException {
         String proposalId = jsObject.getString(Introspection.JSONKeys.REF_UUID, null);
 
         if (proposalId != null) {
@@ -117,7 +117,7 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
             }
         }
 
-        int sizeUpperLimit = jsObject.getInt(Introspection.JSONKeys.GROUP_SIZE);
+        int sizeUpperLimit = jsObject.getInt(Introspection.JSONKeys.GROUP_SIZE, 0);
         if (sizeUpperLimit > 0) {
             this.sizeUpperLimit = sizeUpperLimit;
         }
@@ -141,7 +141,7 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
         return this;
     }
 
-    public UUID getUUID() {
+    public UUID getProductUUID() {
         return productId;
     }
 

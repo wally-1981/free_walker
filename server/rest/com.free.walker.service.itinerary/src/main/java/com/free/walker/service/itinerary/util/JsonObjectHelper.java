@@ -8,9 +8,13 @@ import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.product.HotelItem;
+import com.free.walker.service.itinerary.product.ResortItem;
 import com.free.walker.service.itinerary.product.SimpleTravelProduct;
+import com.free.walker.service.itinerary.product.TrafficItem;
 import com.free.walker.service.itinerary.product.TravelProduct;
 import com.free.walker.service.itinerary.product.TravelProductItem;
+import com.free.walker.service.itinerary.product.TrivItem;
 import com.free.walker.service.itinerary.req.HotelRequirement;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.ResortRequirement;
@@ -80,6 +84,34 @@ public class JsonObjectHelper {
     }
 
     public static TravelProductItem toProductItem(JsonObject travelProductItem) throws InvalidTravelProductException {
-        return null;
+        return toProductItem(travelProductItem, false);
+    }
+
+    public static TravelProductItem toProductItem(JsonObject travelProductItem, boolean strict)
+        throws InvalidTravelProductException {        
+        String uuidStr = strict ? travelProductItem.getString(Introspection.JSONKeys.UUID, null) : null;
+        UUID uuid = uuidStr == null ? null : UuidUtil.fromUuidStr(uuidStr);
+
+        if (!travelProductItem.containsKey(Introspection.JSONKeys.SUB_TYPE)) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(
+                LocalMessages.invalid_parameter_with_value, Introspection.JSONKeys.SUB_TYPE, null), uuid);
+        }
+        String itemType = travelProductItem.getString(Introspection.JSONKeys.SUB_TYPE, null);
+
+        if (HotelItem.SUB_TYPE.equals(itemType)) {
+            return strict ? new HotelItem().fromJSON(travelProductItem) : new HotelItem()
+                .newFromJSON(travelProductItem);
+        } else if (TrafficItem.SUB_TYPE.equals(itemType)) {
+            return strict ? new TrafficItem().fromJSON(travelProductItem) : new TrafficItem()
+                .newFromJSON(travelProductItem);
+        } else if (ResortItem.SUB_TYPE.equals(itemType)) {
+            return strict ? new ResortItem().fromJSON(travelProductItem) : new ResortItem()
+                .newFromJSON(travelProductItem);
+        } else if (TrivItem.SUB_TYPE.equals(itemType)) {
+            return strict ? new TrivItem().fromJSON(travelProductItem) : new TrivItem().newFromJSON(travelProductItem);
+        } else {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(
+                LocalMessages.invalid_parameter_with_value, Introspection.JSONKeys.SUB_TYPE, itemType), uuid);
+        }
     }
 }

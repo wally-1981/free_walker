@@ -1,4 +1,4 @@
-package com.free.walker.service.itinerary.basic;
+package com.free.walker.service.itinerary.product;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -16,7 +16,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import com.free.walker.service.itinerary.basic.Flight;
+import com.free.walker.service.itinerary.basic.Hotel;
+import com.free.walker.service.itinerary.basic.Resort;
 import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.product.Bidding;
 import com.free.walker.service.itinerary.product.HotelItem;
 import com.free.walker.service.itinerary.product.ResortItem;
 import com.free.walker.service.itinerary.product.SimpleTravelProduct;

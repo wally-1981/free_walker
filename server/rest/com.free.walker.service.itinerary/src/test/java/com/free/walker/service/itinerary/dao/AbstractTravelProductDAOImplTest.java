@@ -1,7 +1,10 @@
 package com.free.walker.service.itinerary.dao;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.After;
@@ -11,19 +14,21 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.free.walker.service.itinerary.LocalMessages;
-import com.free.walker.service.itinerary.basic.Bidding;
-import com.free.walker.service.itinerary.basic.Bidding.BiddingItem;
 import com.free.walker.service.itinerary.basic.Flight;
 import com.free.walker.service.itinerary.basic.Hotel;
 import com.free.walker.service.itinerary.basic.Resort;
 import com.free.walker.service.itinerary.basic.Train;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
+import com.free.walker.service.itinerary.product.Bidding;
 import com.free.walker.service.itinerary.product.HotelItem;
 import com.free.walker.service.itinerary.product.ResortItem;
 import com.free.walker.service.itinerary.product.SimpleTravelProduct;
 import com.free.walker.service.itinerary.product.TrafficItem;
 import com.free.walker.service.itinerary.product.TravelProduct;
+import com.free.walker.service.itinerary.product.TravelProductItem;
+import com.free.walker.service.itinerary.product.TrivItem;
+import com.free.walker.service.itinerary.product.Bidding.BiddingItem;
 import com.free.walker.service.itinerary.traffic.TrafficTool;
 import com.ibm.icu.util.Calendar;
 
@@ -34,6 +39,7 @@ public abstract class AbstractTravelProductDAOImplTest {
     private HotelItem hotelItem;
     private TrafficItem trafficItem;
     private ResortItem resortItem;
+    private TrivItem trivItem;
     private Bidding bidding;
 
     @Rule
@@ -97,6 +103,10 @@ public abstract class AbstractTravelProductDAOImplTest {
         }
 
         {
+            trivItem = new TrivItem(travelProduct);
+        }
+
+        {
             BiddingItem[] items = new BiddingItem[5];
             items[0] = new Bidding.BiddingItem(1, 5, 8999.99);
             items[1] = new Bidding.BiddingItem(6, 20, 8666.66);
@@ -119,7 +129,7 @@ public abstract class AbstractTravelProductDAOImplTest {
         assertNotNull(productId);
 
         thrown.expect(InvalidTravelProductException.class);
-        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.existed_travel_product, travelProduct.getUUID()));
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.existed_travel_product, travelProduct.getProductUUID()));
         travelProductDAO.createProduct(travelProduct);
     }
 
@@ -130,16 +140,16 @@ public abstract class AbstractTravelProductDAOImplTest {
     }
 
     @Test
-    public void testAddHotelWithNull() throws InvalidTravelProductException, DatabaseAccessException {
+    public void testAddItemWithNull() throws InvalidTravelProductException, DatabaseAccessException {
         thrown.expect(NullPointerException.class);
-        travelProductDAO.addItem(null, HotelItem.SUB_TYPE);
+        travelProductDAO.addItem(null);
     }
 
     @Test
     public void testAddHotelWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
         thrown.expect(InvalidTravelProductException.class);
-        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, hotelItem.getUUID()));
-        travelProductDAO.addItem(hotelItem, HotelItem.SUB_TYPE);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, hotelItem.getProductUUID()));
+        travelProductDAO.addItem(hotelItem);
     }
 
     @Test
@@ -147,21 +157,15 @@ public abstract class AbstractTravelProductDAOImplTest {
         UUID productId = travelProductDAO.createProduct(travelProduct);
         assertNotNull(productId);
 
-        productId = travelProductDAO.addItem(hotelItem, HotelItem.SUB_TYPE);
+        productId = travelProductDAO.addItem(hotelItem);
         assertNotNull(productId);
-    }
-
-    @Test
-    public void testAddTrafficWithNull() throws InvalidTravelProductException, DatabaseAccessException {
-        thrown.expect(NullPointerException.class);
-        travelProductDAO.addItem(null, TrafficItem.SUB_TYPE);
     }
 
     @Test
     public void testAddTrafficWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
         thrown.expect(InvalidTravelProductException.class);
-        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, trafficItem.getUUID()));
-        travelProductDAO.addItem(trafficItem, TrafficItem.SUB_TYPE);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, trafficItem.getProductUUID()));
+        travelProductDAO.addItem(trafficItem);
     }
 
     @Test
@@ -169,21 +173,15 @@ public abstract class AbstractTravelProductDAOImplTest {
         UUID productId = travelProductDAO.createProduct(travelProduct);
         assertNotNull(productId);
 
-        productId = travelProductDAO.addItem(trafficItem, TrafficItem.SUB_TYPE);
+        productId = travelProductDAO.addItem(trafficItem);
         assertNotNull(productId);
-    }
-
-    @Test
-    public void testAddResortWithNull() throws InvalidTravelProductException, DatabaseAccessException {
-        thrown.expect(NullPointerException.class);
-        travelProductDAO.addItem(null, ResortItem.SUB_TYPE);
     }
 
     @Test
     public void testAddResortWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
         thrown.expect(InvalidTravelProductException.class);
-        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, resortItem.getUUID()));
-        travelProductDAO.addItem(resortItem, ResortItem.SUB_TYPE);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, resortItem.getProductUUID()));
+        travelProductDAO.addItem(resortItem);
     }
 
     @Test
@@ -191,7 +189,23 @@ public abstract class AbstractTravelProductDAOImplTest {
         UUID productId = travelProductDAO.createProduct(travelProduct);
         assertNotNull(productId);
 
-        productId = travelProductDAO.addItem(resortItem, ResortItem.SUB_TYPE);
+        productId = travelProductDAO.addItem(resortItem);
+        assertNotNull(productId);
+    }
+
+    @Test
+    public void testAddTrivWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, trivItem.getProductUUID()));
+        travelProductDAO.addItem(trivItem);
+    }
+
+    @Test
+    public void testAddTriv() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        assertNotNull(productId);
+
+        productId = travelProductDAO.addItem(trivItem);
         assertNotNull(productId);
     }
 
@@ -204,7 +218,20 @@ public abstract class AbstractTravelProductDAOImplTest {
     @Test
     public void testSetBiddingWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
         thrown.expect(InvalidTravelProductException.class);
-        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, bidding.getUUID()));
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, bidding.getProductUUID()));
+        travelProductDAO.setBidding(bidding);
+    }
+
+    @Test
+    public void testSetBiddingTwice() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        assertNotNull(productId);
+
+        productId = travelProductDAO.setBidding(bidding);
+        assertNotNull(productId);
+
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.existed_product_bidding, bidding.getProductUUID()));
         travelProductDAO.setBidding(bidding);
     }
 
@@ -215,6 +242,290 @@ public abstract class AbstractTravelProductDAOImplTest {
 
         productId = travelProductDAO.setBidding(bidding);
         assertNotNull(productId);
+    }
+
+    @Test
+    public void testGetProductWithNullProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.getProduct(null);
+    }
+
+    @Test
+    public void testGetProductWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        assertNull(travelProductDAO.getProduct(UUID.randomUUID()));
+    }
+
+    @Test
+    public void testGetProduct() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+
+        TravelProduct travelProduct = travelProductDAO.getProduct(productId);
+        assertNotNull(travelProduct);
+    }
+
+    @Test
+    public void testGetHotelItemsWithNullProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.getItems(null, HotelItem.SUB_TYPE);
+    }
+
+    @Test
+    public void testGetHotelItemsWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID wrongProductId = UUID.randomUUID();
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, wrongProductId));
+        travelProductDAO.getItems(wrongProductId, HotelItem.SUB_TYPE);
+    }
+
+    @Test
+    public void testGetHotelItems() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID itemId = travelProductDAO.addItem(hotelItem);
+        assertNotNull(itemId);
+
+        List<TravelProductItem> items = travelProductDAO.getItems(productId, HotelItem.SUB_TYPE);
+        assertNotNull(items);
+        assertEquals(4, items.size());
+        assertNotNull(items.get(0));
+        assertNotNull(items.get(1));
+        assertNotNull(items.get(2));
+        assertNotNull(items.get(3));
+    }
+
+    @Test
+    public void testGetTrafficItemsWithNullProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.getItems(null, TrafficItem.SUB_TYPE);
+    }
+
+    @Test
+    public void testGetTrafficItemsWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID wrongProductId = UUID.randomUUID();
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, wrongProductId));
+        travelProductDAO.getItems(wrongProductId, TrafficItem.SUB_TYPE);
+    }
+
+    @Test
+    public void testGetTrafficItems() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID itemId = travelProductDAO.addItem(trafficItem);
+        assertNotNull(itemId);
+
+        List<TravelProductItem> items = travelProductDAO.getItems(productId, TrafficItem.SUB_TYPE);
+        assertNotNull(items);
+        assertEquals(4, items.size());
+        assertNotNull(items.get(0));
+        assertNotNull(items.get(1));
+        assertNotNull(items.get(2));
+        assertNotNull(items.get(3));
+    }
+
+    @Test
+    public void testGetResortItemsWithNullProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.getItems(null, ResortItem.SUB_TYPE);
+    }
+
+    @Test
+    public void testGetResortItemsWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID wrongProductId = UUID.randomUUID();
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, wrongProductId));
+        travelProductDAO.getItems(wrongProductId, ResortItem.SUB_TYPE);
+    }
+
+    @Test
+    public void testGetResortItems() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID itemId = travelProductDAO.addItem(resortItem);
+        assertNotNull(itemId);
+
+        List<TravelProductItem> items = travelProductDAO.getItems(productId, ResortItem.SUB_TYPE);
+        assertNotNull(items);
+        assertEquals(3, items.size());
+        assertNotNull(items.get(0));
+        assertNotNull(items.get(1));
+        assertNotNull(items.get(2));
+    }
+
+    @Test
+    public void testGetBiddingWithNullProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.getBidding(null);
+    }
+
+    @Test
+    public void testGetBidding() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        productId = travelProductDAO.setBidding(bidding);
+        Bidding bidding = travelProductDAO.getBidding(productId);
+        assertNotNull(bidding);
+    }
+
+    @Test
+    public void testRemoveHotelItemWithNullProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.removeHotelItem(null, UUID.randomUUID());
+    }
+
+    @Test
+    public void testRemoveHotelItemWithNullItemId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.removeHotelItem(UUID.randomUUID(), null);
+    }
+
+    @Test
+    public void testRemoveHotelItemWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID wrongProductId = UUID.randomUUID();
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, wrongProductId));
+        travelProductDAO.removeHotelItem(wrongProductId, UUID.randomUUID());
+    }
+
+    @Test
+    public void testRemoveHotelItemWithBidding() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        productId = travelProductDAO.setBidding(bidding);
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_remove_product_item_operation, productId));
+        travelProductDAO.removeHotelItem(productId, hotelItem.getUUID());
+    }
+
+    @Test
+    public void testRemoveHotelItem() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID hotelItemId = travelProductDAO.removeHotelItem(productId, hotelItem.getUUID());
+        assertNotNull(hotelItemId);
+    }
+
+    @Test
+    public void testRemoveTrafficItemWithNullProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.removeTrafficItem(null, UUID.randomUUID());
+    }
+
+    @Test
+    public void testRemoveTrafficItemWithNullItemId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.removeTrafficItem(UUID.randomUUID(), null);
+    }
+
+    @Test
+    public void testRemoveTrafficItemWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID wrongProductId = UUID.randomUUID();
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, wrongProductId));
+        travelProductDAO.removeTrafficItem(wrongProductId, UUID.randomUUID());
+    }
+
+    @Test
+    public void testRemoveTrafficItemWithBidding() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        productId = travelProductDAO.setBidding(bidding);
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_remove_product_item_operation, productId));
+        travelProductDAO.removeTrafficItem(productId, trafficItem.getUUID());
+    }
+
+    @Test
+    public void testRemoveTrafficItem() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID trafficItemId = travelProductDAO.removeTrafficItem(productId, trafficItem.getUUID());
+        assertNotNull(trafficItemId);
+    }
+
+    @Test
+    public void testRemoveResortItemWithNullProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.removeResortItem(null, UUID.randomUUID());
+    }
+
+    @Test
+    public void testRemoveResortItemWithNullItemId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.removeResortItem(UUID.randomUUID(), null);
+    }
+
+    @Test
+    public void testRemoveResortItemWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID wrongProductId = UUID.randomUUID();
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, wrongProductId));
+        travelProductDAO.removeResortItem(wrongProductId, UUID.randomUUID());
+    }
+
+    @Test
+    public void testRemoveResortItemWithBidding() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        productId = travelProductDAO.setBidding(bidding);
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_remove_product_item_operation, productId));
+        travelProductDAO.removeResortItem(productId, resortItem.getUUID());
+    }
+
+    @Test
+    public void testRemoveResortItem() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID resortItemId = travelProductDAO.removeResortItem(productId, resortItem.getUUID());
+        assertNotNull(resortItemId);
+    }
+
+    @Test
+    public void testRemoveTrivItemWithNullProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.removeTrivItem(null, UUID.randomUUID());
+    }
+
+    @Test
+    public void testRemoveTrivItemWithNullItemId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.removeTrivItem(UUID.randomUUID(), null);
+    }
+
+    @Test
+    public void testRemoveTrivItemWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID wrongProductId = UUID.randomUUID();
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, wrongProductId));
+        travelProductDAO.removeTrivItem(wrongProductId, UUID.randomUUID());
+    }
+
+    @Test
+    public void testRemoveTrivItemWithBidding() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        productId = travelProductDAO.setBidding(bidding);
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_remove_product_item_operation, productId));
+        travelProductDAO.removeTrivItem(productId, trivItem.getUUID());
+    }
+
+    @Test
+    public void testRemoveTrivItem() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID trivItemId = travelProductDAO.removeTrivItem(productId, trivItem.getUUID());
+        assertNotNull(trivItemId);
+    }
+
+    @Test
+    public void testUnsetBiddingWithNullProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.unsetBidding(null);
+    }
+
+    @Test
+    public void testUnsetBiddingWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID wrongProductId = UUID.randomUUID();
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, wrongProductId));
+        travelProductDAO.unsetBidding(wrongProductId);
+    }
+
+    @Test
+    public void testUnsetBidding() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        productId = travelProductDAO.setBidding(bidding);
+        travelProductDAO.unsetBidding(productId);
     }
 
     @After

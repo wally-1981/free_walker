@@ -7,12 +7,16 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.free.walker.service.itinerary.LocalMessages;
-import com.free.walker.service.itinerary.basic.Bidding;
 import com.free.walker.service.itinerary.dao.TravelProductDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
+import com.free.walker.service.itinerary.product.Bidding;
+import com.free.walker.service.itinerary.product.HotelItem;
+import com.free.walker.service.itinerary.product.ResortItem;
+import com.free.walker.service.itinerary.product.TrafficItem;
 import com.free.walker.service.itinerary.product.TravelProduct;
 import com.free.walker.service.itinerary.product.TravelProductItem;
+import com.free.walker.service.itinerary.product.TrivItem;
 
 public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
     protected Map<UUID, TravelProduct> travelProducts;
@@ -43,38 +47,38 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
             throw new NullPointerException();
         }
 
-        if (travelProducts.containsKey(travelProduct.getUUID())) {
+        if (travelProducts.containsKey(travelProduct.getProductUUID())) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.existed_travel_product,
-                travelProduct.getUUID()), travelProduct.getUUID());
+                travelProduct.getProductUUID()), travelProduct.getProductUUID());
         }
 
-        if (travelProductItems.containsKey(travelProduct.getUUID())) {
+        if (travelProductItems.containsKey(travelProduct.getProductUUID())) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.existed_travel_product,
-                travelProduct.getUUID()), travelProduct.getUUID());
+                travelProduct.getProductUUID()), travelProduct.getProductUUID());
         }
 
-        travelProducts.put(travelProduct.getUUID(), travelProduct);
+        travelProducts.put(travelProduct.getProductUUID(), travelProduct);
         List<TravelProductItem> items = new ArrayList<TravelProductItem>(travelProduct.getTravelProductItems());
         travelProduct.getTravelProductItems().clear();
-        travelProductItems.put(travelProduct.getUUID(), items);
-        return travelProduct.getUUID();
+        travelProductItems.put(travelProduct.getProductUUID(), items);
+        return travelProduct.getProductUUID();
     }
 
-    public UUID addItem(TravelProductItem travelProductItem, String itemType) throws InvalidTravelProductException,
+    public UUID addItem(TravelProductItem travelProductItem) throws InvalidTravelProductException,
         DatabaseAccessException {
         if (travelProductItem == null) {
             throw new NullPointerException();
         }
 
-        UUID productId = travelProductItem.getUUID();
+        UUID productId = travelProductItem.getProductUUID();
         if (!travelProducts.containsKey(productId)) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
-                travelProductItem.getUUID()), travelProductItem.getUUID());
+                travelProductItem.getProductUUID()), travelProductItem.getProductUUID());
         }
 
         travelProductItems.get(productId).add(travelProductItem);
 
-        return productId;
+        return travelProductItem.getUUID();
     }
 
     public UUID setBidding(Bidding bidding) throws InvalidTravelProductException, DatabaseAccessException {
@@ -82,71 +86,178 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
             throw new NullPointerException();
         }
 
-        if (!travelProducts.containsKey(bidding.getUUID())) {
+        if (!travelProducts.containsKey(bidding.getProductUUID())) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
-                bidding.getUUID()), bidding.getUUID());
+                bidding.getProductUUID()), bidding.getProductUUID());
         }
 
-        travelProductBiddings.put(bidding.getUUID(), bidding);
+        if (travelProductBiddings.containsKey(bidding.getProductUUID())) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.existed_product_bidding,
+                bidding.getProductUUID()), bidding.getProductUUID());
+        }
 
-        return bidding.getUUID();
+        travelProductBiddings.put(bidding.getProductUUID(), bidding);
+
+        return bidding.getProductUUID();
     }
 
     public TravelProduct getProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
+        if (productId == null) {
+            throw new NullPointerException();
+        }
+
+        return travelProducts.get(productId);
     }
 
-    public List<TravelProductItem> getHotelItems(UUID productId) throws InvalidTravelProductException,
+    public List<TravelProductItem> getItems(UUID productId, String itemType) throws InvalidTravelProductException,
         DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        if (productId == null) {
+            throw new NullPointerException();
+        }
 
-    public List<TravelProductItem> getTrafficItems(UUID productId) throws InvalidTravelProductException,
-        DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        if (!travelProducts.containsKey(productId)) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
+                productId), productId);
+        }
 
-    public List<TravelProductItem> getResortItems(UUID productId) throws InvalidTravelProductException,
-        DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        List<TravelProductItem> items = travelProductItems.get(productId);
+        List<TravelProductItem> results = new ArrayList<TravelProductItem>();
+        for (int i = 0; items != null && i < items.size(); i++) {
+            if (itemType != null && itemType.equals(items.get(i).getType())) {
+                results.add(items.get(i));
+            }
+        }
 
-    public List<TravelProductItem> getTrivItems(UUID productId) throws InvalidTravelProductException,
-        DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
+        return results;
     }
 
     public Bidding getBidding(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
+        if (productId == null) {
+            throw new NullPointerException();
+        }
+
+        return travelProductBiddings.get(productId);
     }
 
     public UUID removeHotelItem(UUID productId, UUID hotelItemId) throws InvalidTravelProductException,
         DatabaseAccessException {
-        // TODO Auto-generated method stub
+        if (productId == null || hotelItemId == null) {
+            throw new NullPointerException();
+        }
+
+        if (!travelProducts.containsKey(productId)) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
+                productId), productId);
+        }
+
+        if (travelProductBiddings.containsKey(productId)) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(
+                LocalMessages.illegal_remove_product_item_operation, productId), productId);
+        }
+
+        List<TravelProductItem> items = travelProductItems.get(productId);
+        for (int i = 0; i < items.size(); i++) {
+            TravelProductItem hotelItem = items.get(i);
+            if (hotelItemId.equals(hotelItem.getUUID()) && HotelItem.SUB_TYPE.equals(hotelItem.getType())) {
+                return items.remove(i).getUUID();
+            }
+        }
+
         return null;
     }
 
     public UUID removeTrafficItem(UUID productId, UUID trafficItemId) throws InvalidTravelProductException,
         DatabaseAccessException {
-        // TODO Auto-generated method stub
+        if (productId == null || trafficItemId == null) {
+            throw new NullPointerException();
+        }
+
+        if (!travelProducts.containsKey(productId)) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
+                productId), productId);
+        }
+
+        if (travelProductBiddings.containsKey(productId)) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(
+                LocalMessages.illegal_remove_product_item_operation, productId), productId);
+        }
+
+        List<TravelProductItem> items = travelProductItems.get(productId);
+        for (int i = 0; i < items.size(); i++) {
+            TravelProductItem trafficItem = items.get(i);
+            if (trafficItemId.equals(trafficItem.getUUID()) && TrafficItem.SUB_TYPE.equals(trafficItem.getType())) {
+                return items.remove(i).getUUID();
+            }
+        }
+
         return null;
     }
 
     public UUID removeResortItem(UUID productId, UUID resortItemId) throws InvalidTravelProductException,
         DatabaseAccessException {
-        // TODO Auto-generated method stub
+        if (productId == null || resortItemId == null) {
+            throw new NullPointerException();
+        }
+
+        if (!travelProducts.containsKey(productId)) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
+                productId), productId);
+        }
+
+        if (travelProductBiddings.containsKey(productId)) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(
+                LocalMessages.illegal_remove_product_item_operation, productId), productId);
+        }
+
+        List<TravelProductItem> items = travelProductItems.get(productId);
+        for (int i = 0; i < items.size(); i++) {
+            TravelProductItem resortItem = items.get(i);
+            if (resortItemId.equals(resortItem.getUUID()) && ResortItem.SUB_TYPE.equals(resortItem.getType())) {
+                return items.remove(i).getUUID();
+            }
+        }
+
         return null;
     }
 
     public UUID removeTrivItem(UUID productId, UUID trivItemId) throws InvalidTravelProductException,
         DatabaseAccessException {
-        // TODO Auto-generated method stub
+        if (productId == null || trivItemId == null) {
+            throw new NullPointerException();
+        }
+
+        if (!travelProducts.containsKey(productId)) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
+                productId), productId);
+        }
+
+        if (travelProductBiddings.containsKey(productId)) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(
+                LocalMessages.illegal_remove_product_item_operation, productId), productId);
+        }
+
+        List<TravelProductItem> items = travelProductItems.get(productId);
+        for (int i = 0; i < items.size(); i++) {
+            TravelProductItem trivItem = items.get(i);
+            if (trivItemId.equals(trivItem.getUUID()) && TrivItem.SUB_TYPE.equals(trivItem.getType())) {
+                return items.remove(i).getUUID();
+            }
+        }
+
         return null;
+
+    }
+
+    public Bidding unsetBidding(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {
+        if (productId == null) {
+            throw new NullPointerException();
+        }
+
+        if (!travelProducts.containsKey(productId)) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
+                productId), productId);
+        }
+
+        return travelProductBiddings.remove(productId);
     }
 }

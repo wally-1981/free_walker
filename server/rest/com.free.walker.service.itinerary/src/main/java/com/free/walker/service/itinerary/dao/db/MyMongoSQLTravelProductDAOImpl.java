@@ -3,6 +3,7 @@ package com.free.walker.service.itinerary.dao.db;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -17,17 +18,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.free.walker.service.itinerary.LocalMessages;
-import com.free.walker.service.itinerary.basic.Bidding;
 import com.free.walker.service.itinerary.dao.DAOConstants;
 import com.free.walker.service.itinerary.dao.TravelProductDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
 import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.product.Bidding;
 import com.free.walker.service.itinerary.product.HotelItem;
 import com.free.walker.service.itinerary.product.ResortItem;
+import com.free.walker.service.itinerary.product.SimpleTravelProduct;
 import com.free.walker.service.itinerary.product.TrafficItem;
 import com.free.walker.service.itinerary.product.TravelProduct;
 import com.free.walker.service.itinerary.product.TravelProductItem;
+import com.free.walker.service.itinerary.product.TrivItem;
+import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.MongoDbClientBuilder;
 import com.mongodb.BasicDBObject;
 import com.mongodb.CommandResult;
@@ -92,36 +96,43 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
 
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
-        if (productColls.findOne(travelProduct.getUUID().toString()) != null) {
+        if (productColls.findOne(travelProduct.getProductUUID().toString()) != null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.existed_travel_product,
-                travelProduct.getUUID()), travelProduct.getUUID());
+                travelProduct.getProductUUID()), travelProduct.getProductUUID());
         }
 
         DBCollection productHotelColls = productDb.getCollection(DAOConstants.PRODUCT_HOTEL_COLL_NAME);
-        if (productHotelColls.findOne(travelProduct.getUUID().toString()) != null) {
+        if (productHotelColls.findOne(travelProduct.getProductUUID().toString()) != null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.existed_travel_product,
-                travelProduct.getUUID()), travelProduct.getUUID());
+                travelProduct.getProductUUID()), travelProduct.getProductUUID());
         }
 
         DBCollection productTrafficColls = productDb.getCollection(DAOConstants.PRODUCT_TRAFFIC_COLL_NAME);
-        if (productTrafficColls.findOne(travelProduct.getUUID().toString()) != null) {
+        if (productTrafficColls.findOne(travelProduct.getProductUUID().toString()) != null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.existed_travel_product,
-                travelProduct.getUUID()), travelProduct.getUUID());
+                travelProduct.getProductUUID()), travelProduct.getProductUUID());
         }
 
         DBCollection productResortColls = productDb.getCollection(DAOConstants.PRODUCT_RESORT_COLL_NAME);
-        if (productResortColls.findOne(travelProduct.getUUID().toString()) != null) {
+        if (productResortColls.findOne(travelProduct.getProductUUID().toString()) != null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.existed_travel_product,
-                travelProduct.getUUID()), travelProduct.getUUID());
+                travelProduct.getProductUUID()), travelProduct.getProductUUID());
+        }
+
+        DBCollection productTrivColls = productDb.getCollection(DAOConstants.PRODUCT_TRIV_COLL_NAME);
+        if (productTrivColls.findOne(travelProduct.getProductUUID().toString()) != null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.existed_travel_product,
+                travelProduct.getProductUUID()), travelProduct.getProductUUID());
         }
 
         JsonArrayBuilder hotelItemsJs = Json.createArrayBuilder();
         JsonArrayBuilder trafficItemsJs = Json.createArrayBuilder();
         JsonArrayBuilder resortItemsJs = Json.createArrayBuilder();
+        JsonArrayBuilder trivItemsJs = Json.createArrayBuilder();
         for (int i = 0; i < travelProduct.getTravelProductItems().size(); i++) {
             TravelProductItem item = travelProduct.getTravelProductItems().get(i);
             if (item.isTriv()) {
-                continue;
+                trivItemsJs.add(item.toJSON());
             } else {
                 if (HotelItem.SUB_TYPE.equals(item.getType())) {
                     hotelItemsJs.add(item.toJSON());
@@ -142,57 +153,64 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             WriteResult wr = storeProduct(productJs);
             LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
         } catch (MongoException e) {
-            throw new InvalidTravelProductException(travelProduct.getUUID(), e);
+            throw new InvalidTravelProductException(travelProduct.getProductUUID(), e);
         }
 
         try {
-            WriteResult wr = storeProductItems(travelProduct.getUUID(), HotelItem.SUB_TYPE, hotelItemsJs.build());
+            WriteResult wr = storeProductItems(travelProduct.getProductUUID(), HotelItem.SUB_TYPE, hotelItemsJs.build());
             LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
         } catch (MongoException e) {
-            throw new InvalidTravelProductException(travelProduct.getUUID(), e);
+            throw new InvalidTravelProductException(travelProduct.getProductUUID(), e);
         }
 
         try {
-            WriteResult wr = storeProductItems(travelProduct.getUUID(), TrafficItem.SUB_TYPE, trafficItemsJs.build());
+            WriteResult wr = storeProductItems(travelProduct.getProductUUID(), TrafficItem.SUB_TYPE, trafficItemsJs.build());
             LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
         } catch (MongoException e) {
-            throw new InvalidTravelProductException(travelProduct.getUUID(), e);
+            throw new InvalidTravelProductException(travelProduct.getProductUUID(), e);
         }
 
         try {
-            WriteResult wr = storeProductItems(travelProduct.getUUID(), ResortItem.SUB_TYPE, resortItemsJs.build());
+            WriteResult wr = storeProductItems(travelProduct.getProductUUID(), ResortItem.SUB_TYPE, resortItemsJs.build());
             LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
         } catch (MongoException e) {
-            throw new InvalidTravelProductException(travelProduct.getUUID(), e);
+            throw new InvalidTravelProductException(travelProduct.getProductUUID(), e);
         }
 
-        return travelProduct.getUUID();
+        try {
+            WriteResult wr = storeProductItems(travelProduct.getProductUUID(), TrivItem.SUB_TYPE, trivItemsJs.build());
+            LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+        } catch (MongoException e) {
+            throw new InvalidTravelProductException(travelProduct.getProductUUID(), e);
+        }
+
+        return travelProduct.getProductUUID();
     }
 
-    public UUID addItem(TravelProductItem travelProductItem, String itemType) throws InvalidTravelProductException,
+    public UUID addItem(TravelProductItem travelProductItem) throws InvalidTravelProductException,
         DatabaseAccessException {
         if (travelProductItem == null) {
             throw new NullPointerException();
         }
 
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
-        if (productColls.findOne(travelProductItem.getUUID().toString()) == null) {
+        if (productColls.findOne(travelProductItem.getProductUUID().toString()) == null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
-                travelProductItem.getUUID()), travelProductItem.getUUID());
+                travelProductItem.getProductUUID()), travelProductItem.getProductUUID());
         }
 
         DBCollection productItemColls;
-        if (HotelItem.SUB_TYPE.equals(itemType)) {
+        if (HotelItem.SUB_TYPE.equals(travelProductItem.getType())) {
             productItemColls = productDb.getCollection(DAOConstants.PRODUCT_HOTEL_COLL_NAME);
-        } else if (TrafficItem.SUB_TYPE.equals(itemType)) {
+        } else if (TrafficItem.SUB_TYPE.equals(travelProductItem.getType())) {
             productItemColls = productDb.getCollection(DAOConstants.PRODUCT_TRAFFIC_COLL_NAME);
-        } else if (ResortItem.SUB_TYPE.equals(itemType)) {
+        } else if (ResortItem.SUB_TYPE.equals(travelProductItem.getType())) {
             productItemColls = productDb.getCollection(DAOConstants.PRODUCT_RESORT_COLL_NAME);
         } else {
             productItemColls = productDb.getCollection(DAOConstants.PRODUCT_TRIV_COLL_NAME);
         }
 
-        UUID productId = travelProductItem.getUUID();
+        UUID productId = travelProductItem.getProductUUID();
         DBObject productItemBs = productItemColls.findOne(productId.toString());
         JsonArrayBuilder itemsBuilder = Json.createArrayBuilder();
         if (productItemBs == null) {
@@ -207,13 +225,13 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
 
         try {
-            WriteResult wr = storeProductItems(productId, HotelItem.SUB_TYPE, itemsBuilder.build());
+            WriteResult wr = storeProductItems(productId, travelProductItem.getType(), itemsBuilder.build());
             LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
         } catch (MongoException e) {
-            throw new InvalidTravelProductException(travelProductItem.getUUID(), e);
+            throw new InvalidTravelProductException(travelProductItem.getProductUUID(), e);
         }
 
-        return productId;
+        return travelProductItem.getUUID();
     }
 
     public UUID setBidding(Bidding bidding) throws InvalidTravelProductException, DatabaseAccessException {
@@ -222,19 +240,345 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
 
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
-        if (productColls.findOne(bidding.getUUID().toString()) == null) {
+        if (productColls.findOne(bidding.getProductUUID().toString()) == null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
-                bidding.getUUID()), bidding.getUUID());
+                bidding.getProductUUID()), bidding.getProductUUID());
+        }
+
+        DBCollection productBiddingColls = productDb.getCollection(DAOConstants.PRODUCT_BIDDING_COLL_NAME);
+        if (productBiddingColls.findOne(bidding.getProductUUID().toString()) != null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.existed_product_bidding,
+                bidding.getProductUUID()), bidding.getProductUUID());
         }
 
         try {
-            WriteResult wr = storeProductBidding(bidding.getUUID(), bidding.toJSON());
+            WriteResult wr = storeProductBidding(bidding.getProductUUID(), bidding.toJSON());
             LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
         } catch (MongoException e) {
-            throw new InvalidTravelProductException(bidding.getUUID(), e);
+            throw new InvalidTravelProductException(bidding.getProductUUID(), e);
         }
 
-        return bidding.getUUID();
+        return bidding.getProductUUID();
+    }
+
+    public TravelProduct getProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {
+        if (productId == null) {
+            throw new NullPointerException();
+        }
+
+        DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
+        DBObject productBs = productColls.findOne(productId.toString());
+        if (productBs == null) {
+            return null;
+        } else {
+            JsonObject product = Json.createReader(new StringReader(productBs.toString())).readObject();
+            TravelProduct travelProduct = new SimpleTravelProduct().fromJSON(product);
+            return travelProduct;
+        }
+    }
+
+    public List<TravelProductItem> getItems(UUID productId, String itemType) throws InvalidTravelProductException,
+        DatabaseAccessException {
+        if (productId == null) {
+            throw new NullPointerException();
+        }
+
+        DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
+        if (productColls.findOne(productId.toString()) == null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
+                productId), productId);
+        }
+
+        DBCollection productHotelColls = productDb.getCollection(DAOConstants.PRODUCT_HOTEL_COLL_NAME);
+        DBCollection productTrafficColls = productDb.getCollection(DAOConstants.PRODUCT_TRAFFIC_COLL_NAME);
+        DBCollection productResortColls = productDb.getCollection(DAOConstants.PRODUCT_RESORT_COLL_NAME);
+        DBCollection productTrivColls = productDb.getCollection(DAOConstants.PRODUCT_TRIV_COLL_NAME);
+
+        List<TravelProductItem> result = new ArrayList<TravelProductItem>();
+
+        if (HotelItem.SUB_TYPE.equals(itemType)) {
+            DBObject productHotelsBs = productHotelColls.findOne(productId.toString());
+            if (productHotelsBs != null) {
+                JsonObject productHotels = Json.createReader(new StringReader(productHotelsBs.toString())).readObject();
+                JsonArray hotelsJs = productHotels.getJsonArray(Introspection.JSONKeys.ITEMS);
+                for (int i = 0; i < hotelsJs.size(); i++) {
+                    result.add(JsonObjectHelper.toProductItem(hotelsJs.getJsonObject(i), true));
+                }
+            }
+        }
+
+        if (TrafficItem.SUB_TYPE.equals(itemType)) {
+            DBObject productTrafficsBs = productTrafficColls.findOne(productId.toString());
+            if (productTrafficsBs != null) {
+                JsonObject productTraffics = Json.createReader(new StringReader(productTrafficsBs.toString())).readObject();
+                JsonArray trafficsJs = productTraffics.getJsonArray(Introspection.JSONKeys.ITEMS);
+                for (int i = 0; i < trafficsJs.size(); i++) {
+                    result.add(JsonObjectHelper.toProductItem(trafficsJs.getJsonObject(i), true));
+                }
+            }
+        }
+
+        if (ResortItem.SUB_TYPE.equals(itemType)) {
+            DBObject productResortsBs = productResortColls.findOne(productId.toString());
+            if (productResortsBs != null) {
+                JsonObject productResorts = Json.createReader(new StringReader(productResortsBs.toString())).readObject();
+                JsonArray resortsJs = productResorts.getJsonArray(Introspection.JSONKeys.ITEMS);
+                for (int i = 0; i < resortsJs.size(); i++) {
+                    result.add(JsonObjectHelper.toProductItem(resortsJs.getJsonObject(i), true));
+                }
+            }
+        }
+
+        if (TrivItem.SUB_TYPE.equals(itemType)) {
+            DBObject productTrivsBs = productTrivColls.findOne(productId.toString());
+            if (productTrivsBs != null) {
+                JsonObject productTrivs = Json.createReader(new StringReader(productTrivsBs.toString())).readObject();
+                JsonArray trivsJs = productTrivs.getJsonArray(Introspection.JSONKeys.ITEMS);
+                for (int i = 0; i < trivsJs.size(); i++) {
+                    result.add(JsonObjectHelper.toProductItem(trivsJs.getJsonObject(i), true));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public Bidding getBidding(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {
+        if (productId == null) {
+            throw new NullPointerException();
+        }
+
+        DBCollection productBiddingColls = productDb.getCollection(DAOConstants.PRODUCT_BIDDING_COLL_NAME);
+        DBObject productBs = productBiddingColls.findOne(productId.toString());
+        if (productBs == null) {
+            return null;
+        } else {
+            JsonObject bidding = Json.createReader(new StringReader(productBs.toString())).readObject();
+            return new Bidding().fromJSON(bidding);
+        }
+    }
+
+    public UUID removeHotelItem(UUID productId, UUID hotelItemId) throws InvalidTravelProductException,
+        DatabaseAccessException {
+        if (productId == null || hotelItemId == null) {
+            throw new NullPointerException();
+        }
+
+        DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
+        if (productColls.findOne(productId.toString()) == null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
+                productId), productId);
+        }
+
+        DBCollection productBiddingColls = productDb.getCollection(DAOConstants.PRODUCT_BIDDING_COLL_NAME);
+        if (productBiddingColls.findOne(productId.toString()) != null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(
+                LocalMessages.illegal_remove_product_item_operation, productId), productId);
+        }
+
+        DBCollection productHotelColls = productDb.getCollection(DAOConstants.PRODUCT_HOTEL_COLL_NAME);
+        DBObject productHotelsBs = productHotelColls.findOne(productId.toString());
+        if (productHotelsBs != null) {
+            JsonArrayBuilder hotelsBuilder = Json.createArrayBuilder();
+            boolean removing = false;
+            JsonObject productHotels = Json.createReader(new StringReader(productHotelsBs.toString())).readObject();
+            JsonArray hotelsJs = productHotels.getJsonArray(Introspection.JSONKeys.ITEMS);
+            for (int i = 0; i < hotelsJs.size(); i++) {
+                JsonObject hotelJs = hotelsJs.getJsonObject(i);
+                if (hotelItemId.toString().equals(hotelJs.getString(Introspection.JSONKeys.UUID, null))) {
+                    removing = true;
+                } else {
+                    hotelsBuilder.add(hotelJs);
+                }
+            }
+
+            if (removing) {
+                try {
+                    WriteResult wr = storeProductItems(productId, HotelItem.SUB_TYPE, hotelsBuilder.build());
+                    LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+                } catch (MongoException e) {
+                    throw new InvalidTravelProductException(productId, e);
+                }
+                return hotelItemId;
+            } else {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    public UUID removeTrafficItem(UUID productId, UUID trafficItemId) throws InvalidTravelProductException,
+        DatabaseAccessException {
+        if (productId == null || trafficItemId == null) {
+            throw new NullPointerException();
+        }
+
+        DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
+        if (productColls.findOne(productId.toString()) == null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
+                productId), productId);
+        }
+
+        DBCollection productBiddingColls = productDb.getCollection(DAOConstants.PRODUCT_BIDDING_COLL_NAME);
+        if (productBiddingColls.findOne(productId.toString()) != null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(
+                LocalMessages.illegal_remove_product_item_operation, productId), productId);
+        }
+
+        DBCollection productHotelColls = productDb.getCollection(DAOConstants.PRODUCT_TRAFFIC_COLL_NAME);
+        DBObject productHotelsBs = productHotelColls.findOne(productId.toString());
+        if (productHotelsBs != null) {
+            JsonArrayBuilder hotelsBuilder = Json.createArrayBuilder();
+            boolean removing = false;
+            JsonObject productHotels = Json.createReader(new StringReader(productHotelsBs.toString())).readObject();
+            JsonArray hotelsJs = productHotels.getJsonArray(Introspection.JSONKeys.ITEMS);
+            for (int i = 0; i < hotelsJs.size(); i++) {
+                JsonObject hotelJs = hotelsJs.getJsonObject(i);
+                if (trafficItemId.toString().equals(hotelJs.getString(Introspection.JSONKeys.UUID, null))) {
+                    removing = true;
+                } else {
+                    hotelsBuilder.add(hotelJs);
+                }
+            }
+
+            if (removing) {
+                try {
+                    WriteResult wr = storeProductItems(productId, TrafficItem.SUB_TYPE, hotelsBuilder.build());
+                    LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+                } catch (MongoException e) {
+                    throw new InvalidTravelProductException(productId, e);
+                }
+                return trafficItemId;
+            } else {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    public UUID removeResortItem(UUID productId, UUID resortItemId) throws InvalidTravelProductException,
+        DatabaseAccessException {
+        if (productId == null || resortItemId == null) {
+            throw new NullPointerException();
+        }
+
+        DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
+        if (productColls.findOne(productId.toString()) == null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
+                productId), productId);
+        }
+
+        DBCollection productBiddingColls = productDb.getCollection(DAOConstants.PRODUCT_BIDDING_COLL_NAME);
+        if (productBiddingColls.findOne(productId.toString()) != null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(
+                LocalMessages.illegal_remove_product_item_operation, productId), productId);
+        }
+
+        DBCollection productResortColls = productDb.getCollection(DAOConstants.PRODUCT_RESORT_COLL_NAME);
+        DBObject productResortsBs = productResortColls.findOne(productId.toString());
+        if (productResortsBs != null) {
+            JsonArrayBuilder resortsBuilder = Json.createArrayBuilder();
+            boolean removing = false;
+            JsonObject productResorts = Json.createReader(new StringReader(productResortsBs.toString())).readObject();
+            JsonArray resortsJs = productResorts.getJsonArray(Introspection.JSONKeys.ITEMS);
+            for (int i = 0; i < resortsJs.size(); i++) {
+                JsonObject resortJs = resortsJs.getJsonObject(i);
+                if (resortItemId.toString().equals(resortJs.getString(Introspection.JSONKeys.UUID, null))) {
+                    removing = true;
+                } else {
+                    resortsBuilder.add(resortJs);
+                }
+            }
+
+            if (removing) {
+                try {
+                    WriteResult wr = storeProductItems(productId, ResortItem.SUB_TYPE, resortsBuilder.build());
+                    LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+                } catch (MongoException e) {
+                    throw new InvalidTravelProductException(productId, e);
+                }
+                return resortItemId;
+            } else {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    public UUID removeTrivItem(UUID productId, UUID trivItemId) throws InvalidTravelProductException,
+        DatabaseAccessException {
+        if (productId == null || trivItemId == null) {
+            throw new NullPointerException();
+        }
+
+        DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
+        if (productColls.findOne(productId.toString()) == null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
+                productId), productId);
+        }
+
+        DBCollection productBiddingColls = productDb.getCollection(DAOConstants.PRODUCT_BIDDING_COLL_NAME);
+        if (productBiddingColls.findOne(productId.toString()) != null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(
+                LocalMessages.illegal_remove_product_item_operation, productId), productId);
+        }
+
+        DBCollection productTrivColls = productDb.getCollection(DAOConstants.PRODUCT_TRIV_COLL_NAME);
+        DBObject productTrivsBs = productTrivColls.findOne(productId.toString());
+        if (productTrivsBs != null) {
+            JsonArrayBuilder trivsBuilder = Json.createArrayBuilder();
+            boolean removing = false;
+            JsonObject productTrivs = Json.createReader(new StringReader(productTrivsBs.toString())).readObject();
+            JsonArray trivsJs = productTrivs.getJsonArray(Introspection.JSONKeys.ITEMS);
+            for (int i = 0; i < trivsJs.size(); i++) {
+                JsonObject trivJs = trivsJs.getJsonObject(i);
+                if (trivItemId.toString().equals(trivJs.getString(Introspection.JSONKeys.UUID, null))) {
+                    removing = true;
+                } else {
+                    trivsBuilder.add(trivJs);
+                }
+            }
+
+            if (removing) {
+                try {
+                    WriteResult wr = storeProductItems(productId, TrivItem.SUB_TYPE, trivsBuilder.build());
+                    LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+                } catch (MongoException e) {
+                    throw new InvalidTravelProductException(productId, e);
+                }
+                return trivItemId;
+            } else {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    public Bidding unsetBidding(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {
+        if (productId == null) {
+            throw new NullPointerException();
+        }
+
+        DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
+        if (productColls.findOne(productId.toString()) == null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
+                productId), productId);
+        }
+
+        DBCollection productBiddingColls = productDb.getCollection(DAOConstants.PRODUCT_BIDDING_COLL_NAME);
+        DBObject biddingBs = productBiddingColls.findOne(productId.toString());
+        if (biddingBs == null) {
+            return null;
+        } else {
+            WriteResult wr = productBiddingColls.remove(biddingBs);
+            LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+            JsonObject bidding = Json.createReader(new StringReader(biddingBs.toString())).readObject();
+            return new Bidding().fromJSON(bidding);
+        }
     }
 
     private WriteResult storeProduct(JsonObject product) {
@@ -294,63 +638,5 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             DBObject productQuery = QueryBuilder.start(DAOConstants.mongo_database_pk).is(productId.toString()).get();
             return productTrivColls.update(productQuery, trivBs, true, false, WriteConcern.MAJORITY);
         }
-    }
-
-    public TravelProduct getProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public List<TravelProductItem> getHotelItems(UUID productId) throws InvalidTravelProductException,
-        DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public List<TravelProductItem> getTrafficItems(UUID productId) throws InvalidTravelProductException,
-        DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public List<TravelProductItem> getResortItems(UUID productId) throws InvalidTravelProductException,
-        DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public List<TravelProductItem> getTrivItems(UUID productId) throws InvalidTravelProductException,
-        DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public Bidding getBidding(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public UUID removeHotelItem(UUID productId, UUID hotelItemId) throws InvalidTravelProductException,
-        DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public UUID removeTrafficItem(UUID productId, UUID trafficItemId) throws InvalidTravelProductException,
-        DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public UUID removeResortItem(UUID productId, UUID resortItemId) throws InvalidTravelProductException,
-        DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public UUID removeTrivItem(UUID productId, UUID trivItemId) throws InvalidTravelProductException,
-        DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

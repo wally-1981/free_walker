@@ -6,6 +6,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
+import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.primitive.TrafficToolType;
 import com.free.walker.service.itinerary.traffic.TrafficTool;
@@ -94,10 +95,17 @@ public class Flight extends TrafficTool {
 
     public JsonObject toJSON() {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
+        resBuilder.add(Introspection.JSONKeys.TRAFFIC_TOOL_TYPE, getType().enumValue());
         return resBuilder.build();
     }
 
     public Flight fromJSON(JsonObject jsObject) throws JsonException {
+        int toolType = jsObject.getInt(Introspection.JSONKeys.TRAFFIC_TOOL_TYPE, 0);
+        if (toolType != Introspection.JSONValues.TRAFFIC_TOOL_TYPE_FLIGHT.enumValue()) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.TRAFFIC_TOOL_TYPE, toolType));
+        }
+
         return this;
     }
 
