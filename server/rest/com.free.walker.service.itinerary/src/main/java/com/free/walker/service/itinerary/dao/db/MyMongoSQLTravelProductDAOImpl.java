@@ -520,12 +520,6 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
                 productId), productId);
         }
 
-        DBCollection productBiddingColls = productDb.getCollection(DAOConstants.PRODUCT_BIDDING_COLL_NAME);
-        if (productBiddingColls.findOne(productId.toString()) != null) {
-            throw new InvalidTravelProductException(LocalMessages.getMessage(
-                LocalMessages.illegal_remove_product_item_operation, productId), productId);
-        }
-
         DBCollection productTrivColls = productDb.getCollection(DAOConstants.PRODUCT_TRIV_COLL_NAME);
         DBObject productTrivsBs = productTrivColls.findOne(productId.toString());
         if (productTrivsBs != null) {

@@ -492,17 +492,9 @@ public abstract class AbstractTravelProductDAOImplTest {
     }
 
     @Test
-    public void testRemoveTrivItemWithBidding() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
-        productId = travelProductDAO.setBidding(bidding);
-        thrown.expect(InvalidTravelProductException.class);
-        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_remove_product_item_operation, productId));
-        travelProductDAO.removeTrivItem(productId, trivItem.getUUID());
-    }
-
-    @Test
     public void testRemoveTrivItem() throws InvalidTravelProductException, DatabaseAccessException {
         UUID productId = travelProductDAO.createProduct(travelProduct);
+        productId = travelProductDAO.setBidding(bidding);
         UUID trivItemId = travelProductDAO.removeTrivItem(productId, trivItem.getUUID());
         assertNotNull(trivItemId);
     }

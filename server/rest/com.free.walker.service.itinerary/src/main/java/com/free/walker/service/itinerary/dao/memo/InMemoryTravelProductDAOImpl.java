@@ -231,11 +231,6 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
                 productId), productId);
         }
 
-        if (travelProductBiddings.containsKey(productId)) {
-            throw new InvalidTravelProductException(LocalMessages.getMessage(
-                LocalMessages.illegal_remove_product_item_operation, productId), productId);
-        }
-
         List<TravelProductItem> items = travelProductItems.get(productId);
         for (int i = 0; i < items.size(); i++) {
             TravelProductItem trivItem = items.get(i);
