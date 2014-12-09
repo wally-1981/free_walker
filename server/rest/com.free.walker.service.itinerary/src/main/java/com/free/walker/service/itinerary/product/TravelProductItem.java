@@ -40,6 +40,10 @@ public abstract class TravelProductItem implements TravelProduct, Renewable {
         return travelProduct.getProductUUID();
     }
 
+    public UUID getProposalUUID() {
+        return travelProduct.getProposalUUID();
+    }
+
     public ValueType getValueType() {
         return JsonValue.ValueType.NULL;
     }

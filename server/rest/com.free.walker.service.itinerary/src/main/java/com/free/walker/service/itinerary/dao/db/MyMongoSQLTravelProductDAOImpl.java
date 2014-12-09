@@ -37,6 +37,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.CommandResult;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 import com.mongodb.QueryBuilder;
@@ -275,6 +276,27 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             TravelProduct travelProduct = new SimpleTravelProduct().fromJSON(product);
             return travelProduct;
         }
+    }
+
+    public List<TravelProduct> getProducts(UUID proposalId) throws InvalidTravelProductException,
+        DatabaseAccessException {
+        if (proposalId == null) {
+            throw new NullPointerException();
+        }
+
+        List<TravelProduct> result = new ArrayList<TravelProduct>();
+        DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
+        DBCursor productsCr = productColls.find(new BasicDBObject("ref_uuid", proposalId.toString()));
+        try {
+            while (productsCr.hasNext()) {
+                JsonObject product = Json.createReader(new StringReader(productsCr.next().toString())).readObject();
+                result.add(JsonObjectHelper.toProduct(product, true));
+            }
+        } finally {
+            productsCr.close();
+        }
+
+        return result;
     }
 
     public List<TravelProductItem> getItems(UUID productId, String itemType) throws InvalidTravelProductException,

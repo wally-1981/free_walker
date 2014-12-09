@@ -1,7 +1,7 @@
 package com.free.walker.service.itinerary.rest;
 
 public class ItineraryServiceProdTest extends AbstractItineraryServiceTest {
-    protected String getServiceUrl() {
-        return "http://localhost:9000/service/itinerary/";
+    public String getServiceUrl() {
+        return ServiceUrlProvider.ITINERARY_PROD_LOCAL_URL;
     }
 }

@@ -2,6 +2,7 @@ package com.free.walker.service.itinerary.dao.memo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -107,6 +108,24 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         }
 
         return travelProducts.get(productId);
+    }
+
+    public List<TravelProduct> getProducts(UUID proposalId) throws InvalidTravelProductException,
+        DatabaseAccessException {
+        if (proposalId == null) {
+            throw new NullPointerException();
+        }
+
+        List<TravelProduct> result = new ArrayList<TravelProduct>();
+        Iterator<TravelProduct> iter = travelProducts.values().iterator();
+        while (iter.hasNext()) {
+            TravelProduct product = iter.next();
+            if (product.getProposalUUID().equals(proposalId)) {
+                result.add(product);
+            }
+        }
+
+        return result;
     }
 
     public List<TravelProductItem> getItems(UUID productId, String itemType) throws InvalidTravelProductException,

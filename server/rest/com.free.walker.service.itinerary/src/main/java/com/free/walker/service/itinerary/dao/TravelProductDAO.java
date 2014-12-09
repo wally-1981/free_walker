@@ -11,8 +11,8 @@ import com.free.walker.service.itinerary.product.TravelProductItem;
 
 public interface TravelProductDAO extends HealthyDAO {
     /**
-     * Create the specified product, and all attached initial product items will be
-     * created either.
+     * Create the specified product, and all attached initial product items will
+     * be created either.
      * 
      * @param travelProduct
      * @return
@@ -46,7 +46,7 @@ public interface TravelProductDAO extends HealthyDAO {
 
     /**
      * Retrieve the product by the specified product id. No product item will be
-     * included in the return.
+     * included in the returned product.
      * 
      * @param productId
      * @return
@@ -54,6 +54,18 @@ public interface TravelProductDAO extends HealthyDAO {
      * @throws DatabaseAccessException
      */
     public TravelProduct getProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException;
+
+    /**
+     * Retrieve all products by the specified proposal id. No product item will
+     * be included in every returned product.
+     * 
+     * @param productId
+     * @return
+     * @throws InvalidTravelProductException
+     * @throws DatabaseAccessException
+     */
+    public List<TravelProduct> getProducts(UUID proposalId) throws InvalidTravelProductException,
+        DatabaseAccessException;
 
     /**
      * Retrieve all product items by the specified product id and item type. The

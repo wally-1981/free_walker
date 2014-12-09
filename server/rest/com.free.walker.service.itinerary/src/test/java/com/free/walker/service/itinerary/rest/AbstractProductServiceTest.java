@@ -7,7 +7,7 @@ import org.junit.rules.ExpectedException;
 
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
 
-public abstract class AbstractProductServiceTest {
+public abstract class AbstractProductServiceTest implements ServiceUrlProvider {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -20,6 +20,4 @@ public abstract class AbstractProductServiceTest {
     public void testAll() throws InvalidTravelProductException {
         ;
     }
-
-    protected abstract String getServiceUrl();
 }

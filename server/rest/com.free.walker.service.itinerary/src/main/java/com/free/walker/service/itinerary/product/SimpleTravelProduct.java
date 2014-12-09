@@ -145,6 +145,10 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
         return productId;
     }
 
+    public UUID getProposalUUID() {
+        return proposalId;
+    }
+
     public ValueType getValueType() {
         return JsonValue.ValueType.NULL;
     }

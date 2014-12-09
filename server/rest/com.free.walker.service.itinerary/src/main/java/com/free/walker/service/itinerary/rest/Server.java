@@ -44,11 +44,11 @@ public class Server {
         List<Class<?>> classes = new ArrayList<Class<?>>();
         classes.add(ItineraryService.class);
         classes.add(ProductService.class);
-        classes.add(PlatformAdminService.class);
+        classes.add(PlatformService.class);
         List<ResourceProvider> providers = new ArrayList<ResourceProvider>();
         providers.add(new SingletonResourceProvider(itinerarySvr));
         providers.add(new SingletonResourceProvider(productSvr));
-        providers.add(new SingletonResourceProvider(new PlatformAdminService()));
+        providers.add(new SingletonResourceProvider(new PlatformService()));
 
         sf.setResourceClasses(classes);
         sf.setResourceProviders(providers);

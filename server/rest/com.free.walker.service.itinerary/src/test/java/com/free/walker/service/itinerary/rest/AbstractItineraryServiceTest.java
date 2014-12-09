@@ -34,7 +34,7 @@ import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
-public abstract class AbstractItineraryServiceTest {
+public abstract class AbstractItineraryServiceTest implements ServiceUrlProvider {
     private HttpClient httpClient;
     private String itineraryServiceUrlStr;
 
@@ -148,30 +148,6 @@ public abstract class AbstractItineraryServiceTest {
 
     @Test
     public void testAll() throws URISyntaxException {
-        /*
-         * 获取Web服务自省。
-         */
-        {
-            HttpGet get = new HttpGet();
-            get.setURI(new URI(itineraryServiceUrlStr + "introspection/"));
-            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            try {
-                HttpResponse response = httpClient.execute(get);
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == HttpStatus.OK_200) {
-                    JsonObject introspection = Json.createReader(response.getEntity().getContent()).readObject();
-                    assertNotNull(introspection);
-                } else {
-                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
-                    throw new ProcessingException(error.toString());
-                }
-            } catch (IOException e) {
-                throw new ProcessingException(e);
-            } finally {
-                get.abort();
-            }
-        }
-
         /*
          * 新建一个Proposal，同时添加一个初始的Itinerary。
          */
@@ -711,6 +687,4 @@ public abstract class AbstractItineraryServiceTest {
             }
         }
     }
-
-    protected abstract String getServiceUrl();
 }
