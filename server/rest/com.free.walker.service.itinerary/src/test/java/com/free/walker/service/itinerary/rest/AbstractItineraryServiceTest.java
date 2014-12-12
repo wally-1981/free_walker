@@ -30,13 +30,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
-import com.free.walker.service.itinerary.util.UuidUtil;
 
-public abstract class AbstractItineraryServiceTest implements ServiceUrlProvider {
+public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvider {
     private HttpClient httpClient;
-    private String itineraryServiceUrlStr;
 
     private JsonObject proposal;
     private JsonObject itinerary;
@@ -50,13 +47,14 @@ public abstract class AbstractItineraryServiceTest implements ServiceUrlProvider
     private String requirementId1st;
     private String requirementId2nd;
 
+    protected String itineraryServiceUrlStr;
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Before
-    public void before() throws InvalidTravelReqirementException {
+    public void before() {
         httpClient = HttpClientBuilder.create().build();
-        itineraryServiceUrlStr = getServiceUrl();
 
         {
             JsonObjectBuilder requirementBuilder = Json.createObjectBuilder();
@@ -64,15 +62,13 @@ public abstract class AbstractItineraryServiceTest implements ServiceUrlProvider
 
             JsonObjectBuilder destinationBuilder = Json.createObjectBuilder();
             JsonObjectBuilder destCityBuilder = Json.createObjectBuilder();
-            destCityBuilder.add(Introspection.JSONKeys.UUID,
-                UuidUtil.fromUuidStr("02515d41-f141-4175-9a11-9e68b9cfe687").toString());
+            destCityBuilder.add(Introspection.JSONKeys.UUID, "02515d41-f141-4175-9a11-9e68b9cfe687");
             destinationBuilder.add(Introspection.JSONKeys.CITY, destCityBuilder);
             requirementBuilder.add(Introspection.JSONKeys.DESTINATION, destinationBuilder);
 
             JsonObjectBuilder departureBuilder = Json.createObjectBuilder();
             JsonObjectBuilder deptCityBuilder = Json.createObjectBuilder();
-            deptCityBuilder.add(Introspection.JSONKeys.UUID,
-                UuidUtil.fromUuidStr("84844276-3036-47dd-90e0-f095cfa98da5").toString());
+            deptCityBuilder.add(Introspection.JSONKeys.UUID, "84844276-3036-47dd-90e0-f095cfa98da5");
             departureBuilder.add(Introspection.JSONKeys.CITY, deptCityBuilder);
             requirementBuilder.add(Introspection.JSONKeys.DEPARTURE, departureBuilder);
 
@@ -91,15 +87,13 @@ public abstract class AbstractItineraryServiceTest implements ServiceUrlProvider
 
             JsonObjectBuilder destinationBuilder = Json.createObjectBuilder();
             JsonObjectBuilder destCityBuilder = Json.createObjectBuilder();
-            destCityBuilder.add(Introspection.JSONKeys.UUID,
-                UuidUtil.fromUuidStr("79fd8642-a11d-4811-887d-ec4268097a82").toString());
+            destCityBuilder.add(Introspection.JSONKeys.UUID, "79fd8642-a11d-4811-887d-ec4268097a82");
             destinationBuilder.add(Introspection.JSONKeys.CITY, destCityBuilder);
             requirementBuilder.add(Introspection.JSONKeys.DESTINATION, destinationBuilder);
 
             JsonObjectBuilder departureBuilder = Json.createObjectBuilder();
             JsonObjectBuilder deptCityBuilder = Json.createObjectBuilder();
-            deptCityBuilder.add(Introspection.JSONKeys.UUID,
-                UuidUtil.fromUuidStr("46e46912-f856-49ce-b9f8-cac99fe9211e").toString());
+            deptCityBuilder.add(Introspection.JSONKeys.UUID, "46e46912-f856-49ce-b9f8-cac99fe9211e");
             departureBuilder.add(Introspection.JSONKeys.CITY, deptCityBuilder);
             requirementBuilder.add(Introspection.JSONKeys.DEPARTURE, departureBuilder);
             itinerary = requirementBuilder.build();

@@ -11,7 +11,7 @@ public abstract class TravelProductItem implements TravelProduct, Renewable {
     protected UUID uuid;
 
     public TravelProductItem() {
-        ;
+        this.uuid = UUID.randomUUID();
     }
 
     public TravelProductItem(TravelProduct travelProduct) {

@@ -10,5 +10,7 @@ public interface ServiceUrlProvider {
     public static final String PRODUCT_PROD_LOCAL_URL = "http://localhost:9000/service/product/";
     public static final String PRODUCT_DEVO_LOCAL_URL = "http://localhost:9010/service/product/";
 
-    public abstract String getServiceUrl();
+    public abstract String getProdServiceUrl(Class<?> aClass);
+
+    public abstract String getDevoServiceUrl(Class<?> aClass);
 }

@@ -110,7 +110,7 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
             try {
                 for (int i = 0; i < items.size(); i++) {
                     JsonObject item = items.getJsonObject(i);
-                    items.add(JsonObjectHelper.toProductItem(item));
+                    travelProductItems.add(JsonObjectHelper.toProductItem(item));
                 }
             } catch (InvalidTravelProductException e) {
                 throw new JsonException(e.getMessage(), e);

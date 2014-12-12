@@ -25,6 +25,7 @@ import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.product.Bidding;
 import com.free.walker.service.itinerary.product.HotelItem;
+import com.free.walker.service.itinerary.product.ResortItem;
 import com.free.walker.service.itinerary.product.TrafficItem;
 import com.free.walker.service.itinerary.product.TravelProduct;
 import com.free.walker.service.itinerary.product.TravelProductItem;
@@ -110,6 +111,24 @@ public class ProductService {
     }
 
     @GET
+    @Path("/products/{productId}/resorts/")
+    public Response getResorts(@PathParam("productId") String productId) {
+        try {
+            List<TravelProductItem> resortItems = travelProductDAO.getItems(UuidUtil.fromUuidStr(productId),
+                ResortItem.SUB_TYPE);
+            JsonArrayBuilder resBuilder = Json.createArrayBuilder();
+            for (int i = 0; i < resortItems.size(); i++) {
+                resBuilder.add(resortItems.get(i).toJSON());
+            }
+            return Response.ok(resBuilder.build()).build();
+        } catch (InvalidTravelProductException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
+    }
+
+    @GET
     @Path("/products/{productId}/items/")
     public Response getItems(@PathParam("productId") String productId) {
         try {
@@ -129,10 +148,15 @@ public class ProductService {
 
     @GET
     @Path("/products/{productId}/bidding/")
-    public Response getBiddings(@PathParam("productId") String productId) {
+    public Response getBidding(@PathParam("productId") String productId) {
         try {
             Bidding bidding = travelProductDAO.getBidding(UuidUtil.fromUuidStr(productId));
-            return Response.ok(bidding.toJSON()).build();
+            if (bidding == null) {
+                JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productId).build();
+                return Response.status(Status.NOT_FOUND).entity(res).build();
+            } else {
+                return Response.ok(bidding.toJSON()).build();
+            }
         } catch (InvalidTravelProductException e) {
             return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
         } catch (DatabaseAccessException e) {
@@ -141,7 +165,7 @@ public class ProductService {
     }
 
     @POST
-    @Path("/products/{proposalId}")
+    @Path("/products/")
     public Response addProduct(JsonObject travelProduct) {
         try {
             TravelProduct product = JsonObjectHelper.toProduct(travelProduct);
@@ -156,7 +180,7 @@ public class ProductService {
     }
 
     @DELETE
-    @Path("/products/{productId}/traffics/{hotelItemId}")
+    @Path("/products/{productId}/hotels/{hotelItemId}")
     public Response deleteHotelItem(@PathParam("productId") String productId,
         @PathParam("hotelItemId") String hotelItemId) {
         try {
@@ -178,7 +202,7 @@ public class ProductService {
     }
 
     @DELETE
-    @Path("/products/{productId}/hotels/{trafficItemId}")
+    @Path("/products/{productId}/traffics/{trafficItemId}")
     public Response deleteTrafficItem(@PathParam("productId") String productId,
         @PathParam("trafficItemId") String trafficItemId) {
         try {
@@ -191,6 +215,28 @@ public class ProductService {
 
             JsonObject res = Json.createObjectBuilder()
                 .add(Introspection.JSONKeys.UUID, deletedTrafficItemId.toString()).build();
+            return Response.ok(res).build();
+        } catch (InvalidTravelProductException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
+    }
+
+    @DELETE
+    @Path("/products/{productId}/resorts/{resortItemId}")
+    public Response deleteResortItem(@PathParam("productId") String productId,
+        @PathParam("resortItemId") String resortItemId) {
+        try {
+            UUID deletedResortItemId = travelProductDAO.removeResortItem(UuidUtil.fromUuidStr(productId),
+                UuidUtil.fromUuidStr(resortItemId));
+            if (deletedResortItemId == null) {
+                JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, resortItemId).build();
+                return Response.status(Status.NOT_FOUND).entity(res).build();
+            }
+
+            JsonObject res = Json.createObjectBuilder()
+                .add(Introspection.JSONKeys.UUID, deletedResortItemId.toString()).build();
             return Response.ok(res).build();
         } catch (InvalidTravelProductException e) {
             return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
@@ -220,27 +266,97 @@ public class ProductService {
         }
     }
 
-    @POST
-    @Path("/products/{productId}/hotels")
-    public Response addHotel(JsonObject hotel) {
-        return Response.status(Status.NOT_IMPLEMENTED).build();
+    @DELETE
+    @Path("/products/{productId}/bidding")
+    public Response deleteBidding(@PathParam("productId") String productId) {
+        try {
+            Bidding bidding = travelProductDAO.unsetBidding(UuidUtil.fromUuidStr(productId));
+            if (bidding == null) {
+                JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productId).build();
+                return Response.status(Status.NOT_FOUND).entity(res).build();
+            }
+
+            JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productId).build();
+            return Response.ok(res).build();
+        } catch (InvalidTravelProductException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
     }
 
     @POST
-    @Path("/products/{productId}/traffics")
-    public Response addTraffic(JsonObject traffic) {
-        return Response.status(Status.NOT_IMPLEMENTED).build();
+    @Path("/products/{productId}/hotels/")
+    public Response addHotel(@PathParam("productId") String productId, JsonObject hotelItem) {
+        try {
+            TravelProductItem productItem = JsonObjectHelper.toProductItem(hotelItem);
+            String hotelItemId = travelProductDAO.addItem(UuidUtil.fromUuidStr(productId), productItem).toString();
+            JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, hotelItemId).build();
+            return Response.ok(res).build();
+        } catch (InvalidTravelProductException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
     }
 
     @POST
-    @Path("/products/{productId}/items")
-    public Response addItem(JsonObject item) {
-        return Response.status(Status.NOT_IMPLEMENTED).build();
+    @Path("/products/{productId}/traffics/")
+    public Response addTraffic(@PathParam("productId") String productId, JsonObject trafficItem) {
+        try {
+            TravelProductItem productItem = JsonObjectHelper.toProductItem(trafficItem);
+            String trafficItemId = travelProductDAO.addItem(UuidUtil.fromUuidStr(productId), productItem).toString();
+            JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, trafficItemId).build();
+            return Response.ok(res).build();
+        } catch (InvalidTravelProductException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
     }
 
     @POST
-    @Path("/products/{productId}/biddings")
-    public Response addBidding(JsonObject item) {
-        return Response.status(Status.NOT_IMPLEMENTED).build();
+    @Path("/products/{productId}/resorts/")
+    public Response addResort(@PathParam("productId") String productId, JsonObject resortItem) {
+        try {
+            TravelProductItem productItem = JsonObjectHelper.toProductItem(resortItem);
+            String resortItemId = travelProductDAO.addItem(UuidUtil.fromUuidStr(productId), productItem).toString();
+            JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, resortItemId).build();
+            return Response.ok(res).build();
+        } catch (InvalidTravelProductException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
+    }
+
+    @POST
+    @Path("/products/{productId}/items/")
+    public Response addItem(@PathParam("productId") String productId, JsonObject item) {
+        try {
+            TravelProductItem productItem = JsonObjectHelper.toProductItem(item);
+            String trivItemId = travelProductDAO.addItem(UuidUtil.fromUuidStr(productId), productItem).toString();
+            JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, trivItemId).build();
+            return Response.ok(res).build();
+        } catch (InvalidTravelProductException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
+    }
+
+    @POST
+    @Path("/products/{productId}/bidding/")
+    public Response setBidding(@PathParam("productId") String productId, JsonObject bidding) {
+        try {
+            Bidding biddingItem = new Bidding().newFromJSON(bidding);
+            travelProductDAO.setBidding(UuidUtil.fromUuidStr(productId), biddingItem);
+            JsonObject res = Json.createObjectBuilder().build();
+            return Response.ok(res).build();
+        } catch (InvalidTravelProductException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
     }
 }

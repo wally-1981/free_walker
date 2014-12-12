@@ -68,7 +68,7 @@ public class ResortItem extends TravelProductItem {
         return resBuilder.build();
     }
 
-    public ResortItem newFromJSON(JsonObject jsObject) throws JsonException {
+    public ResortItem fromJSON(JsonObject jsObject) throws JsonException {
         String uuidStr = jsObject.getString(Introspection.JSONKeys.UUID, null);
         if (uuidStr == null) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
@@ -77,10 +77,10 @@ public class ResortItem extends TravelProductItem {
             uuid = UuidUtil.fromUuidStr(uuidStr);
         }
 
-        return fromJSON(jsObject);
+        return newFromJSON(jsObject);
     }
 
-    public ResortItem fromJSON(JsonObject jsObject) throws JsonException {
+    public ResortItem newFromJSON(JsonObject jsObject) throws JsonException {
         String subType = jsObject.getString(Introspection.JSONKeys.SUB_TYPE, null);
         if (subType == null || !SUB_TYPE.equals(subType)) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,

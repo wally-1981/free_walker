@@ -25,24 +25,27 @@ public interface TravelProductDAO extends HealthyDAO {
     /**
      * Add the product item to the specified product.
      * 
+     * @param productId
      * @param travelProductItem
      * @return
      * @throws InvalidTravelProductException
      * @throws DatabaseAccessException
      */
-    public UUID addItem(TravelProductItem travelProductItem) throws InvalidTravelProductException,
+    public UUID addItem(UUID productId, TravelProductItem travelProductItem) throws InvalidTravelProductException,
         DatabaseAccessException;
 
     /**
      * Set the specicied bidding for the product assciating with the specified
      * bidding.
      * 
+     * @param productId
      * @param bidding
      * @return
      * @throws InvalidTravelProductException
      * @throws DatabaseAccessException
      */
-    public UUID setBidding(Bidding bidding) throws InvalidTravelProductException, DatabaseAccessException;
+    public UUID setBidding(UUID productId, Bidding bidding) throws InvalidTravelProductException,
+        DatabaseAccessException;
 
     /**
      * Retrieve the product by the specified product id. No product item will be

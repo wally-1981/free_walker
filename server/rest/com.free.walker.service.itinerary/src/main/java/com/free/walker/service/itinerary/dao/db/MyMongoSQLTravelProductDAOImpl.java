@@ -188,16 +188,16 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         return travelProduct.getProductUUID();
     }
 
-    public UUID addItem(TravelProductItem travelProductItem) throws InvalidTravelProductException,
+    public UUID addItem(UUID productId, TravelProductItem travelProductItem) throws InvalidTravelProductException,
         DatabaseAccessException {
-        if (travelProductItem == null) {
+        if (productId ==null || travelProductItem == null) {
             throw new NullPointerException();
         }
 
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
-        if (productColls.findOne(travelProductItem.getProductUUID().toString()) == null) {
+        if (productColls.findOne(productId.toString()) == null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
-                travelProductItem.getProductUUID()), travelProductItem.getProductUUID());
+                productId), productId);
         }
 
         DBCollection productItemColls;
@@ -211,7 +211,6 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             productItemColls = productDb.getCollection(DAOConstants.PRODUCT_TRIV_COLL_NAME);
         }
 
-        UUID productId = travelProductItem.getProductUUID();
         DBObject productItemBs = productItemColls.findOne(productId.toString());
         JsonArrayBuilder itemsBuilder = Json.createArrayBuilder();
         if (productItemBs == null) {
@@ -229,37 +228,38 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             WriteResult wr = storeProductItems(productId, travelProductItem.getType(), itemsBuilder.build());
             LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
         } catch (MongoException e) {
-            throw new InvalidTravelProductException(travelProductItem.getProductUUID(), e);
+            throw new InvalidTravelProductException(productId, e);
         }
 
         return travelProductItem.getUUID();
     }
 
-    public UUID setBidding(Bidding bidding) throws InvalidTravelProductException, DatabaseAccessException {
-        if (bidding == null) {
+    public UUID setBidding(UUID productId, Bidding bidding) throws InvalidTravelProductException,
+        DatabaseAccessException {
+        if (productId == null || bidding == null) {
             throw new NullPointerException();
         }
 
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
-        if (productColls.findOne(bidding.getProductUUID().toString()) == null) {
+        if (productColls.findOne(productId.toString()) == null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
-                bidding.getProductUUID()), bidding.getProductUUID());
+                productId), productId);
         }
 
         DBCollection productBiddingColls = productDb.getCollection(DAOConstants.PRODUCT_BIDDING_COLL_NAME);
-        if (productBiddingColls.findOne(bidding.getProductUUID().toString()) != null) {
+        if (productBiddingColls.findOne(productId.toString()) != null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.existed_product_bidding,
-                bidding.getProductUUID()), bidding.getProductUUID());
+                productId), productId);
         }
 
         try {
-            WriteResult wr = storeProductBidding(bidding.getProductUUID(), bidding.toJSON());
+            WriteResult wr = storeProductBidding(productId, bidding.toJSON());
             LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
         } catch (MongoException e) {
-            throw new InvalidTravelProductException(bidding.getProductUUID(), e);
+            throw new InvalidTravelProductException(productId, e);
         }
 
-        return bidding.getProductUUID();
+        return productId;
     }
 
     public TravelProduct getProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {

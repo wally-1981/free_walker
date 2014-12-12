@@ -65,13 +65,12 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         return travelProduct.getProductUUID();
     }
 
-    public UUID addItem(TravelProductItem travelProductItem) throws InvalidTravelProductException,
+    public UUID addItem(UUID productId, TravelProductItem travelProductItem) throws InvalidTravelProductException,
         DatabaseAccessException {
-        if (travelProductItem == null) {
+        if (productId == null || travelProductItem == null) {
             throw new NullPointerException();
         }
 
-        UUID productId = travelProductItem.getProductUUID();
         if (!travelProducts.containsKey(productId)) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
                 travelProductItem.getProductUUID()), travelProductItem.getProductUUID());
@@ -82,24 +81,25 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         return travelProductItem.getUUID();
     }
 
-    public UUID setBidding(Bidding bidding) throws InvalidTravelProductException, DatabaseAccessException {
-        if (bidding == null) {
+    public UUID setBidding(UUID productId, Bidding bidding) throws InvalidTravelProductException,
+        DatabaseAccessException {
+        if (productId == null || bidding == null) {
             throw new NullPointerException();
         }
 
-        if (!travelProducts.containsKey(bidding.getProductUUID())) {
+        if (!travelProducts.containsKey(productId)) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
-                bidding.getProductUUID()), bidding.getProductUUID());
+                productId), productId);
         }
 
-        if (travelProductBiddings.containsKey(bidding.getProductUUID())) {
+        if (travelProductBiddings.containsKey(productId)) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.existed_product_bidding,
-                bidding.getProductUUID()), bidding.getProductUUID());
+                productId), productId);
         }
 
-        travelProductBiddings.put(bidding.getProductUUID(), bidding);
+        travelProductBiddings.put(productId, bidding);
 
-        return bidding.getProductUUID();
+        return productId;
     }
 
     public TravelProduct getProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {

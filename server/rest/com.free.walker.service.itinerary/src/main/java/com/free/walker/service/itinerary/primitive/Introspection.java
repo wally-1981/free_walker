@@ -5,6 +5,7 @@ import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.product.HotelItem;
 import com.free.walker.service.itinerary.product.ResortItem;
 import com.free.walker.service.itinerary.product.TrafficItem;
+import com.free.walker.service.itinerary.product.TrivItem;
 import com.free.walker.service.itinerary.req.HotelRequirement;
 import com.free.walker.service.itinerary.req.ResortRequirement;
 import com.free.walker.service.itinerary.req.TrafficRequirement;
@@ -114,6 +115,7 @@ public class Introspection {
         public static final String SUB_TYPE_HOTEL_ITEM = HotelItem.SUB_TYPE;
         public static final String SUB_TYPE_TRAFFIC_ITEM = TrafficItem.SUB_TYPE;
         public static final String SUB_TYPE_RESORT_ITEM = ResortItem.SUB_TYPE;
+        public static final String SUB_TYPE_TRIV_ITEM = TrivItem.SUB_TYPE;
     }
 
     public static class JsonValueHelper {

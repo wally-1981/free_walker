@@ -22,9 +22,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public abstract class AbstractPlatformServiceTest implements ServiceUrlProvider {
+public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider {
     private HttpClient httpClient;
-    private String itineraryServiceUrlStr;
+
+    protected String platformServiceUrlStr;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -32,7 +33,7 @@ public abstract class AbstractPlatformServiceTest implements ServiceUrlProvider 
     @Before
     public void before() {
         httpClient = HttpClientBuilder.create().build();
-        itineraryServiceUrlStr = getServiceUrl();
+        platformServiceUrlStr = getProdServiceUrl(PlatformService.class);
     }
 
     @Test
@@ -42,7 +43,7 @@ public abstract class AbstractPlatformServiceTest implements ServiceUrlProvider 
          */
         {
             HttpGet get = new HttpGet();
-            get.setURI(new URI(itineraryServiceUrlStr + "introspection/"));
+            get.setURI(new URI(platformServiceUrlStr + "introspection/"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             try {
                 HttpResponse response = httpClient.execute(get);

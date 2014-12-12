@@ -1,7 +1,11 @@
 package com.free.walker.service.itinerary.rest;
 
+import org.junit.Before;
+
 public class ItineraryServiceDevoTest extends AbstractItineraryServiceTest {
-    public String getServiceUrl() {
-        return ServiceUrlProvider.ITINERARY_DEVO_LOCAL_URL;
+    @Before
+    public void before() {
+        itineraryServiceUrlStr = getDevoServiceUrl(ItineraryService.class);
+        super.before();
     }
 }
