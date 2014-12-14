@@ -89,9 +89,15 @@ public class LocalMessages {
     public static final String load_country_failed = "load_country_failed";
     public static final String load_province_failed = "load_province_failed";
     public static final String load_city_failed = "load_city_failed";
+    public static final String load_tag_failed = "load_tag_failed";
     public static final String load_country_success = "load_country_success";
     public static final String load_province_success = "load_province_success";
     public static final String load_city_success = "load_city_success";
+    public static final String load_tag_success = "load_tag_success";
+
+    public static final String schedule_task_scheduled = "schedule_task_scheduled";
+    public static final String schedule_task_success = "schedule_task_success";
+    public static final String schedule_task_failed = "schedule_task_failed";
 
     public static final String test_message = "test_message";
     public static final String test_message_with_1_arg = "test_message_with_1_arg";

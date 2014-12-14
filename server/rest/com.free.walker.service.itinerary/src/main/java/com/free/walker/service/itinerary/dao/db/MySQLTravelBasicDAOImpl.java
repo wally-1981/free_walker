@@ -16,6 +16,7 @@ import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.City;
 import com.free.walker.service.itinerary.basic.Country;
 import com.free.walker.service.itinerary.basic.Province;
+import com.free.walker.service.itinerary.basic.Tag;
 import com.free.walker.service.itinerary.dao.BasicMapper;
 import com.free.walker.service.itinerary.dao.DAOConstants;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
@@ -103,6 +104,20 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
             BasicMapper basicMapper = session.getMapper(BasicMapper.class);
             List<City> cities = basicMapper.getAllCities();
             return cities;
+        }  catch(Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public List<Tag> getHottestTags(int topN) throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            List<Tag> tags = basicMapper.getHottestTags(topN);
+            return tags;
         }  catch(Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);

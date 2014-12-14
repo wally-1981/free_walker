@@ -21,7 +21,6 @@ import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.Serializable;
 import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
-import com.free.walker.service.itinerary.dao.db.MySQLTravelBasicDAOImpl;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
@@ -33,7 +32,7 @@ public class City implements Serializable, Loadable {
     private static TravelBasicDAO travelBasicDAO;
 
     static {
-        travelBasicDAO = DAOFactory.getTravelBasicDAO(MySQLTravelBasicDAOImpl.class.getName());
+        travelBasicDAO = DAOFactory.getTravelBasicDAO();
     }
 
     private UUID uuid;

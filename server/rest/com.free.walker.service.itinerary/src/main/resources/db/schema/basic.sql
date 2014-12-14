@@ -17,6 +17,32 @@ CREATE TABLE `itinerary`.`user` (
   UNIQUE INDEX `login_UNIQUE` (`login` ASC));
 
 --
+-- Table structure for table `tag`
+--
+
+DROP TABLE IF EXISTS `tag`;
+CREATE TABLE `itinerary`.`tag` (
+  `name` VARCHAR(32) NOT NULL,
+  `frequency` INT(8) UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (`name`),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC),
+  INDEX `frequency_INDEX` (`frequency` ASC));
+
+--
+-- Dumping data for table `country`
+--
+
+LOCK TABLES `tag` WRITE;
+
+INSERT INTO ITINERARY.TAG (name, frequency) VALUES ('自然', 10);
+INSERT INTO ITINERARY.TAG (name, frequency) VALUES ('户外', 102);
+INSERT INTO ITINERARY.TAG (name, frequency) VALUES ('蜜月', 322);
+INSERT INTO ITINERARY.TAG (name, frequency) VALUES ('踏青', 252);
+INSERT INTO ITINERARY.TAG (name, frequency) VALUES ('摄影', 162);
+
+UNLOCK TABLES;
+
+--
 -- Table structure for table `country`
 --
 

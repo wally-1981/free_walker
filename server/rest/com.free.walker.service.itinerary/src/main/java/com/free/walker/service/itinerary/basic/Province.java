@@ -19,7 +19,6 @@ import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.Serializable;
 import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
-import com.free.walker.service.itinerary.dao.db.MySQLTravelBasicDAOImpl;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
@@ -31,7 +30,7 @@ public class Province  implements Serializable, Loadable {
     private static TravelBasicDAO travelBasicDAO;
 
     static {
-        travelBasicDAO = DAOFactory.getTravelBasicDAO(MySQLTravelBasicDAOImpl.class.getName());
+        travelBasicDAO = DAOFactory.getTravelBasicDAO();
     }
 
     private UUID uuid;
@@ -83,7 +82,7 @@ public class Province  implements Serializable, Loadable {
             List<Province> provinces = travelBasicDAO.getAllProvinces();
 
             if (provinces == null || provinces.size() == 0) {
-                LOG.error(LocalMessages.getMessage(LocalMessages.load_country_failed));
+                LOG.error(LocalMessages.getMessage(LocalMessages.load_province_failed));
                 return false;
             }
 

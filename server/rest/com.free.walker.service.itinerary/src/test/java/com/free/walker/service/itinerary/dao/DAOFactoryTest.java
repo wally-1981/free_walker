@@ -7,21 +7,13 @@ import org.junit.Test;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MySQLTravelBasicDAOImpl;
-import com.free.walker.service.itinerary.dao.memo.InMemoryTravelBasicDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImpl;
 
 public class DAOFactoryTest {
     @Test
-    public void testBasicDAOFactoryByInMemory() {
-        TravelBasicDAO travelBasicDAO = DAOFactory.getTravelBasicDAO(InMemoryTravelBasicDAOImpl.class.getName());
-        assertTrue(travelBasicDAO instanceof InMemoryTravelBasicDAOImpl);
-        assertTrue(travelBasicDAO.pingPersistence());
-    }
-
-    @Test
     public void testBasicDAOFactoryByDb() {
-        TravelBasicDAO travelBasicDAO = DAOFactory.getTravelBasicDAO(MySQLTravelBasicDAOImpl.class.getName());
+        TravelBasicDAO travelBasicDAO = DAOFactory.getTravelBasicDAO();
         assertTrue(travelBasicDAO instanceof MySQLTravelBasicDAOImpl);
         assertTrue(travelBasicDAO.pingPersistence());
     }

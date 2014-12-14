@@ -3,15 +3,18 @@ package com.free.walker.service.itinerary.rest;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -27,8 +30,12 @@ import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.Flight;
 import com.free.walker.service.itinerary.basic.Hotel;
 import com.free.walker.service.itinerary.basic.Resort;
+import com.free.walker.service.itinerary.basic.Tag;
 import com.free.walker.service.itinerary.basic.Train;
 import com.free.walker.service.itinerary.basic.TravelLocation;
+import com.free.walker.service.itinerary.dao.DAOFactory;
+import com.free.walker.service.itinerary.dao.TravelBasicDAO;
+import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.req.HotelRequirement;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
@@ -40,11 +47,13 @@ import com.ibm.icu.util.Calendar;
 
 @Path("/service/platform")
 @Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class PlatformService {
     private static Logger LOG = LoggerFactory.getLogger(PlatformService.class);
+    private TravelBasicDAO travelBasicDAO;
 
     public PlatformService() {
-        ;
+        travelBasicDAO = DAOFactory.getTravelBasicDAO();
     }
 
     @GET
@@ -206,8 +215,17 @@ public class PlatformService {
     }
 
     @GET
-    @Path("/tags")
-    public Response getTags() {
-        return Response.ok().build();
+    @Path("/tags/top/{n}")
+    public Response getTags(@PathParam("n") int n) {
+        try {
+            List<Tag> tags = travelBasicDAO.getHottestTags(n);
+            JsonArrayBuilder resBuilder = Json.createArrayBuilder();
+            for (int i = 0; i < tags.size(); i++) {
+                resBuilder.add(tags.get(i).toJSON());
+            }
+            return Response.ok(resBuilder.build()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
     }
 }

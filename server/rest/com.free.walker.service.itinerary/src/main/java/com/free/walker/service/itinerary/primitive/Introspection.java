@@ -62,6 +62,7 @@ public class Introspection {
         public static final String MAX = "max";
         public static final String PRICE = "price";
         public static final String BIDDING = "bidding";
+        public static final String FREQUENCY = "frequency";
 
         public static final String ERROR_CODE = "error_code";
         public static final String ERROR_TYPE = "error_type";

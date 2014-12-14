@@ -32,5 +32,9 @@
 				<include>startServerDevo.*</include>
 			</includes>
 		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}\src\test\java\com\free\walker\service\itinerary\rest</directory>
+			<outputDirectory>\test</outputDirectory>
+		</fileSet>
 	</fileSets>
 </assembly>

@@ -45,8 +45,20 @@ public class ProductService {
 
     @GET
     @Path("/products/")
-    public Response searchProposals(@QueryParam("pageNum") String pageNum, @QueryParam("pageSize") String pageSize,
+    public Response searchProducts(@QueryParam("pageNum") String pageNum, @QueryParam("pageSize") String pageSize,
         @QueryParam("searchTerm") String searchTerm) {
+        return Response.status(Status.NOT_IMPLEMENTED).build();
+    }
+
+    @POST
+    @Path("/products/public/{productId}")
+    public Response publishProduct(@PathParam("productId") String productId) {
+        return Response.status(Status.NOT_IMPLEMENTED).build();
+    }
+
+    @DELETE
+    @Path("/products/public/{productId}")
+    public Response depublishProduct(@PathParam("productId") String productId) {
         return Response.status(Status.NOT_IMPLEMENTED).build();
     }
 
