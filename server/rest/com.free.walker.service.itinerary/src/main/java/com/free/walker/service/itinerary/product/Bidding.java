@@ -117,7 +117,7 @@ public class Bidding extends TravelProductItem {
         }
 
         public BiddingItem(int min, int max, double price) {
-            if (min < 1 || max < 1 || price <= 0) {
+            if (min < 1 || max < 1 || price < 0) {
                 throw new IllegalArgumentException();
             }
 

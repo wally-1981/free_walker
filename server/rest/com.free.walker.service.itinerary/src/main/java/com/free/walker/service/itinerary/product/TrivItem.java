@@ -12,10 +12,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.product.Bidding.BiddingExtra;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
 public class TrivItem extends TravelProductItem {
     public static final String SUB_TYPE;
+    private BiddingExtra biddingExtra;
 
     static {
         String[] names = StringUtils.splitByCharacterTypeCamelCase(TrivItem.class.getSimpleName());
@@ -54,6 +56,9 @@ public class TrivItem extends TravelProductItem {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, uuid.toString());
         resBuilder.add(Introspection.JSONKeys.SUB_TYPE, SUB_TYPE);
+        if (biddingExtra != null) {
+            resBuilder.add(Introspection.JSONKeys.BIDDING, biddingExtra.toJSON());
+        }
         return resBuilder.build();
     }
 
@@ -74,6 +79,11 @@ public class TrivItem extends TravelProductItem {
         if (subType == null || !SUB_TYPE.equals(subType)) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.SUB_TYPE, subType));
+        }
+
+        JsonObject biddingExtraJs = jsObject.getJsonObject(Introspection.JSONKeys.BIDDING);
+        if (biddingExtraJs != null) {
+            this.biddingExtra = new BiddingExtra().fromJSON(biddingExtraJs);
         }
 
         return this;

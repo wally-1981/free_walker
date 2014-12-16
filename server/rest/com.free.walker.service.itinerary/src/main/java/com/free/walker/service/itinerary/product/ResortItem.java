@@ -40,7 +40,7 @@ public class ResortItem extends TravelProductItem {
         }
 
         this.resort = resort;
-        this.date= date;
+        this.date = date;
     }
 
     public double getCost() {
