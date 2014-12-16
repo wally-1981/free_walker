@@ -87,7 +87,12 @@ public class Bidding extends TravelProductItem {
         } else {
             this.biddingItems = new BiddingItem[biddingJs.size()];
             for (int i = 0; i < biddingJs.size(); i++) {
-                this.biddingItems[i] = new BiddingItem().fromJSON(biddingJs.getJsonObject(i));
+                JsonObject item = biddingJs.getJsonObject(i);
+                if (item.getJsonString(Introspection.JSONKeys.TITLE) == null) {
+                    this.biddingItems[i] = new BiddingItem().fromJSON(item);
+                } else {
+                    this.biddingItems[i] = new BiddingExtra().fromJSON(item);
+                }
             }
         }
 
@@ -95,9 +100,9 @@ public class Bidding extends TravelProductItem {
     }
 
     public static class BiddingItem implements Serializable {
-        private int min;
-        private int max;
-        private double price;
+        protected int min;
+        protected int max;
+        protected double price;
 
         private BiddingItem() {
             ;
@@ -177,6 +182,63 @@ public class Bidding extends TravelProductItem {
 
         private int getMax() {
             return max;
+        }
+    }
+
+    public static class BiddingExtra extends BiddingItem {
+        private String title;
+
+        public BiddingExtra() {
+            ;
+        }
+
+        public BiddingExtra(String title, double price) {
+            super(1, Integer.MAX_VALUE, Math.abs(price));
+
+            if (title == null) {
+                throw new NullPointerException();
+            }
+
+            if (title.trim().length() == 0) {
+                throw new IllegalArgumentException();
+            }
+
+            this.title = title;
+            this.price = price;
+        }
+
+        public ValueType getValueType() {
+            return JsonValue.ValueType.NULL;
+        }
+
+        public JsonObject toJSON() throws JsonException {
+            JsonObjectBuilder resBuilder = Json.createObjectBuilder();
+            resBuilder.add(Introspection.JSONKeys.TITLE, title);
+            resBuilder.add(Introspection.JSONKeys.PRICE, price);
+            return resBuilder.build();
+        }
+
+        public BiddingExtra fromJSON(JsonObject jsObject) throws JsonException {
+            String title = jsObject.getString(Introspection.JSONKeys.TITLE, null);
+            if (title == null || title.trim().length() == 0) {
+                throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                    Introspection.JSONKeys.TITLE, title));
+            } else {
+                this.title = title;
+            }
+
+            JsonNumber price = jsObject.getJsonNumber(Introspection.JSONKeys.PRICE);
+            if (price == null) {
+                throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                    Introspection.JSONKeys.PRICE, price));
+            } else {
+                this.price = price.doubleValue();
+            }
+
+            this.min = 1;
+            this.max = Integer.MAX_VALUE;
+
+            return this;
         }
     }
 }
