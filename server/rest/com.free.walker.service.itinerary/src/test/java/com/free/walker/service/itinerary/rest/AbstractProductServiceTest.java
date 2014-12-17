@@ -208,6 +208,10 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
         {
             JsonObjectBuilder trivItemBuilder = Json.createObjectBuilder();
             trivItemBuilder.add(Introspection.JSONKeys.SUB_TYPE, Introspection.JSONValues.SUB_TYPE_TRIV_ITEM);
+            JsonObjectBuilder biddingBuilder = Json.createObjectBuilder();
+            biddingBuilder.add(Introspection.JSONKeys.TITLE, "随身Wifi");
+            biddingBuilder.add(Introspection.JSONKeys.PRICE, 108.8);
+            trivItemBuilder.add(Introspection.JSONKeys.BIDDING, biddingBuilder);
             newTriv = trivItemBuilder.build();
         }
 
@@ -232,6 +236,16 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             biddingItemBuilder3.add(Introspection.JSONKeys.MAX, 80);
             biddingItemBuilder3.add(Introspection.JSONKeys.PRICE, 1200);
             biddingItemsBuilder.add(biddingItemBuilder3);
+
+            JsonObjectBuilder biddingItemBuilder4 = Json.createObjectBuilder();
+            biddingItemBuilder4.add(Introspection.JSONKeys.TITLE, "Child Price");
+            biddingItemBuilder4.add(Introspection.JSONKeys.PRICE, -300.01);
+            biddingItemsBuilder.add(biddingItemBuilder4);
+
+            JsonObjectBuilder biddingItemBuilder5 = Json.createObjectBuilder();
+            biddingItemBuilder5.add(Introspection.JSONKeys.TITLE, "Single Room Price");
+            biddingItemBuilder5.add(Introspection.JSONKeys.PRICE, 388);
+            biddingItemsBuilder.add(biddingItemBuilder5);
 
             biddingBuilder.add(Introspection.JSONKeys.BIDDING, biddingItemsBuilder);
 
@@ -856,6 +870,31 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
         }
 
         /*
+         * 获取刚新建的Product的Bidding。
+         */
+        {
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/bidding"));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonObject bidding = Json.createReader(response.getEntity().getContent()).readObject();
+                    assertNotNull(bidding);
+                    JsonArray biddingItems = bidding.getJsonArray(Introspection.JSONKeys.BIDDING);
+                    assertNotNull(biddingItems);
+                    assertEquals(5, biddingItems.size());
+                    
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
+        }
+
+        /*
          * 取消产品Bidding。
          */
         {
@@ -1119,6 +1158,12 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                         assertEquals(Introspection.JSONValues.SUB_TYPE_TRIV_ITEM,
                             trivItem.getString(Introspection.JSONKeys.SUB_TYPE));
                         assertFalse(trivItem.getString(Introspection.JSONKeys.UUID).equals(trivItemId));
+                        JsonObject bidding = trivItem.getJsonObject(Introspection.JSONKeys.BIDDING);
+                        assertNotNull(bidding);
+                        assertNotNull(bidding.getString(Introspection.JSONKeys.TITLE));
+                        assertNotNull(bidding.getJsonNumber(Introspection.JSONKeys.PRICE));
+                        assertEquals("随身Wifi", bidding.getString(Introspection.JSONKeys.TITLE));
+                        assertEquals(108.8, bidding.getJsonNumber(Introspection.JSONKeys.PRICE).doubleValue(), 0.1);
                     }
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
