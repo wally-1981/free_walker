@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Calendar;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -32,6 +31,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.free.walker.service.itinerary.primitive.Introspection;
+import com.ibm.icu.util.Calendar;
 
 public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider {
     private HttpClient httpClient;
@@ -86,6 +86,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
 
             JsonObjectBuilder proposalBuilder = Json.createObjectBuilder();
             proposalBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL);
+            proposalBuilder.add(Introspection.JSONKeys.AUTHOR, "3b3e4dcf-e353-4418-adfb-3c9af7a54992");
             proposalBuilder.add(Introspection.JSONKeys.TITLE, "测试提议");
             JsonArrayBuilder requirementsBuilder = Json.createArrayBuilder();
             requirementsBuilder.add(requirementBuilder);

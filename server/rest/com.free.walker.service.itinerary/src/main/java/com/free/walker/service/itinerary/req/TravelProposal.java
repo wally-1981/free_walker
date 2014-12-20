@@ -16,6 +16,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
+import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
@@ -23,8 +24,7 @@ import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
 public class TravelProposal extends BaseTravelRequirement implements TravelRequirement {
-    private static final String NEW_PROPOSAL = "New Proposal";
-
+    private String authorAccountId;
     private String proposalTitle;
     private List<TravelRequirement> travelRequirements;
     private Set<String> proposalTags;
@@ -32,7 +32,8 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
     public TravelProposal() {
         this.travelRequirements = new ArrayList<TravelRequirement>();
         this.proposalTags = new HashSet<String>();
-        this.proposalTitle = NEW_PROPOSAL;
+        this.proposalTitle = Constants.NEW_PROPOSAL;
+        this.authorAccountId = Constants.DEFAULT_ACCOUNT.getUuid();
     }
 
     public TravelProposal(String proposalTitle, ItineraryRequirement itineraryRequirement) {
@@ -50,24 +51,23 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
         this.travelRequirements.add(itineraryRequirement);
         this.proposalTags = new HashSet<String>();
         this.proposalTitle = proposalTitle;
+        this.authorAccountId = Constants.DEFAULT_ACCOUNT.getUuid();
     }
 
     public TravelProposal(String proposalTitle, ItineraryRequirement itineraryRequirement, List<String> proposalTags) {
         this(proposalTitle, itineraryRequirement);
-
         this.proposalTags = distill(proposalTags);
-        this.proposalTitle = proposalTitle;
     }
 
     public TravelProposal(ItineraryRequirement itineraryRequirement) {
-        this(NEW_PROPOSAL, itineraryRequirement);
+        this(Constants.NEW_PROPOSAL, itineraryRequirement);
         String dest = itineraryRequirement.getDestination().getCity().getChineseName();
         String dept = itineraryRequirement.getDeparture().getCity().getChineseName();
         this.proposalTitle = dept + "=>" + dest;
     }
 
     public TravelProposal(ItineraryRequirement itineraryRequirement, List<String> proposalTags) {
-        this(NEW_PROPOSAL, itineraryRequirement, proposalTags);
+        this(Constants.NEW_PROPOSAL, itineraryRequirement, proposalTags);
         String dest = itineraryRequirement.getDestination().getCity().getChineseName();
         String dept = itineraryRequirement.getDeparture().getCity().getChineseName();
         this.proposalTitle = dept + "=>" + dest;
@@ -93,6 +93,7 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
         resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL);
+        resBuilder.add(Introspection.JSONKeys.AUTHOR, authorAccountId);
         resBuilder.add(Introspection.JSONKeys.TITLE, proposalTitle);
 
         JsonArrayBuilder requirements = Json.createArrayBuilder();
@@ -135,6 +136,16 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
         if (title == null || title.trim().length() == 0) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.TITLE, title));
+        } else {
+            proposalTitle = title;
+        }
+
+        String author = jsObject.getString(Introspection.JSONKeys.AUTHOR, null);
+        if (author == null || author.trim().length() == 0) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.AUTHOR, author));
+        } else {
+            authorAccountId = author;
         }
 
         JsonArray requirements = jsObject.getJsonArray(Introspection.JSONKeys.REQUIREMENTS);

@@ -1,6 +1,5 @@
 package com.free.walker.service.itinerary.task;
 
-import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -10,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.Reloadable;
 import com.free.walker.service.itinerary.basic.Tag;
+import com.ibm.icu.util.Calendar;
 
 public class TagRefreshTask extends TimerTask {
     private static final int SCHEDULE_PERIOD_HOURS = 24;
@@ -41,7 +41,7 @@ public class TagRefreshTask extends TimerTask {
         firstStart.set(Calendar.HOUR_OF_DAY, 3);
         firstStart.set(Calendar.MINUTE, 0);
         firstStart.set(Calendar.SECOND, 0);
-        firstStart.add(Calendar.DAY_OF_MONTH, 1);
+        firstStart.roll(Calendar.DAY_OF_MONTH, 1);
 
         timer.schedule(new TagRefreshTask(), firstStart.getTime(), SCHEDULE_PERIOD_HOURS * 1000 * 3600);
         LOG.info(LocalMessages.getMessage(LocalMessages.schedule_task_scheduled, TagRefreshTask.class.getSimpleName(),

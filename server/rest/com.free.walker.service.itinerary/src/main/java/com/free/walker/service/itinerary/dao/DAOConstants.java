@@ -11,6 +11,7 @@ public class DAOConstants {
     public static final String PRODUCT_TRIV_COLL_NAME = "product_triv";
     public static final String PRODUCT_BIDDING_COLL_NAME = "product_bidding";
     public static final String PROPOSAL_REQUIREMENT_COLL_NAME = "proposal_requirement";
+    public static final String PROPOSAL_SUBMISSION_COLL_NAME = "proposal_submission";
 
     public static final String mysql_database_url = "mysql_database_url";
     public static final String mysql_database_driver = "mysql_database_driver";

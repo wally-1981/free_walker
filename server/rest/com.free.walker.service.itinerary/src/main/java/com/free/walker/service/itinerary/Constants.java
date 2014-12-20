@@ -1,11 +1,14 @@
 package com.free.walker.service.itinerary;
 
-import java.util.UUID;
+import javax.json.Json;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.free.walker.service.itinerary.basic.Account;
 import com.free.walker.service.itinerary.basic.City;
+import com.free.walker.service.itinerary.primitive.AccountType;
+import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
 public class Constants {
@@ -14,10 +17,36 @@ public class Constants {
     public static City WUHAN;
     public static City GENEVA;
 
-    // TODO: Replace this with the data from user account system.
-    public static final UUID MockAdminUser;
+    public static final String NEW_PROPOSAL;
+
+    public static final Account DEFAULT_ACCOUNT;
+    public static final Account ADMIN_ACCOUNT;
 
     static {
+        ADMIN_ACCOUNT = new Account().fromJSON(
+            Json.createObjectBuilder()
+            .add(Introspection.JSONKeys.UUID, "8eeeeca9-a27c-46c1-a38f-30372d44fa70")
+            .add(Introspection.JSONKeys.TYPE, AccountType.MASTER.ordinal())
+            .add(Introspection.JSONKeys.LOGIN, "admin")
+            .add(Introspection.JSONKeys.MOBILE, "")
+            .add(Introspection.JSONKeys.EMAIL, "")
+            .add(Introspection.JSONKeys.NAME, "administrator")
+            .add(Introspection.JSONKeys.REF_LINK, "")
+            .build());
+
+        DEFAULT_ACCOUNT = new Account().fromJSON(
+            Json.createObjectBuilder()
+            .add(Introspection.JSONKeys.UUID, "3b3e4dcf-e353-4418-adfb-3c9af7a54992")
+            .add(Introspection.JSONKeys.TYPE, AccountType.MASTER.ordinal())
+            .add(Introspection.JSONKeys.LOGIN, "default")
+            .add(Introspection.JSONKeys.MOBILE, "")
+            .add(Introspection.JSONKeys.EMAIL, "")
+            .add(Introspection.JSONKeys.NAME, "default_user")
+            .add(Introspection.JSONKeys.REF_LINK, "")
+            .build());
+
+        NEW_PROPOSAL = "New Proposal";
+
         Logger LOG = LoggerFactory.getLogger(City.class);
         try {
             TAIBEI = new City(UuidUtil.fromUuidStr("02515d41-f141-4175-9a11-9e68b9cfe687"));
@@ -27,7 +56,5 @@ public class Constants {
         } catch (IllegalArgumentException e) {
             LOG.error(e.getMessage(), e);
         }
-
-        MockAdminUser = UUID.fromString("8eeeeca9-a27c-46c1-a38f-30372d44fa70");
     }
 }

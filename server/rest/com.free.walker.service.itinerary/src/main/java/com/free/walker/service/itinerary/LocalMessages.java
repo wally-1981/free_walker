@@ -64,12 +64,14 @@ public class LocalMessages {
     public static final String existed_travel_proposal = "existed_travel_proposal";
     public static final String missing_travel_itinerary = "missing_travel_itinerary";
     public static final String existed_travel_itinerary = "existed_travel_itinerary";
+    public static final String missing_travel_proposal_bidding = "missing_travel_proposal_bidding";
 
     public static final String illegal_add_proposal_as_requirement = "illegal_add_proposal_as_requirement";
     public static final String illegal_add_itinerary_as_requirement = "illegal_add_itinerary_as_requirement";
     public static final String illegal_update_travel_requirement_operation = "illegal_update_travel_requirement_operation";
     public static final String illegal_delete_travel_requirement_operation = "illegal_delete_travel_requirement_operation";
     public static final String illegal_remove_product_item_operation = "illegal_remove_product_item_operation";
+    public static final String illegal_submit_proposal_operation = "illegal_submit_proposal_operation";
 
     public static final String requirement_not_found = "requirement_not_found";
     public static final String itinerary_not_found = "itinerary_not_found";
@@ -95,7 +97,16 @@ public class LocalMessages {
     public static final String load_city_success = "load_city_success";
     public static final String load_tag_success = "load_tag_success";
 
+    public static final String agency_election_start = "agency_election_start";
+    public static final String agency_election_end = "agency_election_end";
+    public static final String agency_election_success = "agency_election_success";
+    public static final String agency_election_failed = "agency_election_failed";
+
+    public static final String submit_proposal_failed = "submit_proposal_failed";
+    public static final String submit_proposal_success = "submit_proposal_success";
+
     public static final String schedule_task_scheduled = "schedule_task_scheduled";
+    public static final String schedule_task_scheduled_run_once = "schedule_task_scheduled_run_once";
     public static final String schedule_task_success = "schedule_task_success";
     public static final String schedule_task_failed = "schedule_task_failed";
 

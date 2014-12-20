@@ -286,7 +286,8 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
 
         List<TravelProduct> result = new ArrayList<TravelProduct>();
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
-        DBCursor productsCr = productColls.find(new BasicDBObject("ref_uuid", proposalId.toString()));
+        DBCursor productsCr = productColls.find(new BasicDBObject(Introspection.JSONKeys.REF_UUID, proposalId
+            .toString()));
         try {
             while (productsCr.hasNext()) {
                 JsonObject product = Json.createReader(new StringReader(productsCr.next().toString())).readObject();

@@ -1,5 +1,6 @@
 package com.free.walker.service.itinerary.primitive;
 
+import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.product.HotelItem;
@@ -21,6 +22,7 @@ public class Introspection {
         public static final String REQUIREMENTS = "requirements";
         public static final String ITEMS = "items";
         public static final String TAGS = "tags";
+        public static final String AGENCIES = "agencies";
 
         public static final String CITY = "city";
         public static final String COUNTRY = "country";
@@ -40,7 +42,13 @@ public class Introspection {
          * Primitive Keys
          */
         public static final String UUID = "uuid";
+        public static final String OWNER = "owner";
         public static final String REF_UUID = "ref_uuid";
+        public static final String REF_LINK = "ref_link";
+        public static final String LOGIN = "login";
+        public static final String MOBILE = "mobile";
+        public static final String EMAIL = "email";
+        public static final String AUTHOR = "author";
         public static final String NAME = "name";
         public static final String TITLE = "title";
         public static final String DATE = "date";
@@ -117,6 +125,15 @@ public class Introspection {
         public static final String SUB_TYPE_TRAFFIC_ITEM = TrafficItem.SUB_TYPE;
         public static final String SUB_TYPE_RESORT_ITEM = ResortItem.SUB_TYPE;
         public static final String SUB_TYPE_TRIV_ITEM = TrivItem.SUB_TYPE;
+
+        public static final int ACCOUNT_TYPE_MASTER = AccountType.MASTER.ordinal();
+        public static final int ACCOUNT_TYPE_WECHAT = AccountType.WeChat.ordinal();
+        public static final int ACCOUNT_TYPE_QQ = AccountType.QQ.ordinal();
+        public static final int ACCOUNT_TYPE_ALIPAY = AccountType.AliPay.ordinal();
+        public static final int ACCOUNT_TYPE_WEIBO = AccountType.WeiBo.ordinal();
+
+        public static final String DEFAULT_ACCOUNT = Constants.DEFAULT_ACCOUNT.getUuid();
+        public static final String DEFAULT_PROPOSAL_TITLE = Constants.NEW_PROPOSAL;
     }
 
     public static class JsonValueHelper {

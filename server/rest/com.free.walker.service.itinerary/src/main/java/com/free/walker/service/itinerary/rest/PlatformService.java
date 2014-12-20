@@ -89,6 +89,9 @@ public class PlatformService {
                         if (field.get(Introspection.JSONValues.class) instanceof Enumable) {
                             valueDataBuilder.add(field.getName(),
                                 ((Enumable) field.get(Introspection.JSONValues.class)).enumValue());
+                        } else if (field.get(Introspection.JSONValues.class) instanceof Integer) {
+                            valueDataBuilder.add(field.getName(),
+                                ((Integer) field.get(Introspection.JSONValues.class)).intValue());
                         } else if (field.get(Introspection.JSONValues.class) instanceof Imaginable) {
                             valueDataBuilder.add(field.getName(),
                                 ((Imaginable) field.get(Introspection.JSONValues.class)).realValue() + ":"

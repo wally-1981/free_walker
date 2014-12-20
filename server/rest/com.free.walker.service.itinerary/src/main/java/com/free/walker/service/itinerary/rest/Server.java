@@ -12,6 +12,7 @@ import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImpl;
+import com.free.walker.service.itinerary.handler.SimpleSecurityContextInInterceptor;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
 
 public class Server {
@@ -61,6 +62,8 @@ public class Server {
         } else {
             throw new IllegalArgumentException();
         }
+
+        sf.getInInterceptors().add(new SimpleSecurityContextInInterceptor());
 
         sf.create();
     }

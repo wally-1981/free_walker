@@ -8,18 +8,45 @@ import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.TravelProposal;
 import com.free.walker.service.itinerary.req.TravelRequirement;
+import com.ibm.icu.util.Calendar;
 
 public interface TravelRequirementDAO extends HealthyDAO {
     /**
      * Create the specified proposal, and all attached initial itineraries will
      * be created either as ordered.
      * 
+     * @param accountId
      * @param travelProposal
      * @return
      * @throws InvalidTravelReqirementException
      * @throws DatabaseAccessException
      */
-    public UUID createProposal(TravelProposal travelProposal) throws InvalidTravelReqirementException,
+    public UUID createProposal(UUID accountId, TravelProposal travelProposal) throws InvalidTravelReqirementException,
+        DatabaseAccessException;
+
+    /**
+     * Publish the specified proposal, so that travel agency could start join
+     * the bidding.
+     * 
+     * @param travelProposalId
+     * @param accountId
+     * @return
+     * @throws InvalidTravelReqirementException
+     * @throws DatabaseAccessException
+     */
+    public UUID startProposalBid(UUID travelProposalId, UUID accountId) throws InvalidTravelReqirementException,
+        DatabaseAccessException;
+
+    /**
+     * Bid for the specified proposal by the specified agency.
+     * 
+     * @param travelProposalId
+     * @param agencyId
+     * @return
+     * @throws InvalidTravelReqirementException
+     * @throws DatabaseAccessException
+     */
+    public UUID joinProposalBid(UUID travelProposalId, UUID agencyId) throws InvalidTravelReqirementException,
         DatabaseAccessException;
 
     /**
@@ -174,5 +201,27 @@ public interface TravelRequirementDAO extends HealthyDAO {
      * @throws DatabaseAccessException
      */
     public UUID removeRequirement(UUID travelProposalId, UUID travelRequirementId)
+        throws InvalidTravelReqirementException, DatabaseAccessException;
+
+    /**
+     * Retrieve all proposals by travel agency.
+     * 
+     * @param agencyId
+     * @param since
+     * @param numberOfDay
+     * @return
+     */
+    public List<TravelProposal> getTravelProposalsByAgency(UUID agencyId, Calendar since, int numberOfDay)
+        throws InvalidTravelReqirementException, DatabaseAccessException;
+
+    /**
+     * Retrieve all proposals by author.
+     * 
+     * @param accountId
+     * @param since
+     * @param numberOfDay
+     * @return
+     */
+    public List<TravelProposal> getTravelProposalsByAccount(UUID accountId, Calendar since, int numberOfDay)
         throws InvalidTravelReqirementException, DatabaseAccessException;
 }

@@ -33,10 +33,12 @@ import com.free.walker.service.itinerary.req.TravelRequirement;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.MongoDbClientBuilder;
 import com.free.walker.service.itinerary.util.UuidUtil;
+import com.ibm.icu.util.Calendar;
 import com.mongodb.BasicDBObject;
 import com.mongodb.CommandResult;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 import com.mongodb.QueryBuilder;
@@ -92,9 +94,9 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         return true;
     }
 
-    public UUID createProposal(TravelProposal travelProposal) throws InvalidTravelReqirementException,
+    public UUID createProposal(UUID anctId, TravelProposal travelProposal) throws InvalidTravelReqirementException,
         DatabaseAccessException {
-        if (travelProposal == null) {
+        if (anctId == null || travelProposal == null) {
             throw new NullPointerException();
         }
 
@@ -154,6 +156,81 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         }
 
         return travelProposal.getUUID();
+    }
+
+    public UUID startProposalBid(UUID travelProposalId, UUID accoutId) throws InvalidTravelReqirementException,
+        DatabaseAccessException {
+        if (travelProposalId == null || accoutId == null) {
+            throw new NullPointerException();
+        }
+
+        DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
+        if (proposalColls.findOne(travelProposalId.toString()) == null) {
+            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
+                travelProposalId), travelProposalId);
+        }
+
+        DBCollection proposalAgencyColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_SUBMISSION_COLL_NAME);
+        DBObject proposalAgency = proposalAgencyColls.findOne(travelProposalId.toString());
+        if (proposalAgency != null) {
+            if (!accoutId.toString().equals(proposalAgency.get(Introspection.JSONKeys.OWNER))) {
+                throw new InvalidTravelReqirementException(LocalMessages.getMessage(
+                    LocalMessages.illegal_submit_proposal_operation, travelProposalId, accoutId), travelProposalId);
+            } else {
+                return travelProposalId;
+            }
+        } else {
+            try {
+                WriteResult wr = storeProposalBid(travelProposalId, accoutId, Json.createArrayBuilder().build());
+                LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+            } catch (MongoException e) {
+                throw new InvalidTravelReqirementException(travelProposalId, e);
+            }
+            return travelProposalId;
+        }
+    }
+
+    public UUID joinProposalBid(UUID travelProposalId, UUID agencyId) throws InvalidTravelReqirementException,
+        DatabaseAccessException {
+        if (travelProposalId == null || agencyId == null) {
+            throw new NullPointerException();
+        }
+
+        DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
+        if (proposalColls.findOne(travelProposalId.toString()) == null) {
+            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
+                travelProposalId), travelProposalId);
+        }
+
+        DBCollection proposalAgencyColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_SUBMISSION_COLL_NAME);
+        DBObject proposalAgency = proposalAgencyColls.findOne(travelProposalId.toString());
+        if (proposalAgency == null) {
+            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
+                LocalMessages.missing_travel_proposal_bidding, travelProposalId), travelProposalId);
+        } else {
+            Object agenciesBs = proposalAgency.get(Introspection.JSONKeys.AGENCIES);
+            Object ownerBs = proposalAgency.get(Introspection.JSONKeys.OWNER);
+            JsonArrayBuilder agenciesJs = Json.createArrayBuilder();
+            agenciesJs.add(agencyId.toString());
+            JsonArray agencies = Json.createReader(new StringReader(agenciesBs.toString())).readArray();
+            for (int i = 0; i < agencies.size(); i++) {
+                if (agencyId.toString().equals(agencies.getString(i))) {
+                    return agencyId;
+                } else {
+                    agenciesJs.add(agencies.getString(i));
+                }
+            }
+
+            try {
+                WriteResult wr = storeProposalBid(travelProposalId, UUID.fromString((String) ownerBs),
+                    agenciesJs.build());
+                LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+            } catch (MongoException e) {
+                throw new InvalidTravelReqirementException(travelProposalId, e);
+            }
+        }
+
+        return agencyId;
     }
 
     public UUID addItinerary(UUID travelProposalId, UUID itineraryRequirementId,
@@ -351,7 +428,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
             WriteResult wr;
             if (travelRequirement.isItinerary()) {
                 wr = storeItinerary(travelRequirement.toJSON());
-            } else {                
+            } else {
                 wr = storeRequirement(travelRequirement.toJSON());
             }
             LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
@@ -684,8 +761,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         return null;
     }
 
-    public UUID updateRequirement(TravelRequirement travelRequirement)
-        throws InvalidTravelReqirementException {
+    public UUID updateRequirement(TravelRequirement travelRequirement) throws InvalidTravelReqirementException {
         if (travelRequirement == null || travelRequirement.getUUID() == null) {
             throw new NullPointerException();
         }
@@ -830,6 +906,84 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         }
     }
 
+    public List<TravelProposal> getTravelProposalsByAgency(UUID agencyId, Calendar since, int numberOfDay)
+        throws InvalidTravelReqirementException {
+        if (agencyId == null || since == null) {
+            throw new NullPointerException();
+        }
+
+        Calendar until = Calendar.getInstance();
+        if (numberOfDay != 0) {
+            until.setTimeInMillis(since.getTimeInMillis());
+            until.roll(Calendar.DAY_OF_MONTH, numberOfDay);
+        }
+
+        List<TravelProposal> result = new ArrayList<TravelProposal>();
+        DBCollection proposalSubmissionColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_SUBMISSION_COLL_NAME);
+        BasicDBObject query1 = new BasicDBObject(Introspection.JSONKeys.DATE, new BasicDBObject("$gte",
+            since.getTimeInMillis()).append("$lte", until.getTimeInMillis()));
+        BasicDBObject query2 = new BasicDBObject(Introspection.JSONKeys.AGENCIES, new BasicDBObject("$in",
+            new String[] { agencyId.toString() }));
+        BasicDBObject query = new BasicDBObject("$and", new BasicDBObject[] { query1, query2 });
+        DBCursor submissionsCr = proposalSubmissionColls.find(query);
+
+        try {
+            while (submissionsCr.hasNext()) {
+                JsonObject proposalSubmission = Json.createReader(new StringReader(submissionsCr.next().toString()))
+                    .readObject();
+                String proposalId = proposalSubmission.getString(Introspection.JSONKeys.UUID, null);
+                DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
+                DBObject proposalBs = proposalColls.findOne(proposalId);
+                if (proposalBs != null) {
+                    JsonObject proposal = Json.createReader(new StringReader(proposalBs.toString())).readObject();
+                    result.add((TravelProposal) JsonObjectHelper.toRequirement(proposal, true));
+                }
+            }
+        } finally {
+            submissionsCr.close();
+        }
+
+        return result;
+    }
+
+    public List<TravelProposal> getTravelProposalsByAccount(UUID accountId, Calendar since, int numberOfDay)
+        throws InvalidTravelReqirementException {
+        if (accountId == null || since == null) {
+            throw new NullPointerException();
+        }
+
+        Calendar until = Calendar.getInstance();
+        if (numberOfDay != 0) {
+            until.setTimeInMillis(since.getTimeInMillis());
+            until.roll(Calendar.DAY_OF_MONTH, numberOfDay);
+        }
+
+        List<TravelProposal> result = new ArrayList<TravelProposal>();
+        DBCollection proposalSubmissionColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_SUBMISSION_COLL_NAME);
+        BasicDBObject query1 = new BasicDBObject(Introspection.JSONKeys.DATE, new BasicDBObject("$gte",
+            since.getTimeInMillis()).append("$lte", until.getTimeInMillis()));
+        BasicDBObject query2 = new BasicDBObject(new BasicDBObject(Introspection.JSONKeys.OWNER, accountId.toString()));
+        BasicDBObject query = new BasicDBObject("$and", new BasicDBObject[] { query1, query2 });
+        DBCursor submissionsCr = proposalSubmissionColls.find(query);
+        try {
+            while (submissionsCr.hasNext()) {
+                JsonObject proposalSubmission = Json.createReader(new StringReader(submissionsCr.next().toString()))
+                    .readObject();
+                String proposalId = proposalSubmission.getString(Introspection.JSONKeys.UUID, null);
+                DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
+                DBObject proposalBs = proposalColls.findOne(proposalId);
+                if (proposalBs != null) {
+                    JsonObject proposal = Json.createReader(new StringReader(proposalBs.toString())).readObject();
+                    result.add((TravelProposal) JsonObjectHelper.toRequirement(proposal, true));
+                }
+            }
+        } finally {
+            submissionsCr.close();
+        }
+
+        return result;
+    }
+
     private WriteResult storeProposal(JsonObject proposal) {
         String proposalId = proposal.getString(Introspection.JSONKeys.UUID);
         DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
@@ -867,6 +1021,21 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         DBCollection proposalRequirementColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_REQUIREMENT_COLL_NAME);
         DBObject proposalQuery = QueryBuilder.start(DAOConstants.mongo_database_pk).is(proposalId.toString()).get();
         return proposalRequirementColls.update(proposalQuery, requirementsBs, true, false, WriteConcern.MAJORITY);
+    }
+
+    private WriteResult storeProposalBid(UUID proposalId, UUID accountId, JsonArray agencies) {
+        JsonObjectBuilder bidJs = Json.createObjectBuilder();
+        bidJs.add(Introspection.JSONKeys.UUID, proposalId.toString());
+        bidJs.add(Introspection.JSONKeys.OWNER, accountId.toString());
+        bidJs.add(Introspection.JSONKeys.AGENCIES, agencies);
+        bidJs.add(Introspection.JSONKeys.DATE, Calendar.getInstance().getTimeInMillis());
+
+        DBObject bidBs = (DBObject) JSON.parse(bidJs.build().toString());
+        bidBs.put(DAOConstants.mongo_database_pk, proposalId.toString());
+
+        DBCollection proposalBidColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_SUBMISSION_COLL_NAME);
+        DBObject proposalQuery = QueryBuilder.start(DAOConstants.mongo_database_pk).is(proposalId.toString()).get();
+        return proposalBidColls.update(proposalQuery, bidBs, true, false, WriteConcern.MAJORITY);
     }
 
     private DBObject isTypeOf(String requirementId, Class<?> requirementClass) {

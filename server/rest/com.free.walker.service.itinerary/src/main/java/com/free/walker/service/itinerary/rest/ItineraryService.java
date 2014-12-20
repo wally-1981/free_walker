@@ -15,11 +15,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.cxf.jaxrs.ext.MessageContext;
+
 import com.free.walker.service.itinerary.LocalMessages;
+import com.free.walker.service.itinerary.basic.Account;
 import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.TravelRequirementDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
@@ -28,8 +32,10 @@ import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.TravelProposal;
 import com.free.walker.service.itinerary.req.TravelRequirement;
+import com.free.walker.service.itinerary.task.AgencyElectionTask;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.UuidUtil;
+import com.ibm.icu.util.Calendar;
 
 @Path("/service/itinerary/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -46,6 +52,80 @@ public class ItineraryService {
     public Response searchProposals(@QueryParam("pageNum") String pageNum, @QueryParam("pageSize") String pageSize,
         @QueryParam("searchTerm") String searchTerm) {
         return Response.status(Status.NOT_IMPLEMENTED).build();
+    }
+
+    @GET
+    @Context
+    @Path("/proposals/my/")
+    public Response getProposals(@Context MessageContext msgCntx) {
+        Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
+        UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
+
+        Calendar weekAgo = Calendar.getInstance();
+        weekAgo.roll(Calendar.DAY_OF_MONTH, -7);
+
+        try {
+            List<TravelProposal> proposals = travelRequirementDAO.getTravelProposalsByAccount(acntId, weekAgo, 7);
+
+            if (proposals.isEmpty()) {
+                JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, acntId.toString()).build();
+                return Response.status(Status.NOT_FOUND).entity(res).build();
+            }
+
+            JsonArrayBuilder resBuilder = Json.createArrayBuilder();
+            for (int i = 0; i < proposals.size(); i++) {
+                resBuilder.add(proposals.get(i).toJSON());
+            }
+            return Response.ok(resBuilder.build()).build();
+        } catch (InvalidTravelReqirementException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
+    }
+
+    @GET
+    @Path("/proposals/agencies/{agencyId}/")
+    public Response getProposals(@PathParam("agencyId") String agencyId) {
+        Calendar weekAgo = Calendar.getInstance();
+        weekAgo.roll(Calendar.DAY_OF_MONTH, -7);
+
+        try {
+            List<TravelProposal> proposals = travelRequirementDAO.getTravelProposalsByAgency(
+                UuidUtil.fromUuidStr(agencyId), weekAgo, 7);
+
+            if (proposals.isEmpty()) {
+                JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, agencyId).build();
+                return Response.status(Status.NOT_FOUND).entity(res).build();
+            }
+
+            JsonArrayBuilder resBuilder = Json.createArrayBuilder();
+            for (int i = 0; i < proposals.size(); i++) {
+                resBuilder.add(proposals.get(i).toJSON());
+            }
+            return Response.ok(resBuilder.build()).build();
+        } catch (InvalidTravelReqirementException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
+    }
+
+    @POST
+    @Context
+    @Path("/proposals/{proposalId}/agencies/")
+    public Response submitProposal(@PathParam("proposalId") String proposalId, @Context MessageContext msgCntx) {
+        try {
+            Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
+            UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
+            travelRequirementDAO.startProposalBid(UuidUtil.fromUuidStr(proposalId), acntId);
+            AgencyElectionTask.schedule(travelRequirementDAO, proposalId);
+            return Response.status(Status.ACCEPTED).build();
+        } catch (InvalidTravelReqirementException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
     }
 
     @GET
@@ -235,11 +315,14 @@ public class ItineraryService {
     }
 
     @POST
+    @Context
     @Path("/proposals/")
-    public Response addProposal(JsonObject travelProposal) {
+    public Response addProposal(JsonObject travelProposal, @Context MessageContext msgCntx) {
         try {
+            Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
+            UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
             TravelRequirement proposal = JsonObjectHelper.toRequirement(travelProposal);
-            String proposalId = travelRequirementDAO.createProposal((TravelProposal) proposal).toString();
+            String proposalId = travelRequirementDAO.createProposal(acntId, (TravelProposal) proposal).toString();
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, proposalId).build();
             return Response.ok(res).build();
         } catch (InvalidTravelReqirementException e) {

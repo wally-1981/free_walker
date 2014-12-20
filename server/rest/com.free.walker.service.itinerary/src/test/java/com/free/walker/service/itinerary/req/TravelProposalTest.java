@@ -42,6 +42,7 @@ public class TravelProposalTest {
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
         JsonObject jo = travelProposal.toJSON();
         assertEquals(Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL, jo.getString(Introspection.JSONKeys.TYPE));
+        assertEquals(Introspection.JSONValues.DEFAULT_ACCOUNT, jo.getString(Introspection.JSONKeys.AUTHOR));
         assertTrue(jo.get(Introspection.JSONKeys.REQUIREMENTS) instanceof JsonArray);
 
         JsonArray requirements = (JsonArray) jo.get(Introspection.JSONKeys.REQUIREMENTS);
@@ -58,9 +59,11 @@ public class TravelProposalTest {
         travelTags.add("摄影 ");
         travelTags.add(" 蜜月");
         travelTags.add(" 摄影");
-        TravelProposal travelProposal = new TravelProposal(itineraryRequirement, travelTags);
+        TravelProposal travelProposal = new TravelProposal("测试提议", itineraryRequirement, travelTags);
         JsonObject jo = travelProposal.toJSON();
         assertEquals(Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL, jo.getString(Introspection.JSONKeys.TYPE));
+        assertEquals(Introspection.JSONValues.DEFAULT_ACCOUNT, jo.getString(Introspection.JSONKeys.AUTHOR));
+        assertEquals("测试提议", jo.getString(Introspection.JSONKeys.TITLE));
 
         assertTrue(jo.get(Introspection.JSONKeys.REQUIREMENTS) instanceof JsonArray);
         JsonArray requirements = (JsonArray) jo.get(Introspection.JSONKeys.REQUIREMENTS);
@@ -82,6 +85,7 @@ public class TravelProposalTest {
         UUID uuid = UUID.randomUUID();
         proposal.add(Introspection.JSONKeys.UUID, uuid.toString());
         proposal.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL);
+        proposal.add(Introspection.JSONKeys.AUTHOR, Constants.DEFAULT_ACCOUNT.getUuid());
         proposal.add(Introspection.JSONKeys.TITLE, "测试提议");
         JsonArray requirements = Json.createArrayBuilder().build();
         proposal.add(Introspection.JSONKeys.REQUIREMENTS, requirements);
@@ -99,6 +103,7 @@ public class TravelProposalTest {
         UUID uuid = UUID.randomUUID();
         proposal.add(Introspection.JSONKeys.UUID, uuid.toString());
         proposal.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL);
+        proposal.add(Introspection.JSONKeys.AUTHOR, Constants.DEFAULT_ACCOUNT.getUuid());
         JsonArray requirements = Json.createArrayBuilder().build();
         proposal.add(Introspection.JSONKeys.TITLE, "测试提议");
         proposal.add(Introspection.JSONKeys.REQUIREMENTS, requirements);

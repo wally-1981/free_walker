@@ -2,6 +2,7 @@ package com.free.walker.service.itinerary.rest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URI;
@@ -74,6 +75,7 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
 
             JsonObjectBuilder proposalBuilder = Json.createObjectBuilder();
             proposalBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL);
+            proposalBuilder.add(Introspection.JSONKeys.AUTHOR, "3b3e4dcf-e353-4418-adfb-3c9af7a54992");
             proposalBuilder.add(Introspection.JSONKeys.TITLE, "测试提议");
             JsonArrayBuilder requirementsBuilder = Json.createArrayBuilder();
             requirementsBuilder.add(requirementBuilder);
@@ -673,6 +675,49 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
                         assertEquals("武汉", destinationCity.getString(Introspection.JSONKeys.CHINESE_NAME));
                         assertEquals("wuhan", destinationCity.getString(Introspection.JSONKeys.PINYIN_NAME));
                     }
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
+        }
+
+        /*
+         * 提交Proposal。
+         */
+        {
+            HttpPost post = new HttpPost();
+            post.setURI(new URI(itineraryServiceUrlStr + "proposals/" + proposalId + "/agencies"));
+            post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(post);
+                int statusCode = response.getStatusLine().getStatusCode();
+                assertEquals(HttpStatus.ACCEPTED_202, statusCode);
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                post.abort();
+            }
+        }
+
+        /*
+         * 查询我提交的Proposal。
+         */
+        {
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(itineraryServiceUrlStr + "proposals/my"));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonArray proposals = Json.createReader(response.getEntity().getContent()).readArray();
+                    assertNotNull(proposals);
+                    assertTrue(proposals.size() > 0);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
                 }
             } catch (IOException e) {
                 throw new ProcessingException(e);
