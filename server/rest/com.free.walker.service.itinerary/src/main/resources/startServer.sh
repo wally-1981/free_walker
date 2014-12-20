@@ -7,4 +7,4 @@
 # Start MongoDB: (The path to mongod may vary depending on the install location of MongoDB on your system.)
 /opt/mongo_server/bin/mongod -dbpath /opt/mongo_server/data
 
-java -jar ./com.free.walker.service.itinerary-0.0.2.jar -Prod
+java -jar ./com.free.walker.service.itinerary-0.0.3.jar -Prod

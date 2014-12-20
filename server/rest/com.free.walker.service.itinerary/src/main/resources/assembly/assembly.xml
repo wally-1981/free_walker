@@ -36,5 +36,12 @@
 			<directory>${project.basedir}\src\test\java\com\free\walker\service\itinerary\rest</directory>
 			<outputDirectory>\test</outputDirectory>
 		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}\src\main\resources\com\free\walker\service\itinerary\dao</directory>
+			<outputDirectory>\conf</outputDirectory>
+			<includes>
+				<include>config.properties</include>
+			</includes>
+		</fileSet>
 	</fileSets>
 </assembly>

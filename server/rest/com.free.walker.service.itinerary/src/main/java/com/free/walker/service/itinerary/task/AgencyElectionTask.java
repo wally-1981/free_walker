@@ -6,6 +6,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,9 +17,9 @@ import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
 public class AgencyElectionTask extends TimerTask {
+    private static final Logger LOG = LoggerFactory.getLogger(AgencyElectionTask.class);
     private static final int SCHEDULE_DELAY = 1 * 1000;
 
-    private static Logger LOG = LoggerFactory.getLogger(AgencyElectionTask.class);
     private static Timer timer = new Timer();
 
     private String proposalId;
@@ -39,15 +40,19 @@ public class AgencyElectionTask extends TimerTask {
 
         if (Boolean.TRUE.booleanValue()) {
             String[] agencyIds = agencies.toArray(new String[agencies.size()]);
-            LOG.info(LocalMessages.getMessage(LocalMessages.agency_election_success, proposalId, agencyIds.toString()));
+            LOG.info(LocalMessages.getMessage(LocalMessages.agency_election_success, proposalId,
+                StringUtils.join(agencyIds, ',')));
             try {
                 travelRequirementDAO.joinProposalBid(UuidUtil.fromUuidStr(proposalId), UUID.randomUUID());
             } catch (InvalidTravelReqirementException e) {
-                LOG.error(LocalMessages.getMessage(LocalMessages.submit_proposal_failed, agencyIds.toString()), e);
+                LOG.error(LocalMessages.getMessage(LocalMessages.submit_proposal_failed,
+                    StringUtils.join(agencyIds, ',')), e);
             } catch (DatabaseAccessException e) {
-                LOG.error(LocalMessages.getMessage(LocalMessages.submit_proposal_failed, agencyIds.toString()), e);
+                LOG.error(LocalMessages.getMessage(LocalMessages.submit_proposal_failed,
+                    StringUtils.join(agencyIds, ',')), e);
             }
-            LOG.info(LocalMessages.getMessage(LocalMessages.submit_proposal_success, proposalId, agencyIds.toString()));
+            LOG.info(LocalMessages.getMessage(LocalMessages.submit_proposal_success, proposalId,
+                StringUtils.join(agencyIds, ',')));
         } else {
             LOG.info(LocalMessages.getMessage(LocalMessages.agency_election_failed, proposalId));
         }

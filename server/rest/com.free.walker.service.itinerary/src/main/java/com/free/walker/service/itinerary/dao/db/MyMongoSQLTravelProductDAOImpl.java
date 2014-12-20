@@ -46,7 +46,7 @@ import com.mongodb.WriteResult;
 import com.mongodb.util.JSON;
 
 public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
-    private static Logger LOG = LoggerFactory.getLogger(MyMongoSQLTravelProductDAOImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyMongoSQLTravelProductDAOImpl.class);
 
     private DB productDb;
     private String productMongoDbUrl;
@@ -60,11 +60,9 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         return SingletonHolder.INSTANCE;
     }
 
-    public MyMongoSQLTravelProductDAOImpl() {
+    private MyMongoSQLTravelProductDAOImpl() {
         try {
-            String resource = "com/free/walker/service/itinerary/dao/config.properties";
-            Properties config = new Properties();
-            config.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(resource));
+            Properties config = MongoDbClientBuilder.getConfig();
             productDb = new MongoDbClientBuilder().build(DAOConstants.product_mongo_database, config);
             mongoDbDriver = DB.class.getName();
             productMongoDbUrl = config.getProperty(DAOConstants.mongo_database_url);

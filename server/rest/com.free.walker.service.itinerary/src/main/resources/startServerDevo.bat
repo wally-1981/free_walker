@@ -4,4 +4,4 @@
 :: c:\MySQL\MySQL Server 5.6\bin\mysqld
 ::
 
-java -jar ./com.free.walker.service.itinerary-0.0.2.jar -Devo
+java -jar ./com.free.walker.service.itinerary-0.0.3.jar -Devo

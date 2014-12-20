@@ -50,7 +50,7 @@ import com.mongodb.util.JSON;
  * TODO: MongoDB does not have transaction support. Need to build transaction log for transaction recoverary automatically.
  */
 public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO {
-    private static Logger LOG = LoggerFactory.getLogger(MyMongoSQLTravelRequirementDAOImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyMongoSQLTravelRequirementDAOImpl.class);
 
     private DB itineraryDb;
     private String itineraryMongoDbUrl;
@@ -66,9 +66,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
 
     private MyMongoSQLTravelRequirementDAOImpl() {
         try {
-            String resource = "com/free/walker/service/itinerary/dao/config.properties";
-            Properties config = new Properties();
-            config.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(resource));
+            Properties config = MongoDbClientBuilder.getConfig();
             itineraryDb = new MongoDbClientBuilder().build(DAOConstants.itinerary_mongo_database, config);
             mongoDbDriver = DB.class.getName();
             itineraryMongoDbUrl = config.getProperty(DAOConstants.mongo_database_url);

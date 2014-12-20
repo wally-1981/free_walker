@@ -25,7 +25,8 @@ import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
 public class Country implements Serializable, Loadable {
-    private static Logger LOG = LoggerFactory.getLogger(Country.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Country.class);
+
     private static Map<UUID, Country> countries = new HashMap<UUID, Country>();
     private static TravelBasicDAO travelBasicDAO;
 

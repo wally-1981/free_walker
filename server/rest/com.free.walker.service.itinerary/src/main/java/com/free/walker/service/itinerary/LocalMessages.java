@@ -50,6 +50,9 @@ public class LocalMessages {
         ;
     }
 
+    public static final String fallback_config_path_mysql = "fallback_config_path_mysql";
+    public static final String fallback_config_path_mongo = "fallback_config_path_mongo";
+
     public static final String illegal_uuid = "illegal_uuid";
     public static final String illegal_compact_uuid = "illegal_compact_uuid";
     public static final String illegal_hotel_nights = "illegal_hotel_nights";

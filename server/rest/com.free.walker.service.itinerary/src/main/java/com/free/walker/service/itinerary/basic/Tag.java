@@ -23,9 +23,9 @@ import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 
 public class Tag implements Serializable, Loadable, Reloadable {
+    private static final Logger LOG = LoggerFactory.getLogger(Tag.class);
     private static final int TOP_N = 10;
 
-    private static Logger LOG = LoggerFactory.getLogger(Tag.class);
     private static List<Tag> tags = new ArrayList<Tag>();
     private static TravelBasicDAO travelBasicDAO;
 

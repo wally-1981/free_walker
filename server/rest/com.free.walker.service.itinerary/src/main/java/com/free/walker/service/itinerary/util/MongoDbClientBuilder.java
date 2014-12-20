@@ -1,5 +1,9 @@
 package com.free.walker.service.itinerary.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +19,11 @@ import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 
 public class MongoDbClientBuilder {
-    private static Logger LOG = LoggerFactory.getLogger(MongoDbClientBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MongoDbClientBuilder.class);
+
+    private static final String DEFAULT_CONFIG = "com/free/walker/service/itinerary/dao/config.properties";
+    private static final String CONFIG_DIR = new File(System.getProperty("user.dir"), "conf").toString();
+    private static final String CONFIG_FILE = "config.properties";
 
     private static final String AT = "@";
     private static final String ADDRESS_SPLITTER = ";";
@@ -24,6 +32,18 @@ public class MongoDbClientBuilder {
     private static final int DEFAULT_DB_PORT = 27017;
 
     private MongoClient client;
+
+    public static Properties getConfig() throws FileNotFoundException, IOException {
+        Properties config = new Properties();
+        File configFile = new File(CONFIG_DIR, CONFIG_FILE);
+        if (configFile.exists() && configFile.isFile() && configFile.canRead()) {
+            config.load(new FileInputStream(configFile));
+        } else {
+            config.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(DEFAULT_CONFIG));
+            LOG.info(LocalMessages.getMessage(LocalMessages.fallback_config_path_mongo, configFile.toString()));
+        }
+        return config;
+    }
 
     public DB build(String dbName, Properties config) throws UnknownHostException {
         if (config == null || config.getProperty(DAOConstants.mongo_database_url) == null || dbName == null

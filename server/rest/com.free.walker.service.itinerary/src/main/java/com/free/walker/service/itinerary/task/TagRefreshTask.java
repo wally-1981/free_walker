@@ -12,9 +12,9 @@ import com.free.walker.service.itinerary.basic.Tag;
 import com.ibm.icu.util.Calendar;
 
 public class TagRefreshTask extends TimerTask {
+    private static final Logger LOG = LoggerFactory.getLogger(TagRefreshTask.class);
     private static final int SCHEDULE_PERIOD_HOURS = 24;
 
-    private static Logger LOG = LoggerFactory.getLogger(TagRefreshTask.class);
     private static Timer timer = new Timer();
 
     private Reloadable tagReloader = new Tag();

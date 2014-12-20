@@ -49,7 +49,7 @@ import com.ibm.icu.util.Calendar;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PlatformService {
-    private static Logger LOG = LoggerFactory.getLogger(PlatformService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PlatformService.class);
     private TravelBasicDAO travelBasicDAO;
 
     public PlatformService() {

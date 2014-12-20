@@ -1,10 +1,9 @@
 package com.free.walker.service.itinerary.dao.db;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
-import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -21,9 +20,10 @@ import com.free.walker.service.itinerary.dao.BasicMapper;
 import com.free.walker.service.itinerary.dao.DAOConstants;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
+import com.free.walker.service.itinerary.util.MySQLDbClientBuilder;
 
 public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
-    private static Logger LOG = LoggerFactory.getLogger(MySQLTravelBasicDAOImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MySQLTravelBasicDAOImpl.class);
 
     private SqlSessionFactory sqlSessionFactory;
     private String mysqlDatabaseUrl;
@@ -38,18 +38,18 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
     }
 
     private MySQLTravelBasicDAOImpl() {
-        String resource = "com/free/walker/service/itinerary/dao/mybatis-config.xml";
-        InputStream inputStream;
         try {
-            inputStream = Resources.getResourceAsStream(resource);
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(MySQLDbClientBuilder.getMasterConfig(),
+                MySQLDbClientBuilder.getConfig());
+            mysqlDatabaseUrl = sqlSessionFactory.getConfiguration().getVariables()
+                .getProperty(DAOConstants.mysql_database_url);
+            mysqlDatabaseDriver = sqlSessionFactory.getConfiguration().getVariables()
+                .getProperty(DAOConstants.mysql_database_driver);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException(e);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-        sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-        mysqlDatabaseUrl = sqlSessionFactory.getConfiguration().getVariables()
-            .getProperty(DAOConstants.mysql_database_url);
-        mysqlDatabaseDriver = sqlSessionFactory.getConfiguration().getVariables()
-            .getProperty(DAOConstants.mysql_database_driver);
     }
 
     public boolean pingPersistence() {

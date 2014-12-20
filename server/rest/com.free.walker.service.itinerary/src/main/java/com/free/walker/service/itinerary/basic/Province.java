@@ -25,7 +25,8 @@ import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
 public class Province  implements Serializable, Loadable {
-    private static Logger LOG = LoggerFactory.getLogger(Province.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Province.class);
+
     private static Map<UUID, Province> provinces = new HashMap<UUID, Province>();
     private static TravelBasicDAO travelBasicDAO;
 
