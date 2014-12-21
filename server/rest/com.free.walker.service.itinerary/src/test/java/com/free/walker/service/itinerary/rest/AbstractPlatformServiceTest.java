@@ -35,7 +35,6 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
     @Before
     public void before() {
         httpClient = HttpClientBuilder.create().build();
-        platformServiceUrlStr = getProdServiceUrl(PlatformService.class);
     }
 
     @Test

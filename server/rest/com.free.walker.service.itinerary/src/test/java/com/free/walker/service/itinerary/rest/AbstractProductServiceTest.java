@@ -66,7 +66,6 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
     @Before
     public void before() {
         httpClient = HttpClientBuilder.create().build();
-        productServiceUrlStr = getProdServiceUrl(ProductService.class);
 
         {
             JsonObjectBuilder requirementBuilder = Json.createObjectBuilder();
