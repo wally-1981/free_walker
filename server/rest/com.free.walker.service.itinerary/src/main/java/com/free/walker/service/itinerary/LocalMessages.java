@@ -50,6 +50,7 @@ public class LocalMessages {
         ;
     }
 
+    public static final String localhost_ip_founed = "localhost_ip_founed";
     public static final String fallback_config_path_mysql = "fallback_config_path_mysql";
     public static final String fallback_config_path_mongo = "fallback_config_path_mongo";
 

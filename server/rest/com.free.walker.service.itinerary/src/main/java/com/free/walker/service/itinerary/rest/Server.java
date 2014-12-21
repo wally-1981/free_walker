@@ -1,5 +1,6 @@
 package com.free.walker.service.itinerary.rest;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,15 +8,21 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
 import org.apache.cxf.jaxrs.provider.jsrjsonp.JsrJsonpProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.handler.SimpleSecurityContextInInterceptor;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
+import com.ibm.icu.text.MessageFormat;
 
 public class Server {
+    private static final Logger LOG = LoggerFactory.getLogger(Server.class);
+
     private static final String MODE_SINGLE_DEVO = "Devo";
     private static final String MODE_SINGLE_PROD = "Prod";
 
@@ -55,10 +62,12 @@ public class Server {
         sf.setResourceProviders(providers);
         sf.setProvider(new JsrJsonpProvider());
 
+        String localIp = InetAddress.getLocalHost().getHostAddress();
+        LOG.info(LocalMessages.getMessage(LocalMessages.localhost_ip_founed, localIp));
         if (mode.equals(MODE_SINGLE_DEVO)) {
-            sf.setAddress("http://localhost:9010/");
+            sf.setAddress(MessageFormat.format("http://{0}:9010/", localIp));
         } else if (mode.equals(MODE_SINGLE_PROD)) {
-            sf.setAddress("http://localhost:9000/");
+            sf.setAddress(MessageFormat.format("http://{0}:9000/", localIp));
         } else {
             throw new IllegalArgumentException();
         }
