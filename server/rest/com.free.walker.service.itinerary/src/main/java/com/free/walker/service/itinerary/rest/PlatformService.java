@@ -62,6 +62,37 @@ public class PlatformService {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
 
         {
+            JsonObjectBuilder valueDataBuilder = Json.createObjectBuilder();
+            Field[] fields = Introspection.TestValues.class.getFields();
+            for (Field field : fields) {
+                if (Modifier.isStatic(field.getModifiers())) {
+                    try {
+                        if (field.get(Introspection.TestValues.class) instanceof Enumable) {
+                            valueDataBuilder.add(field.getName(),
+                                ((Enumable) field.get(Introspection.TestValues.class)).enumValue());
+                        } else if (field.get(Introspection.TestValues.class) instanceof Integer) {
+                            valueDataBuilder.add(field.getName(),
+                                ((Integer) field.get(Introspection.TestValues.class)).intValue());
+                        } else if (field.get(Introspection.TestValues.class) instanceof Imaginable) {
+                            valueDataBuilder.add(field.getName(),
+                                ((Imaginable) field.get(Introspection.TestValues.class)).realValue() + ":"
+                                    + ((Imaginable) field.get(Introspection.TestValues.class)).imaginaryValue());
+                        } else {
+                            valueDataBuilder.add(field.getName(), (String) field.get(Introspection.TestValues.class));
+                        }
+                    } catch (JsonException e) {
+                        LOG.error(LocalMessages.introspection_failure, e);
+                        return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+                    } catch (Exception e) {
+                        LOG.error(LocalMessages.introspection_failure, e);
+                        return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+                    }
+                }
+            }
+            resBuilder.add("test_data", valueDataBuilder);
+        }
+
+        {
             JsonObjectBuilder keyDataBuilder = Json.createObjectBuilder();
             Field[] fields = Introspection.JSONKeys.class.getFields();
             for (Field field : fields) {
@@ -150,6 +181,8 @@ public class PlatformService {
             sampleDataBuilder.add(trafficRequirementC.toJSON());
             sampleDataBuilder.add(trafficRequirementD.toJSON());
             sampleDataBuilder.add(trafficRequirementE.toJSON());
+
+//            TODO
 
             resBuilder.add("sample_data", sampleDataBuilder);
         }

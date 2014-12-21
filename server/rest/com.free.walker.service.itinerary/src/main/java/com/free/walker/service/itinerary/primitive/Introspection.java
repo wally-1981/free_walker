@@ -131,7 +131,9 @@ public class Introspection {
         public static final int ACCOUNT_TYPE_QQ = AccountType.QQ.ordinal();
         public static final int ACCOUNT_TYPE_ALIPAY = AccountType.AliPay.ordinal();
         public static final int ACCOUNT_TYPE_WEIBO = AccountType.WeiBo.ordinal();
+    }
 
+    public static class TestValues {
         public static final String DEFAULT_ACCOUNT = Constants.DEFAULT_ACCOUNT.getUuid();
         public static final String DEFAULT_PROPOSAL_TITLE = Constants.NEW_PROPOSAL;
     }
