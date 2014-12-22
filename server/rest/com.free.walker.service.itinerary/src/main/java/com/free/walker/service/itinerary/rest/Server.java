@@ -1,6 +1,7 @@
 package com.free.walker.service.itinerary.rest;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,7 @@ public class Server {
     private static final String MODE_SINGLE_PROD = "Prod";
 
     protected Server(String mode) throws Exception {
-        PlatformInitializer.init(); 
+        PlatformInitializer.init();
 
         JAXRSServerFactoryBean sf = new JAXRSServerFactoryBean();
 
@@ -67,9 +68,9 @@ public class Server {
         String localIp = InetAddress.getLocalHost().getHostAddress();
         LOG.info(LocalMessages.getMessage(LocalMessages.localhost_ip_founed, localIp));
         if (mode.equals(MODE_SINGLE_DEVO)) {
-            sf.setAddress(MessageFormat.format("http://{0}:9010/", localIp));
+            sf.setAddress(MessageFormat.format("http://{0}:9010", localIp));
         } else if (mode.equals(MODE_SINGLE_PROD)) {
-            sf.setAddress(MessageFormat.format("http://{0}:9000/", localIp));
+            sf.setAddress(MessageFormat.format("http://{0}:9000", localIp));
         } else {
             throw new IllegalArgumentException();
         }
@@ -77,26 +78,23 @@ public class Server {
         sf.getInInterceptors().add(new SimpleSecurityContextInInterceptor());
 
         sf.create();
+
+        File logFile = new File(System.getProperty("user.dir"), SystemConfigUtil.getLogConfig().getProperty(
+            "log4j.appender.application.File"));
+        LOG.info(LocalMessages.getMessage(LocalMessages.log_file_path_determined, logFile.toString()));
+        LOG.info(LocalMessages.getMessage(LocalMessages.server_started, ManagementFactory.getRuntimeMXBean().getName(),
+            sf.getAddress()));
+
+        synchronized (this) {
+            this.wait();
+        }
     }
 
     public static void main(String args[]) throws Exception {
-        String mode = null;
-        if (args.length == 1) {
-            mode = args[0].substring(1);
-        } else {
-            mode = MODE_SINGLE_DEVO;
-        }
+        LOG.info("Sevrer starting...");
+        new Server(args.length == 1 ? args[0].substring(1) : MODE_SINGLE_DEVO);
 
-        new Server(mode);
-
-        File logFile = new File(System.getProperty("user.dir"), SystemConfigUtil.getLogConfig().getProperty(
-            "log4j.appender.File.File"));
-        LOG.info(LocalMessages.getMessage(LocalMessages.log_file_path_determined, logFile.toString()));
-
-        LOG.info("Server ready...");
-
-        Thread.sleep(5 * 6000 * 1000);
-        LOG.info("Server exiting");
+        LOG.info("Sevrer existing...");
         System.exit(0);
     }
 }
