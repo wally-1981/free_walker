@@ -21,6 +21,7 @@ import com.free.walker.service.itinerary.dao.DAOConstants;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.util.MySQLDbClientBuilder;
+import com.free.walker.service.itinerary.util.SystemConfigUtil;
 
 public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
     private static final Logger LOG = LoggerFactory.getLogger(MySQLTravelBasicDAOImpl.class);
@@ -40,7 +41,7 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
     private MySQLTravelBasicDAOImpl() {
         try {
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(MySQLDbClientBuilder.getMasterConfig(),
-                MySQLDbClientBuilder.getConfig());
+                SystemConfigUtil.getApplicationConfig());
             mysqlDatabaseUrl = sqlSessionFactory.getConfiguration().getVariables()
                 .getProperty(DAOConstants.mysql_database_url);
             mysqlDatabaseDriver = sqlSessionFactory.getConfiguration().getVariables()

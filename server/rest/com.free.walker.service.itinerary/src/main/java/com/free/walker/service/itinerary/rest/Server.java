@@ -1,5 +1,6 @@
 package com.free.walker.service.itinerary.rest;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import com.free.walker.service.itinerary.dao.memo.InMemoryTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.handler.SimpleSecurityContextInInterceptor;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
+import com.free.walker.service.itinerary.util.SystemConfigUtil;
 import com.ibm.icu.text.MessageFormat;
 
 public class Server {
@@ -86,10 +88,15 @@ public class Server {
         }
 
         new Server(mode);
-        System.out.println("Server ready...");
+
+        File logFile = new File(System.getProperty("user.dir"), SystemConfigUtil.getLogConfig().getProperty(
+            "log4j.appender.File.File"));
+        LOG.info(LocalMessages.getMessage(LocalMessages.log_file_path_determined, logFile.toString()));
+
+        LOG.info("Server ready...");
 
         Thread.sleep(5 * 6000 * 1000);
-        System.out.println("Server exiting");
+        LOG.info("Server exiting");
         System.exit(0);
     }
 }

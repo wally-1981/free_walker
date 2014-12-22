@@ -32,6 +32,7 @@ import com.free.walker.service.itinerary.req.TravelProposal;
 import com.free.walker.service.itinerary.req.TravelRequirement;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.MongoDbClientBuilder;
+import com.free.walker.service.itinerary.util.SystemConfigUtil;
 import com.free.walker.service.itinerary.util.UuidUtil;
 import com.ibm.icu.util.Calendar;
 import com.mongodb.BasicDBObject;
@@ -66,7 +67,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
 
     private MyMongoSQLTravelRequirementDAOImpl() {
         try {
-            Properties config = MongoDbClientBuilder.getConfig();
+            Properties config = SystemConfigUtil.getApplicationConfig();
             itineraryDb = new MongoDbClientBuilder().build(DAOConstants.itinerary_mongo_database, config);
             mongoDbDriver = DB.class.getName();
             itineraryMongoDbUrl = config.getProperty(DAOConstants.mongo_database_url);

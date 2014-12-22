@@ -33,6 +33,7 @@ import com.free.walker.service.itinerary.product.TravelProductItem;
 import com.free.walker.service.itinerary.product.TrivItem;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.MongoDbClientBuilder;
+import com.free.walker.service.itinerary.util.SystemConfigUtil;
 import com.mongodb.BasicDBObject;
 import com.mongodb.CommandResult;
 import com.mongodb.DB;
@@ -62,7 +63,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
 
     private MyMongoSQLTravelProductDAOImpl() {
         try {
-            Properties config = MongoDbClientBuilder.getConfig();
+            Properties config = SystemConfigUtil.getApplicationConfig();
             productDb = new MongoDbClientBuilder().build(DAOConstants.product_mongo_database, config);
             mongoDbDriver = DB.class.getName();
             productMongoDbUrl = config.getProperty(DAOConstants.mongo_database_url);
