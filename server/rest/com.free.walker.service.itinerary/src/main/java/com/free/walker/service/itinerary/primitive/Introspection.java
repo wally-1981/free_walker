@@ -65,7 +65,7 @@ public class Introspection {
         public static final String TIME_RANGE_OFFSET = "time_range_offset";
         public static final String TRAFFIC_TOOL_TYPE = "traffice_tool_type";
         public static final String TRAFFIC_TOOL_SEAT_CLASS = "traffice_tool_seat_class";
-        public static final String GROUP_SIZE = "group_size";
+        public static final String GROUP_CAPACITY = "group_capacity";
         public static final String MIN = "min";
         public static final String MAX = "max";
         public static final String PRICE = "price";

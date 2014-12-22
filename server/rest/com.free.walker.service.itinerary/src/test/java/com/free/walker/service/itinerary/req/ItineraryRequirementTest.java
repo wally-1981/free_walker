@@ -86,7 +86,7 @@ public class ItineraryRequirementTest {
         assertEquals(Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY, jo.getString(Introspection.JSONKeys.TYPE));
         assertNotNull(jo.get(Introspection.JSONKeys.DESTINATION));
         assertNotNull(jo.get(Introspection.JSONKeys.DEPARTURE));
-        assertEquals(8, jo.getInt(Introspection.JSONKeys.GROUP_SIZE));
+        assertEquals(8, jo.getInt(Introspection.JSONKeys.GROUP_CAPACITY));
 
         assertEquals(true, itineraryRequirement.isItinerary());
     }

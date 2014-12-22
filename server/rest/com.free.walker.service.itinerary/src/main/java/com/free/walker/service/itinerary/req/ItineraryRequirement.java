@@ -75,7 +75,7 @@ public class ItineraryRequirement extends BaseTravelRequirement implements Trave
         }
 
         if (groupSize != null) {
-            resBuilder.add(Introspection.JSONKeys.GROUP_SIZE, groupSize);
+            resBuilder.add(Introspection.JSONKeys.GROUP_CAPACITY, groupSize);
         }
 
         return resBuilder.build();
@@ -125,7 +125,7 @@ public class ItineraryRequirement extends BaseTravelRequirement implements Trave
             departureDateTimeSelections.add(cal);
         }
 
-        int groupSize = jsObject.getInt(Introspection.JSONKeys.GROUP_SIZE, 0);
+        int groupSize = jsObject.getInt(Introspection.JSONKeys.GROUP_CAPACITY, 0);
         if (groupSize > 0) {
             this.groupSize = groupSize;
         }

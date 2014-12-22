@@ -137,7 +137,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
 
             JsonObjectBuilder productBuilder = Json.createObjectBuilder();
             productBuilder.add(Introspection.JSONKeys.REF_UUID, proposalId);
-            productBuilder.add(Introspection.JSONKeys.GROUP_SIZE, 60);
+            productBuilder.add(Introspection.JSONKeys.GROUP_CAPACITY, 60);
             productBuilder.add(Introspection.JSONKeys.DEADLINE_DATETIME, enrollmentDeadlineDatetime.getTimeInMillis());
             productBuilder.add(Introspection.JSONKeys.DEPARTURE_DATETIME, departureDatetime.getTimeInMillis());
 
@@ -296,7 +296,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     JsonObject product = Json.createReader(response.getEntity().getContent()).readObject();
                     assertNotNull(product);
                     assertEquals(productId, product.getString(Introspection.JSONKeys.UUID));
-                    assertEquals(60, product.getInt(Introspection.JSONKeys.GROUP_SIZE));
+                    assertEquals(60, product.getInt(Introspection.JSONKeys.GROUP_CAPACITY));
                     assertEquals(enrollmentDeadlineDatetime.getTimeInMillis(),
                         product.getJsonNumber(Introspection.JSONKeys.DEADLINE_DATETIME).longValue());
                     assertEquals(departureDatetime.getTimeInMillis(),
@@ -335,7 +335,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                         assertNotNull(product);
 
                         assertEquals(productId, product.getString(Introspection.JSONKeys.UUID));
-                        assertEquals(60, product.getInt(Introspection.JSONKeys.GROUP_SIZE));
+                        assertEquals(60, product.getInt(Introspection.JSONKeys.GROUP_CAPACITY));
                         assertEquals(enrollmentDeadlineDatetime.getTimeInMillis(),
                             product.getJsonNumber(Introspection.JSONKeys.DEADLINE_DATETIME).longValue());
                         assertEquals(departureDatetime.getTimeInMillis(),

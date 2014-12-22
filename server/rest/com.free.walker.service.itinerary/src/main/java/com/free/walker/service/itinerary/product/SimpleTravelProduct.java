@@ -68,7 +68,7 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
         resBuilder.add(Introspection.JSONKeys.ITEMS, items);
 
         if (sizeUpperLimit > 0) {
-            resBuilder.add(Introspection.JSONKeys.GROUP_SIZE, sizeUpperLimit);
+            resBuilder.add(Introspection.JSONKeys.GROUP_CAPACITY, sizeUpperLimit);
         }
 
         if (enrolmentDeadlineDateTime != null) {
@@ -117,7 +117,7 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
             }
         }
 
-        int sizeUpperLimit = jsObject.getInt(Introspection.JSONKeys.GROUP_SIZE, 0);
+        int sizeUpperLimit = jsObject.getInt(Introspection.JSONKeys.GROUP_CAPACITY, 0);
         if (sizeUpperLimit > 0) {
             this.sizeUpperLimit = sizeUpperLimit;
         }
