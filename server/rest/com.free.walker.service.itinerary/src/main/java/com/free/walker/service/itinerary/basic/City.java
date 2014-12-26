@@ -22,7 +22,6 @@ import com.free.walker.service.itinerary.Serializable;
 import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
-import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
@@ -30,11 +29,7 @@ public class City implements Serializable, Loadable {
     private static final Logger LOG = LoggerFactory.getLogger(City.class);
 
     private static Map<UUID, City> cities = new HashMap<UUID, City>();
-    private static TravelBasicDAO travelBasicDAO;
-
-    static {
-        travelBasicDAO = DAOFactory.getTravelBasicDAO();
-    }
+    private TravelBasicDAO travelBasicDAO;
 
     private UUID uuid;
     private String name;
@@ -45,10 +40,12 @@ public class City implements Serializable, Loadable {
     private int continentId;
 
     public City() {
-        ;
+        travelBasicDAO = DAOFactory.getTravelBasicDAO();
     }
 
     public City(UUID uuid) {
+        this();
+
         if (!this.load()) throw new IllegalStateException();
 
         City city = cities.get(uuid);
@@ -144,14 +141,10 @@ public class City implements Serializable, Loadable {
     }
 
     public void setUuid(String uuid) {
-        try {
-            if (UuidUtil.isCmpUuidStr(uuid)) {
-                this.uuid = UuidUtil.fromCmpUuidStr(uuid);
-            } else {
-                this.uuid = UuidUtil.fromUuidStr(uuid);
-            }
-        } catch (InvalidTravelReqirementException e) {
-            throw new IllegalStateException(e);
+        if (UuidUtil.isCmpUuidStr(uuid)) {
+            this.uuid = UuidUtil.fromCmpUuidStr(uuid);
+        } else {
+            this.uuid = UuidUtil.fromUuidStr(uuid);
         }
     }
 
@@ -184,14 +177,10 @@ public class City implements Serializable, Loadable {
     }
 
     public void setProvinceUuid(String provinceUuid) {
-        try {
-            if (UuidUtil.isCmpUuidStr(provinceUuid)) {
-                this.provinceUuid = UuidUtil.fromCmpUuidStr(provinceUuid);
-            } else {
-                this.provinceUuid = UuidUtil.fromUuidStr(provinceUuid);
-            }
-        } catch (InvalidTravelReqirementException e) {
-            throw new IllegalStateException(e);
+        if (UuidUtil.isCmpUuidStr(provinceUuid)) {
+            this.provinceUuid = UuidUtil.fromCmpUuidStr(provinceUuid);
+        } else {
+            this.provinceUuid = UuidUtil.fromUuidStr(provinceUuid);
         }
     }
 
@@ -200,14 +189,10 @@ public class City implements Serializable, Loadable {
     }
 
     public void setCountryUuid(String countryUuid) {
-        try {
-            if (UuidUtil.isCmpUuidStr(countryUuid)) {
-                this.countryUuid = UuidUtil.fromCmpUuidStr(countryUuid);
-            } else {
-                this.countryUuid = UuidUtil.fromUuidStr(countryUuid);
-            }
-        } catch (InvalidTravelReqirementException e) {
-            throw new IllegalStateException(e);
+        if (UuidUtil.isCmpUuidStr(countryUuid)) {
+            this.countryUuid = UuidUtil.fromCmpUuidStr(countryUuid);
+        } else {
+            this.countryUuid = UuidUtil.fromUuidStr(countryUuid);
         }
     }
 

@@ -15,22 +15,16 @@ import com.free.walker.service.itinerary.util.UuidUtil;
 
 public class Agency implements Serializable {
     private UUID agencyId;
+    private String name;
 
     public Agency() {
-        agencyId = UUID.randomUUID();
-    }
-
-    public Agency(UUID agencyId) {
-        if (agencyId == null) {
-            throw new NullPointerException();
-        }
-
-        this.agencyId = agencyId;
+        ;
     }
 
     public JsonObject toJSON() {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, agencyId.toString());
+        resBuilder.add(Introspection.JSONKeys.NAME, name);
         return resBuilder.build();
     }
 
@@ -43,11 +37,35 @@ public class Agency implements Serializable {
             agencyId = UuidUtil.fromUuidStr(uuidStr);
         }
 
+        String nameStr = jsObject.getString(Introspection.JSONKeys.NAME, null);
+        if (nameStr == null) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.NAME, nameStr));
+        } else {
+            name = nameStr;
+        }
+
         return this;
     }
 
     public String getUuid() {
         return agencyId.toString();
+    }
+
+    public void setUuid(String uuid) {
+        if (UuidUtil.isCmpUuidStr(uuid)) {
+            this.agencyId = UuidUtil.fromCmpUuidStr(uuid);
+        } else {
+            this.agencyId = UuidUtil.fromUuidStr(uuid);
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public ValueType getValueType() {

@@ -20,7 +20,6 @@ import com.free.walker.service.itinerary.Serializable;
 import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
-import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
@@ -28,11 +27,7 @@ public class Province  implements Serializable, Loadable {
     private static final Logger LOG = LoggerFactory.getLogger(Province.class);
 
     private static Map<UUID, Province> provinces = new HashMap<UUID, Province>();
-    private static TravelBasicDAO travelBasicDAO;
-
-    static {
-        travelBasicDAO = DAOFactory.getTravelBasicDAO();
-    }
+    private TravelBasicDAO travelBasicDAO;
 
     private UUID uuid;
     private String name;
@@ -40,7 +35,7 @@ public class Province  implements Serializable, Loadable {
     private String pinyinName;
 
     public Province() {
-        ;
+        travelBasicDAO = DAOFactory.getTravelBasicDAO();
     }
 
     public JsonObject toJSON() throws JsonException {
@@ -109,14 +104,10 @@ public class Province  implements Serializable, Loadable {
     }
 
     public void setUuid(String uuid) {
-        try {
-            if (UuidUtil.isCmpUuidStr(uuid)) {
-                this.uuid = UuidUtil.fromCmpUuidStr(uuid);
-            } else {
-                this.uuid = UuidUtil.fromUuidStr(uuid);
-            }
-        } catch (InvalidTravelReqirementException e) {
-            throw new IllegalStateException(e);
+        if (UuidUtil.isCmpUuidStr(uuid)) {
+            this.uuid = UuidUtil.fromCmpUuidStr(uuid);
+        } else {
+            this.uuid = UuidUtil.fromUuidStr(uuid);
         }
     }
 

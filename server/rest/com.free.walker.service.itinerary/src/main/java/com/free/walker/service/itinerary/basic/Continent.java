@@ -82,4 +82,32 @@ public class Continent implements Serializable {
     public ValueType getValueType() {
         return JsonValue.ValueType.NULL;
     }
+
+    public String getUuid() {
+        return String.valueOf(id.enumValue());
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getChineseName() {
+        return chineseName;
+    }
+
+    public void setChineseName(String chineseName) {
+        this.chineseName = chineseName;
+    }
+
+    public String getPinyinName() {
+        return pinyinName;
+    }
+
+    public void setPinyinName(String pinyinName) {
+        this.pinyinName = pinyinName;
+    }
 }

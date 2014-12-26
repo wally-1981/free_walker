@@ -27,17 +27,13 @@ public class Tag implements Serializable, Loadable, Reloadable {
     private static final int TOP_N = 10;
 
     private static List<Tag> tags = new ArrayList<Tag>();
-    private static TravelBasicDAO travelBasicDAO;
-
-    static {
-        travelBasicDAO = DAOFactory.getTravelBasicDAO();
-    }
+    private TravelBasicDAO travelBasicDAO;
 
     private String name;
     private long frequency;
 
     public Tag() {
-        ;
+        travelBasicDAO = DAOFactory.getTravelBasicDAO();
     }
 
     public String getName() {
@@ -79,6 +75,8 @@ public class Tag implements Serializable, Loadable, Reloadable {
         if (name == null) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.NAME, name));
+        } else {
+            this.name = name;
         }
 
         JsonNumber frequency = jsObject.getJsonNumber(Introspection.JSONKeys.FREQUENCY);
