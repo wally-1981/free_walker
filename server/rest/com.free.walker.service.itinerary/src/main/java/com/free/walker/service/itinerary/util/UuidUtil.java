@@ -3,7 +3,6 @@ package com.free.walker.service.itinerary.util;
 import java.util.UUID;
 
 import com.free.walker.service.itinerary.LocalMessages;
-import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 
 public class UuidUtil {
     public static UUID fromUuidStr(final String uuidStr) {
@@ -31,7 +30,7 @@ public class UuidUtil {
         }
     }
 
-    public static UUID fromCmpUuidStr(final String uuidCmpStr) throws InvalidTravelReqirementException {
+    public static UUID fromCmpUuidStr(final String uuidCmpStr) {
         if (uuidCmpStr == null) {
             throw new NullPointerException();
         }
