@@ -31,15 +31,15 @@ public class ProvinceTest {
     @Test
     public void testFromToJSON() throws InvalidTravelReqirementException {
         JsonObjectBuilder builder = Json.createObjectBuilder();
-        builder.add(Introspection.JSONKeys.UUID, UuidUtil.fromCmpUuidStr("8a1dc8fe34c04380b241c19a61ad07be").toString());
+        builder.add(Introspection.JSONKeys.UUID, UuidUtil.fromCmpUuidStr("03161e050c2448378eb863bfcbe744f3").toString());
         Province province = new Province().fromJSON(builder.build());
 
         JsonObject provinceObj = province.toJSON();
-        assertEquals(UuidUtil.fromCmpUuidStr("8a1dc8fe34c04380b241c19a61ad07be").toString(),
+        assertEquals(UuidUtil.fromCmpUuidStr("03161e050c2448378eb863bfcbe744f3").toString(),
             provinceObj.getString(Introspection.JSONKeys.UUID));
-        assertEquals("Hongkong", provinceObj.getString(Introspection.JSONKeys.NAME));
-        assertEquals("香港", provinceObj.getString(Introspection.JSONKeys.CHINESE_NAME));
-        assertEquals("xianggang", provinceObj.getString(Introspection.JSONKeys.PINYIN_NAME));
+        assertEquals("Hubei", provinceObj.getString(Introspection.JSONKeys.NAME));
+        assertEquals("湖北", provinceObj.getString(Introspection.JSONKeys.CHINESE_NAME));
+        assertEquals("hubei", provinceObj.getString(Introspection.JSONKeys.PINYIN_NAME));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class ProvinceTest {
     @Test
     public void testFromToJSONWithCmpUuid() {
         JsonObjectBuilder builder = Json.createObjectBuilder();
-        String cmpUuidStr = "8a1dc8fe34c04380b241c19a61ad07be";
+        String cmpUuidStr = "03161e050c2448378eb863bfcbe744f3";
         builder.add(Introspection.JSONKeys.UUID, cmpUuidStr);
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage(cmpUuidStr);
