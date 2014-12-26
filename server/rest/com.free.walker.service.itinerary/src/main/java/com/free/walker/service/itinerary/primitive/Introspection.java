@@ -25,7 +25,9 @@ public class Introspection {
         public static final String AGENCIES = "agencies";
 
         public static final String CITY = "city";
+        public static final String PROVINCE = "province";
         public static final String COUNTRY = "country";
+        public static final String CONTINENT = "continent";
         public static final String HOTEL = "hotel";
         public static final String RESORT = "resort";
         public static final String TRAFFIC = "traffic";
