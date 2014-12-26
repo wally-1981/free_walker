@@ -61,15 +61,15 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
 
     public TravelProposal(ItineraryRequirement itineraryRequirement) {
         this(Constants.NEW_PROPOSAL, itineraryRequirement);
-        String dest = itineraryRequirement.getDestination().getCity().getChineseName();
-        String dept = itineraryRequirement.getDeparture().getCity().getChineseName();
+        String dest = itineraryRequirement.getDestination().getChineseName();
+        String dept = itineraryRequirement.getDeparture().getChineseName();
         this.proposalTitle = dept + "=>" + dest;
     }
 
     public TravelProposal(ItineraryRequirement itineraryRequirement, List<String> proposalTags) {
         this(Constants.NEW_PROPOSAL, itineraryRequirement, proposalTags);
-        String dest = itineraryRequirement.getDestination().getCity().getChineseName();
-        String dept = itineraryRequirement.getDeparture().getCity().getChineseName();
+        String dest = itineraryRequirement.getDestination().getChineseName();
+        String dept = itineraryRequirement.getDeparture().getChineseName();
         this.proposalTitle = dept + "=>" + dest;
     }
 
