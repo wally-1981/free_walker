@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.free.walker.service.itinerary.dao.mapper.BasicMapper">
+	<sql id="locationColumns">
+		hex(uuid) as uuid,
+		name as name,
+		chinese_name as chineseName,
+		pinyin_name as pinyinName
+	</sql>
+
+	<select id="pingPersistence" resultType="int">
+		select
+			count(*)
+		from
+			information_schema.tables
+		where
+			table_name = 'country' or
+			table_name = 'province' or
+			table_name = 'city'
+	</select>
+
+	<select id="getAllCounties" resultType="Country">
+		select
+			<include refid="locationColumns"/>
+		from
+			country
+	</select>
+
+	<select id="getAllProvinces" resultType="Province">
+		select
+			<include refid="locationColumns"/>
+		from
+			province
+	</select>
+
+	<select id="getAllCities" resultType="City">
+		select
+			<include refid="locationColumns"/>,
+			hex(province_uuid) as provinceUuid,
+			hex(country_uuid) as countryUuid,
+			continent_id as continentId
+		from city
+	</select>
+
+	<select id="getCountry" resultType="Country">
+		select
+			<include refid="locationColumns"/>
+		from
+			country
+		where
+			hex(uuid) = #{uuid}
+	</select>
+
+	<select id="getProvince" resultType="Province">
+		select
+			<include refid="locationColumns"/>
+		from
+			province
+		where
+			hex(uuid) = #{uuid}
+	</select>
+
+	<select id="getCity" resultType="City">
+		select
+			<include refid="locationColumns"/>,
+			hex(province_uuid) as provinceUuid,
+			hex(country_uuid) as countryUuid,
+			continent_id as continentId
+		from city
+		where
+			hex(uuid) = #{uuid}
+	</select>
+
+	<!-- Continents are stored in memory, so sql will not count them. -->
+	<select id="hasLocationByTerm" resultType="String">
+		select
+			hex(uuid)
+		from
+		(
+			select uuid from city where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
+			union
+			select uuid from province where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
+			union
+			select uuid from country where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
+		) as location
+		limit 1
+	</select>
+
+	<!-- Continents are stored in memory, so sql will not count them. -->
+	<select id="hasLocationByUuid" resultType="String">
+		select
+			hex(uuid)
+		from
+		(
+			select uuid from city where hex(uuid) = #{uuid}
+			union
+			select uuid from province where hex(uuid) = #{uuid}
+			union
+			select uuid from country where hex(uuid) = #{uuid}
+		) as location
+		limit 1
+	</select>
+
+	<!-- Continents are stored in memory, so sql will not count them. -->
+	<select id="countLocationByTerm" resultType="int">
+		select
+			count(uuid)
+		from
+		(
+			select uuid from city where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
+			union
+			select uuid from province where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
+			union
+			select uuid from country where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
+		) as location
+	</select>
+
+	<!-- Continents are stored in memory, so sql will not count them. -->
+	<select id="countLocationByUuid" resultType="int">
+		select
+			count(uuid)
+		from
+		(
+			select uuid from city where hex(uuid) = #{uuid}
+			union
+			select uuid from province where hex(uuid) = #{uuid}
+			union
+			select uuid from country where hex(uuid) = #{uuid}
+		) as location
+	</select>
+
+	<!-- Continents are stored in memory, so sql will not count them. -->
+	<select id="countDomesticLocationByTerm" resultType="int">
+		select
+			count(*)
+		from city as c
+		right join province as p
+			on hex(c.province_uuid) = hex(p.uuid)
+		right join country as co
+			on hex(c.country_uuid) = hex(co.uuid)
+		where
+			co.name = 'China' and
+			(
+				(c.chinese_name = #{term} or c.name = #{term} or c.pinyin_name = #{term}) or
+				(p.chinese_name = #{term} or p.name = #{term} or p.pinyin_name = #{term}) or
+				(co.chinese_name = #{term} or co.name = #{term} or co.pinyin_name = #{term})
+			)
+	</select>
+
+	<!-- Continents are stored in memory, so sql will not count them. -->
+	<select id="countDomesticLocationByUuid" resultType="int">
+		select
+			count(*)
+		from city as c
+		right join province as p
+			on hex(c.province_uuid) = hex(p.uuid)
+		right join country as co
+			on hex(c.country_uuid) = hex(co.uuid)
+		where
+			co.name = 'China' and
+			(hex(c.uuid) = #{uuid} or hex(p.uuid) = #{uuid} or hex(co.uuid) = #{uuid})
+	</select>
+
+	<select id="getAgencies4DomesticDestination" resultType="Agency">
+		select
+			agency.name as name
+		from
+		(
+			select uuid as uuid from city where hex(uuid) = #{departureLocationUuid}
+			union
+			select uuid as uuid from province where hex(uuid) = #{departureLocationUuid}
+			union
+			select uuid as uuid from country where hex(uuid) = #{departureLocationUuid}
+			union
+			select associated_location_uuid as uuid from location_association where hex(location_uuid) = #{departureLocationUuid}
+		) as location
+		join agency on hex(location.uuid) = hex(agency.send_location_uuid)
+		
+		union
+		
+		select
+			agency.name as name
+		from
+		(
+			select uuid as uuid from city where hex(uuid) = #{destinationLocationUuid}
+			union
+			select uuid as uuid from province where hex(uuid) = #{destinationLocationUuid}
+			union
+			select uuid as uuid from country where hex(uuid) = #{destinationLocationUuid}
+			union
+			select associated_location_uuid as uuid from location_association where hex(location_uuid) = #{destinationLocationUuid}
+		) as location
+		join agency on hex(location.uuid) = hex(agency.recv_location_uuid)
+	</select>
+
+	<select id="getAgencies4InternationalDestination" resultType="Agency">
+		select
+			agency.name
+		from
+		(
+			select uuid as uuid from city where hex(uuid) = #{departureLocationUuid}
+			union
+			select uuid as uuid from province where hex(uuid) = #{departureLocationUuid}
+			union
+			select uuid as uuid from country where hex(uuid) = #{departureLocationUuid}
+			union
+			select associated_location_uuid as uuid from location_association where hex(location_uuid) = #{departureLocationUuid}
+			union
+			select port_location_uuid as uuid from port_association where hex(location_uuid) = #{destinationLocationUuid}
+		) as location
+		join agency on hex(location.uuid) = hex(agency.send_location_uuid)
+		
+		union
+		
+		select
+			agency.name
+		from
+		(
+			select uuid as uuid from city where hex(uuid) = #{destinationLocationUuid}
+			union
+			select uuid as uuid from province where hex(uuid) = #{destinationLocationUuid}
+			union
+			select uuid as uuid from country where hex(uuid) = #{destinationLocationUuid}
+			union
+			select convert(unhex(continent_id), binary(16)) as uuid from city where continent_id = #{destinationLocationUuid}
+			union
+			select associated_location_uuid as uuid from location_association where hex(location_uuid) = #{departureLocationUuid}
+		) as location
+		join agency on hex(location.uuid) = hex(agency.recv_location_uuid)
+	</select>
+
+	<select id="getAgencies4DangleDestination" resultType="Agency">
+		select
+			agency.name
+		from
+		(
+			select uuid as uuid from city where hex(uuid) = #{departureLocationUuid}
+			union
+			select uuid as uuid from province where hex(uuid) = #{departureLocationUuid}
+			union
+			select uuid as uuid from country where hex(uuid) = #{departureLocationUuid}
+			union
+			select associated_location_uuid as uuid from location_association where hex(location_uuid) = #{departureLocationUuid}
+		) as location
+		join agency on hex(location.uuid) = hex(agency.send_location_uuid)
+	</select>
+
+	<select id="getHottestTags" resultType="Tag">
+		select
+			name as name,
+			frequency as frequency
+		from
+			tag
+		order by frequency desc
+		limit #{topN}
+	</select>
+
+	<insert id="associateLocatoin">
+		insert into location_association (location_uuid, associated_location_uuid)
+		values (unhex(replace(#{primary}, '-', '')), unhex(replace(#{secondary}, '-', '')))
+	</insert>
+
+	<delete id="deassociateLocatoin">
+		delete from location_association
+		where
+			hex(location_uuid) = hex(convert(unhex(replace(#{primary}, '-', '')), binary(16))) and
+			hex(associated_location_uuid) = hex(convert(unhex(replace(#{secondary}, '-', '')), binary(16)))
+	</delete>
+
+	<insert id="associatePortLocatoin">
+		insert into port_association (location_uuid, port_location_uuid)
+		values (unhex(replace(#{primary}, '-', '')), unhex(replace(#{secondary}, '-', '')))
+	</insert>
+
+	<delete id="deassociatePortLocatoin">
+		delete from port_association
+		where
+			hex(location_uuid) = replace(#{primary}, '-', '') and
+			hex(port_location_uuid) = replace(#{secondary}, '-', '')
+	</delete>
+
+	<insert id="addAgency" parameterType="Agency">
+		insert into agency (uuid, name, send_location_uuid, recv_location_uuid)
+		values (unhex(replace(#{uuid}, '-', '')), #{name}, unhex(replace(#{departure}, '-', '')), unhex(replace(#{destination}, '-', '')))
+	</insert>
+
+	<delete id="deleteAgency">
+		delete from agency where hex(uuid) = replace(#{uuid}, '-', '')
+	</delete>
+</mapper>
+ 

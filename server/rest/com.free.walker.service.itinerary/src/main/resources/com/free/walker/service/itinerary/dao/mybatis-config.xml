@@ -4,6 +4,14 @@
   "http://mybatis.org/dtd/mybatis-3-config.dtd">
 
 <configuration>
+	<typeAliases>
+		<typeAlias type="com.free.walker.service.itinerary.basic.Country" alias="Country"/>
+		<typeAlias type="com.free.walker.service.itinerary.basic.Province" alias="Province"/>
+		<typeAlias type="com.free.walker.service.itinerary.basic.City" alias="City"/>
+		<typeAlias type="com.free.walker.service.itinerary.basic.Agency" alias="Agency"/>
+		<typeAlias type="com.free.walker.service.itinerary.basic.Tag" alias="Tag"/>
+	</typeAliases>
+
 	<environments default="development">
 		<environment id="development">
 			<transactionManager type="JDBC"/>
@@ -19,6 +27,6 @@
 	</environments>
 
 	<mappers>
-		<mapper class="com.free.walker.service.itinerary.dao.BasicMapper"/>
+		<mapper resource="com/free/walker/service/itinerary/dao/mapper/BasicMapper.xml"/>
 	</mappers>
 </configuration>

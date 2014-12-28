@@ -133,7 +133,6 @@ INSERT INTO itinerary.province (uuid, name, chinese_name, pinyin_name) VALUES (U
 INSERT INTO itinerary.province (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('6e0bcba8b19f4ce9896018e3e2f607f6'),'Taiwan','台湾','taiwan');
 INSERT INTO itinerary.province (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('f58ef2c6aa164c99a0b03d4967e2c665'),'Ningxia','宁夏','ningxia');
 INSERT INTO itinerary.province (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('b2e4bc62e7844cc0b499f74bd6b90df0'),'Heilongjiang','黑龙江','heilongjiang');
-INSERT INTO itinerary.province (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('8678048dd15841ecbfc632e54cde3074'),'Tianjin','天津','tianjin');
 INSERT INTO itinerary.province (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('e50cef252b64401dae8a9785c5729b6b'),'Henan','河南','henan');
 INSERT INTO itinerary.province (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('4d1a492e0dda4431b8e19ca1b2028069'),'Liaoning','辽宁','liaoning');
 INSERT INTO itinerary.province (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('fb77a12e99ad45c89f88e50aeb028814'),'Qinghai','青海','qinghai');
@@ -581,6 +580,7 @@ INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id) VALUES (UNHEX('8a1dc8fe34c04380b241c19a61ad07be'),'Hongkong','香港','xianggang',UNHEX(''),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1');
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id) VALUES (UNHEX('b6890ab6c23d405fa1c74b9dd5dd2e0c'),'Newyork','纽约','niuyue',UNHEX(''),UNHEX('cc0968e70fe34cc99f5b3a6898a04506'),'3');
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id) VALUES (UNHEX('9473223591264341b4e8fa8eee3a0c35'),'Aomen','澳门','aomen',UNHEX(''),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1');
+INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id) VALUES (UNHEX('8678048dd15841ecbfc632e54cde3074'),'Tianjin','天津','tianjin',UNHEX(''),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1');
 
 UNLOCK TABLES;
 
@@ -602,12 +602,6 @@ CREATE TABLE `location_association` (
 --
 
 LOCK TABLES `location_association` WRITE;
-
-INSERT INTO itinerary.location_association (location_uuid, associated_location_uuid) VALUES (UNHEX('e98c3585f7474eca9b66b58f57362fb7'),UNHEX('03161e050c2448378eb863bfcbe744f3'));
-INSERT INTO itinerary.location_association (location_uuid, associated_location_uuid) VALUES (UNHEX('e98c3585f7474eca9b66b58f57362fb7'),UNHEX('79fd8642a11d4811887dec4268097a82'));
-INSERT INTO itinerary.location_association (location_uuid, associated_location_uuid) VALUES (UNHEX('e98c3585f7474eca9b66b58f57362fb7'),UNHEX('cda48bcd9ab64669994013897321a3fb'));
-INSERT INTO itinerary.location_association (location_uuid, associated_location_uuid) VALUES (UNHEX('03161e050c2448378eb863bfcbe744f3'),UNHEX('79fd8642a11d4811887dec4268097a82'));
-
 UNLOCK TABLES;
 
 --
@@ -628,16 +622,6 @@ CREATE TABLE `port_association` (
 --
 
 LOCK TABLES `port_association` WRITE;
-
-INSERT INTO itinerary.port_association (location_uuid, port_location_uuid) VALUES (UNHEX('46e46912f85649ceb9f8cac99fe9211e'),UNHEX('689ddfcdeffd4937b56707c4c8907378'));
-INSERT INTO itinerary.port_association (location_uuid, port_location_uuid) VALUES (UNHEX('5baee5c1ced04d3f89b79cc2579180c9'),UNHEX('689ddfcdeffd4937b56707c4c8907378'));
-INSERT INTO itinerary.port_association (location_uuid, port_location_uuid) VALUES (UNHEX('9fb780ecd4b64cfbadc5f5c72d9326e4'),UNHEX('689ddfcdeffd4937b56707c4c8907378'));
-INSERT INTO itinerary.port_association (location_uuid, port_location_uuid) VALUES (UNHEX('990d650cfdc84ad8842f59d0f27c1f65'),UNHEX('689ddfcdeffd4937b56707c4c8907378'));
-INSERT INTO itinerary.port_association (location_uuid, port_location_uuid) VALUES (UNHEX('32b16ed6825041a586add3f102790293'),UNHEX('689ddfcdeffd4937b56707c4c8907378'));
-INSERT INTO itinerary.port_association (location_uuid, port_location_uuid) VALUES (UNHEX('5baee5c1ced04d3f89b79cc2579180c9'),UNHEX('301cdd76923047d28eb28e85932d9f53'));
-INSERT INTO itinerary.port_association (location_uuid, port_location_uuid) VALUES (UNHEX('9fb780ecd4b64cfbadc5f5c72d9326e4'),UNHEX('301cdd76923047d28eb28e85932d9f53'));
-INSERT INTO itinerary.port_association (location_uuid, port_location_uuid) VALUES (UNHEX('990d650cfdc84ad8842f59d0f27c1f65'),UNHEX('301cdd76923047d28eb28e85932d9f53'));
-
 UNLOCK TABLES;
 
 --
@@ -662,7 +646,4 @@ CREATE TABLE `agency` (
 --
 
 LOCK TABLES `agency` WRITE;
-
-
-
 UNLOCK TABLES;

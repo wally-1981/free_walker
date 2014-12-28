@@ -54,6 +54,8 @@ public class LocalMessages {
     public static final String localhost_ip_founed = "localhost_ip_founed";
     public static final String fallback_config_path = "fallback_config_path";
     public static final String log_file_path_determined = "log_file_path_determined";
+    public static final String read_configuration_file_failed = "read_configuration_file_failed";
+    public static final String eval_configuration_value_failed = "eval_configuration_value_failed";
 
     public static final String illegal_uuid = "illegal_uuid";
     public static final String illegal_compact_uuid = "illegal_compact_uuid";
@@ -70,7 +72,11 @@ public class LocalMessages {
     public static final String missing_travel_itinerary = "missing_travel_itinerary";
     public static final String existed_travel_itinerary = "existed_travel_itinerary";
     public static final String missing_travel_proposal_bidding = "missing_travel_proposal_bidding";
+    public static final String missing_location = "missing_location";
 
+    public static final String illegal_location_association = "illegal_location_association";
+    public static final String illegal_port_association = "illegal_port_association";
+    public static final String illegal_add_agency_operation = "illegal_add_agency_operation";
     public static final String illegal_add_proposal_as_requirement = "illegal_add_proposal_as_requirement";
     public static final String illegal_add_itinerary_as_requirement = "illegal_add_itinerary_as_requirement";
     public static final String illegal_update_travel_requirement_operation = "illegal_update_travel_requirement_operation";
@@ -105,7 +111,9 @@ public class LocalMessages {
     public static final String agency_election_start = "agency_election_start";
     public static final String agency_election_end = "agency_election_end";
     public static final String agency_election_success = "agency_election_success";
-    public static final String agency_election_failed = "agency_election_failed";
+    public static final String agency_election_map_failed = "agency_election_map_failed";
+    public static final String agency_election_reduce_failed = "agency_election_reduce_failed";
+    public static final String agency_election_task_cancelled = "agency_election_task_cancelled";
 
     public static final String submit_proposal_failed = "submit_proposal_failed";
     public static final String submit_proposal_success = "submit_proposal_success";

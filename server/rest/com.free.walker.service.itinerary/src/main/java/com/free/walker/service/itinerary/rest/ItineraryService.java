@@ -25,6 +25,7 @@ import org.apache.cxf.jaxrs.ext.MessageContext;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.Account;
 import com.free.walker.service.itinerary.dao.DAOFactory;
+import com.free.walker.service.itinerary.dao.TravelBasicDAO;
 import com.free.walker.service.itinerary.dao.TravelRequirementDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
@@ -32,6 +33,7 @@ import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.TravelProposal;
 import com.free.walker.service.itinerary.req.TravelRequirement;
+import com.free.walker.service.itinerary.task.AgencyElectionRoutine;
 import com.free.walker.service.itinerary.task.AgencyElectionTask;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.UuidUtil;
@@ -41,9 +43,11 @@ import com.ibm.icu.util.Calendar;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ItineraryService {
+    private TravelBasicDAO travelBasicDAO;
     private TravelRequirementDAO travelRequirementDAO;
 
     public ItineraryService(Class<?> daoClass) {
+        travelBasicDAO = DAOFactory.getTravelBasicDAO();
         travelRequirementDAO = DAOFactory.getTravelRequirementDAO(daoClass.getName());
     }
 
@@ -119,7 +123,19 @@ public class ItineraryService {
             Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
             UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
             travelRequirementDAO.startProposalBid(UuidUtil.fromUuidStr(proposalId), acntId);
-            AgencyElectionTask.schedule(travelRequirementDAO, proposalId);
+            List<TravelRequirement> itineraries = travelRequirementDAO.getItineraryRequirements(UuidUtil
+                .fromUuidStr(proposalId));
+            if (itineraries.size() == 1) {
+                ItineraryRequirement itinerary = (ItineraryRequirement) itineraries.get(0);
+                AgencyElectionTask.schedule(new AgencyElectionRoutine(travelBasicDAO, itinerary.getDeparture(),
+                    itinerary.getDestination()), proposalId);
+            } else if (itineraries.size() > 1) {
+                ItineraryRequirement itinerary = (ItineraryRequirement) itineraries.get(0);
+                AgencyElectionTask.schedule(new AgencyElectionRoutine(travelBasicDAO, itinerary.getDeparture()),
+                    proposalId);
+            } else {
+                return Response.status(Status.CONFLICT).build();
+            }
             return Response.status(Status.ACCEPTED).build();
         } catch (InvalidTravelReqirementException e) {
             return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();

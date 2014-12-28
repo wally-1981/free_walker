@@ -35,18 +35,12 @@ public class Server {
         JAXRSServerFactoryBean sf = new JAXRSServerFactoryBean();
 
         ItineraryService itinerarySvr = null;
-        if (mode.equals(MODE_SINGLE_DEVO)) {
-            itinerarySvr = new ItineraryService(InMemoryTravelRequirementDAOImpl.class);
-        } else if (mode.equals(MODE_SINGLE_PROD)) {
-            itinerarySvr = new ItineraryService(MyMongoSQLTravelRequirementDAOImpl.class);
-        } else {
-            throw new IllegalArgumentException();
-        }
-
         ProductService productSvr = null;
         if (mode.equals(MODE_SINGLE_DEVO)) {
+            itinerarySvr = new ItineraryService(InMemoryTravelRequirementDAOImpl.class);
             productSvr = new ProductService(InMemoryTravelProductDAOImpl.class);
         } else if (mode.equals(MODE_SINGLE_PROD)) {
+            itinerarySvr = new ItineraryService(MyMongoSQLTravelRequirementDAOImpl.class);
             productSvr = new ProductService(MyMongoSQLTravelProductDAOImpl.class);
         } else {
             throw new IllegalArgumentException();

@@ -22,6 +22,12 @@ public class Constants {
     public static final Account DEFAULT_ACCOUNT;
     public static final Account ADMIN_ACCOUNT;
 
+    public static final String agency_election_window_in_min = "agency_election_window_in_min";
+    public static final String agency_election_by_feedback_size = "agency_election_by_feedback_size";
+    public static final String agency_election_by_experience_size = "agency_election_by_experience_size";
+    public static final String agency_election_by_randomization_size = "agency_election_by_randomization_size";
+    public static final String agency_election_max_size = "agency_election_max_size";
+
     static {
         ADMIN_ACCOUNT = new Account().fromJSON(
             Json.createObjectBuilder()

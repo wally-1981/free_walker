@@ -9,6 +9,7 @@ import com.free.walker.service.itinerary.basic.CountryTest;
 import com.free.walker.service.itinerary.basic.ProvinceTest;
 import com.free.walker.service.itinerary.basic.ResortTest;
 import com.free.walker.service.itinerary.dao.DAOFactoryTest;
+import com.free.walker.service.itinerary.dao.TravelBasicDAOImplTest;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelProductDAOImplTest;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOImplTest;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelProductDAOImplTest;
@@ -42,6 +43,7 @@ import com.free.walker.service.itinerary.util.UuidUtilTest;
     BiddingTest.class,
 
     DAOFactoryTest.class,
+    TravelBasicDAOImplTest.class,
     InMemoryTravelRequirementDAOImplTest.class,
     MyMongoSQLTravelRequirementDAOImplTest.class,
     InMemoryTravelProductDAOImplTest.class,
