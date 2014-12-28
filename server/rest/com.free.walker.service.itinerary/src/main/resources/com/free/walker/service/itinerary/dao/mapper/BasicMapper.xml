@@ -11,6 +11,45 @@
 		pinyin_name as pinyinName
 	</sql>
 
+	<sql id="agencyColumns">
+		hex(agency.uuid) as uuid,
+		agency.name as name,
+		hex(agency.send_location_uuid) as departure,
+		hex(agency.recv_location_uuid) as destination
+	</sql>
+
+	<sql id="selectLocationsByUuid">
+		select uuid from city where hex(uuid) = #{uuid}
+		union
+		select uuid from province where hex(uuid) = #{uuid}
+		union
+		select uuid from country where hex(uuid) = #{uuid}
+	</sql>
+
+	<sql id="selectLocationsByTerm">
+		select uuid from city where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
+		union
+		select uuid from province where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
+		union
+		select uuid from country where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
+	</sql>
+
+	<sql id="selectLocationsByDepartureUuid">
+		select uuid as uuid from city where hex(uuid) = #{departureLocationUuid}
+		union
+		select uuid as uuid from province where hex(uuid) = #{departureLocationUuid}
+		union
+		select uuid as uuid from country where hex(uuid) = #{departureLocationUuid}
+	</sql>
+
+	<sql id="selectLocationsByDestinationUuid">
+		select uuid as uuid from city where hex(uuid) = #{destinationLocationUuid}
+		union
+		select uuid as uuid from province where hex(uuid) = #{destinationLocationUuid}
+		union
+		select uuid as uuid from country where hex(uuid) = #{destinationLocationUuid}
+	</sql>
+
 	<select id="pingPersistence" resultType="int">
 		select
 			count(*)
@@ -80,11 +119,7 @@
 			hex(uuid)
 		from
 		(
-			select uuid from city where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
-			union
-			select uuid from province where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
-			union
-			select uuid from country where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
+			<include refid="selectLocationsByTerm"/>
 		) as location
 		limit 1
 	</select>
@@ -95,11 +130,7 @@
 			hex(uuid)
 		from
 		(
-			select uuid from city where hex(uuid) = #{uuid}
-			union
-			select uuid from province where hex(uuid) = #{uuid}
-			union
-			select uuid from country where hex(uuid) = #{uuid}
+			<include refid="selectLocationsByUuid"/>
 		) as location
 		limit 1
 	</select>
@@ -110,11 +141,7 @@
 			count(uuid)
 		from
 		(
-			select uuid from city where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
-			union
-			select uuid from province where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
-			union
-			select uuid from country where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
+			<include refid="selectLocationsByTerm"/>
 		) as location
 	</select>
 
@@ -124,11 +151,7 @@
 			count(uuid)
 		from
 		(
-			select uuid from city where hex(uuid) = #{uuid}
-			union
-			select uuid from province where hex(uuid) = #{uuid}
-			union
-			select uuid from country where hex(uuid) = #{uuid}
+			<include refid="selectLocationsByUuid"/>
 		) as location
 	</select>
 
@@ -166,14 +189,10 @@
 
 	<select id="getAgencies4DomesticDestination" resultType="Agency">
 		select
-			agency.name as name
+			<include refid="agencyColumns"/>
 		from
 		(
-			select uuid as uuid from city where hex(uuid) = #{departureLocationUuid}
-			union
-			select uuid as uuid from province where hex(uuid) = #{departureLocationUuid}
-			union
-			select uuid as uuid from country where hex(uuid) = #{departureLocationUuid}
+			<include refid="selectLocationsByDepartureUuid"/>
 			union
 			select associated_location_uuid as uuid from location_association where hex(location_uuid) = #{departureLocationUuid}
 		) as location
@@ -182,14 +201,10 @@
 		union
 		
 		select
-			agency.name as name
+			<include refid="agencyColumns"/>
 		from
 		(
-			select uuid as uuid from city where hex(uuid) = #{destinationLocationUuid}
-			union
-			select uuid as uuid from province where hex(uuid) = #{destinationLocationUuid}
-			union
-			select uuid as uuid from country where hex(uuid) = #{destinationLocationUuid}
+			<include refid="selectLocationsByDestinationUuid"/>
 			union
 			select associated_location_uuid as uuid from location_association where hex(location_uuid) = #{destinationLocationUuid}
 		) as location
@@ -198,14 +213,10 @@
 
 	<select id="getAgencies4InternationalDestination" resultType="Agency">
 		select
-			agency.name
+			<include refid="agencyColumns"/>
 		from
 		(
-			select uuid as uuid from city where hex(uuid) = #{departureLocationUuid}
-			union
-			select uuid as uuid from province where hex(uuid) = #{departureLocationUuid}
-			union
-			select uuid as uuid from country where hex(uuid) = #{departureLocationUuid}
+			<include refid="selectLocationsByDepartureUuid"/>
 			union
 			select associated_location_uuid as uuid from location_association where hex(location_uuid) = #{departureLocationUuid}
 			union
@@ -216,14 +227,10 @@
 		union
 		
 		select
-			agency.name
+			<include refid="agencyColumns"/>
 		from
 		(
-			select uuid as uuid from city where hex(uuid) = #{destinationLocationUuid}
-			union
-			select uuid as uuid from province where hex(uuid) = #{destinationLocationUuid}
-			union
-			select uuid as uuid from country where hex(uuid) = #{destinationLocationUuid}
+			<include refid="selectLocationsByDestinationUuid"/>
 			union
 			select convert(unhex(continent_id), binary(16)) as uuid from city where continent_id = #{destinationLocationUuid}
 			union
@@ -234,14 +241,10 @@
 
 	<select id="getAgencies4DangleDestination" resultType="Agency">
 		select
-			agency.name
+			<include refid="agencyColumns"/>
 		from
 		(
-			select uuid as uuid from city where hex(uuid) = #{departureLocationUuid}
-			union
-			select uuid as uuid from province where hex(uuid) = #{departureLocationUuid}
-			union
-			select uuid as uuid from country where hex(uuid) = #{departureLocationUuid}
+			<include refid="selectLocationsByDepartureUuid"/>
 			union
 			select associated_location_uuid as uuid from location_association where hex(location_uuid) = #{departureLocationUuid}
 		) as location
@@ -288,7 +291,9 @@
 	</insert>
 
 	<delete id="deleteAgency">
-		delete from agency where hex(uuid) = replace(#{uuid}, '-', '')
+		delete from agency
+		where
+			hex(uuid) = replace(#{uuid}, '-', '')
 	</delete>
 </mapper>
  
