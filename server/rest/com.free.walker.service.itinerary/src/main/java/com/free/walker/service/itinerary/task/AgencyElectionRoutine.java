@@ -68,15 +68,15 @@ public class AgencyElectionRoutine extends AgencyElectionBaseRoutine {
     }
 
     public List<Agency> reduceByFeedback(List<Agency> agencies, int resultMaxSize) {
-        return agencies.subList(0, resultMaxSize);
+        return agencies.subList(0, agencies.isEmpty() ? 0 : Math.min(resultMaxSize, agencies.size() - 1));
     }
 
     public List<Agency> reduceByExperience(List<Agency> agencies, int resultMaxSize) {
-        return agencies.subList(0, resultMaxSize);
+        return agencies.subList(0, agencies.isEmpty() ? 0 : Math.min(resultMaxSize, agencies.size() - 1));
     }
 
     public List<Agency> reduceByRandomization(List<Agency> agencies, int resultMaxSize) {
-        return agencies.subList(0, resultMaxSize);
+        return agencies.subList(0, agencies.isEmpty() ? 0 : Math.min(resultMaxSize, agencies.size() - 1));
     }
 
     private void notify(List<Agency> agencies) {
