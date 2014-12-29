@@ -625,7 +625,7 @@ LOCK TABLES `port_association` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `location_association`
+-- Table structure for table `agency`
 --
 
 DROP TABLE IF EXISTS `agency`;
@@ -642,8 +642,33 @@ CREATE TABLE `agency` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `port_association`
+-- Dumping data for table `agency`
 --
 
 LOCK TABLES `agency` WRITE;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `agency_candidate`
+--
+
+DROP TABLE IF EXISTS `agency_candidate`;
+CREATE TABLE `agency_candidate` (
+  `id` int(32) unsigned NOT NULL AUTO_INCREMENT,
+  `agency_uuid` binary(16) NOT NULL,
+  `proposal_uuid` binary(16) NOT NULL,
+  `proposal_summary` VARCHAR(256) NOT NULL,
+  `election_status` smallint(16) NOT NULL DEFAULT 0,
+  `bid_status` tinyint(1) NOT NULL DEFAULT 0,
+  `last_updated` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `agency_uuid_UNIQUE` (`agency_uuid`),
+  UNIQUE KEY `prposal_uuid_UNIQUE` (`proposal_uuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `agency_candidate`
+--
+
+LOCK TABLES `agency_candidate` WRITE;
 UNLOCK TABLES;
