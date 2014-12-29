@@ -1,6 +1,7 @@
 package com.free.walker.service.itinerary.dao.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -58,4 +59,19 @@ public interface BasicMapper {
     public void addAgency(Agency agency);
 
     public void deleteAgency(@Param("uuid") String uuid);
+
+    public void addAgencyCandidates4Proposal(Map<String, Object> proposalCandidates);
+
+    public List<Agency> getAgencyCandidates4Proposal(@Param("proposalId") String proposalId);
+
+    public void markAgencyCandidateAsResponded(@Param("proposalId") String proposalId,
+        @Param("agencyId") String agencyId);
+
+    public List<Agency> getRespondedAgencyCandidates4Proposal(@Param("proposalId") String proposalId);
+
+    public void markAgencyCandidatesAsElected(Map<String, Object> proposalAgencyIds);
+
+    public List<Agency> getElectedAgencyCandidates4Proposal(@Param("proposalId") String proposalId);
+
+    public List<Agency> getNotElectedAgencyCandidates4Proposal(@Param("proposalId") String proposalId);
 }

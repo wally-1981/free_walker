@@ -2,7 +2,9 @@ package com.free.walker.service.itinerary.dao.db;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
@@ -253,12 +255,13 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
             } else {
                 basicMapper.associateLocatoin(primary, secondary);
             }
+
+            session.commit();
             return;
         } catch(Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);
         } finally {
-            session.commit();
             session.close();
         }
     }
@@ -268,12 +271,13 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
         try {
             BasicMapper basicMapper = session.getMapper(BasicMapper.class);
             basicMapper.deassociateLocatoin(primary, secondary);
+
+            session.commit();
             return;
         } catch (Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);
         } finally {
-            session.commit();
             session.close();
         }
     }
@@ -294,12 +298,13 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
             } else {
                 basicMapper.associatePortLocatoin(primary, secondary);
             }
+
+            session.commit();
             return;
         } catch(Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);
         } finally {
-            session.commit();
             session.close();
         }
     }
@@ -309,12 +314,13 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
         try {
             BasicMapper basicMapper = session.getMapper(BasicMapper.class);
             basicMapper.deassociatePortLocatoin(primary, secondary);
+
+            session.commit();
             return;
         } catch (Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);
         } finally {
-            session.commit();
             session.close();
         }
     }
@@ -337,12 +343,13 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
             } else {
                 basicMapper.addAgency(agency);
             }
+
+            session.commit();
             return agency.getUuid().toString();
         } catch (Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);
         } finally {
-            session.commit();
             session.close();
         }
     }
@@ -352,12 +359,121 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
         try {
             BasicMapper basicMapper = session.getMapper(BasicMapper.class);
             basicMapper.deleteAgency(uuid);
+
+            session.commit();
             return uuid;
         } catch(Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);
         } finally {
+            session.close();
+        }
+    }
+
+    public void addAgencyCandidates4Proposal(String proposalId, String proposalSummary, List<Agency> candidates)
+        throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("proposalId", proposalId);
+            params.put("proposalSummary", proposalSummary);
+            params.put("candidates", candidates);
+            basicMapper.addAgencyCandidates4Proposal(params);
+
             session.commit();
+            return;
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public List<Agency> getAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            return basicMapper.getAgencyCandidates4Proposal(proposalId);
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public void markAgencyCandidatesAsElected(String proposalId, List<String> agencyIds) throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("proposalId", proposalId);
+            params.put("agencyIds", agencyIds);
+            basicMapper.markAgencyCandidatesAsElected(params);
+
+            session.commit();
+            return;
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public List<Agency> getElectedAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            return basicMapper.getElectedAgencyCandidates4Proposal(proposalId);
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public List<Agency> getNotElectedAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            return basicMapper.getNotElectedAgencyCandidates4Proposal(proposalId);
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public void markAgencyCandidateAsResponded(String proposalId, String agencyId) throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            basicMapper.markAgencyCandidateAsResponded(proposalId, agencyId);
+
+            session.commit();
+            return;
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public List<Agency> getRespondedAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            return basicMapper.getRespondedAgencyCandidates4Proposal(proposalId);
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
             session.close();
         }
     }

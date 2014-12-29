@@ -1,9 +1,11 @@
 package com.free.walker.service.itinerary.dao;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,12 +37,17 @@ public class TravelBasicDAOImplTest {
     private String a9;
     private String a10;
 
+    private List<Agency> candidates;
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void before() throws DatabaseAccessException {
         PlatformInitializer.init();
+
+        candidates = new ArrayList<Agency>();
+
         travelBasicDAO = DAOFactory.getTravelBasicDAO();
 
         {
@@ -51,6 +58,7 @@ public class TravelBasicDAOImplTest {
             agency.setDeparture("cda48bcd9ab64669994013897321a3fb");
             agency.setDestination("03161e050c2448378eb863bfcbe744f3");
             travelBasicDAO.addAgency(agency);
+            candidates.add(agency);
         }
 
         {
@@ -61,6 +69,7 @@ public class TravelBasicDAOImplTest {
             agency.setDeparture("79fd8642a11d4811887dec4268097a82");
             agency.setDestination("03161e050c2448378eb863bfcbe744f3");
             travelBasicDAO.addAgency(agency);
+            candidates.add(agency);
         }
 
         {
@@ -71,6 +80,7 @@ public class TravelBasicDAOImplTest {
             agency.setDeparture("675b8393ac04418786ccb1d1618f33f1");
             agency.setDestination("92d55e093025479db3f64b6aa38de051");
             travelBasicDAO.addAgency(agency);
+            candidates.add(agency);
         }
 
         {
@@ -81,6 +91,7 @@ public class TravelBasicDAOImplTest {
             agency.setDeparture("689ddfcdeffd4937b56707c4c8907378");
             agency.setDestination("af70a55ceb4c415c837588081716f8b8");
             travelBasicDAO.addAgency(agency);
+            candidates.add(agency);
         }
 
         {
@@ -91,6 +102,7 @@ public class TravelBasicDAOImplTest {
             agency.setDeparture("301cdd76923047d28eb28e85932d9f53");
             agency.setDestination("1");
             travelBasicDAO.addAgency(agency);
+            candidates.add(agency);
         }
 
         {
@@ -101,6 +113,7 @@ public class TravelBasicDAOImplTest {
             agency.setDeparture("54053f1a057a4ded88c854c5e56c63f4");
             agency.setDestination("54053f1a057a4ded88c854c5e56c63f4");
             travelBasicDAO.addAgency(agency);
+            candidates.add(agency);
         }
 
         {
@@ -111,6 +124,7 @@ public class TravelBasicDAOImplTest {
             agency.setDeparture("84844276303647dd90e0f095cfa98da5");
             agency.setDestination("fe80acb2816e45f0a98819caa587c6fc");
             travelBasicDAO.addAgency(agency);
+            candidates.add(agency);
         }
 
         {
@@ -121,6 +135,7 @@ public class TravelBasicDAOImplTest {
             agency.setDeparture("990d650cfdc84ad8842f59d0f27c1f65");
             agency.setDestination("2");
             travelBasicDAO.addAgency(agency);
+            candidates.add(agency);
         }
 
         {
@@ -131,6 +146,7 @@ public class TravelBasicDAOImplTest {
             agency.setDeparture("b6890ab6c23d405fa1c74b9dd5dd2e0c");
             agency.setDestination("cc0968e70fe34cc99f5b3a6898a04506");
             travelBasicDAO.addAgency(agency);
+            candidates.add(agency);
         }
 
         {
@@ -141,6 +157,7 @@ public class TravelBasicDAOImplTest {
             agency.setDeparture("689ddfcdeffd4937b56707c4c8907378");
             agency.setDestination("689ddfcdeffd4937b56707c4c8907378");
             travelBasicDAO.addAgency(agency);
+            candidates.add(agency);
         }
 
         {
@@ -599,6 +616,63 @@ public class TravelBasicDAOImplTest {
         assertNotNull(last);
         assertNotNull(last.getName());
         assertTrue(last.getFrequency() > 0);
+    }
+
+    @Test
+    public void testAddAgencyCandidates4Proposal() throws DatabaseAccessException {
+        String proposalId = UUID.randomUUID().toString();
+        travelBasicDAO.addAgencyCandidates4Proposal(proposalId, "Mock Proposal Summary A", candidates);
+
+        List<Agency> agencies = travelBasicDAO.getAgencyCandidates4Proposal(proposalId);
+        assertNotNull(agencies);
+        assertFalse(agencies.isEmpty());
+        assertEquals(candidates.size(), agencies.size());
+    }
+
+    @Test
+    public void testMarkAgencyCandidatesAsResponded() throws DatabaseAccessException {
+        String proposalId = UUID.randomUUID().toString();
+        travelBasicDAO.addAgencyCandidates4Proposal(proposalId, "Mock Proposal Summary B", candidates);
+
+        for (int i = 0; i < candidates.size() / 2; i++) {
+            travelBasicDAO.markAgencyCandidateAsResponded(proposalId, candidates.get(i).getUuid().toString());
+        }
+
+        List<Agency> agencies = travelBasicDAO.getRespondedAgencyCandidates4Proposal(proposalId);
+        assertNotNull(agencies);
+        assertFalse(agencies.isEmpty());
+        assertEquals(candidates.size() / 2, agencies.size());
+
+        List<Agency> agenciesAll = travelBasicDAO.getAgencyCandidates4Proposal(proposalId);
+        assertNotNull(agenciesAll);
+        assertFalse(agenciesAll.isEmpty());
+        assertEquals(candidates.size(), agenciesAll.size());
+    }
+
+    @Test
+    public void testMarkAgencyCandidatesAsElected() throws DatabaseAccessException {
+        String proposalId = UUID.randomUUID().toString();
+        travelBasicDAO.addAgencyCandidates4Proposal(proposalId, "Mock Proposal Summary B", candidates);
+        List<String> agencyIds = new ArrayList<String>(candidates.size());
+        for (int i = 0; i < candidates.size() / 2; i++) {
+            agencyIds.add(candidates.get(i).getUuid().toString());
+        }
+        travelBasicDAO.markAgencyCandidatesAsElected(proposalId, agencyIds);
+
+        List<Agency> agenciesElected = travelBasicDAO.getElectedAgencyCandidates4Proposal(proposalId);
+        assertNotNull(agenciesElected);
+        assertFalse(agenciesElected.isEmpty());
+        assertEquals(candidates.size() / 2, agenciesElected.size());
+
+        List<Agency> agenciesNotElected = travelBasicDAO.getNotElectedAgencyCandidates4Proposal(proposalId);
+        assertNotNull(agenciesNotElected);
+        assertFalse(agenciesNotElected.isEmpty());
+        assertEquals(candidates.size() - candidates.size() / 2, agenciesNotElected.size());
+
+        List<Agency> agenciesAll = travelBasicDAO.getAgencyCandidates4Proposal(proposalId);
+        assertNotNull(agenciesAll);
+        assertFalse(agenciesAll.isEmpty());
+        assertEquals(candidates.size(), agenciesAll.size());
     }
 
     @After
