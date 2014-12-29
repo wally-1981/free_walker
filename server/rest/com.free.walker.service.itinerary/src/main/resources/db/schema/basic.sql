@@ -659,11 +659,9 @@ CREATE TABLE `agency_candidate` (
   `proposal_uuid` binary(16) NOT NULL,
   `proposal_summary` VARCHAR(256) NOT NULL,
   `election_status` smallint(16) NOT NULL DEFAULT 0,
-  `bid_status` tinyint(1) NOT NULL DEFAULT 0,
+  `respond_status` tinyint(1) NOT NULL DEFAULT 0,
   `last_updated` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `agency_uuid_UNIQUE` (`agency_uuid`),
-  UNIQUE KEY `prposal_uuid_UNIQUE` (`proposal_uuid`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
