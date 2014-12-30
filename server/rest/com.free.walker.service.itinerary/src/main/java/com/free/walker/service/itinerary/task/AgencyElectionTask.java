@@ -2,13 +2,12 @@ package com.free.walker.service.itinerary.task;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CancellationException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +26,7 @@ public class AgencyElectionTask extends TimerTask {
     private static final int SCHEDULE_DELAY = 1 * 1000 * 60;
     private static final int DEFAULT_DELAY_MIN = 10;
 
-    private static Timer timer = new Timer();
+    private static int delayMins = DEFAULT_DELAY_MIN;
 
     private MRRoutine agencyElectionRoutine;
     private String proposalId;
@@ -42,33 +41,32 @@ public class AgencyElectionTask extends TimerTask {
 
     public void run() {
         LOG.info(LocalMessages.getMessage(LocalMessages.agency_election_start, proposalId));
-        List<Object> agencies = new ArrayList<Object>();
+        String[] agencyIds = null;
         try {
-            agencies = agencyElectionRoutine.reduce().collect();
+            List<Object> agencies = agencyElectionRoutine.reduce().collect();
+            agencyIds = agencies.toArray(new String[agencies.size()]);
+            if (agencyIds.length == 0) {
+                throw new IllegalStateException(LocalMessages.getMessage(LocalMessages.agency_election_error,
+                    proposalId));
+            } else {
+                LOG.info(LocalMessages.getMessage(LocalMessages.agency_election_success, proposalId,
+                    agencyIds.toString()));
+            }
         } catch (IllegalStateException e) {
-            agencies = null;
+            LOG.error(LocalMessages.getMessage(LocalMessages.agency_election_failed, proposalId), e);
         }
         LOG.info(LocalMessages.getMessage(LocalMessages.agency_election_end, proposalId));
 
-        if (agencies != null) {
-            String[] agencyIds = agencies.toArray(new String[agencies.size()]);
-            LOG.info(LocalMessages.getMessage(LocalMessages.agency_election_success, proposalId,
-                StringUtils.join(agencyIds, ',')));
-
-            try {
-                for (int i = 0; i < agencyIds.length; i++) {
-                    travelRequirementDAO.joinProposalBid(UuidUtil.fromUuidStr(proposalId),
-                        UuidUtil.fromUuidStr(agencyIds[i]));
-                }
-                LOG.info(LocalMessages.getMessage(LocalMessages.submit_proposal_success, proposalId,
-                    StringUtils.join(agencyIds, ',')));
-            } catch (InvalidTravelReqirementException e) {
-                LOG.error(LocalMessages.getMessage(LocalMessages.submit_proposal_failed,
-                    StringUtils.join(agencyIds, ',')), e);
-            } catch (DatabaseAccessException e) {
-                LOG.error(LocalMessages.getMessage(LocalMessages.submit_proposal_failed,
-                    StringUtils.join(agencyIds, ',')), e);
+        try {
+            for (int i = 0; i < agencyIds.length; i++) {
+                travelRequirementDAO.joinProposalBid(UuidUtil.fromUuidStr(proposalId),
+                    UuidUtil.fromUuidStr(agencyIds[i]));
             }
+            LOG.info(LocalMessages.getMessage(LocalMessages.proposal_submission_success, proposalId, agencyIds.toString()));
+        } catch (InvalidTravelReqirementException e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.proposal_submission_failed, agencyIds.toString()), e);
+        } catch (DatabaseAccessException e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.proposal_submission_failed, agencyIds.toString()), e);
         }
     }
 
@@ -77,29 +75,38 @@ public class AgencyElectionTask extends TimerTask {
             throw new NullPointerException();
         }
 
-        int delayMins = DEFAULT_DELAY_MIN;
-        String setting = null;
-        try {
-            Properties applicationConfig = SystemConfigUtil.getApplicationConfig();
-            setting = applicationConfig.getProperty(Constants.agency_election_window_in_min);
-            delayMins = Integer.valueOf(setting);
-        } catch (FileNotFoundException e) {
-            LOG.warn(LocalMessages.getMessage(LocalMessages.read_configuration_file_failed), e);
-        } catch (IOException e) {
-            LOG.warn(LocalMessages.getMessage(LocalMessages.read_configuration_file_failed), e);
-        } catch (RuntimeException e) {
-            delayMins = DEFAULT_DELAY_MIN;
-            LOG.warn(LocalMessages.getMessage(LocalMessages.eval_configuration_value_failed, setting,
-                LocalMessages.eval_configuration_value_failed), e);
+        if (agencyElectionRoutine.immediate()) {
+            delayMins = 0;
+        } else {
+            String setting = null;
+            try {
+                Properties applicationConfig = SystemConfigUtil.getApplicationConfig();
+                setting = applicationConfig.getProperty(Constants.agency_election_window_in_min);
+                delayMins = Integer.valueOf(setting);
+            } catch (FileNotFoundException e) {
+                LOG.warn(LocalMessages.getMessage(LocalMessages.read_configuration_file_failed), e);
+            } catch (IOException e) {
+                LOG.warn(LocalMessages.getMessage(LocalMessages.read_configuration_file_failed), e);
+            } catch (RuntimeException e) {
+                delayMins = DEFAULT_DELAY_MIN;
+                LOG.warn(LocalMessages.getMessage(LocalMessages.eval_configuration_value_failed, setting,
+                    LocalMessages.eval_configuration_value_failed), e);
+            }
         }
 
         try {
-            timer.schedule(new AgencyElectionTask(agencyElectionRoutine.map(), proposalId),
+            new Timer().schedule(new AgencyElectionTask(agencyElectionRoutine.map(), proposalId),
                 (SCHEDULE_DELAY * delayMins) / 1000);
             LOG.info(LocalMessages.getMessage(LocalMessages.schedule_task_scheduled_run_once,
-                AgencyElectionTask.class.getSimpleName(), SCHEDULE_DELAY / 1000));
+                AgencyElectionTask.class.getSimpleName(), (SCHEDULE_DELAY * delayMins) / 1000));
+        } catch (CancellationException e) {
+            LOG.info(LocalMessages.getMessage(LocalMessages.agency_election_task_descheduled, proposalId));
         } catch (IllegalStateException e) {
-            LOG.info(LocalMessages.getMessage(LocalMessages.agency_election_task_cancelled));
+            LOG.error(LocalMessages.getMessage(LocalMessages.agency_election_task_cancelled, proposalId), e);
         }
+    }
+
+    public static int getElectionWindow() {
+        return delayMins;
     }
 }

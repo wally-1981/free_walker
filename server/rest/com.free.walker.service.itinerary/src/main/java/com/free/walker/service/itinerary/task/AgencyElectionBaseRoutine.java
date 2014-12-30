@@ -13,6 +13,8 @@ import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.MRRoutine;
 import com.free.walker.service.itinerary.basic.Agency;
+import com.free.walker.service.itinerary.dao.TravelBasicDAO;
+import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.util.SystemConfigUtil;
 
 public abstract class AgencyElectionBaseRoutine implements MRRoutine {
@@ -49,19 +51,32 @@ public abstract class AgencyElectionBaseRoutine implements MRRoutine {
         }
     }
 
-    protected List<Agency> mappedAgencyIds = new ArrayList<Agency>();
     private List<Object> result = new ArrayList<Object>();
+    protected String proposalId;
+    protected TravelBasicDAO travelBasicDAO;
+
+    protected AgencyElectionBaseRoutine(String proposalId, TravelBasicDAO travelBasicDAO) {
+        this.proposalId = proposalId;
+        this.travelBasicDAO = travelBasicDAO;
+    }
 
     public MRRoutine reduce() {
-        List<Agency> topFeedback = reduceByFeedback(mappedAgencyIds, AGENCY_ELECTION_BY_FEEDBACK_SIZE);
-        List<Agency> topExperience = reduceByExperience(mappedAgencyIds, AGENCY_ELECTION_BY_EXPERIENCE_SIZE);
-        List<Agency> randomSelection = reduceByRandomization(mappedAgencyIds, AGENCY_ELECTION_BY_RANDOMIZATION_SIZE);
+        try {
+            List<Agency> candidates = travelBasicDAO.getAgencyCandidates4Proposal(proposalId);
 
-        result.addAll(topFeedback);
-        result.addAll(topExperience);
-        result.addAll(randomSelection);
-        if (result.size() > AGENCY_ELECTION_MAX_SIZE) {
-            result = result.subList(0, AGENCY_ELECTION_MAX_SIZE - 1);
+            List<Agency> topFeedback = reduceByFeedback(candidates, AGENCY_ELECTION_BY_FEEDBACK_SIZE);
+            List<Agency> topExperience = reduceByExperience(candidates, AGENCY_ELECTION_BY_EXPERIENCE_SIZE);
+            List<Agency> randomSelection = reduceByRandomization(candidates, AGENCY_ELECTION_BY_RANDOMIZATION_SIZE);
+
+            result.addAll(topFeedback);
+            result.addAll(topExperience);
+            result.addAll(randomSelection);
+            if (result.size() > AGENCY_ELECTION_MAX_SIZE) {
+                result = result.subList(0, AGENCY_ELECTION_MAX_SIZE - 1);
+            }
+        } catch (DatabaseAccessException e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.agency_election_reduce_failed, proposalId), e);
+            throw new IllegalStateException(e);
         }
 
         return this;
@@ -69,6 +84,11 @@ public abstract class AgencyElectionBaseRoutine implements MRRoutine {
 
     public List<Object> collect() {
         return result;
+    }
+
+    protected void notify(List<Agency> agencies) {
+        // TODO: Integrate with Messaging System
+        return;
     }
 
     public abstract List<Agency> reduceByFeedback(List<Agency> agencies, int resultMaxSize);

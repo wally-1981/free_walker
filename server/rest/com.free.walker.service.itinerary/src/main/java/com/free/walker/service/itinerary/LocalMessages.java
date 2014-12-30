@@ -108,15 +108,21 @@ public class LocalMessages {
     public static final String load_city_success = "load_city_success";
     public static final String load_tag_success = "load_tag_success";
 
-    public static final String agency_election_start = "agency_election_start";
-    public static final String agency_election_end = "agency_election_end";
-    public static final String agency_election_success = "agency_election_success";
     public static final String agency_election_map_failed = "agency_election_map_failed";
-    public static final String agency_election_reduce_failed = "agency_election_reduce_failed";
+    public static final String agency_election_no_candidate_found = "agency_election_no_candidate_found";
+    public static final String agency_election_invalid_summary = "agency_election_invalid_summary";    
+    public static final String agency_election_persist_candidates_failed = "agency_election_persist_candidates_failed";
+    public static final String agency_election_persist_candidates_success = "agency_election_persist_candidates_success";
+    public static final String agency_election_task_descheduled = "agency_election_task_descheduled";
     public static final String agency_election_task_cancelled = "agency_election_task_cancelled";
-
-    public static final String submit_proposal_failed = "submit_proposal_failed";
-    public static final String submit_proposal_success = "submit_proposal_success";
+    public static final String agency_election_start = "agency_election_start";
+    public static final String agency_election_error = "agency_election_error";
+    public static final String agency_election_reduce_failed = "agency_election_reduce_failed";
+    public static final String agency_election_success = "agency_election_success";
+    public static final String agency_election_failed = "agency_election_failed";
+    public static final String agency_election_end = "agency_election_end";
+    public static final String proposal_submission_failed = "proposal_submission_failed";
+    public static final String proposal_submission_success = "proposal_submission_success";
 
     public static final String schedule_task_scheduled = "schedule_task_scheduled";
     public static final String schedule_task_scheduled_run_once = "schedule_task_scheduled_run_once";

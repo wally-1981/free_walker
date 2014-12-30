@@ -8,4 +8,6 @@ public interface MRRoutine {
     public MRRoutine reduce();
 
     public List<Object> collect();
+
+    public boolean immediate();
 }
