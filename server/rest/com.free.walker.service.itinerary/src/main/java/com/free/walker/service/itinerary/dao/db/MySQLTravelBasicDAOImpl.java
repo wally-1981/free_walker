@@ -18,6 +18,7 @@ import com.free.walker.service.itinerary.basic.Agency;
 import com.free.walker.service.itinerary.basic.City;
 import com.free.walker.service.itinerary.basic.Country;
 import com.free.walker.service.itinerary.basic.Province;
+import com.free.walker.service.itinerary.basic.StringPair;
 import com.free.walker.service.itinerary.basic.Tag;
 import com.free.walker.service.itinerary.dao.DAOConstants;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
@@ -396,6 +397,25 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
         try {
             BasicMapper basicMapper = session.getMapper(BasicMapper.class);
             return basicMapper.getAgencyCandidates4Proposal(proposalId);
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public Map<String, String> getProposals4AgencyCandidate(String agencyId, int electionWindow)
+        throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            Map<String, String> proposalSummaries = new HashMap<String, String>();
+            List<StringPair> summaries = basicMapper.getProposals4AgencyCandidate(agencyId, electionWindow);
+            for (int i = 0; i < summaries.size(); i++) {
+                proposalSummaries.put(summaries.get(i).getPrimary(), summaries.get(i).getSecondary());
+            }
+            return proposalSummaries;
         } catch (Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);

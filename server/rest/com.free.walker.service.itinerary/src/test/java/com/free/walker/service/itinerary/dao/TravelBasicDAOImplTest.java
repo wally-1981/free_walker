@@ -6,7 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.After;
@@ -627,6 +629,33 @@ public class TravelBasicDAOImplTest {
         assertNotNull(agencies);
         assertFalse(agencies.isEmpty());
         assertEquals(candidates.size(), agencies.size());
+    }
+
+    @Test
+    public void testGetProposals4Agency() throws DatabaseAccessException {
+        {
+            String proposalId = UUID.randomUUID().toString();
+            travelBasicDAO.addAgencyCandidates4Proposal(proposalId, "Mock Proposal Summary A", candidates);
+
+            Map<String, String> proposalSummaries = travelBasicDAO.getProposals4AgencyCandidate(a1, 10);
+            assertNotNull(proposalSummaries);
+            assertEquals(1, proposalSummaries.values().size());
+            assertTrue("Mock Proposal Summary A".equals(proposalSummaries.values().iterator().next()));
+        }
+
+        {
+            String proposalId = UUID.randomUUID().toString();
+            travelBasicDAO.addAgencyCandidates4Proposal(proposalId, "Mock Proposal Summary B", candidates);
+
+            Map<String, String> proposalSummaries = travelBasicDAO.getProposals4AgencyCandidate(a1, 10);
+            assertNotNull(proposalSummaries);
+            assertEquals(2, proposalSummaries.values().size());
+            Iterator<String> summaries = proposalSummaries.values().iterator();
+            String s1 = summaries.next();
+            String s2 = summaries.next();
+            assertTrue("Mock Proposal Summary A".equals(s1) || "Mock Proposal Summary B".equals(s1));
+            assertTrue("Mock Proposal Summary A".equals(s2) || "Mock Proposal Summary B".equals(s2));
+        }
     }
 
     @Test

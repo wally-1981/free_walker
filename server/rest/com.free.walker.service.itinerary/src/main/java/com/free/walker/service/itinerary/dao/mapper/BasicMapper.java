@@ -9,6 +9,7 @@ import com.free.walker.service.itinerary.basic.Agency;
 import com.free.walker.service.itinerary.basic.City;
 import com.free.walker.service.itinerary.basic.Country;
 import com.free.walker.service.itinerary.basic.Province;
+import com.free.walker.service.itinerary.basic.StringPair;
 import com.free.walker.service.itinerary.basic.Tag;
 
 public interface BasicMapper {
@@ -63,6 +64,9 @@ public interface BasicMapper {
     public void addAgencyCandidates4Proposal(Map<String, Object> proposalCandidates);
 
     public List<Agency> getAgencyCandidates4Proposal(@Param("proposalId") String proposalId);
+
+    public List<StringPair> getProposals4AgencyCandidate(@Param("agencyId") String agencyId,
+        @Param("latestNMin") int latestNMin);
 
     public void markAgencyCandidateAsResponded(@Param("proposalId") String proposalId,
         @Param("agencyId") String agencyId);

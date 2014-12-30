@@ -50,7 +50,7 @@
 		select uuid as uuid from country where hex(uuid) = replace(#{destinationLocationUuid}, '-', '')
 	</sql>
 
-	<select id="pingPersistence" resultType="int">
+	<select id="pingPersistence" resultType="Integer">
 		select
 			count(*)
 		from
@@ -136,7 +136,7 @@
 	</select>
 
 	<!-- Continents are stored in memory, so sql will not count them. -->
-	<select id="countLocationByTerm" resultType="int">
+	<select id="countLocationByTerm" resultType="Integer">
 		select
 			count(uuid)
 		from
@@ -146,7 +146,7 @@
 	</select>
 
 	<!-- Continents are stored in memory, so sql will not count them. -->
-	<select id="countLocationByUuid" resultType="int">
+	<select id="countLocationByUuid" resultType="Integer">
 		select
 			count(uuid)
 		from
@@ -156,7 +156,7 @@
 	</select>
 
 	<!-- Continents are stored in memory, so sql will not count them. -->
-	<select id="countDomesticLocationByTerm" resultType="int">
+	<select id="countDomesticLocationByTerm" resultType="Integer">
 		select
 			count(*)
 		from city as c
@@ -174,7 +174,7 @@
 	</select>
 
 	<!-- Continents are stored in memory, so sql will not count them. -->
-	<select id="countDomesticLocationByUuid" resultType="int">
+	<select id="countDomesticLocationByUuid" resultType="Integer">
 		select
 			count(*)
 		from city as c
@@ -296,7 +296,7 @@
 			hex(uuid) = replace(#{uuid}, '-', '')
 	</delete>
 
-	<insert id="addAgencyCandidates4Proposal" parameterType="map">
+	<insert id="addAgencyCandidates4Proposal" parameterType="Map">
 		insert into agency_candidate (agency_uuid, proposal_uuid, proposal_summary)
 		values
 		<foreach collection="candidates" item="agency" index="index" separator=",">
@@ -311,7 +311,17 @@
 		join agency_candidate
 			on hex(agency.uuid) = hex(agency_candidate.agency_uuid)
 		where
-			hex(agency_candidate.proposal_uuid) = replace(#{proposalId}, '-', '');
+			hex(agency_candidate.proposal_uuid) = replace(#{proposalId}, '-', '')
+	</select>
+
+	<select id="getProposals4AgencyCandidate" resultType="StringPair">
+		select
+			hex(ac.proposal_uuid) as 'primary', ac.proposal_summary as secondary
+		from agency_candidate as ac
+		where
+			hex(ac.agency_uuid) = replace(#{agencyId}, '-', '') and
+			ac.election_status = 0 and ac.respond_status = 0 and
+			ac.created between adddate(now(), interval -#{latestNMin} minute) and now()
 	</select>
 
 	<update id="markAgencyCandidateAsResponded">
@@ -330,10 +340,10 @@
 		join agency_candidate
 			on hex(agency.uuid) = hex(agency_candidate.agency_uuid)
 		where
-			hex(agency_candidate.proposal_uuid) = replace(#{proposalId}, '-', '') and agency_candidate.respond_status = 1;
+			hex(agency_candidate.proposal_uuid) = replace(#{proposalId}, '-', '') and agency_candidate.respond_status = 1
 	</select>
 
-	<update id="markAgencyCandidatesAsElected" parameterType="map">
+	<update id="markAgencyCandidatesAsElected" parameterType="Map">
 		<foreach collection="agencyIds" item="agencyId" index="index" separator=";">
 			update
 				agency_candidate
@@ -350,7 +360,7 @@
 		join agency_candidate
 			on hex(agency.uuid) = hex(agency_candidate.agency_uuid)
 		where
-			hex(agency_candidate.proposal_uuid) = replace(#{proposalId}, '-', '') and agency_candidate.election_status != 0;
+			hex(agency_candidate.proposal_uuid) = replace(#{proposalId}, '-', '') and agency_candidate.election_status != 0
 	</select>
 
 	<select id="getNotElectedAgencyCandidates4Proposal" resultType="Agency">
@@ -360,7 +370,7 @@
 		join agency_candidate
 			on hex(agency.uuid) = hex(agency_candidate.agency_uuid)
 		where
-			hex(agency_candidate.proposal_uuid) = replace(#{proposalId}, '-', '') and agency_candidate.election_status = 0;
+			hex(agency_candidate.proposal_uuid) = replace(#{proposalId}, '-', '') and agency_candidate.election_status = 0
 	</select>
 </mapper>
  

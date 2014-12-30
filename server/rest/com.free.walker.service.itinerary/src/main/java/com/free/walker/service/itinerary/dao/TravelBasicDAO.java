@@ -1,6 +1,7 @@
 package com.free.walker.service.itinerary.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.free.walker.service.itinerary.basic.Agency;
 import com.free.walker.service.itinerary.basic.City;
@@ -50,6 +51,9 @@ public interface TravelBasicDAO extends HealthyDAO {
         throws DatabaseAccessException;
 
     public List<Agency> getAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException;
+
+    public Map<String, String> getProposals4AgencyCandidate(String agencyId, int electionWindow)
+        throws DatabaseAccessException;
 
     public void markAgencyCandidatesAsElected(String proposalId, List<String> agencyIds) throws DatabaseAccessException;
 
