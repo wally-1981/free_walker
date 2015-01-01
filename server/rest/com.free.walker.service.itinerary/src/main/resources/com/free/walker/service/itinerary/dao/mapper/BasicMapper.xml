@@ -61,6 +61,13 @@
 			table_name = 'city'
 	</select>
 
+	<select id="getAllRegions" resultType="Region">
+		select
+			<include refid="locationColumns"/>
+		from
+			region
+	</select>
+
 	<select id="getAllCounties" resultType="Country">
 		select
 			<include refid="locationColumns"/>

@@ -7,10 +7,13 @@ import com.free.walker.service.itinerary.basic.Agency;
 import com.free.walker.service.itinerary.basic.City;
 import com.free.walker.service.itinerary.basic.Country;
 import com.free.walker.service.itinerary.basic.Province;
+import com.free.walker.service.itinerary.basic.Region;
 import com.free.walker.service.itinerary.basic.Tag;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 
 public interface TravelBasicDAO extends HealthyDAO {
+    public List<Region> getAllRegions() throws DatabaseAccessException;
+
     public List<Country> getAllCountries() throws DatabaseAccessException;
 
     public List<Province> getAllProvinces() throws DatabaseAccessException;

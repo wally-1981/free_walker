@@ -99,10 +99,12 @@ public class LocalMessages {
 
     public static final String invalid_parameter_with_value = "invalid_parameter_with_value";
 
+    public static final String load_region_failed = "load_region_failed";
     public static final String load_country_failed = "load_country_failed";
     public static final String load_province_failed = "load_province_failed";
     public static final String load_city_failed = "load_city_failed";
     public static final String load_tag_failed = "load_tag_failed";
+    public static final String load_region_success = "load_region_success";
     public static final String load_country_success = "load_country_success";
     public static final String load_province_success = "load_province_success";
     public static final String load_city_success = "load_city_success";

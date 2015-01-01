@@ -6,6 +6,7 @@
 <configuration>
 	<typeAliases>
 		<typeAlias type="com.free.walker.service.itinerary.basic.StringPair" alias="StringPair"/>
+		<typeAlias type="com.free.walker.service.itinerary.basic.Region" alias="Region"/>
 		<typeAlias type="com.free.walker.service.itinerary.basic.Country" alias="Country"/>
 		<typeAlias type="com.free.walker.service.itinerary.basic.Province" alias="Province"/>
 		<typeAlias type="com.free.walker.service.itinerary.basic.City" alias="City"/>
