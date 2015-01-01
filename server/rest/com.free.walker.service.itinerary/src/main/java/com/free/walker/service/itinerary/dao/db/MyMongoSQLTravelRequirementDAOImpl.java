@@ -914,7 +914,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         Calendar until = Calendar.getInstance();
         if (numberOfDay != 0) {
             until.setTimeInMillis(since.getTimeInMillis());
-            until.roll(Calendar.DAY_OF_MONTH, numberOfDay);
+            until.add(Calendar.DATE, numberOfDay);
         }
 
         List<TravelProposal> result = new ArrayList<TravelProposal>();
@@ -954,7 +954,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         Calendar until = Calendar.getInstance();
         if (numberOfDay != 0) {
             until.setTimeInMillis(since.getTimeInMillis());
-            until.roll(Calendar.DAY_OF_MONTH, numberOfDay);
+            until.add(Calendar.DATE, numberOfDay);
         }
 
         List<TravelProposal> result = new ArrayList<TravelProposal>();

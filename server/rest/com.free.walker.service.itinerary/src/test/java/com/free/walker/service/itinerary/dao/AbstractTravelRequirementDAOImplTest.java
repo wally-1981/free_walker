@@ -1014,7 +1014,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         }
 
         Calendar since = Calendar.getInstance();
-        since.roll(Calendar.SECOND, -5);
+        since.add(Calendar.SECOND, -5);
 
         List<TravelProposal> travelProposals = travelRequirementDAO.getTravelProposalsByAccount(
             UuidUtil.fromUuidStr(Constants.ADMIN_ACCOUNT.getUuid()), since, 0);
@@ -1032,7 +1032,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     @Test
     public void testGetProposalsByAgencyId() throws InvalidTravelReqirementException, DatabaseAccessException {
         UUID proposalId1 = null;
-        {            
+        {
             TravelLocation destination = new TravelLocation(Constants.TAIBEI);
             TravelLocation departure = new TravelLocation(Constants.BARCELONA);
             ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -1065,7 +1065,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         travelRequirementDAO.joinProposalBid(proposalId2, agencyId2);
 
         Calendar since = Calendar.getInstance();
-        since.roll(Calendar.DAY_OF_MONTH, -1);
+        since.add(Calendar.DATE, -1);
 
         List<TravelProposal> travelProposals4Agency1 = travelRequirementDAO.getTravelProposalsByAgency(
             agencyId1, since, 1);

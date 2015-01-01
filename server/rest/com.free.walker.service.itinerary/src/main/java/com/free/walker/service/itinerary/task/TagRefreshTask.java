@@ -41,7 +41,7 @@ public class TagRefreshTask extends TimerTask {
         firstStart.set(Calendar.HOUR_OF_DAY, 3);
         firstStart.set(Calendar.MINUTE, 0);
         firstStart.set(Calendar.SECOND, 0);
-        firstStart.roll(Calendar.DAY_OF_MONTH, 1);
+        firstStart.add(Calendar.DATE, 1);
 
         timer.schedule(new TagRefreshTask(), firstStart.getTime(), SCHEDULE_PERIOD_HOURS * 1000 * 3600);
         LOG.info(LocalMessages.getMessage(LocalMessages.schedule_task_scheduled, TagRefreshTask.class.getSimpleName(),
