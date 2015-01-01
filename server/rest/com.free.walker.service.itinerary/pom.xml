@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.free.walker.service</groupId>
 	<artifactId>com.free.walker.service.itinerary</artifactId>
-	<version>0.0.4</version>
+	<version>0.0.5</version>
 	<packaging>jar</packaging>
 	<name>itinerary_service</name>
 

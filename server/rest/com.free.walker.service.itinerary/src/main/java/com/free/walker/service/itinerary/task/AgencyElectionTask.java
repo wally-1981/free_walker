@@ -70,27 +70,31 @@ public class AgencyElectionTask extends TimerTask {
         }
     }
 
-    public static void schedule(MRRoutine agencyElectionRoutine, String proposalId) {
+    public static void schedule(MRRoutine agencyElectionRoutine, String proposalId, int delayMins) {
         if (agencyElectionRoutine == null || proposalId == null) {
             throw new NullPointerException();
         }
 
         if (agencyElectionRoutine.immediate()) {
-            delayMins = 0;
+            AgencyElectionTask.delayMins = 0;
         } else {
-            String setting = null;
-            try {
-                Properties applicationConfig = SystemConfigUtil.getApplicationConfig();
-                setting = applicationConfig.getProperty(Constants.agency_election_window_in_min);
-                delayMins = Integer.valueOf(setting);
-            } catch (FileNotFoundException e) {
-                LOG.warn(LocalMessages.getMessage(LocalMessages.read_configuration_file_failed), e);
-            } catch (IOException e) {
-                LOG.warn(LocalMessages.getMessage(LocalMessages.read_configuration_file_failed), e);
-            } catch (RuntimeException e) {
-                delayMins = DEFAULT_DELAY_MIN;
-                LOG.warn(LocalMessages.getMessage(LocalMessages.eval_configuration_value_failed, setting,
-                    LocalMessages.eval_configuration_value_failed), e);
+            if (delayMins <= 0) {
+                String setting = null;
+                try {
+                    Properties applicationConfig = SystemConfigUtil.getApplicationConfig();
+                    setting = applicationConfig.getProperty(Constants.agency_election_window_in_min);
+                    AgencyElectionTask.delayMins = Integer.valueOf(setting);
+                } catch (FileNotFoundException e) {
+                    LOG.warn(LocalMessages.getMessage(LocalMessages.read_configuration_file_failed), e);
+                } catch (IOException e) {
+                    LOG.warn(LocalMessages.getMessage(LocalMessages.read_configuration_file_failed), e);
+                } catch (RuntimeException e) {
+                    AgencyElectionTask.delayMins = DEFAULT_DELAY_MIN;
+                    LOG.warn(LocalMessages.getMessage(LocalMessages.eval_configuration_value_failed, setting,
+                        LocalMessages.eval_configuration_value_failed), e);
+                }
+            } else {
+                AgencyElectionTask.delayMins = delayMins;
             }
         }
 
@@ -101,8 +105,10 @@ public class AgencyElectionTask extends TimerTask {
                 AgencyElectionTask.class.getSimpleName(), (SCHEDULE_DELAY * delayMins) / 1000));
         } catch (CancellationException e) {
             LOG.info(LocalMessages.getMessage(LocalMessages.agency_election_task_descheduled, proposalId));
+            throw e;
         } catch (IllegalStateException e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.agency_election_task_cancelled, proposalId), e);
+            throw e;
         }
     }
 

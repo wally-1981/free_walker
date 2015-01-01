@@ -53,6 +53,7 @@ public class Introspection {
         public static final String AUTHOR = "author";
         public static final String NAME = "name";
         public static final String TITLE = "title";
+        public static final String SUMMARY = "summary";
         public static final String DATE = "date";
         public static final String CHINESE_NAME = "chinese_name";
         public static final String PINYIN_NAME = "pinyin_name";

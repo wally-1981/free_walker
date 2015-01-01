@@ -1,7 +1,10 @@
 package com.free.walker.service.itinerary.rest;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CancellationException;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -23,6 +26,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.cxf.jaxrs.ext.MessageContext;
 
 import com.free.walker.service.itinerary.LocalMessages;
+import com.free.walker.service.itinerary.MRRoutine;
 import com.free.walker.service.itinerary.basic.Account;
 import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
@@ -33,6 +37,7 @@ import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.TravelProposal;
 import com.free.walker.service.itinerary.req.TravelRequirement;
+import com.free.walker.service.itinerary.task.AgencyElectionReduceRoutine;
 import com.free.walker.service.itinerary.task.AgencyElectionRoutine;
 import com.free.walker.service.itinerary.task.AgencyElectionTask;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
@@ -66,7 +71,7 @@ public class ItineraryService {
         UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
 
         Calendar weekAgo = Calendar.getInstance();
-        weekAgo.roll(Calendar.DAY_OF_MONTH, -7);
+        weekAgo.add(Calendar.DATE, -7);
 
         try {
             List<TravelProposal> proposals = travelRequirementDAO.getTravelProposalsByAccount(acntId, weekAgo, 7);
@@ -92,7 +97,7 @@ public class ItineraryService {
     @Path("/proposals/agencies/{agencyId}/")
     public Response getProposals(@PathParam("agencyId") String agencyId) {
         Calendar weekAgo = Calendar.getInstance();
-        weekAgo.roll(Calendar.DAY_OF_MONTH, -7);
+        weekAgo.add(Calendar.DATE, -7);
 
         try {
             List<TravelProposal> proposals = travelRequirementDAO.getTravelProposalsByAgency(
@@ -118,7 +123,8 @@ public class ItineraryService {
     @POST
     @Context
     @Path("/proposals/{proposalId}/agencies/")
-    public Response submitProposal(@PathParam("proposalId") String proposalId, @Context MessageContext msgCntx) {
+    public Response submitProposal(@PathParam("proposalId") String proposalId, @Context MessageContext msgCntx,
+        @QueryParam("delayMins") int delayMins) {
         try {
             Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
             UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
@@ -127,18 +133,89 @@ public class ItineraryService {
                 .fromUuidStr(proposalId));
             if (itineraries.size() == 1) {
                 ItineraryRequirement itinerary = (ItineraryRequirement) itineraries.get(0);
-                AgencyElectionTask.schedule(new AgencyElectionRoutine(travelBasicDAO, itinerary.getDeparture(),
-                    itinerary.getDestination()), proposalId);
+                MRRoutine agencyElectionRoutine = new AgencyElectionRoutine(proposalId, travelBasicDAO,
+                    travelRequirementDAO, itinerary.getDeparture(), itinerary.getDestination());
+                AgencyElectionTask.schedule(agencyElectionRoutine, proposalId, delayMins);
             } else if (itineraries.size() > 1) {
                 ItineraryRequirement itinerary = (ItineraryRequirement) itineraries.get(0);
-                AgencyElectionTask.schedule(new AgencyElectionRoutine(travelBasicDAO, itinerary.getDeparture()),
-                    proposalId);
+                MRRoutine agencyElectionRoutine = new AgencyElectionRoutine(proposalId, travelBasicDAO,
+                    travelRequirementDAO, itinerary.getDeparture());
+                AgencyElectionTask.schedule(agencyElectionRoutine, proposalId, delayMins);
             } else {
                 return Response.status(Status.CONFLICT).build();
             }
             return Response.status(Status.ACCEPTED).build();
+        } catch(CancellationException e) {
+            return Response.status(Status.NO_CONTENT).build();
         } catch (InvalidTravelReqirementException e) {
             return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        } catch (IllegalStateException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.getMessage()).build();
+        }
+    }
+
+    @POST
+    @Path("/proposals/{proposalId}/agencies/next/")
+    public Response resubmitProposal(@PathParam("proposalId") String proposalId) {
+        try {
+            List<TravelRequirement> itineraries = travelRequirementDAO.getItineraryRequirements(UuidUtil
+                .fromUuidStr(proposalId));
+            if (itineraries.size() == 1) {
+                ItineraryRequirement itinerary = (ItineraryRequirement) itineraries.get(0);
+                MRRoutine agencyElectionRoutine = new AgencyElectionReduceRoutine(proposalId, travelBasicDAO,
+                    travelRequirementDAO, itinerary.getDeparture(), itinerary.getDestination());
+                AgencyElectionTask.schedule(agencyElectionRoutine, proposalId, -1);
+            } else if (itineraries.size() > 1) {
+                ItineraryRequirement itinerary = (ItineraryRequirement) itineraries.get(0);
+                MRRoutine agencyElectionRoutine = new AgencyElectionReduceRoutine(proposalId, travelBasicDAO,
+                    travelRequirementDAO, itinerary.getDeparture());
+                AgencyElectionTask.schedule(agencyElectionRoutine, proposalId, -1);
+            } else {
+                return Response.status(Status.CONFLICT).build();
+            }
+            return Response.status(Status.ACCEPTED).build();
+        } catch(CancellationException e) {
+            return Response.status(Status.NO_CONTENT).build();
+        } catch (InvalidTravelReqirementException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        } catch (IllegalStateException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("/proposals/agencies/{agencyId}/")
+    public Response getStagedProposals(@PathParam("agencyId") String agencyId) {
+        try {
+            Map<String, String> proposalsSummary = travelBasicDAO.getProposals4AgencyCandidate(agencyId,
+                AgencyElectionTask.getElectionWindow());
+            JsonArrayBuilder proposalIds = Json.createArrayBuilder();
+            JsonArrayBuilder proposalSummaries = Json.createArrayBuilder();
+            Iterator<String> proposalIdIter = proposalsSummary.keySet().iterator();
+            while (proposalIdIter.hasNext()) {
+                String proposalId = proposalIdIter.next();
+                String proposalSummary = proposalsSummary.get(proposalId);
+                proposalIds.add(proposalId);
+                proposalSummaries.add(proposalSummary);
+            }
+            JsonObject summaries = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, proposalIds)
+                .add(Introspection.JSONKeys.SUMMARY, proposalSummaries).build();
+            return Response.ok(summaries).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
+    }
+
+    @PUT
+    @Path("/proposals/{proposalId}/agencies/{agencyId}/")
+    public Response grabProposal(@PathParam("proposalId") String proposalId, @PathParam("agencyId") String agencyId) {
+        try {
+            travelBasicDAO.markAgencyCandidateAsResponded(proposalId, agencyId);
+            return Response.status(Status.OK).build();
         } catch (DatabaseAccessException e) {
             return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
         }

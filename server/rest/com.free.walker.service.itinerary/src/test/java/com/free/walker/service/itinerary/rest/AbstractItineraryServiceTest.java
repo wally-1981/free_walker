@@ -143,7 +143,7 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
     }
 
     @Test
-    public void testAll() throws URISyntaxException {
+    public void testAll() throws URISyntaxException, InterruptedException {
         /*
          * 新建一个Proposal，同时添加一个初始的Itinerary。
          */
@@ -688,12 +688,12 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
          */
         {
             HttpPost post = new HttpPost();
-            post.setURI(new URI(itineraryServiceUrlStr + "proposals/" + proposalId + "/agencies"));
+            post.setURI(new URI(itineraryServiceUrlStr + "proposals/" + proposalId + "/agencies?delayMins=1"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             try {
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
-                assertEquals(HttpStatus.ACCEPTED_202, statusCode);
+                assertEquals(HttpStatus.NO_CONTENT_204, statusCode);
             } catch (IOException e) {
                 throw new ProcessingException(e);
             } finally {
@@ -702,7 +702,7 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
         }
 
         /*
-         * 查询我提交的Proposal。
+         * 查询我（游客）提交的Proposal。
          */
         {
             HttpGet get = new HttpGet();
@@ -725,5 +725,41 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
                 get.abort();
             }
         }
+
+        /*
+         * 查看我（旅行社）为候选的Proposal。
+         */
+        {
+            ;
+        }
+
+        /*
+         * 旅行社抢单Proposal。
+         */
+        {
+            ;
+        }
+
+        /*
+         * 查询我（旅行社）为候选的Proposal。
+         */
+        {
+            ;
+        }
+
+        {
+            Thread.sleep(1000 * 90);
+        }
+
+        /*
+         * 查询我（旅行社）收到的Proposal。
+         */
+        {
+            ;
+        }
+
+        /*
+         * 再次提交Proposal。
+         */
     }
 }
