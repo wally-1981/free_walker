@@ -18,6 +18,7 @@ import com.free.walker.service.itinerary.basic.Agency;
 import com.free.walker.service.itinerary.basic.City;
 import com.free.walker.service.itinerary.basic.Country;
 import com.free.walker.service.itinerary.basic.Province;
+import com.free.walker.service.itinerary.basic.Region;
 import com.free.walker.service.itinerary.basic.StringPair;
 import com.free.walker.service.itinerary.basic.Tag;
 import com.free.walker.service.itinerary.dao.DAOConstants;
@@ -73,6 +74,20 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
         } catch(Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_init_failure, mysqlDatabaseUrl, mysqlDatabaseDriver), e);
             return false;
+        } finally {
+            session.close();
+        }
+    }
+
+    public List<Region> getAllRegions() throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            List<Region> regions = basicMapper.getAllRegions();
+            return regions;
+        }  catch(Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
         } finally {
             session.close();
         }

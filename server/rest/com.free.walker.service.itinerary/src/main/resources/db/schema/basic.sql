@@ -28,6 +28,34 @@ INSERT INTO itinerary.tag (name, frequency) VALUES ('摄影', 162);
 UNLOCK TABLES;
 
 --
+-- Table structure for table `region`
+--
+
+DROP TABLE IF EXISTS `region`;
+CREATE TABLE `region` (
+  `id` tinyint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` binary(16) NOT NULL,
+  `name` varchar(48) NOT NULL,
+  `chinese_name` varchar(48) NOT NULL,
+  `pinyin_name` varchar(48) NOT NULL,
+  `code` int(16) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `uuid_UNIQUE` (`uuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `region`
+--
+
+LOCK TABLES `region` WRITE;
+
+INSERT INTO itinerary.region (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('2f4c029aa74d470fa6b217b98c82a400'),'SoutheastAsia','东南亚','dongnanya');
+INSERT INTO itinerary.region (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('2a066cc457874226b6661885c840139b'),'MiddleEast','中东','zhongdong');
+
+UNLOCK TABLES;
+
+--
 -- Table structure for table `country`
 --
 
