@@ -14,16 +14,20 @@
 	<sql id="agencyColumns">
 		hex(agency.uuid) as uuid,
 		agency.name as name,
-		hex(agency.send_location_uuid) as departure,
-		hex(agency.recv_location_uuid) as destination
+		agency.title as title,
+		agency.rating as rating,
+		agency.hmd as hmd,
+		agency.exp as exp
 	</sql>
 
 	<sql id="selectLocationsByUuid">
-		select uuid from city where hex(uuid) = replace(#{uuid}, '-', '')
+		select uuid from city where uuid = unhex(replace(#{uuid}, '-', ''))
 		union
-		select uuid from province where hex(uuid) = replace(#{uuid}, '-', '')
+		select uuid from province where uuid = unhex(replace(#{uuid}, '-', ''))
 		union
-		select uuid from country where hex(uuid) = replace(#{uuid}, '-', '')
+		select uuid from country where uuid = unhex(replace(#{uuid}, '-', ''))
+		union
+		select uuid from region where uuid = unhex(replace(#{uuid}, '-', ''))
 	</sql>
 
 	<sql id="selectLocationsByTerm">
@@ -32,22 +36,40 @@
 		select uuid from province where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
 		union
 		select uuid from country where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
+		union
+		select uuid from region where chinese_name = #{term} or name = #{term} or pinyin_name = #{term}
 	</sql>
 
 	<sql id="selectLocationsByDepartureUuid">
-		select uuid as uuid from city where hex(uuid) = replace(#{departureLocationUuid}, '-', '')
+		select uuid as uuid from city where uuid = unhex(replace(#{departureLocationUuid}, '-', ''))
 		union
-		select uuid as uuid from province where hex(uuid) = replace(#{departureLocationUuid}, '-', '')
+		select uuid as uuid from province where uuid = unhex(replace(#{departureLocationUuid}, '-', ''))
 		union
-		select uuid as uuid from country where hex(uuid) = replace(#{departureLocationUuid}, '-', '')
+		select uuid as uuid from country where uuid = unhex(replace(#{departureLocationUuid}, '-', ''))
+		union
+		select uuid as uuid from region where uuid = unhex(replace(#{departureLocationUuid}, '-', ''))
 	</sql>
 
 	<sql id="selectLocationsByDestinationUuid">
-		select uuid as uuid from city where hex(uuid) = replace(#{destinationLocationUuid}, '-', '')
+		select uuid as uuid from city where uuid = unhex(replace(#{destinationLocationUuid}, '-', ''))
 		union
-		select uuid as uuid from province where hex(uuid) = replace(#{destinationLocationUuid}, '-', '')
+		select uuid as uuid from province where uuid = unhex(replace(#{destinationLocationUuid}, '-', ''))
 		union
-		select uuid as uuid from country where hex(uuid) = replace(#{destinationLocationUuid}, '-', '')
+		select uuid as uuid from country where uuid = unhex(replace(#{destinationLocationUuid}, '-', ''))
+		union
+		select uuid as uuid from region where uuid = unhex(replace(#{destinationLocationUuid}, '-', ''))
+	</sql>
+
+	<sql id="joinAgencyBizLocation4Send">
+		join agency_biz_location on agency_biz_location.location_uuid = location.uuid
+		join agency on agency.uuid = agency_biz_location.agency_uuid
+		where agency_biz_location.send_recv = 0
+	</sql>
+
+	<sql id="joinAgencyBizLocation4Recv">
+		join agency_biz_location on agency_biz_location.location_uuid = location.uuid
+		join agency on agency.uuid = agency_biz_location.agency_uuid
+		where agency_biz_location.send_recv = 1
 	</sql>
 
 	<select id="pingPersistence" resultType="Integer">
@@ -91,13 +113,22 @@
 		from city
 	</select>
 
+	<select id="getRegion" resultType="Region">
+		select
+			<include refid="locationColumns"/>
+		from
+			region
+		where
+			uuid = unhex(replace(#{uuid}, '-', ''))
+	</select>
+
 	<select id="getCountry" resultType="Country">
 		select
 			<include refid="locationColumns"/>
 		from
 			country
 		where
-			hex(uuid) = replace(#{uuid}, '-', '')
+			uuid = unhex(replace(#{uuid}, '-', ''))
 	</select>
 
 	<select id="getProvince" resultType="Province">
@@ -106,7 +137,7 @@
 		from
 			province
 		where
-			hex(uuid) = replace(#{uuid}, '-', '')
+			uuid = unhex(replace(#{uuid}, '-', ''))
 	</select>
 
 	<select id="getCity" resultType="City">
@@ -117,7 +148,7 @@
 			continent_id as continentId
 		from city
 		where
-			hex(uuid) = replace(#{uuid}, '-', '')
+			uuid = unhex(replace(#{uuid}, '-', ''))
 	</select>
 
 	<!-- Continents are stored in memory, so sql will not count them. -->
@@ -168,9 +199,9 @@
 			count(*)
 		from city as c
 		right join province as p
-			on hex(c.province_uuid) = hex(p.uuid)
+			on c.province_uuid = p.uuid
 		right join country as co
-			on hex(c.country_uuid) = hex(co.uuid)
+			on c.country_uuid = co.uuid
 		where
 			co.name = 'China' and
 			(
@@ -186,12 +217,12 @@
 			count(*)
 		from city as c
 		right join province as p
-			on hex(c.province_uuid) = hex(p.uuid)
+			on c.province_uuid = p.uuid
 		right join country as co
-			on hex(c.country_uuid) = hex(co.uuid)
+			on c.country_uuid = co.uuid
 		where
 			co.name = 'China' and
-			(hex(c.uuid) = replace(#{uuid}, '-', '') or hex(p.uuid) = replace(#{uuid}, '-', '') or hex(co.uuid) = replace(#{uuid}, '-', ''))
+			(c.uuid = unhex(replace(#{uuid}, '-', '')) or p.uuid = unhex(replace(#{uuid}, '-', '')) or co.uuid = unhex(replace(#{uuid}, '-', '')))
 	</select>
 
 	<select id="getAgencies4DomesticDestination" resultType="Agency">
@@ -201,9 +232,9 @@
 		(
 			<include refid="selectLocationsByDepartureUuid"/>
 			union
-			select associated_location_uuid as uuid from location_association where hex(location_uuid) = replace(#{departureLocationUuid}, '-', '')
+			select associated_location_uuid as uuid from location_association where location_uuid = unhex(replace(#{departureLocationUuid}, '-', ''))
 		) as location
-		join agency on hex(location.uuid) = hex(agency.send_location_uuid)
+		<include refid="joinAgencyBizLocation4Send"/>
 		
 		union
 		
@@ -213,9 +244,9 @@
 		(
 			<include refid="selectLocationsByDestinationUuid"/>
 			union
-			select associated_location_uuid as uuid from location_association where hex(location_uuid) = replace(#{destinationLocationUuid}, '-', '')
+			select associated_location_uuid as uuid from location_association where location_uuid = unhex(replace(#{destinationLocationUuid}, '-', ''))
 		) as location
-		join agency on hex(location.uuid) = hex(agency.recv_location_uuid)
+		<include refid="joinAgencyBizLocation4Recv"/>
 	</select>
 
 	<select id="getAgencies4InternationalDestination" resultType="Agency">
@@ -225,11 +256,11 @@
 		(
 			<include refid="selectLocationsByDepartureUuid"/>
 			union
-			select associated_location_uuid as uuid from location_association where hex(location_uuid) = replace(#{departureLocationUuid}, '-', '')
+			select associated_location_uuid as uuid from location_association where location_uuid = unhex(replace(#{departureLocationUuid}, '-', ''))
 			union
-			select port_location_uuid as uuid from port_association where hex(location_uuid) = replace(#{destinationLocationUuid}, '-', '')
+			select port_location_uuid as uuid from port_association where location_uuid = unhex(replace(#{destinationLocationUuid}, '-', ''))
 		) as location
-		join agency on hex(location.uuid) = hex(agency.send_location_uuid)
+		<include refid="joinAgencyBizLocation4Send"/>
 		
 		union
 		
@@ -239,11 +270,11 @@
 		(
 			<include refid="selectLocationsByDestinationUuid"/>
 			union
-			select convert(unhex(continent_id), binary(16)) as uuid from city where continent_id = #{destinationLocationUuid}
+			select convert(unhex(continent_id), binary(16)) as uuid from city where continent_id = #{destinationLocationUuid} limit 1
 			union
-			select associated_location_uuid as uuid from location_association where hex(location_uuid) = replace(#{destinationLocationUuid}, '-', '')
+			select associated_location_uuid as uuid from location_association where location_uuid = unhex(replace(#{destinationLocationUuid}, '-', ''))
 		) as location
-		join agency on hex(location.uuid) = hex(agency.recv_location_uuid)
+		<include refid="joinAgencyBizLocation4Recv"/>
 	</select>
 
 	<select id="getAgencies4DangleDestination" resultType="Agency">
@@ -253,9 +284,9 @@
 		(
 			<include refid="selectLocationsByDepartureUuid"/>
 			union
-			select associated_location_uuid as uuid from location_association where hex(location_uuid) = replace(#{departureLocationUuid}, '-', '')
+			select associated_location_uuid as uuid from location_association where location_uuid = unhex(replace(#{departureLocationUuid}, '-', ''))
 		) as location
-		join agency on hex(location.uuid) = hex(agency.send_location_uuid)
+		<include refid="joinAgencyBizLocation4Send"/>
 	</select>
 
 	<select id="getHottestTags" resultType="Tag">
@@ -268,39 +299,94 @@
 		limit #{topN}
 	</select>
 
-	<insert id="associateLocatoin">
+	<insert id="associateLocation">
 		insert into location_association (location_uuid, associated_location_uuid)
-		values (unhex(replace(#{primary}, '-', '')), unhex(replace(#{secondary}, '-', '')))
+		values (convert(unhex(replace(#{primary}, '-', '')), binary(16)), convert(unhex(replace(#{secondary}, '-', '')), binary(16)))
 	</insert>
 
-	<delete id="deassociateLocatoin">
+	<select id="countAssociatedLocation" resultType="Integer">
+		select
+			count(id)
+		from
+			location_association
+		where
+			location_uuid = convert(unhex(replace(#{primary}, '-', '')), binary(16))
+	</select>
+
+	<delete id="deassociateLocation">
 		delete from location_association
 		where
-			hex(location_uuid) = hex(convert(unhex(replace(#{primary}, '-', '')), binary(16))) and
-			hex(associated_location_uuid) = hex(convert(unhex(replace(#{secondary}, '-', '')), binary(16)))
+			location_uuid = convert(unhex(replace(#{primary}, '-', '')), binary(16)) and
+			associated_location_uuid = convert(unhex(replace(#{secondary}, '-', '')), binary(16))
 	</delete>
 
-	<insert id="associatePortLocatoin">
+	<insert id="associatePortLocation">
 		insert into port_association (location_uuid, port_location_uuid)
 		values (unhex(replace(#{primary}, '-', '')), unhex(replace(#{secondary}, '-', '')))
 	</insert>
 
-	<delete id="deassociatePortLocatoin">
+	<select id="countAssociatedPortLocation" resultType="Integer">
+		select
+			count(id)
+		from
+			port_association
+		where
+			location_uuid = unhex(replace(#{primary}, '-', ''))
+	</select>
+
+	<delete id="deassociatePortLocation">
 		delete from port_association
 		where
-			hex(location_uuid) = replace(#{primary}, '-', '') and
-			hex(port_location_uuid) = replace(#{secondary}, '-', '')
+			location_uuid = unhex(replace(#{primary}, '-', '')) and
+			port_location_uuid = unhex(replace(#{secondary}, '-', ''))
 	</delete>
 
 	<insert id="addAgency" parameterType="Agency">
-		insert into agency (uuid, name, send_location_uuid, recv_location_uuid)
-		values (unhex(replace(#{uuid}, '-', '')), #{name}, unhex(replace(#{departure}, '-', '')), unhex(replace(#{destination}, '-', '')))
+		insert into agency (uuid, name, title, hmd)
+		values (unhex(replace(#{uuid}, '-', '')), #{name}, #{title}, #{hmd})
 	</insert>
+
+	<insert id="relAgencyLocation">
+		insert into agency_biz_location (agency_uuid, location_uuid, send_recv)
+		values (unhex(replace(#{agencyId}, '-', '')), convert(unhex(replace(#{locationId}, '-', '')), binary(16)), #{sendRecv})
+	</insert>
+
+	<select id="countRelAgencyLocation4Send" resultType="Integer">
+		select
+			count(id)
+		from
+			agency_biz_location
+		where
+			agency_uuid = unhex(replace(#{agencyId}, '-', '')) and
+			send_recv = 0
+	</select>
+
+	<select id="countRelAgencyLocation4Recv" resultType="Integer">
+		select
+			count(id)
+		from
+			agency_biz_location
+		where
+			agency_uuid = unhex(replace(#{agencyId}, '-', '')) and
+			send_recv = 1
+	</select>
+
+	<delete id="unrelAgencyLocation">
+		delete from agency_biz_location
+		where
+			agency_uuid = unhex(replace(#{agencyId}, '-', '')) and
+			location_uuid = convert(unhex(replace(#{locationId}, '-', '')), binary(16)) and
+			send_recv = #{sendRecv}
+	</delete>
 
 	<delete id="deleteAgency">
 		delete from agency
 		where
-			hex(uuid) = replace(#{uuid}, '-', '')
+			uuid = unhex(replace(#{uuid}, '-', ''));
+		
+		delete from agency_biz_location
+		where
+			agency_uuid = unhex(replace(#{uuid}, '-', ''));
 	</delete>
 
 	<insert id="addAgencyCandidates4Proposal" parameterType="Map">
@@ -316,9 +402,9 @@
 			<include refid="agencyColumns"/>
 		from agency
 		join agency_candidate
-			on hex(agency.uuid) = hex(agency_candidate.agency_uuid)
+			on agency.uuid = agency_candidate.agency_uuid
 		where
-			hex(agency_candidate.proposal_uuid) = replace(#{proposalId}, '-', '')
+			agency_candidate.proposal_uuid = unhex(replace(#{proposalId}, '-', ''))
 	</select>
 
 	<select id="getProposals4AgencyCandidate" resultType="StringPair">
@@ -326,7 +412,7 @@
 			hex(ac.proposal_uuid) as 'primary', ac.proposal_summary as secondary
 		from agency_candidate as ac
 		where
-			hex(ac.agency_uuid) = replace(#{agencyId}, '-', '') and
+			ac.agency_uuid = unhex(replace(#{agencyId}, '-', '')) and
 			ac.election_status = 0 and ac.respond_status = 0 and
 			ac.created between adddate(now(), interval -#{latestNMin} minute) and now()
 	</select>
@@ -337,7 +423,7 @@
 		set
 			agency_candidate.respond_status = 1
 		where
-			hex(agency_candidate.proposal_uuid) = replace(#{proposalId}, '-', '') and hex(agency_candidate.agency_uuid) = replace(#{agencyId}, '-', '')
+			agency_candidate.proposal_uuid = unhex(replace(#{proposalId}, '-', '')) and agency_candidate.agency_uuid = unhex(replace(#{agencyId}, '-', ''))
 	</update>
 
 	<select id="getRespondedAgencyCandidates4Proposal" resultType="Agency">
@@ -345,9 +431,9 @@
 			<include refid="agencyColumns"/>
 		from agency
 		join agency_candidate
-			on hex(agency.uuid) = hex(agency_candidate.agency_uuid)
+			on agency.uuid = agency_candidate.agency_uuid
 		where
-			hex(agency_candidate.proposal_uuid) = replace(#{proposalId}, '-', '') and agency_candidate.respond_status = 1
+			agency_candidate.proposal_uuid = unhex(replace(#{proposalId}, '-', '')) and agency_candidate.respond_status = 1
 	</select>
 
 	<update id="markAgencyCandidatesAsElected" parameterType="Map">
@@ -356,7 +442,7 @@
 				agency_candidate
 			set agency_candidate.election_status = 1
 			where
-				hex(agency_candidate.proposal_uuid) = replace(#{proposalId}, '-', '') and hex(agency_candidate.agency_uuid) = replace(#{agencyId}, '-', '')
+				agency_candidate.proposal_uuid = unhex(replace(#{proposalId}, '-', '')) and agency_candidate.agency_uuid = unhex(replace(#{agencyId}, '-', ''))
 		</foreach>
 	</update>
 
@@ -365,9 +451,9 @@
 			<include refid="agencyColumns"/>
 		from agency
 		join agency_candidate
-			on hex(agency.uuid) = hex(agency_candidate.agency_uuid)
+			on agency.uuid = agency_candidate.agency_uuid
 		where
-			hex(agency_candidate.proposal_uuid) = replace(#{proposalId}, '-', '') and agency_candidate.election_status != 0
+			agency_candidate.proposal_uuid = unhex(replace(#{proposalId}, '-', '')) and agency_candidate.election_status != 0
 	</select>
 
 	<select id="getNotElectedAgencyCandidates4Proposal" resultType="Agency">
@@ -375,9 +461,9 @@
 			<include refid="agencyColumns"/>
 		from agency
 		join agency_candidate
-			on hex(agency.uuid) = hex(agency_candidate.agency_uuid)
+			on agency.uuid = agency_candidate.agency_uuid
 		where
-			hex(agency_candidate.proposal_uuid) = replace(#{proposalId}, '-', '') and agency_candidate.election_status = 0
+			agency_candidate.proposal_uuid = unhex(replace(#{proposalId}, '-', '')) and agency_candidate.election_status = 0
 	</select>
 </mapper>
  

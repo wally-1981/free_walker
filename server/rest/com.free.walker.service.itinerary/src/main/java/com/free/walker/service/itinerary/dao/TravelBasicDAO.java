@@ -40,13 +40,27 @@ public interface TravelBasicDAO extends HealthyDAO {
 
     public void associateLocation(String primary, String secondary) throws DatabaseAccessException;
 
-    public void associatePortLocation(String primary, String secondary) throws DatabaseAccessException;
+    public int countAssociatedLocation(String primary) throws DatabaseAccessException;
 
     public void deassociateLocation(String primary, String secondary) throws DatabaseAccessException;
+
+    public void associatePortLocation(String primary, String secondary) throws DatabaseAccessException;
+
+    public int countAssociatedPortLocation(String primary) throws DatabaseAccessException;
 
     public void deassociatePortLocation(String primary, String secondary) throws DatabaseAccessException;
 
     public String addAgency(Agency agency) throws DatabaseAccessException;
+
+    public void relAgencyLocation(String agencyId, List<String> sendLocationIds, List<String> recvLocationIds)
+        throws DatabaseAccessException;
+
+    public int countRelAgencyLocation4Send(String agencyId) throws DatabaseAccessException;
+
+    public int countRelAgencyLocation4Recv(String agencyId) throws DatabaseAccessException;
+
+    public void unrelAgencyLocation(String agencyId, List<String> sendLocationIds, List<String> recvLocationIds)
+        throws DatabaseAccessException;
 
     public String removeAgency(String uuid) throws DatabaseAccessException;
 

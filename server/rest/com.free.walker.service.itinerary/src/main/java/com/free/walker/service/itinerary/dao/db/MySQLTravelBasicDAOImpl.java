@@ -269,11 +269,26 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
                 throw new IllegalArgumentException(LocalMessages.getMessage(LocalMessages.illegal_location_association,
                     primary, level1, secondary, level2));
             } else {
-                basicMapper.associateLocatoin(primary, secondary);
+                basicMapper.associateLocation(primary, secondary);
             }
 
             session.commit();
             return;
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch(Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public int countAssociatedLocation(String primary) throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            return basicMapper.countAssociatedLocation(primary);
         } catch(Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);
@@ -286,7 +301,7 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
         SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
         try {
             BasicMapper basicMapper = session.getMapper(BasicMapper.class);
-            basicMapper.deassociateLocatoin(primary, secondary);
+            basicMapper.deassociateLocation(primary, secondary);
 
             session.commit();
             return;
@@ -312,11 +327,26 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
                 throw new IllegalArgumentException(LocalMessages.getMessage(LocalMessages.illegal_port_association,
                     primary, level1, secondary, level2));
             } else {
-                basicMapper.associatePortLocatoin(primary, secondary);
+                basicMapper.associatePortLocation(primary, secondary);
             }
 
             session.commit();
             return;
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch(Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public int countAssociatedPortLocation(String primary) throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            return basicMapper.countAssociatedPortLocation(primary);
         } catch(Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);
@@ -329,7 +359,7 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
         SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
         try {
             BasicMapper basicMapper = session.getMapper(BasicMapper.class);
-            basicMapper.deassociatePortLocatoin(primary, secondary);
+            basicMapper.deassociatePortLocation(primary, secondary);
 
             session.commit();
             return;
@@ -345,23 +375,98 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
         SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
         try {
             BasicMapper basicMapper = session.getMapper(BasicMapper.class);
-            int level1 = getLocationLevel(basicMapper, agency.getDeparture());
-            int level2 = getLocationLevel(basicMapper, agency.getDestination());
-            if (level1 == 0) {
-                throw new IllegalArgumentException(LocalMessages.getMessage(LocalMessages.missing_location,
-                    agency.getDeparture()));
-            } else if (level2 == 0) {
-                throw new IllegalArgumentException(LocalMessages.getMessage(LocalMessages.missing_location,
-                    agency.getDestination()));
-            } else if (level1 != BASE_LOCATION_LEVEL) {
-                throw new IllegalArgumentException(LocalMessages.getMessage(LocalMessages.illegal_add_agency_operation,
-                    agency.getDeparture(), level1));
-            } else {
-                basicMapper.addAgency(agency);
-            }
+            basicMapper.addAgency(agency);
 
             session.commit();
             return agency.getUuid().toString();
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public void relAgencyLocation(String agencyId, List<String> sendLocationIds, List<String> recvLocationIds)
+        throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+
+            for (int i = 0; i < sendLocationIds.size(); i++) {
+                int level = getLocationLevel(basicMapper, sendLocationIds.get(i));
+                if (level == 0) {
+                    throw new IllegalArgumentException(LocalMessages.getMessage(LocalMessages.missing_location,
+                        sendLocationIds.get(i)));
+                } else {
+                    basicMapper.relAgencyLocation(agencyId, sendLocationIds.get(i), false);
+                }
+            }
+
+            for (int i = 0; i < recvLocationIds.size(); i++) {
+                int level = getLocationLevel(basicMapper, recvLocationIds.get(i));
+                if (level == 0) {
+                    throw new IllegalArgumentException(LocalMessages.getMessage(LocalMessages.missing_location,
+                        recvLocationIds.get(i)));
+                } else {
+                    basicMapper.relAgencyLocation(agencyId, recvLocationIds.get(i), true);
+                }
+            }            
+
+            session.commit();
+            return;
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public int countRelAgencyLocation4Send(String agencyId)  throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            return basicMapper.countRelAgencyLocation4Send(agencyId);
+        } catch(Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public int countRelAgencyLocation4Recv(String agencyId)  throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            return basicMapper.countRelAgencyLocation4Recv(agencyId);
+        } catch(Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public void unrelAgencyLocation(String agencyId, List<String> sendLocationIds, List<String> recvLocationIds)
+        throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+
+            for (int i = 0; i < sendLocationIds.size(); i++) {
+                basicMapper.unrelAgencyLocation(agencyId, sendLocationIds.get(i), false);
+            }
+
+            for (int i = 0; i < recvLocationIds.size(); i++) {
+                basicMapper.unrelAgencyLocation(agencyId, recvLocationIds.get(i), true);
+            }            
+
+            session.commit();
+            return;
         } catch (Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);
@@ -515,13 +620,15 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
 
     private int getLocationLevel(BasicMapper basicMapper, String uuid) {
         int base = BASE_LOCATION_LEVEL;
-        if (basicMapper.getCity(uuid) != null) {
+        if (uuid.matches("[1-7]")) {
+            return base + LOCATION_LEVEL_INTERVAL * 3;
+        } else if (basicMapper.getCity(uuid) != null) {
             return base;
         } else if (basicMapper.getProvince(uuid) != null) {
             return base + LOCATION_LEVEL_INTERVAL;
         } else if (basicMapper.getCountry(uuid) != null) {
             return base + LOCATION_LEVEL_INTERVAL * 2;
-        } else if (uuid.matches("[1-7]")) {
+        } else if (basicMapper.getRegion(uuid) != null) {
             return base + LOCATION_LEVEL_INTERVAL * 3;
         } else {
             return 0;

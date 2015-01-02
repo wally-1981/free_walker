@@ -17,6 +17,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.Agency;
 import com.free.walker.service.itinerary.basic.City;
 import com.free.walker.service.itinerary.basic.Country;
@@ -24,6 +25,7 @@ import com.free.walker.service.itinerary.basic.Province;
 import com.free.walker.service.itinerary.basic.Tag;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
+import com.free.walker.service.itinerary.util.UuidUtil;
 
 public class TravelBasicDAOImplTest {
     protected TravelBasicDAO travelBasicDAO;
@@ -57,9 +59,15 @@ public class TravelBasicDAOImplTest {
             a1 = UUID.randomUUID().toString();
             agency.setUuid(a1);
             agency.setName("中青旅（宜昌->湖北）");
-            agency.setDeparture("cda48bcd9ab64669994013897321a3fb");
-            agency.setDestination("03161e050c2448378eb863bfcbe744f3");
+            agency.setTitle("[显示]" + agency.getName());
+            agency.setHmd(80);
             travelBasicDAO.addAgency(agency);
+
+            List<String> sendRecvLocationIds = new ArrayList<String>();
+            sendRecvLocationIds.add("cda48bcd9ab64669994013897321a3fb");
+            sendRecvLocationIds.add("03161e050c2448378eb863bfcbe744f3");
+            travelBasicDAO.relAgencyLocation(a1, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 2));
+
             candidates.add(agency);
         }
 
@@ -68,9 +76,15 @@ public class TravelBasicDAOImplTest {
             a2 = UUID.randomUUID().toString();
             agency.setUuid(a2);
             agency.setName("国旅（武汉->湖北）");
-            agency.setDeparture("79fd8642a11d4811887dec4268097a82");
-            agency.setDestination("03161e050c2448378eb863bfcbe744f3");
+            agency.setTitle("[显示]" + agency.getName());
+            agency.setHmd(76);
             travelBasicDAO.addAgency(agency);
+
+            List<String> sendRecvLocationIds = new ArrayList<String>();
+            sendRecvLocationIds.add("79fd8642a11d4811887dec4268097a82");
+            sendRecvLocationIds.add("03161e050c2448378eb863bfcbe744f3");
+            travelBasicDAO.relAgencyLocation(a2, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 2));
+
             candidates.add(agency);
         }
 
@@ -79,9 +93,15 @@ public class TravelBasicDAOImplTest {
             a3 = UUID.randomUUID().toString();
             agency.setUuid(a3);
             agency.setName("中青旅（长沙->湖南）");
-            agency.setDeparture("675b8393ac04418786ccb1d1618f33f1");
-            agency.setDestination("92d55e093025479db3f64b6aa38de051");
+            agency.setTitle("[显示]" + agency.getName());
+            agency.setHmd(72);
             travelBasicDAO.addAgency(agency);
+
+            List<String> sendRecvLocationIds = new ArrayList<String>();
+            sendRecvLocationIds.add("675b8393ac04418786ccb1d1618f33f1");
+            sendRecvLocationIds.add("92d55e093025479db3f64b6aa38de051");
+            travelBasicDAO.relAgencyLocation(a3, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 2));
+
             candidates.add(agency);
         }
 
@@ -90,9 +110,15 @@ public class TravelBasicDAOImplTest {
             a4 = UUID.randomUUID().toString();
             agency.setUuid(a4);
             agency.setName("国旅（北京->中国）");
-            agency.setDeparture("689ddfcdeffd4937b56707c4c8907378");
-            agency.setDestination("af70a55ceb4c415c837588081716f8b8");
+            agency.setTitle("[显示]" + agency.getName());
+            agency.setHmd(88);
             travelBasicDAO.addAgency(agency);
+
+            List<String> sendRecvLocationIds = new ArrayList<String>();
+            sendRecvLocationIds.add("689ddfcdeffd4937b56707c4c8907378");
+            sendRecvLocationIds.add("af70a55ceb4c415c837588081716f8b8");
+            travelBasicDAO.relAgencyLocation(a4, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 2));
+
             candidates.add(agency);
         }
 
@@ -101,9 +127,15 @@ public class TravelBasicDAOImplTest {
             a5 = UUID.randomUUID().toString();
             agency.setUuid(a5);
             agency.setName("国旅（上海->亚洲）");
-            agency.setDeparture("301cdd76923047d28eb28e85932d9f53");
-            agency.setDestination("1");
+            agency.setTitle("[显示]" + agency.getName());
+            agency.setHmd(85);
             travelBasicDAO.addAgency(agency);
+
+            List<String> sendRecvLocationIds = new ArrayList<String>();
+            sendRecvLocationIds.add("301cdd76923047d28eb28e85932d9f53");
+            sendRecvLocationIds.add("1");
+            travelBasicDAO.relAgencyLocation(a5, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 2));
+
             candidates.add(agency);
         }
 
@@ -112,9 +144,15 @@ public class TravelBasicDAOImplTest {
             a6 = UUID.randomUUID().toString();
             agency.setUuid(a6);
             agency.setName("众信（伦敦->伦敦）");
-            agency.setDeparture("54053f1a057a4ded88c854c5e56c63f4");
-            agency.setDestination("54053f1a057a4ded88c854c5e56c63f4");
+            agency.setTitle("[显示]" + agency.getName());
+            agency.setHmd(79);
             travelBasicDAO.addAgency(agency);
+
+            List<String> sendRecvLocationIds = new ArrayList<String>();
+            sendRecvLocationIds.add("54053f1a057a4ded88c854c5e56c63f4");
+            sendRecvLocationIds.add("54053f1a057a4ded88c854c5e56c63f4");
+            travelBasicDAO.relAgencyLocation(a6, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 2));
+
             candidates.add(agency);
         }
 
@@ -123,9 +161,15 @@ public class TravelBasicDAOImplTest {
             a7 = UUID.randomUUID().toString();
             agency.setUuid(a7);
             agency.setName("众信（巴塞罗纳->西班牙）");
-            agency.setDeparture("84844276303647dd90e0f095cfa98da5");
-            agency.setDestination("fe80acb2816e45f0a98819caa587c6fc");
+            agency.setTitle("[显示]" + agency.getName());
+            agency.setHmd(90);
             travelBasicDAO.addAgency(agency);
+
+            List<String> sendRecvLocationIds = new ArrayList<String>();
+            sendRecvLocationIds.add("84844276303647dd90e0f095cfa98da5");
+            sendRecvLocationIds.add("fe80acb2816e45f0a98819caa587c6fc");
+            travelBasicDAO.relAgencyLocation(a7, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 2));
+
             candidates.add(agency);
         }
 
@@ -134,9 +178,15 @@ public class TravelBasicDAOImplTest {
             a8 = UUID.randomUUID().toString();
             agency.setUuid(a8);
             agency.setName("众信（马德里->欧洲）");
-            agency.setDeparture("990d650cfdc84ad8842f59d0f27c1f65");
-            agency.setDestination("2");
+            agency.setTitle("[显示]" + agency.getName());
+            agency.setHmd(84);
             travelBasicDAO.addAgency(agency);
+
+            List<String> sendRecvLocationIds = new ArrayList<String>();
+            sendRecvLocationIds.add("990d650cfdc84ad8842f59d0f27c1f65");
+            sendRecvLocationIds.add("2");
+            travelBasicDAO.relAgencyLocation(a8, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 2));
+
             candidates.add(agency);
         }
 
@@ -145,9 +195,15 @@ public class TravelBasicDAOImplTest {
             a9 = UUID.randomUUID().toString();
             agency.setUuid(a9);
             agency.setName("众信（纽约->美国）");
-            agency.setDeparture("b6890ab6c23d405fa1c74b9dd5dd2e0c");
-            agency.setDestination("cc0968e70fe34cc99f5b3a6898a04506");
+            agency.setTitle("[显示]" + agency.getName());
+            agency.setHmd(73);
             travelBasicDAO.addAgency(agency);
+
+            List<String> sendRecvLocationIds = new ArrayList<String>();
+            sendRecvLocationIds.add("b6890ab6c23d405fa1c74b9dd5dd2e0c");
+            sendRecvLocationIds.add("cc0968e70fe34cc99f5b3a6898a04506");
+            travelBasicDAO.relAgencyLocation(a9, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 2));
+
             candidates.add(agency);
         }
 
@@ -156,9 +212,15 @@ public class TravelBasicDAOImplTest {
             a10 = UUID.randomUUID().toString();
             agency.setUuid(a10);
             agency.setName("Ali（北京->北京）");
-            agency.setDeparture("689ddfcdeffd4937b56707c4c8907378");
-            agency.setDestination("689ddfcdeffd4937b56707c4c8907378");
+            agency.setTitle("[显示]" + agency.getName());
+            agency.setHmd(62);
             travelBasicDAO.addAgency(agency);
+
+            List<String> sendRecvLocationIds = new ArrayList<String>();
+            sendRecvLocationIds.add("689ddfcdeffd4937b56707c4c8907378");
+            sendRecvLocationIds.add("689ddfcdeffd4937b56707c4c8907378");
+            travelBasicDAO.relAgencyLocation(a10, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 2));
+
             candidates.add(agency);
         }
 
@@ -289,6 +351,104 @@ public class TravelBasicDAOImplTest {
         assertNotNull(last.getName());
         assertNotNull(last.getChineseName());
         assertNotNull(last.getPinyinName());
+    }
+
+    @Test
+    public void testLocationAssociation() throws DatabaseAccessException {
+        travelBasicDAO.associateLocation("7a087f047b83448aa487920a41f3e201", "cda48bcd9ab64669994013897321a3fb");
+        travelBasicDAO.associateLocation(UuidUtil.fromCmpUuidStr("7a087f047b83448aa487920a41f3e201").toString(),
+            UuidUtil.fromCmpUuidStr("79fd8642a11d4811887dec4268097a82").toString());
+        assertEquals(2, travelBasicDAO.countAssociatedLocation("7a087f047b83448aa487920a41f3e201"));
+
+        travelBasicDAO.deassociateLocation("7a087f047b83448aa487920a41f3e201", "cda48bcd9ab64669994013897321a3fb");
+        travelBasicDAO.deassociateLocation(UuidUtil.fromCmpUuidStr("7a087f047b83448aa487920a41f3e201").toString(),
+            UuidUtil.fromCmpUuidStr("79fd8642a11d4811887dec4268097a82").toString());
+        assertEquals(0, travelBasicDAO.countAssociatedLocation("7a087f047b83448aa487920a41f3e201"));
+
+        String uuid = UUID.randomUUID().toString();
+
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_location, uuid));
+        travelBasicDAO.associateLocation(uuid, "cda48bcd9ab64669994013897321a3fb");
+
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_location, uuid));
+        travelBasicDAO.associateLocation("7a087f047b83448aa487920a41f3e201", uuid);
+
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_location_association,
+            "7a087f047b83448aa487920a41f3e201", 200, "af70a55ceb4c415c837588081716f8b8", 600));
+        travelBasicDAO.associateLocation("7a087f047b83448aa487920a41f3e201", "af70a55ceb4c415c837588081716f8b8");
+    }
+
+    @Test
+    public void testPortLocationAssociate() throws DatabaseAccessException {
+        travelBasicDAO.associatePortLocation("7a087f047b83448aa487920a41f3e201", "cda48bcd9ab64669994013897321a3fb");
+        travelBasicDAO.associatePortLocation(UuidUtil.fromCmpUuidStr("7a087f047b83448aa487920a41f3e201").toString(),
+            UuidUtil.fromCmpUuidStr("79fd8642a11d4811887dec4268097a82").toString());
+        assertEquals(2, travelBasicDAO.countAssociatedPortLocation("7a087f047b83448aa487920a41f3e201"));
+
+        travelBasicDAO.deassociatePortLocation("7a087f047b83448aa487920a41f3e201", "cda48bcd9ab64669994013897321a3fb");
+        travelBasicDAO.deassociatePortLocation(UuidUtil.fromCmpUuidStr("7a087f047b83448aa487920a41f3e201").toString(),
+            UuidUtil.fromCmpUuidStr("79fd8642a11d4811887dec4268097a82").toString());
+        assertEquals(0, travelBasicDAO.countAssociatedPortLocation("7a087f047b83448aa487920a41f3e201"));
+
+        String uuid = UUID.randomUUID().toString();
+
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_location, uuid));
+        travelBasicDAO.associateLocation(uuid, "cda48bcd9ab64669994013897321a3fb");
+
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_location, uuid));
+        travelBasicDAO.associateLocation("7a087f047b83448aa487920a41f3e201", uuid);
+
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_port_association,
+            "7a087f047b83448aa487920a41f3e201", 200, "af70a55ceb4c415c837588081716f8b8", 600));
+        travelBasicDAO.associateLocation("7a087f047b83448aa487920a41f3e201", "af70a55ceb4c415c837588081716f8b8");
+    }
+
+    @Test
+    public void testAgencyLocationRel() throws DatabaseAccessException {
+        List<String> sendRecvLocationIds = new ArrayList<String>();
+        sendRecvLocationIds.add("ede7487afde9452aa0689a82437cb19b");
+        sendRecvLocationIds.add("272c6a6766654a20b009c5abc71d1183");
+        sendRecvLocationIds.add("7737001550974bceb0dc62b3c3977db7");
+        sendRecvLocationIds.add("2e072b57c16c46de9dd385e0a67e94da");
+
+        travelBasicDAO.relAgencyLocation(a1, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 4));
+        assertEquals(2, travelBasicDAO.countRelAgencyLocation4Send(a1));
+        assertEquals(4, travelBasicDAO.countRelAgencyLocation4Recv(a1));
+        travelBasicDAO.unrelAgencyLocation(a1, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 4));
+        assertEquals(1, travelBasicDAO.countRelAgencyLocation4Send(a1));
+        assertEquals(1, travelBasicDAO.countRelAgencyLocation4Recv(a1));
+    }
+
+    @Test
+    public void testAddRemoveAgency() throws DatabaseAccessException {
+        Agency agency = new Agency();
+        String a = UUID.randomUUID().toString();
+        agency.setUuid(a);
+        agency.setName("测试");
+        agency.setTitle("[显示]" + agency.getName());
+        agency.setHmd(80);
+        travelBasicDAO.addAgency(agency);
+
+        assertEquals(0, travelBasicDAO.countRelAgencyLocation4Send(a));
+        assertEquals(0, travelBasicDAO.countRelAgencyLocation4Recv(a));
+
+        List<String> sendRecvLocationIds = new ArrayList<String>();
+        sendRecvLocationIds.add("689ddfcdeffd4937b56707c4c8907378");
+        sendRecvLocationIds.add("2");
+        travelBasicDAO.relAgencyLocation(a, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 2));
+
+        assertEquals(1, travelBasicDAO.countRelAgencyLocation4Send(a));
+        assertEquals(1, travelBasicDAO.countRelAgencyLocation4Recv(a));
+
+        travelBasicDAO.removeAgency(a);
+        assertEquals(0, travelBasicDAO.countRelAgencyLocation4Send(a));
+        assertEquals(0, travelBasicDAO.countRelAgencyLocation4Recv(a));
     }
 
     @Test

@@ -152,8 +152,7 @@ public abstract class AbstractTravelProductDAOImplTest {
     @Test
     public void testAddHotelWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
         thrown.expect(InvalidTravelProductException.class);
-        thrown
-            .expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, hotelItem.getProductUUID()));
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, hotelItem.getProductUUID()));
         travelProductDAO.addItem(hotelItem.getProductUUID(), hotelItem);
     }
 

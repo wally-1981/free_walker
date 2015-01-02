@@ -24,6 +24,8 @@ public interface BasicMapper {
 
     public List<City> getAllCities();
 
+    public Region getRegion(@Param("uuid") String uuid);
+
     public Country getCountry(@Param("uuid") String uuid);
 
     public Province getProvince(@Param("uuid") String uuid);
@@ -52,15 +54,29 @@ public interface BasicMapper {
 
     public List<Tag> getHottestTags(@Param("topN") int topN);
 
-    public void associateLocatoin(@Param("primary") String primary, @Param("secondary") String secondary);
+    public void associateLocation(@Param("primary") String primary, @Param("secondary") String secondary);
 
-    public void deassociateLocatoin(@Param("primary") String primary, @Param("secondary") String secondary);
+    public int countAssociatedLocation(@Param("primary") String primary);
 
-    public void associatePortLocatoin(@Param("primary") String primary, @Param("secondary") String secondary);
+    public void deassociateLocation(@Param("primary") String primary, @Param("secondary") String secondary);
 
-    public void deassociatePortLocatoin(@Param("primary") String primary, @Param("secondary") String secondary);
+    public void associatePortLocation(@Param("primary") String primary, @Param("secondary") String secondary);
+
+    public int countAssociatedPortLocation(@Param("primary") String primary);
+
+    public void deassociatePortLocation(@Param("primary") String primary, @Param("secondary") String secondary);
 
     public void addAgency(Agency agency);
+
+    public void relAgencyLocation(@Param("agencyId") String agencyId, @Param("locationId") String locationId,
+        @Param("sendRecv") boolean isRecv);
+
+    public int countRelAgencyLocation4Send(@Param("agencyId") String agencyId);
+
+    public int countRelAgencyLocation4Recv(@Param("agencyId") String agencyId);
+
+    public void unrelAgencyLocation(@Param("agencyId") String agencyId, @Param("locationId") String locationId,
+        @Param("sendRecv") boolean isRecv);
 
     public void deleteAgency(@Param("uuid") String uuid);
 

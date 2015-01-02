@@ -2,6 +2,7 @@ package com.free.walker.service.itinerary.basic;
 
 import javax.json.Json;
 import javax.json.JsonException;
+import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
@@ -13,8 +14,10 @@ import com.free.walker.service.itinerary.primitive.Introspection;
 public class Agency implements Serializable {
     private String uuid;
     private String name;
-    private String departure;
-    private String destination;
+    private String title;
+    private int rating;
+    private int hmd;
+    private long exp;
 
     public Agency() {
         ;
@@ -24,6 +27,10 @@ public class Agency implements Serializable {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, uuid.toString());
         resBuilder.add(Introspection.JSONKeys.NAME, name);
+        resBuilder.add(Introspection.JSONKeys.TITLE, title);
+        resBuilder.add(Introspection.JSONKeys.STAR, rating);
+        resBuilder.add(Introspection.JSONKeys.HMD, hmd);
+        resBuilder.add(Introspection.JSONKeys.EXP, exp);
         return resBuilder.build();
     }
 
@@ -44,20 +51,36 @@ public class Agency implements Serializable {
             this.name = name;
         }
 
-        String departure = jsObject.getString(Introspection.JSONKeys.DEPARTURE, null);
-        if (departure == null) {
+        String title = jsObject.getString(Introspection.JSONKeys.TITLE, null);
+        if (title == null) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
-                Introspection.JSONKeys.DEPARTURE, departure));
+                Introspection.JSONKeys.TITLE, title));
         } else {
-            this.departure = departure;
+            this.title = title;
         }
 
-        String destination = jsObject.getString(Introspection.JSONKeys.DESTINATION, null);
-        if (destination == null) {
+        int rating = jsObject.getInt(Introspection.JSONKeys.STAR, -1);
+        if (rating < 0) {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
-                Introspection.JSONKeys.DESTINATION, destination));
+                Introspection.JSONKeys.STAR, rating));
         } else {
-            this.destination = destination;
+            this.rating = rating;
+        }
+
+        int hmd = jsObject.getInt(Introspection.JSONKeys.HMD, 0);
+        if (hmd > 100 || hmd < 0) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.HMD, hmd));
+        } else {
+            this.hmd = hmd;
+        }
+
+        JsonNumber exp = jsObject.getJsonNumber(Introspection.JSONKeys.EXP);
+        if (exp == null) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.HMD, hmd));
+        } else {
+            this.exp = exp.longValue();
         }
 
         return this;
@@ -71,20 +94,32 @@ public class Agency implements Serializable {
         this.uuid = uuid;
     }
 
-    public String getDeparture() {
-        return departure.toString();
+    public int getRating() {
+        return rating;
     }
 
-    public void setDeparture(String departure) {
-        this.departure = departure;
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 
-    public String getDestination() {
-        return destination.toString();
+    public int getHmd() {
+        return hmd;
     }
 
-    public void setDestination(String destination) {
-        this.destination = destination;
+    public void setHmd(int hmd) {
+        if (hmd > 100 || hmd < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        this.hmd = hmd;
+    }
+
+    public long getExp() {
+        return exp;
+    }
+
+    public void setExp(long exp) {
+        this.exp = exp;
     }
 
     public String getName() {
@@ -93,6 +128,14 @@ public class Agency implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public ValueType getValueType() {

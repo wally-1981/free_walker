@@ -33,7 +33,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `region`;
 CREATE TABLE `region` (
-  `id` tinyint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `id` smallint(16) unsigned NOT NULL AUTO_INCREMENT,
   `uuid` binary(16) NOT NULL,
   `name` varchar(48) NOT NULL,
   `chinese_name` varchar(48) NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE `region` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `uuid_UNIQUE` (`uuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=100 ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `region`
@@ -61,7 +61,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `country`;
 CREATE TABLE `country` (
-  `id` tinyint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `id` smallint(16) unsigned NOT NULL AUTO_INCREMENT,
   `uuid` binary(16) NOT NULL,
   `name` varchar(48) NOT NULL,
   `chinese_name` varchar(48) NOT NULL,
@@ -70,7 +70,7 @@ CREATE TABLE `country` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `uuid_UNIQUE` (`uuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=1000 ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `country`
@@ -124,7 +124,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `province`;
 CREATE TABLE `province` (
-  `id` smallint(16) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(32) unsigned NOT NULL AUTO_INCREMENT,
   `uuid` binary(16) NOT NULL,
   `name` varchar(48) NOT NULL,
   `chinese_name` varchar(48) NOT NULL,
@@ -133,7 +133,7 @@ CREATE TABLE `province` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `uuid_UNIQUE` (`uuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=10000 ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `province`
@@ -194,7 +194,7 @@ CREATE TABLE `city` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `uuid_UNIQUE` (`uuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=100000 ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `city`
@@ -993,12 +993,13 @@ CREATE TABLE `agency` (
   `id` int(32) unsigned NOT NULL AUTO_INCREMENT,
   `uuid` binary(16) NOT NULL,
   `name` VARCHAR(32) NOT NULL,
-  `send_location_uuid` binary(16),
-  `recv_location_uuid` binary(16),
+  `title` VARCHAR(32) NOT NULL,
+  `rating` tinyint(8) unsigned NOT NULL DEFAULT 0,
+  `hmd` tinyint(8) unsigned NOT NULL DEFAULT 0,
+  `exp` int(32) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
-  UNIQUE KEY `uuid_UNIQUE` (`uuid`),
-  UNIQUE KEY `name_UNIQUE` (`name`)
+  UNIQUE KEY `uuid_UNIQUE` (`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -1006,6 +1007,27 @@ CREATE TABLE `agency` (
 --
 
 LOCK TABLES `agency` WRITE;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `agency_biz_location`
+--
+
+DROP TABLE IF EXISTS `agency_biz_location`;
+CREATE TABLE `agency_biz_location` (
+  `id` int(32) unsigned NOT NULL AUTO_INCREMENT,
+  `agency_uuid` binary(16) NOT NULL,
+  `location_uuid` binary(16) NOT NULL,
+  `send_recv` tinyint(8) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `agency_biz_location`
+--
+
+LOCK TABLES `agency_biz_location` WRITE;
 UNLOCK TABLES;
 
 --

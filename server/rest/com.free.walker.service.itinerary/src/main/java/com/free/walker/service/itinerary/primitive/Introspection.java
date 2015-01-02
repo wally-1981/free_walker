@@ -58,6 +58,8 @@ public class Introspection {
         public static final String CHINESE_NAME = "chinese_name";
         public static final String PINYIN_NAME = "pinyin_name";
         public static final String STAR = "star";
+        public static final String HMD = "hmd";
+        public static final String EXP = "exp";
         public static final String NIGHT = "night";
         public static final String DEADLINE_DATETIME = "deadline_datetime";
         public static final String ARRIVAL_DATETIME = "arrival_datetime";
