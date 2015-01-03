@@ -52,6 +52,7 @@ LOCK TABLES `region` WRITE;
 
 INSERT INTO itinerary.region (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('2f4c029aa74d470fa6b217b98c82a400'),'SoutheastAsia','东南亚','dongnanya');
 INSERT INTO itinerary.region (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('2a066cc457874226b6661885c840139b'),'MiddleEast','中东','zhongdong');
+INSERT INTO itinerary.region (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('50443044f4dc4c96882552c88ff97939'),'JapanKorea','日韩','rihan');
 
 UNLOCK TABLES;
 
@@ -80,20 +81,21 @@ LOCK TABLES `country` WRITE;
 
 INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('af70a55ceb4c415c837588081716f8b8'),'China','中国','zhongguo');
 INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('cc0968e70fe34cc99f5b3a6898a04506'),'America','美国','meiguo');
-INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('ef72692dbd2b49a9bc73b74b5ce0b0cb'),'RepublicOfKorea','韩国','hanguo');
-INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('7737001550974bceb0dc62b3c3977db7'),'KingdomOfThailand','泰国','taiguo');
+INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('ef72692dbd2b49a9bc73b74b5ce0b0cb'),'Korea','韩国','hanguo');
+INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('7737001550974bceb0dc62b3c3977db7'),'Thailand','泰国','taiguo');
 INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('2e072b57c16c46de9dd385e0a67e94da'),'DemocraticPeoplesRepublicOfKorea','朝鲜','chaoxian');
-INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('9ce560518c82415ea6bc6b9fdfc3f92e'),'RepublicOfThePhilippines','菲律宾','feilvbin');
-INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('c042f1964dcb4677a0490d2970553c87'),'KingdomOfCambodia','柬埔寨','jianpuza');
-INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('bf4364fa452946ed916bfb25c5d0e9b9'),'TheRepublicOfMaldives','马尔代夫','maerdaifu');
+INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('9ce560518c82415ea6bc6b9fdfc3f92e'),'Philippines','菲律宾','feilvbin');
+INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('c042f1964dcb4677a0490d2970553c87'),'Cambodia','柬埔寨','jianpuza');
+INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('bf4364fa452946ed916bfb25c5d0e9b9'),'Maldives','马尔代夫','maerdaifu');
 INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('ac992fff27704cf9a95a208e183d508c'),'Malaysia','马来西亚','malaixiya');
 INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('e5e94197202147e0badcd17bfbda72f7'),'Mongolia','蒙古','menggu');
+INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('a2185a84841d4e69a6497386c9c14bf7'),'Lao','老挝','laowo');
 INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('3ae5a40430a046328e7596671e7e1622'),'Japan','日本','riben');
-INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('92aec775bd7c440abcd977a2330ee6a6'),'RepublicOfIndia','印度','yindu');
-INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('e10f231aa4094659b0984b5c21bce82a'),'TheRepublicOfIndonesia','印度尼西亚','yinni');
-INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('59cbf43757414500a71b86c8a0da80d4'),'RepublicOfSingapore','新加坡','xinjiapo');
+INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('92aec775bd7c440abcd977a2330ee6a6'),'India','印度','yindu');
+INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('e10f231aa4094659b0984b5c21bce82a'),'Indonesia','印度尼西亚','yinni');
+INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('59cbf43757414500a71b86c8a0da80d4'),'Singapore','新加坡','xinjiapo');
 INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('6eff92de4d11425b893dd6c75efbeb10'),'UnionOfMyanmar','缅甸','miandian');
-INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('34b33dc24b2849d88de116275f7bb779'),'SocialistRepublicOfVietnam','越南','yuenan');
+INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('34b33dc24b2849d88de116275f7bb779'),'Vietnam','越南','yuenan');
 INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('fe80acb2816e45f0a98819caa587c6fc'),'Spain','西班牙','xibanya');
 INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('ce5fc39199eb49c3a41d7011ca079f67'),'Switzerland','瑞士','ruishi');
 INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('72bfb2b60ba94f249c670c54c1f4a2c5'),'Greece','希腊','xila');
@@ -111,10 +113,13 @@ INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UN
 INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('e2d3f3d669104487908a1b3f8dda89ff'),'Germany','德国','deguo');
 INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('b763086ef4114975b28da5672e4a15c6'),'Canada','加拿大','jianada');
 INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('aafac90dfe26494b834f769eeedec6f0'),'Kenya','肯尼亚','kenniya');
-INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('227451454f784474a8b453c92e14d141'),'TheUnitedRepublicofTanzania','坦桑尼亚','tansangniya');
+INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('227451454f784474a8b453c92e14d141'),'Tanzania','坦桑尼亚','tansangniya');
 INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('b2f93dcef0394598bda64cc1d49b501b'),'Nepal','尼泊尔','niboer');
 INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('7241d6f1b2464a59ba3e98d0706581b9'),'Mexico','墨西哥','moxige');
 INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('f4f5954849114c7ca79577fa5227e6db'),'Egypt','埃及','aiji');
+INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('784a52f35fa34df4a328255176064ad2'),'SriLanka','斯里兰卡','sililanka');
+INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('0805e2024f054d7daa10e08de5030114'),'Mauritius','毛里求斯','maoliqiusi');
+INSERT INTO itinerary.country (uuid, name, chinese_name, pinyin_name) VALUES (UNHEX('dd76387572ce42299c264db1c803990c'),'Seychelles','塞舌尔','saisheer');
 
 UNLOCK TABLES;
 
@@ -205,7 +210,9 @@ LOCK TABLES `city` WRITE;
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('79fd8642a11d4811887dec4268097a82'),'Wuhan','武汉','wuhan',UNHEX('03161e050c2448378eb863bfcbe744f3'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',420100);
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('cda48bcd9ab64669994013897321a3fb'),'Yichang','宜昌','yichang',UNHEX('03161e050c2448378eb863bfcbe744f3'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',420500);
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('7a087f047b83448aa487920a41f3e201'),'Shiyan','十堰','shiyan',UNHEX('03161e050c2448378eb863bfcbe744f3'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',420300);
+INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('9ff4875188ff4c708773e0ed57841821'),'Wudangshan','武当山','wudangshan',UNHEX('03161e050c2448378eb863bfcbe744f3'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',0);
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('e98c3585f7474eca9b66b58f57362fb7'),'Enshi','恩施','enshi',UNHEX('03161e050c2448378eb863bfcbe744f3'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',422801);
+INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('ed618a9d2bb742e1aa4ffbf04f4cbbe9'),'Enshitujiazuzizhizhou','恩施土家族自治州','enshitujiazuzizhizhou',UNHEX('03161e050c2448378eb863bfcbe744f3'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',422800);
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('306f9a4de80f49e6914c8278e89a4802'),'Huanggang','黄冈','huanggang',UNHEX('03161e050c2448378eb863bfcbe744f3'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',421100);
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('6e3982a9543f4b65aa38d433007b915a'),'Xiangyang','襄阳','xiangyang',UNHEX('03161e050c2448378eb863bfcbe744f3'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',420600);
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('29ac81493101448bb346d03a1b43395d'),'Shennongjia','神农架','shennongjia',UNHEX('03161e050c2448378eb863bfcbe744f3'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',429021);
@@ -242,6 +249,7 @@ INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('d8efd14e2b634e38871669b06bf17db6'),'Lasa','拉萨','lasa',UNHEX('8f281df5c57142b289b932ef76b9dc5f'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',540100);
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('083490a2e9044c02b22f145a1859c802'),'Hiakou','海口','haikou',UNHEX('d93196c059f64f55b54df0789e370c4e'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',460100);
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('a87a271bd8554bd3858ba974d43c3a8e'),'Xiamen','厦门','xiamen',UNHEX('7522201519804d038be7fe4540bb90bb'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',350200);
+INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('67191eb935f046898ed3ec43d05f869c'),'Taining','泰宁','taining',UNHEX('7522201519804d038be7fe4540bb90bb'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',350429);
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('815221d2daf64b41aaa814be17de1c0f'),'Linzhi','林芝','linzhi',UNHEX('8f281df5c57142b289b932ef76b9dc5f'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',542600);
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('83dbaa4aff3e47d9a74938836738745b'),'Diqing','迪庆','diqing',UNHEX('237db8e728c941469c6009d004057caf'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',533400);
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('4252fd0ae7474f89b981feb62cd02b9e'),'Xishuangbanna','西双版纳','xishuangbanna',UNHEX('237db8e728c941469c6009d004057caf'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',532800);
@@ -941,6 +949,13 @@ INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('2adf66b4ed174c4681f67fad44f9bc61'),'Yuanjiang','沅江','yuanjiang',UNHEX('92d55e093025479db3f64b6aa38de051'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',430981);
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('f523f22855b84b43af45dd4279ec4055'),'Xingcheng','兴城','xingcheng',UNHEX('4d1a492e0dda4431b8e19ca1b2028069'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',211481);
 INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('634868df308f4cd78ab87899e459f585'),'Xichang','西昌','xichang',UNHEX('9ccfbe90bfe24f38ad7cfb429a95354f'),UNHEX('af70a55ceb4c415c837588081716f8b8'),'1',513401);
+INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('e841749c3cf542faba6b9dc23ba74284'),'Sabah','沙巴','saba',UNHEX(''),UNHEX('ac992fff27704cf9a95a208e183d508c'),'1',0);
+INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('f5fe89517196493cbca89ab21b892d33'),'Bali','巴厘岛','balidao',UNHEX(''),UNHEX('e10f231aa4094659b0984b5c21bce82a'),'1',0);
+INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('3c167eee8e4d4d85b2bc8ab96902c057'),'Vientiane','万象','wanxiang',UNHEX(''),UNHEX('a2185a84841d4e69a6497386c9c14bf7'),'1',0);
+INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('a97082dbeb494c10a2513530bf559865'),'Penang','槟城','bincheng',UNHEX(''),UNHEX('ac992fff27704cf9a95a208e183d508c'),'1',0);
+INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('4537872b5e31410a86eb72284462432d'),'Yangon','仰光','yangguang',UNHEX(''),UNHEX('6eff92de4d11425b893dd6c75efbeb10'),'1',0);
+INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('d2271d40780b43dfb3e29067a0772d7c'),'Guahan','关岛','guandao',UNHEX(''),UNHEX('cc0968e70fe34cc99f5b3a6898a04506'),'5',0);
+INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid, country_uuid, continent_id, code) VALUES (UNHEX('af1a85a99d194d4a8308397b029fe790'),'Langkawi','兰卡威','lankawei',UNHEX(''),UNHEX('ac992fff27704cf9a95a208e183d508c'),'1',0);
 
 UNLOCK TABLES;
 
