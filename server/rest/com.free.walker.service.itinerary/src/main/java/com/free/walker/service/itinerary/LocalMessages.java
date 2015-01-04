@@ -73,6 +73,7 @@ public class LocalMessages {
     public static final String existed_travel_itinerary = "existed_travel_itinerary";
     public static final String missing_travel_proposal_bidding = "missing_travel_proposal_bidding";
     public static final String missing_location = "missing_location";
+    public static final String missing_agency = "missing_agency";
 
     public static final String illegal_location_association = "illegal_location_association";
     public static final String illegal_port_association = "illegal_port_association";

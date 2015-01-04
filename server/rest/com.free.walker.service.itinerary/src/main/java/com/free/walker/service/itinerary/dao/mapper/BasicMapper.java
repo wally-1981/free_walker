@@ -32,6 +32,8 @@ public interface BasicMapper {
 
     public City getCity(@Param("uuid") String uuid);
 
+    public Agency getAgency(@Param("uuid") String uuid);
+
     public String hasLocationByTerm(@Param("term") String term);
 
     public String hasLocationByUuid(@Param("uuid") String uuid);
@@ -77,6 +79,10 @@ public interface BasicMapper {
 
     public void unrelAgencyLocation(@Param("agencyId") String agencyId, @Param("locationId") String locationId,
         @Param("sendRecv") boolean isRecv);
+
+    public List<String> getRelAgencyLocation4Send(@Param("agencyId") String agencyId);
+
+    public List<String> getRelAgencyLocation4Recv(@Param("agencyId") String agencyId);
 
     public void deleteAgency(@Param("uuid") String uuid);
 

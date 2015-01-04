@@ -151,6 +151,14 @@
 			uuid = unhex(replace(#{uuid}, '-', ''))
 	</select>
 
+	<select id="getAgency" resultType="Agency">
+		select
+			<include refid="agencyColumns"/>
+		from agency
+		where
+			uuid = unhex(replace(#{uuid}, '-', ''))
+	</select>
+
 	<!-- Continents are stored in memory, so sql will not count them. -->
 	<select id="hasLocationByTerm" resultType="String">
 		select
@@ -342,8 +350,8 @@
 	</delete>
 
 	<insert id="addAgency" parameterType="Agency">
-		insert into agency (uuid, name, title, hmd)
-		values (unhex(replace(#{uuid}, '-', '')), #{name}, #{title}, #{hmd})
+		insert into agency (uuid, name, title, rating, hmd, exp)
+		values (unhex(replace(#{uuid}, '-', '')), #{name}, #{title}, #{rating}, #{hmd}, #{exp})
 	</insert>
 
 	<insert id="relAgencyLocation">
@@ -378,6 +386,26 @@
 			location_uuid = convert(unhex(replace(#{locationId}, '-', '')), binary(16)) and
 			send_recv = #{sendRecv}
 	</delete>
+
+	<select id="getRelAgencyLocation4Send" resultType="String">
+		select
+			hex(location_uuid)
+		from
+			agency_biz_location
+		where
+			agency_uuid = unhex(replace(#{agencyId}, '-', '')) and
+			send_recv = 0
+	</select>
+
+	<select id="getRelAgencyLocation4Recv" resultType="String">
+		select
+			hex(location_uuid)
+		from
+			agency_biz_location
+		where
+			agency_uuid = unhex(replace(#{agencyId}, '-', '')) and
+			send_recv = 1
+	</select>
 
 	<delete id="deleteAgency">
 		delete from agency

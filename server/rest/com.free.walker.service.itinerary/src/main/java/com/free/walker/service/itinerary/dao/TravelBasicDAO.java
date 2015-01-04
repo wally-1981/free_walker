@@ -52,6 +52,8 @@ public interface TravelBasicDAO extends HealthyDAO {
 
     public String addAgency(Agency agency) throws DatabaseAccessException;
 
+    public Agency getAgency(String agencyId) throws DatabaseAccessException;
+
     public void relAgencyLocation(String agencyId, List<String> sendLocationIds, List<String> recvLocationIds)
         throws DatabaseAccessException;
 
@@ -61,6 +63,8 @@ public interface TravelBasicDAO extends HealthyDAO {
 
     public void unrelAgencyLocation(String agencyId, List<String> sendLocationIds, List<String> recvLocationIds)
         throws DatabaseAccessException;
+
+    public List<String> getAgencyLocations(String agencyId, int sendRecv) throws DatabaseAccessException;
 
     public String removeAgency(String uuid) throws DatabaseAccessException;
 

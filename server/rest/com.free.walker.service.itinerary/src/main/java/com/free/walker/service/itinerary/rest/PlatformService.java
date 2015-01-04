@@ -2,8 +2,11 @@ package com.free.walker.service.itinerary.rest;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -11,11 +14,13 @@ import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -27,6 +32,7 @@ import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.Enumable;
 import com.free.walker.service.itinerary.Imaginable;
 import com.free.walker.service.itinerary.LocalMessages;
+import com.free.walker.service.itinerary.basic.Agency;
 import com.free.walker.service.itinerary.basic.Flight;
 import com.free.walker.service.itinerary.basic.Hotel;
 import com.free.walker.service.itinerary.basic.Resort;
@@ -57,7 +63,7 @@ public class PlatformService {
     }
 
     @GET
-    @Path("/introspection")
+    @Path("/introspection/")
     public Response getIntrospection() {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
 
@@ -182,7 +188,13 @@ public class PlatformService {
             sampleDataBuilder.add(trafficRequirementD.toJSON());
             sampleDataBuilder.add(trafficRequirementE.toJSON());
 
-//            TODO
+            Agency agency = new Agency();
+            agency.setUuid(UUID.randomUUID().toString());
+            agency.setName("中青旅（湖北分公司）");
+            agency.setTitle("中青旅");
+            agency.setHmd(86);
+            agency.setExp(99999);
+            sampleDataBuilder.add(agency.toJSON());
 
             resBuilder.add("sample_data", sampleDataBuilder);
         }
@@ -191,7 +203,7 @@ public class PlatformService {
     }
 
     @GET
-    @Path("/countries/{countryId}")
+    @Path("/countries/{countryId}/")
     public Response getCountry() {
         return Response.ok().build();
     }
@@ -203,7 +215,7 @@ public class PlatformService {
     }
 
     @GET
-    @Path("/cities/{cityId}")
+    @Path("/cities/{cityId}/")
     public Response getCity() {
         return Response.ok().build();
     }
@@ -215,7 +227,7 @@ public class PlatformService {
     }
 
     @GET
-    @Path("/resorts/{resortId}")
+    @Path("/resorts/{resortId}/")
     public Response getResort() {
         return Response.ok().build();
     }
@@ -227,7 +239,7 @@ public class PlatformService {
     }
 
     @GET
-    @Path("/hotels/{hotelId}")
+    @Path("/hotels/{hotelId}/")
     public Response getHotel() {
         return Response.ok().build();
     }
@@ -239,19 +251,19 @@ public class PlatformService {
     }
 
     @GET
-    @Path("/flights/{flightId}")
+    @Path("/flights/{flightId}/")
     public Response getFlight() {
         return Response.ok().build();
     }
 
     @GET
-    @Path("/trains/{trainId}")
+    @Path("/trains/{trainId}/")
     public Response getTrain() {
         return Response.ok().build();
     }
 
     @GET
-    @Path("/tags/top/{n}")
+    @Path("/tags/top/{n}/")
     public Response getTags(@PathParam("n") int n) {
         try {
             List<Tag> tags = travelBasicDAO.getHottestTags(n);
@@ -260,6 +272,123 @@ public class PlatformService {
                 resBuilder.add(tags.get(i).toJSON());
             }
             return Response.ok(resBuilder.build()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
+    }
+
+    @POST
+    @Path("/agencies/")
+    public Response addAgency(JsonObject agencyJs) {
+        try {
+            Agency agency = new Agency().fromJSON(agencyJs);
+            String agencyId = travelBasicDAO.addAgency(agency);
+            JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, agencyId).build();
+            return Response.ok(res).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
+    }
+
+    @GET
+    @Path("/agencies/{agencyId}/")
+    public Response getAgency(@PathParam("agencyId") String agencyId) {
+        try {
+            Agency agency = travelBasicDAO.getAgency(agencyId);
+            if (agency == null) {
+                JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, agencyId).build();
+                return Response.status(Status.NOT_FOUND).entity(res).build();
+            }
+            return Response.ok(agency.toJSON()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
+    }
+
+    @POST
+    @Path("/agencies/{agencyId}/locations/send/{locationId}/")
+    public Response addAgencySendLocation(@PathParam("agencyId") String agencyId,
+        @PathParam("locationId") String locationId) {
+        try {
+            List<String> sendLocations = new ArrayList<String>();
+            sendLocations.add(locationId);
+            travelBasicDAO.relAgencyLocation(agencyId, sendLocations, null);
+            return Response.ok().build();
+        } catch(IllegalArgumentException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
+    }
+
+    @DELETE
+    @Path("/agencies/{agencyId}/locations/send/{locationId}/")
+    public Response removeAgencySendLocation(@PathParam("agencyId") String agencyId,
+        @PathParam("locationId") String locationId) {
+        try {
+            List<String> sendLocations = new ArrayList<String>();
+            sendLocations.add(locationId);
+            travelBasicDAO.unrelAgencyLocation(agencyId, sendLocations, null);
+            return Response.ok().build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
+    }
+
+    @POST
+    @Path("/agencies/{agencyId}/locations/recv/{locationId}/")
+    public Response addAgencyRecvLocation(@PathParam("agencyId") String agencyId,
+        @PathParam("locationId") String locationId) {
+        try {
+            List<String> recvLocations = new ArrayList<String>();
+            recvLocations.add(locationId);
+            travelBasicDAO.relAgencyLocation(agencyId, null, recvLocations);
+            return Response.ok().build();
+        } catch(IllegalArgumentException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
+    }
+
+    @DELETE
+    @Path("/agencies/{agencyId}/locations/recv/{locationId}/")
+    public Response removeAgencyRecvLocation(@PathParam("agencyId") String agencyId,
+        @PathParam("locationId") String locationId) {
+        try {
+            List<String> recvLocations = new ArrayList<String>();
+            recvLocations.add(locationId);
+            travelBasicDAO.unrelAgencyLocation(agencyId, null, recvLocations);
+            return Response.ok().build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
+    }
+
+    @GET
+    @Path("/agencies/{agencyId}/locations/")
+    public Response getAgencyLocations(@PathParam("agencyId") String agencyId, @QueryParam("sendRecv") int sendRecv) {
+        try {
+            List<String> agenciesLocation = travelBasicDAO.getAgencyLocations(agencyId, sendRecv);
+            JsonArrayBuilder agencyLocations = Json.createArrayBuilder();
+            Iterator<String> agencyLocationsIter = agenciesLocation.iterator();
+            while (agencyLocationsIter.hasNext()) {
+                agencyLocations.add(agencyLocationsIter.next());
+            }
+            return Response.ok(Json.createObjectBuilder().add(Introspection.JSONKeys.LOCATION,
+                agencyLocations).build()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
+    }
+
+    @DELETE
+    @Path("/agencies/{agencyId}/")
+    public Response removeAgency(@PathParam("agencyId") String agencyId) {
+        try {
+            travelBasicDAO.removeAgency(agencyId);
+            JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, agencyId).build();
+            return Response.ok(res).build();
         } catch (DatabaseAccessException e) {
             return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
         }

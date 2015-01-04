@@ -417,38 +417,66 @@ public class TravelBasicDAOImplTest {
         sendRecvLocationIds.add("7737001550974bceb0dc62b3c3977db7");
         sendRecvLocationIds.add("2e072b57c16c46de9dd385e0a67e94da");
 
-        travelBasicDAO.relAgencyLocation(a1, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 4));
-        assertEquals(2, travelBasicDAO.countRelAgencyLocation4Send(a1));
-        assertEquals(4, travelBasicDAO.countRelAgencyLocation4Recv(a1));
-        travelBasicDAO.unrelAgencyLocation(a1, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 4));
-        assertEquals(1, travelBasicDAO.countRelAgencyLocation4Send(a1));
-        assertEquals(1, travelBasicDAO.countRelAgencyLocation4Recv(a1));
+        {
+            travelBasicDAO.relAgencyLocation(a1, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 4));
+            
+            assertEquals(2, travelBasicDAO.countRelAgencyLocation4Send(a1));
+            List<String> sendLocations = travelBasicDAO.getAgencyLocations(a1, 0);
+            assertNotNull(sendLocations);
+            assertEquals(2, sendLocations.size());
+            
+            assertEquals(4, travelBasicDAO.countRelAgencyLocation4Recv(a1));
+            List<String> recvLocations = travelBasicDAO.getAgencyLocations(a1, 1);
+            assertNotNull(recvLocations);
+            assertEquals(4, recvLocations.size());
+        }
+
+        {
+            travelBasicDAO.unrelAgencyLocation(a1, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 4));
+            
+            assertEquals(1, travelBasicDAO.countRelAgencyLocation4Send(a1));
+            List<String> sendLocations = travelBasicDAO.getAgencyLocations(a1, 0);
+            assertNotNull(sendLocations);
+            assertEquals(1, sendLocations.size());
+            
+            assertEquals(1, travelBasicDAO.countRelAgencyLocation4Recv(a1));
+            List<String> recvLocations = travelBasicDAO.getAgencyLocations(a1, 1);
+            assertNotNull(recvLocations);
+            assertEquals(1, recvLocations.size());
+        }
     }
 
     @Test
     public void testAddRemoveAgency() throws DatabaseAccessException {
         Agency agency = new Agency();
-        String a = UUID.randomUUID().toString();
-        agency.setUuid(a);
+        String aId = UUID.randomUUID().toString();
+        agency.setUuid(aId);
         agency.setName("测试");
         agency.setTitle("[显示]" + agency.getName());
         agency.setHmd(80);
-        travelBasicDAO.addAgency(agency);
+        String agencyId = travelBasicDAO.addAgency(agency);
 
-        assertEquals(0, travelBasicDAO.countRelAgencyLocation4Send(a));
-        assertEquals(0, travelBasicDAO.countRelAgencyLocation4Recv(a));
+        Agency addedAgency = travelBasicDAO.getAgency(agencyId);
+        assertNotNull(addedAgency);
+        assertEquals(aId, addedAgency.getUuid());
+        assertEquals("测试", addedAgency.getName());
+        assertEquals("[显示]" + agency.getName(), addedAgency.getTitle());
+        assertEquals(80, addedAgency.getHmd());
+
+        assertEquals(0, travelBasicDAO.countRelAgencyLocation4Send(aId));
+        assertEquals(0, travelBasicDAO.countRelAgencyLocation4Recv(aId));
 
         List<String> sendRecvLocationIds = new ArrayList<String>();
         sendRecvLocationIds.add("689ddfcdeffd4937b56707c4c8907378");
         sendRecvLocationIds.add("2");
-        travelBasicDAO.relAgencyLocation(a, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 2));
+        travelBasicDAO.relAgencyLocation(aId, sendRecvLocationIds.subList(0, 1), sendRecvLocationIds.subList(1, 2));
 
-        assertEquals(1, travelBasicDAO.countRelAgencyLocation4Send(a));
-        assertEquals(1, travelBasicDAO.countRelAgencyLocation4Recv(a));
+        assertEquals(1, travelBasicDAO.countRelAgencyLocation4Send(aId));
+        assertEquals(1, travelBasicDAO.countRelAgencyLocation4Recv(aId));
 
-        travelBasicDAO.removeAgency(a);
-        assertEquals(0, travelBasicDAO.countRelAgencyLocation4Send(a));
-        assertEquals(0, travelBasicDAO.countRelAgencyLocation4Recv(a));
+        travelBasicDAO.removeAgency(aId);
+        assertEquals(0, travelBasicDAO.countRelAgencyLocation4Send(aId));
+        assertEquals(0, travelBasicDAO.countRelAgencyLocation4Recv(aId));
     }
 
     @Test

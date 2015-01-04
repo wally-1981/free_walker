@@ -387,13 +387,31 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
         }
     }
 
+    public Agency getAgency(String agencyId) throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            return basicMapper.getAgency(agencyId);
+        }  catch(Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
     public void relAgencyLocation(String agencyId, List<String> sendLocationIds, List<String> recvLocationIds)
         throws DatabaseAccessException {
         SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
         try {
             BasicMapper basicMapper = session.getMapper(BasicMapper.class);
 
-            for (int i = 0; i < sendLocationIds.size(); i++) {
+            Agency agency = basicMapper.getAgency(agencyId);
+            if (agency == null) {
+                throw new IllegalArgumentException(LocalMessages.getMessage(LocalMessages.missing_agency, agencyId));
+            }
+
+            for (int i = 0; sendLocationIds != null && i < sendLocationIds.size(); i++) {
                 int level = getLocationLevel(basicMapper, sendLocationIds.get(i));
                 if (level == 0) {
                     throw new IllegalArgumentException(LocalMessages.getMessage(LocalMessages.missing_location,
@@ -403,7 +421,7 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
                 }
             }
 
-            for (int i = 0; i < recvLocationIds.size(); i++) {
+            for (int i = 0; recvLocationIds != null && i < recvLocationIds.size(); i++) {
                 int level = getLocationLevel(basicMapper, recvLocationIds.get(i));
                 if (level == 0) {
                     throw new IllegalArgumentException(LocalMessages.getMessage(LocalMessages.missing_location,
@@ -457,17 +475,34 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
         try {
             BasicMapper basicMapper = session.getMapper(BasicMapper.class);
 
-            for (int i = 0; i < sendLocationIds.size(); i++) {
+            for (int i = 0; sendLocationIds != null && i < sendLocationIds.size(); i++) {
                 basicMapper.unrelAgencyLocation(agencyId, sendLocationIds.get(i), false);
             }
 
-            for (int i = 0; i < recvLocationIds.size(); i++) {
+            for (int i = 0; recvLocationIds != null && i < recvLocationIds.size(); i++) {
                 basicMapper.unrelAgencyLocation(agencyId, recvLocationIds.get(i), true);
             }            
 
             session.commit();
             return;
         } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public List<String> getAgencyLocations(String agencyId, int sendRecv) throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            if (sendRecv == 0) {
+                return basicMapper.getRelAgencyLocation4Send(agencyId);
+            } else {
+                return basicMapper.getRelAgencyLocation4Recv(agencyId);
+            }
+        } catch(Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);
         } finally {
