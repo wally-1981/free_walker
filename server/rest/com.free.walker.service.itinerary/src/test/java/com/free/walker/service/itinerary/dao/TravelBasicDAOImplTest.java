@@ -480,6 +480,46 @@ public class TravelBasicDAOImplTest {
     }
 
     @Test
+    public void testAddRemoveAgencies() throws DatabaseAccessException {
+        Agency agency1 = new Agency();
+        String aId = UUID.randomUUID().toString();
+        agency1.setUuid(aId);
+        agency1.setName("测试1");
+        agency1.setTitle("[显示1]" + agency1.getName());
+        agency1.setHmd(80);
+
+        Agency agency2 = new Agency();
+        String bId = UUID.randomUUID().toString();
+        agency2.setUuid(bId);
+        agency2.setName("测试2");
+        agency2.setTitle("[显示2]" + agency2.getName());
+        agency2.setHmd(79);
+
+        List<Agency> agencies = new ArrayList<Agency>();
+        agencies.add(agency1);
+        agencies.add(agency2);
+        List<String> agencyIds = travelBasicDAO.addAgencies(agencies);
+
+        Agency addedAgency1 = travelBasicDAO.getAgency(agencyIds.get(0));
+        assertNotNull(addedAgency1);
+        assertEquals(aId, addedAgency1.getUuid());
+        assertEquals("测试1", addedAgency1.getName());
+        assertEquals("[显示1]" + agency1.getName(), addedAgency1.getTitle());
+        assertEquals(80, addedAgency1.getHmd());
+        assertEquals(0, addedAgency1.getRating());
+        assertEquals(0, addedAgency1.getExp());
+
+        Agency addedAgency2 = travelBasicDAO.getAgency(agencyIds.get(1));
+        assertNotNull(addedAgency2);
+        assertEquals(bId, addedAgency2.getUuid());
+        assertEquals("测试2", addedAgency2.getName());
+        assertEquals("[显示2]" + agency2.getName(), addedAgency2.getTitle());
+        assertEquals(79, addedAgency2.getHmd());
+        assertEquals(0, addedAgency2.getRating());
+        assertEquals(0, addedAgency2.getExp());
+    }
+
+    @Test
     public void testHasLocationByTerm() throws DatabaseAccessException {
         assertTrue(travelBasicDAO.hasLocationByTerm("Wuhan"));
         assertTrue(travelBasicDAO.hasLocationByTerm("wuhan"));

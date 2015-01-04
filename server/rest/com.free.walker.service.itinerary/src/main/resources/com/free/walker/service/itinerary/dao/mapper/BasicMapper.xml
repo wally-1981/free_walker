@@ -354,6 +354,14 @@
 		values (unhex(replace(#{uuid}, '-', '')), #{name}, #{title}, #{rating}, #{hmd}, #{exp})
 	</insert>
 
+	<insert id="addAgencies" parameterType="Map">
+		insert into agency (uuid, name, title, rating, hmd, exp)
+		values
+		<foreach collection="agencies" item="agency" index="index" separator=",">
+			(unhex(replace(#{agency.uuid}, '-', '')), #{agency.name}, #{agency.title}, #{agency.rating}, #{agency.hmd}, #{agency.exp})
+		</foreach>
+	</insert>
+
 	<insert id="relAgencyLocation">
 		insert into agency_biz_location (agency_uuid, location_uuid, send_recv)
 		values (unhex(replace(#{agencyId}, '-', '')), convert(unhex(replace(#{locationId}, '-', '')), binary(16)), #{sendRecv})

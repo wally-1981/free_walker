@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonException;
 import javax.json.JsonObject;
@@ -279,12 +280,29 @@ public class PlatformService {
 
     @POST
     @Path("/agencies/")
-    public Response addAgency(JsonObject agencyJs) {
+    public Response addAgency(JsonObject agencyJs, @QueryParam("batch") boolean batch) {
         try {
-            Agency agency = new Agency().fromJSON(agencyJs);
-            String agencyId = travelBasicDAO.addAgency(agency);
-            JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, agencyId).build();
-            return Response.ok(res).build();
+            if (batch) {
+                JsonArray agencies = agencyJs.getJsonArray(Introspection.JSONKeys.AGENCIES);
+                List<Agency> a = new ArrayList<Agency>();
+                for (int i = 0; i < agencies.size(); i++) {
+                    a.add(new Agency().fromJSON(agencies.getJsonObject(i)));
+                }
+
+                List<String> agencyIds = travelBasicDAO.addAgencies(a);
+
+                JsonArrayBuilder agencyIdArray = Json.createArrayBuilder();
+                for (int i = 0; i < agencyIds.size(); i++) {
+                    agencyIdArray.add(agencyIds.get(i));
+                }
+                JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, agencyIdArray).build();
+                return Response.ok(res).build();
+            } else {
+                Agency agency = new Agency().fromJSON(agencyJs);
+                String agencyId = travelBasicDAO.addAgency(agency);
+                JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, agencyId).build();
+                return Response.ok(res).build();
+            }
         } catch (DatabaseAccessException e) {
             return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
         }

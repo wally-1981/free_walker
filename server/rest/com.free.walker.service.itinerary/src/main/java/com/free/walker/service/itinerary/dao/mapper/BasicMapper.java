@@ -70,6 +70,8 @@ public interface BasicMapper {
 
     public void addAgency(Agency agency);
 
+    public void addAgencies(Map<String, Object> agencies);
+
     public void relAgencyLocation(@Param("agencyId") String agencyId, @Param("locationId") String locationId,
         @Param("sendRecv") boolean isRecv);
 

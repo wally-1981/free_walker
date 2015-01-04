@@ -2,6 +2,7 @@ package com.free.walker.service.itinerary.dao.db;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -379,6 +380,29 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
 
             session.commit();
             return agency.getUuid().toString();
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public List<String> addAgencies(List<Agency> agencies) throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("agencies", agencies);
+            basicMapper.addAgencies(params);
+
+            session.commit();
+
+            List<String> agencyIds = new ArrayList<String>(agencies.size());
+            for (int i = 0; i < agencies.size(); i++) {
+                agencyIds.add(agencies.get(i).getUuid());
+            }
+            return agencyIds;
         } catch (Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);
