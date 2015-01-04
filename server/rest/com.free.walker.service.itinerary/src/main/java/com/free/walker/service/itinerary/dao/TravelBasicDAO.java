@@ -59,6 +59,9 @@ public interface TravelBasicDAO extends HealthyDAO {
     public void relAgencyLocation(String agencyId, List<String> sendLocationIds, List<String> recvLocationIds)
         throws DatabaseAccessException;
 
+    public void relAgenciesLocation(List<String> agencyIds, Map<String, Map<String, List<String>>> locations)
+        throws DatabaseAccessException;
+
     public int countRelAgencyLocation4Send(String agencyId) throws DatabaseAccessException;
 
     public int countRelAgencyLocation4Recv(String agencyId) throws DatabaseAccessException;

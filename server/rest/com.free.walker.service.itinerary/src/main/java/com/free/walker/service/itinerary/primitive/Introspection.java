@@ -83,6 +83,9 @@ public class Introspection {
         public static final String ERROR_CNTX = "error_cntx";
         public static final String ERROR_DESC = "error_desc";
         public static final String ERROR_ACTN = "error_actn";
+
+        public static final String SEND = "send";
+        public static final String RECV = "recv";
     }
 
     public static class JSONValues {

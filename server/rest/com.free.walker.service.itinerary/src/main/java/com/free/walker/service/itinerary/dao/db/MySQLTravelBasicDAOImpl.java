@@ -26,6 +26,7 @@ import com.free.walker.service.itinerary.dao.DAOConstants;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
 import com.free.walker.service.itinerary.dao.mapper.BasicMapper;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
+import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.MySQLDbClientBuilder;
 import com.free.walker.service.itinerary.util.SystemConfigUtil;
 import com.free.walker.service.itinerary.util.UuidUtil;
@@ -453,7 +454,57 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
                 } else {
                     basicMapper.relAgencyLocation(agencyId, recvLocationIds.get(i), true);
                 }
-            }            
+            }
+
+            session.commit();
+            return;
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public void relAgenciesLocation(List<String> agencyIds, Map<String, Map<String, List<String>>> locations)
+        throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+
+            for (int i = 0; i < agencyIds.size(); i++) {
+                String agencyId = agencyIds.get(i);
+                Map<String, List<String>> agencyLocations = locations.get(agencyId);
+                List<String> sendLocationIds = agencyLocations.get(Introspection.JSONKeys.SEND);
+                List<String> recvLocationIds = agencyLocations.get(Introspection.JSONKeys.RECV);
+
+                Agency agency = basicMapper.getAgency(agencyId);
+                if (agency == null) {
+                    throw new IllegalArgumentException(LocalMessages.getMessage(LocalMessages.missing_agency, agencyId));
+                }
+
+                for (int j = 0; sendLocationIds != null && j < sendLocationIds.size(); j++) {
+                    int level = getLocationLevel(basicMapper, sendLocationIds.get(j));
+                    if (level == 0) {
+                        throw new IllegalArgumentException(LocalMessages.getMessage(LocalMessages.missing_location,
+                            sendLocationIds.get(j)));
+                    } else {
+                        basicMapper.relAgencyLocation(agencyId, sendLocationIds.get(j), false);
+                    }
+                }
+
+                for (int j = 0; recvLocationIds != null && j < recvLocationIds.size(); j++) {
+                    int level = getLocationLevel(basicMapper, recvLocationIds.get(j));
+                    if (level == 0) {
+                        throw new IllegalArgumentException(LocalMessages.getMessage(LocalMessages.missing_location,
+                            recvLocationIds.get(j)));
+                    } else {
+                        basicMapper.relAgencyLocation(agencyId, recvLocationIds.get(j), true);
+                    }
+                }
+            }
 
             session.commit();
             return;

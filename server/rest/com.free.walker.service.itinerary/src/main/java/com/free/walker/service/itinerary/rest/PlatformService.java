@@ -286,6 +286,10 @@ public class PlatformService {
         try {
             if (batch) {
                 JsonArray agencyArray = agencyJs.getJsonArray(Introspection.JSONKeys.AGENCIES);
+                if (agencyArray.size() > 500) {
+                    return Response.status(Status.REQUEST_ENTITY_TOO_LARGE).build();
+                }
+
                 List<Agency> agencies = new ArrayList<Agency>();
                 Map<String, Map<String, List<String>>> agencyLocations = new HashMap<String, Map<String, List<String>>>();
                 for (int i = 0; i < agencyArray.size(); i++) {
@@ -297,26 +301,25 @@ public class PlatformService {
                     List<String> recvLocations = new ArrayList<String>();
                     Map<String, List<String>> locations = new HashMap<String, List<String>>();
                     agencyLocations.put(agency.getUuid(), locations);
-                    JsonArray sendLoctionArray = aJs.getJsonArray("send");
+                    JsonArray sendLoctionArray = aJs.getJsonArray(Introspection.JSONKeys.SEND);
                     for (int j = 0; j < sendLoctionArray.size(); j++) {
                         String locationId = sendLoctionArray.getString(j).trim();
                         if (!locationId.isEmpty()) sendLocations.add(locationId);
                     }
-                    locations.put("send", sendLocations);
-                    JsonArray recvLoctionArray = aJs.getJsonArray("recv");
+                    locations.put(Introspection.JSONKeys.SEND, sendLocations);
+                    JsonArray recvLoctionArray = aJs.getJsonArray(Introspection.JSONKeys.RECV);
                     for (int j = 0; j < recvLoctionArray.size(); j++) {
                         String locationId = recvLoctionArray.getString(j).trim();
                         if (!locationId.isEmpty()) recvLocations.add(locationId);
                     }
-                    locations.put("recv", recvLocations);
+                    locations.put(Introspection.JSONKeys.RECV, recvLocations);
                 }
 
                 List<String> agencyIds = travelBasicDAO.addAgencies(agencies);
+                travelBasicDAO.relAgenciesLocation(agencyIds, agencyLocations);
 
                 JsonArrayBuilder agencyIdArray = Json.createArrayBuilder();
                 for (int i = 0; i < agencyIds.size(); i++) {
-                    Map<String, List<String>> locations = agencyLocations.get(agencyIds.get(i));
-                    travelBasicDAO.relAgencyLocation(agencyIds.get(i), locations.get("send"), locations.get("recv"));
                     agencyIdArray.add(agencyIds.get(i));
                 }
                 JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, agencyIdArray).build();
