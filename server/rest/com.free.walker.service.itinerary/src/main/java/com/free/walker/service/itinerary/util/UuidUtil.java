@@ -36,7 +36,7 @@ public class UuidUtil {
         }
 
         try {
-            String uuidCmp = new StringBuffer(uuidCmpStr.substring(0, 8)).append("-").append(uuidCmpStr.substring(8, 12))
+            String uuidCmp = new StringBuilder(uuidCmpStr.substring(0, 8)).append("-").append(uuidCmpStr.substring(8, 12))
                 .append("-").append(uuidCmpStr.substring(12, 16)).append("-").append(uuidCmpStr.substring(16, 20))
                 .append("-").append(uuidCmpStr.substring(20)).toString();
             return UUID.fromString(uuidCmp);

@@ -32,7 +32,7 @@ public class MongoDbClientBuilder {
         }
 
         String mongoDatabaseUrl = config.getProperty(DAOConstants.mongo_database_url);
-        mongoDatabaseUrl = new StringBuffer(dbName).append(mongoDatabaseUrl).toString();
+        mongoDatabaseUrl = new StringBuilder(dbName).append(mongoDatabaseUrl).toString();
 
         List<ServerAddress> hostAddresses = new ArrayList<ServerAddress>();
         String dbHosts = mongoDatabaseUrl.substring(mongoDatabaseUrl.indexOf(AT) + AT.length());
