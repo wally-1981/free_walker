@@ -52,14 +52,12 @@ public interface TravelBasicDAO extends HealthyDAO {
 
     public String addAgency(Agency agency) throws DatabaseAccessException;
 
-    public List<String> addAgencies(List<Agency> agencies) throws DatabaseAccessException;
+    public List<String> addAgencies(List<Agency> agencies, Map<String, Map<String, List<String>>> locations)
+        throws DatabaseAccessException;
 
     public Agency getAgency(String agencyId) throws DatabaseAccessException;
 
     public void relAgencyLocation(String agencyId, List<String> sendLocationIds, List<String> recvLocationIds)
-        throws DatabaseAccessException;
-
-    public void relAgenciesLocation(List<String> agencyIds, Map<String, Map<String, List<String>>> locations)
         throws DatabaseAccessException;
 
     public int countRelAgencyLocation4Send(String agencyId) throws DatabaseAccessException;

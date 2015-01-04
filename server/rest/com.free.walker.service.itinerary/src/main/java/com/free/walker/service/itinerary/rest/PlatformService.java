@@ -315,8 +315,7 @@ public class PlatformService {
                     locations.put(Introspection.JSONKeys.RECV, recvLocations);
                 }
 
-                List<String> agencyIds = travelBasicDAO.addAgencies(agencies);
-                travelBasicDAO.relAgenciesLocation(agencyIds, agencyLocations);
+                List<String> agencyIds = travelBasicDAO.addAgencies(agencies, agencyLocations);
 
                 JsonArrayBuilder agencyIdArray = Json.createArrayBuilder();
                 for (int i = 0; i < agencyIds.size(); i++) {

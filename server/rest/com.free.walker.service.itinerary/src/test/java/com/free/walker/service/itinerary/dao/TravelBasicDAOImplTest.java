@@ -498,7 +498,7 @@ public class TravelBasicDAOImplTest {
         List<Agency> agencies = new ArrayList<Agency>();
         agencies.add(agency1);
         agencies.add(agency2);
-        List<String> agencyIds = travelBasicDAO.addAgencies(agencies);
+        List<String> agencyIds = travelBasicDAO.addAgencies(agencies, null);
 
         Agency addedAgency1 = travelBasicDAO.getAgency(agencyIds.get(0));
         assertNotNull(addedAgency1);
