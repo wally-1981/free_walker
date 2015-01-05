@@ -62,7 +62,7 @@ public abstract class AgencyElectionBaseRoutine implements MRRoutine {
 
     public MRRoutine reduce() {
         try {
-            List<Agency> candidates = travelBasicDAO.getAgencyCandidates4Proposal(proposalId);
+            List<Agency> candidates = travelBasicDAO.getRespondedAgencyCandidates4Proposal(proposalId);
 
             List<Agency> topFeedback = reduceByFeedback(candidates, AGENCY_ELECTION_BY_FEEDBACK_SIZE);
             List<Agency> topExperience = reduceByExperience(candidates, AGENCY_ELECTION_BY_EXPERIENCE_SIZE);

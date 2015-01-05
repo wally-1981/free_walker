@@ -74,18 +74,21 @@ public interface TravelBasicDAO extends HealthyDAO {
     public void addAgencyCandidates4Proposal(String proposalId, String proposalSummary, List<Agency> candidates)
         throws DatabaseAccessException;
 
-    public List<Agency> getAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException;
-
     public Map<String, String> getProposals4AgencyCandidate(String agencyId, int electionWindow)
         throws DatabaseAccessException;
 
+    public void markAgencyCandidateAsResponded(String proposalId, String agencyId) throws DatabaseAccessException;
+
+    public boolean canRotateElection4Proposal(String proposalId, int electionRotateWindow)
+        throws DatabaseAccessException;
+
+    public List<Agency> getRespondedAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException;
+
     public void markAgencyCandidatesAsElected(String proposalId, List<String> agencyIds) throws DatabaseAccessException;
+
+    public List<Agency> getAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException;
 
     public List<Agency> getElectedAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException;
 
     public List<Agency> getNotElectedAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException;
-
-    public void markAgencyCandidateAsResponded(String proposalId, String agencyId) throws DatabaseAccessException;
-
-    public List<Agency> getRespondedAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException;
 }

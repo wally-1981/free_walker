@@ -605,19 +605,6 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
         }
     }
 
-    public List<Agency> getAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException {
-        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
-        try {
-            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
-            return basicMapper.getAgencyCandidates4Proposal(proposalId);
-        } catch (Exception e) {
-            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
-            throw new DatabaseAccessException(e);
-        } finally {
-            session.close();
-        }
-    }
-
     public Map<String, String> getProposals4AgencyCandidate(String agencyId, int electionWindow)
         throws DatabaseAccessException {
         SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
@@ -629,6 +616,50 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
                 proposalSummaries.put(summaries.get(i).getPrimary(), summaries.get(i).getSecondary());
             }
             return proposalSummaries;
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public void markAgencyCandidateAsResponded(String proposalId, String agencyId) throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            basicMapper.markAgencyCandidateAsResponded(proposalId, agencyId);
+
+            session.commit();
+            return;
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public boolean canRotateElection4Proposal(String proposalId, int electionRotateWindow)
+        throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            String agencyId = basicMapper.canRotateElection4Proposal(proposalId, electionRotateWindow);
+            return agencyId == null || agencyId.isEmpty();
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public List<Agency> getRespondedAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            return basicMapper.getRespondedAgencyCandidates4Proposal(proposalId);
         } catch (Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);
@@ -656,6 +687,19 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
         }
     }
 
+    public List<Agency> getAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            return basicMapper.getAgencyCandidates4Proposal(proposalId);
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
     public List<Agency> getElectedAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException {
         SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
         try {
@@ -674,35 +718,6 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
         try {
             BasicMapper basicMapper = session.getMapper(BasicMapper.class);
             return basicMapper.getNotElectedAgencyCandidates4Proposal(proposalId);
-        } catch (Exception e) {
-            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
-            throw new DatabaseAccessException(e);
-        } finally {
-            session.close();
-        }
-    }
-
-    public void markAgencyCandidateAsResponded(String proposalId, String agencyId) throws DatabaseAccessException {
-        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
-        try {
-            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
-            basicMapper.markAgencyCandidateAsResponded(proposalId, agencyId);
-
-            session.commit();
-            return;
-        } catch (Exception e) {
-            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
-            throw new DatabaseAccessException(e);
-        } finally {
-            session.close();
-        }
-    }
-
-    public List<Agency> getRespondedAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException {
-        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
-        try {
-            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
-            return basicMapper.getRespondedAgencyCandidates4Proposal(proposalId);
         } catch (Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);

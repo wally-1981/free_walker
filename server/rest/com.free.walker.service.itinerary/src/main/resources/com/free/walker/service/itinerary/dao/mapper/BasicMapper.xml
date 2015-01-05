@@ -469,7 +469,21 @@
 		join agency_candidate
 			on agency.uuid = agency_candidate.agency_uuid
 		where
-			agency_candidate.proposal_uuid = unhex(replace(#{proposalId}, '-', '')) and agency_candidate.respond_status = 1
+			agency_candidate.proposal_uuid = unhex(replace(#{proposalId}, '-', '')) and
+			agency_candidate.respond_status = 1 and
+			agency_candidate.election_status = 0 and
+	</select>
+
+	<select id="canRotateElection4Proposal" resultType="String">
+		select
+			unhex(agency_candidate.agency_uuid)
+		from agency_candidate
+		where
+			agency_candidate.proposal_uuid = unhex(replace(#{proposalId}, '-', '')) and
+			agency_candidate.election_status = 1 and
+			agency_candidate.updated between adddate(now(), interval -#{latestNHour} hour) and now()
+		order by agency_candidate.updated desc
+		limit 1
 	</select>
 
 	<update id="markAgencyCandidatesAsElected" parameterType="Map">

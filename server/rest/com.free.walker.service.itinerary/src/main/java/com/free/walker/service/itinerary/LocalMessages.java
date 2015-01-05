@@ -112,7 +112,9 @@ public class LocalMessages {
     public static final String load_tag_success = "load_tag_success";
 
     public static final String agency_election_map_failed = "agency_election_map_failed";
+    public static final String agency_election_can_rotate_failed = "agency_election_can_rotate_failed";
     public static final String agency_election_no_candidate_found = "agency_election_no_candidate_found";
+    public static final String agency_election_miss_rotation_window = "agency_election_miss_rotation_window";
     public static final String agency_election_invalid_summary = "agency_election_invalid_summary";    
     public static final String agency_election_persist_candidates_failed = "agency_election_persist_candidates_failed";
     public static final String agency_election_persist_candidates_success = "agency_election_persist_candidates_success";
@@ -126,6 +128,7 @@ public class LocalMessages {
     public static final String agency_election_end = "agency_election_end";
     public static final String proposal_submission_failed = "proposal_submission_failed";
     public static final String proposal_submission_success = "proposal_submission_success";
+    public static final String proposal_submission_mark_elected_agency_failed = "proposal_submission_mark_elected_agency_failed";
 
     public static final String schedule_task_scheduled = "schedule_task_scheduled";
     public static final String schedule_task_scheduled_run_once = "schedule_task_scheduled_run_once";

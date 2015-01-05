@@ -100,6 +100,9 @@ public interface BasicMapper {
 
     public List<Agency> getRespondedAgencyCandidates4Proposal(@Param("proposalId") String proposalId);
 
+    public String canRotateElection4Proposal(@Param("proposalId") String proposalId,
+        @Param("latestNHour") int latestNHour);
+
     public void markAgencyCandidatesAsElected(Map<String, Object> proposalAgencyIds);
 
     public List<Agency> getElectedAgencyCandidates4Proposal(@Param("proposalId") String proposalId);

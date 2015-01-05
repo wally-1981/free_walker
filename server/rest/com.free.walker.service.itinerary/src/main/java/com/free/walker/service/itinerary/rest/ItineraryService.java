@@ -122,7 +122,7 @@ public class ItineraryService {
 
     @POST
     @Context
-    @Path("/proposals/{proposalId}/agencies/")
+    @Path("/proposals/agencies/{proposalId}/")
     public Response submitProposal(@PathParam("proposalId") String proposalId, @Context MessageContext msgCntx,
         @QueryParam("delayMins") int delayMins) {
         try {
@@ -157,7 +157,7 @@ public class ItineraryService {
     }
 
     @POST
-    @Path("/proposals/{proposalId}/agencies/next/")
+    @Path("/proposals/agencies/{proposalId}/next/")
     public Response resubmitProposal(@PathParam("proposalId") String proposalId) {
         try {
             List<TravelRequirement> itineraries = travelRequirementDAO.getItineraryRequirements(UuidUtil
@@ -188,8 +188,8 @@ public class ItineraryService {
     }
 
     @GET
-    @Path("/proposals/agencies/{agencyId}/")
-    public Response getStagedProposals(@PathParam("agencyId") String agencyId) {
+    @Path("/proposals/agencies/selected/{agencyId}/")
+    public Response getSelectedProposals(@PathParam("agencyId") String agencyId) {
         try {
             Map<String, String> proposalsSummary = travelBasicDAO.getProposals4AgencyCandidate(agencyId,
                 AgencyElectionTask.getElectionWindow());
@@ -211,7 +211,7 @@ public class ItineraryService {
     }
 
     @PUT
-    @Path("/proposals/{proposalId}/agencies/{agencyId}/")
+    @Path("/proposals/agencies/{proposalId}/{agencyId}/")
     public Response grabProposal(@PathParam("proposalId") String proposalId, @PathParam("agencyId") String agencyId) {
         try {
             travelBasicDAO.markAgencyCandidateAsResponded(proposalId, agencyId);

@@ -2,6 +2,7 @@ package com.free.walker.service.itinerary.task;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.Timer;
@@ -31,8 +32,8 @@ public class AgencyElectionTask extends TimerTask {
     private MRRoutine agencyElectionRoutine;
     private String proposalId;
 
-    public static TravelBasicDAO travelBasicDAO;
-    public static TravelRequirementDAO travelRequirementDAO;
+    private static TravelBasicDAO travelBasicDAO;
+    private static TravelRequirementDAO travelRequirementDAO;
 
     private AgencyElectionTask(MRRoutine agencyElectionRoutine, String proposalId) {
         this.agencyElectionRoutine = agencyElectionRoutine;
@@ -54,6 +55,7 @@ public class AgencyElectionTask extends TimerTask {
             }
         } catch (IllegalStateException e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.agency_election_failed, proposalId), e);
+            return;
         }
         LOG.info(LocalMessages.getMessage(LocalMessages.agency_election_end, proposalId));
 
@@ -65,9 +67,20 @@ public class AgencyElectionTask extends TimerTask {
             LOG.info(LocalMessages.getMessage(LocalMessages.proposal_submission_success, proposalId, agencyIds.toString()));
         } catch (InvalidTravelReqirementException e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.proposal_submission_failed, agencyIds.toString()), e);
+            return;
         } catch (DatabaseAccessException e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.proposal_submission_failed, agencyIds.toString()), e);
+            return;
         }
+
+        try {
+            travelBasicDAO.markAgencyCandidatesAsElected(proposalId, Arrays.asList(agencyIds));
+        } catch (DatabaseAccessException e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.proposal_submission_mark_elected_agency_failed,
+                    agencyIds.toString(), proposalId), e);
+        }
+
+        return;
     }
 
     public static void schedule(MRRoutine agencyElectionRoutine, String proposalId, int delayMins) {
