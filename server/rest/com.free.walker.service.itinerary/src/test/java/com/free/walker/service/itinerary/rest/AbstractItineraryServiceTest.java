@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -48,7 +49,10 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
     private String requirementId1st;
     private String requirementId2nd;
 
+    private JsonArray agencyIds;
+
     protected String itineraryServiceUrlStr;
+    protected String platformServiceUrlStr;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -139,6 +143,33 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
                 Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT);
             updatedRequirementBuilder.add(Introspection.JSONKeys.SUB_TYPE, Introspection.JSONValues.SUB_TYPE_HOTEL);
             updatedRequirementBuilder.add(Introspection.JSONKeys.NIGHT, 12);
+        }
+
+        {
+            HttpPost post = new HttpPost();
+
+            try {
+                InputStream is = Thread.currentThread().getContextClassLoader()
+                    .getResourceAsStream("com/free/walker/service/itinerary/rest/agencies.json");
+                post.setEntity(new StringEntity(Json.createReader(is).readObject().toString(), ContentType.APPLICATION_JSON));
+                post.setURI(new URI(platformServiceUrlStr + "agencies/"));
+                post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+                HttpResponse response = httpClient.execute(post);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    agencyIds = Json.createReader(response.getEntity().getContent()).readObject()
+                        .getJsonArray(Introspection.JSONKeys.UUID);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } catch (URISyntaxException e) {
+                throw new ProcessingException(e);
+            } finally {
+                post.abort();
+            }
         }
     }
 
@@ -727,10 +758,28 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
         }
 
         /*
-         * 查看我（旅行社）为候选的Proposal。
+         * 查看我（旅行社）被列为候选的Proposal概述。
          */
         {
-            ;
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(itineraryServiceUrlStr + "proposals/my"));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonArray proposals = Json.createReader(response.getEntity().getContent()).readArray();
+                    assertNotNull(proposals);
+                    assertTrue(proposals.size() > 0);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
         }
 
         /*

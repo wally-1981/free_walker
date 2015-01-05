@@ -6,6 +6,7 @@ public class ItineraryServiceProdTest extends AbstractItineraryServiceTest {
     @Before
     public void before() {
         itineraryServiceUrlStr = getProdServiceUrl(ItineraryService.class);
+        platformServiceUrlStr = getProdServiceUrl(PlatformService.class);
         super.before();
     }
 }
