@@ -355,15 +355,15 @@ public class TravelBasicDAOImplTest {
 
     @Test
     public void testLocationAssociation() throws DatabaseAccessException {
-        travelBasicDAO.associateLocation("7a087f047b83448aa487920a41f3e201", "cda48bcd9ab64669994013897321a3fb");
+        travelBasicDAO.associateLocation("7a087f047b83448aa487920a41f3e201", "689ddfcdeffd4937b56707c4c8907378");
         travelBasicDAO.associateLocation(UuidUtil.fromCmpUuidStr("7a087f047b83448aa487920a41f3e201").toString(),
-            UuidUtil.fromCmpUuidStr("79fd8642a11d4811887dec4268097a82").toString());
-        assertEquals(2, travelBasicDAO.countAssociatedLocation("7a087f047b83448aa487920a41f3e201"));
+            UuidUtil.fromCmpUuidStr("301cdd76923047d28eb28e85932d9f53").toString());
+        assertEquals(5, travelBasicDAO.countAssociatedLocation("7a087f047b83448aa487920a41f3e201"));
 
-        travelBasicDAO.deassociateLocation("7a087f047b83448aa487920a41f3e201", "cda48bcd9ab64669994013897321a3fb");
+        travelBasicDAO.deassociateLocation("7a087f047b83448aa487920a41f3e201", "689ddfcdeffd4937b56707c4c8907378");
         travelBasicDAO.deassociateLocation(UuidUtil.fromCmpUuidStr("7a087f047b83448aa487920a41f3e201").toString(),
-            UuidUtil.fromCmpUuidStr("79fd8642a11d4811887dec4268097a82").toString());
-        assertEquals(0, travelBasicDAO.countAssociatedLocation("7a087f047b83448aa487920a41f3e201"));
+            UuidUtil.fromCmpUuidStr("301cdd76923047d28eb28e85932d9f53").toString());
+        assertEquals(3, travelBasicDAO.countAssociatedLocation("7a087f047b83448aa487920a41f3e201"));
 
         String uuid = UUID.randomUUID().toString();
 
