@@ -27,6 +27,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.eclipse.jetty.http.HttpStatus;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -93,13 +94,13 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
 
             JsonObjectBuilder destinationBuilder = Json.createObjectBuilder();
             JsonObjectBuilder destCityBuilder = Json.createObjectBuilder();
-            destCityBuilder.add(Introspection.JSONKeys.UUID, "79fd8642-a11d-4811-887d-ec4268097a82");
+            destCityBuilder.add(Introspection.JSONKeys.UUID, "b4cef473-1ad7-46cd-8ea5-d50bfa3ca033");
             destinationBuilder.add(Introspection.JSONKeys.CITY, destCityBuilder);
             requirementBuilder.add(Introspection.JSONKeys.DESTINATION, destinationBuilder);
 
             JsonObjectBuilder departureBuilder = Json.createObjectBuilder();
             JsonObjectBuilder deptCityBuilder = Json.createObjectBuilder();
-            deptCityBuilder.add(Introspection.JSONKeys.UUID, "46e46912-f856-49ce-b9f8-cac99fe9211e");
+            deptCityBuilder.add(Introspection.JSONKeys.UUID, "79fd8642-a11d-4811-887d-ec4268097a82");
             departureBuilder.add(Introspection.JSONKeys.CITY, deptCityBuilder);
             requirementBuilder.add(Introspection.JSONKeys.DEPARTURE, departureBuilder);
             itinerary = requirementBuilder.build();
@@ -152,7 +153,7 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
                 InputStream is = Thread.currentThread().getContextClassLoader()
                     .getResourceAsStream("com/free/walker/service/itinerary/rest/agencies.json");
                 post.setEntity(new StringEntity(Json.createReader(is).readObject().toString(), ContentType.APPLICATION_JSON));
-                post.setURI(new URI(platformServiceUrlStr + "agencies/"));
+                post.setURI(new URI(platformServiceUrlStr + "agencies?batch=true"));
                 post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -322,17 +323,17 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
                     assertNotNull(departure);
                     JsonObject departureCity = departure.getJsonObject(Introspection.JSONKeys.CITY);
                     assertNotNull(departureCity);
-                    assertEquals("Geneva", departureCity.getString(Introspection.JSONKeys.NAME));
-                    assertEquals("日内瓦", departureCity.getString(Introspection.JSONKeys.CHINESE_NAME));
-                    assertEquals("rineiwa", departureCity.getString(Introspection.JSONKeys.PINYIN_NAME));
+                    assertEquals("Wuhan", departureCity.getString(Introspection.JSONKeys.NAME));
+                    assertEquals("武汉", departureCity.getString(Introspection.JSONKeys.CHINESE_NAME));
+                    assertEquals("wuhan", departureCity.getString(Introspection.JSONKeys.PINYIN_NAME));
 
                     JsonObject destination = itinerary.getJsonObject(Introspection.JSONKeys.DESTINATION);
                     assertNotNull(destination);
                     JsonObject destinationCity = destination.getJsonObject(Introspection.JSONKeys.CITY);
                     assertNotNull(destinationCity);
-                    assertEquals("Wuhan", destinationCity.getString(Introspection.JSONKeys.NAME));
-                    assertEquals("武汉", destinationCity.getString(Introspection.JSONKeys.CHINESE_NAME));
-                    assertEquals("wuhan", destinationCity.getString(Introspection.JSONKeys.PINYIN_NAME));
+                    assertEquals("Guangzhou", destinationCity.getString(Introspection.JSONKeys.NAME));
+                    assertEquals("广州", destinationCity.getString(Introspection.JSONKeys.CHINESE_NAME));
+                    assertEquals("guangzhou", destinationCity.getString(Introspection.JSONKeys.PINYIN_NAME));
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -449,17 +450,17 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
                         assertNotNull(departure);
                         JsonObject departureCity = departure.getJsonObject(Introspection.JSONKeys.CITY);
                         assertNotNull(departureCity);
-                        assertEquals("Geneva", departureCity.getString(Introspection.JSONKeys.NAME));
-                        assertEquals("日内瓦", departureCity.getString(Introspection.JSONKeys.CHINESE_NAME));
-                        assertEquals("rineiwa", departureCity.getString(Introspection.JSONKeys.PINYIN_NAME));
+                        assertEquals("Wuhan", departureCity.getString(Introspection.JSONKeys.NAME));
+                        assertEquals("武汉", departureCity.getString(Introspection.JSONKeys.CHINESE_NAME));
+                        assertEquals("wuhan", departureCity.getString(Introspection.JSONKeys.PINYIN_NAME));
 
                         JsonObject destination = itineraryRequirement.getJsonObject(Introspection.JSONKeys.DESTINATION);
                         assertNotNull(destination);
                         JsonObject destinationCity = destination.getJsonObject(Introspection.JSONKeys.CITY);
                         assertNotNull(destinationCity);
-                        assertEquals("Wuhan", destinationCity.getString(Introspection.JSONKeys.NAME));
-                        assertEquals("武汉", destinationCity.getString(Introspection.JSONKeys.CHINESE_NAME));
-                        assertEquals("wuhan", destinationCity.getString(Introspection.JSONKeys.PINYIN_NAME));
+                        assertEquals("Guangzhou", destinationCity.getString(Introspection.JSONKeys.NAME));
+                        assertEquals("广州", destinationCity.getString(Introspection.JSONKeys.CHINESE_NAME));
+                        assertEquals("guangzhou", destinationCity.getString(Introspection.JSONKeys.PINYIN_NAME));
                     }
                 }
             } catch (IOException e) {
@@ -694,17 +695,17 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
                         assertNotNull(departure);
                         JsonObject departureCity = departure.getJsonObject(Introspection.JSONKeys.CITY);
                         assertNotNull(departureCity);
-                        assertEquals("Geneva", departureCity.getString(Introspection.JSONKeys.NAME));
-                        assertEquals("日内瓦", departureCity.getString(Introspection.JSONKeys.CHINESE_NAME));
-                        assertEquals("rineiwa", departureCity.getString(Introspection.JSONKeys.PINYIN_NAME));
+                        assertEquals("Wuhan", departureCity.getString(Introspection.JSONKeys.NAME));
+                        assertEquals("武汉", departureCity.getString(Introspection.JSONKeys.CHINESE_NAME));
+                        assertEquals("wuhan", departureCity.getString(Introspection.JSONKeys.PINYIN_NAME));
 
                         JsonObject destination = itineraryRequirement.getJsonObject(Introspection.JSONKeys.DESTINATION);
                         assertNotNull(destination);
                         JsonObject destinationCity = destination.getJsonObject(Introspection.JSONKeys.CITY);
                         assertNotNull(destinationCity);
-                        assertEquals("Wuhan", destinationCity.getString(Introspection.JSONKeys.NAME));
-                        assertEquals("武汉", destinationCity.getString(Introspection.JSONKeys.CHINESE_NAME));
-                        assertEquals("wuhan", destinationCity.getString(Introspection.JSONKeys.PINYIN_NAME));
+                        assertEquals("Guangzhou", destinationCity.getString(Introspection.JSONKeys.NAME));
+                        assertEquals("广州", destinationCity.getString(Introspection.JSONKeys.CHINESE_NAME));
+                        assertEquals("guangzhou", destinationCity.getString(Introspection.JSONKeys.PINYIN_NAME));
                     }
                 }
             } catch (IOException e) {
@@ -719,12 +720,12 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
          */
         {
             HttpPost post = new HttpPost();
-            post.setURI(new URI(itineraryServiceUrlStr + "proposals/" + proposalId + "/agencies?delayMins=1"));
+            post.setURI(new URI(itineraryServiceUrlStr + "proposals/agencies/" + proposalId + "?delayMins=1"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             try {
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
-                assertEquals(HttpStatus.NO_CONTENT_204, statusCode);
+                assertEquals(HttpStatus.ACCEPTED_202, statusCode);
             } catch (IOException e) {
                 throw new ProcessingException(e);
             } finally {
@@ -758,19 +759,27 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
         }
 
         /*
-         * 查看我（旅行社）被列为候选的Proposal概述。
+         * 查看我（旅行社）被列为候选的Proposal（概述）。
          */
         {
             HttpGet get = new HttpGet();
-            get.setURI(new URI(itineraryServiceUrlStr + "proposals/my"));
+            get.setURI(new URI(itineraryServiceUrlStr + "proposals/agencies/selected/"
+                + agencyIds.getString(agencyIds.size() - 2)));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
-                    JsonArray proposals = Json.createReader(response.getEntity().getContent()).readArray();
-                    assertNotNull(proposals);
-                    assertTrue(proposals.size() > 0);
+                    JsonObject proposalSummaries = Json.createReader(response.getEntity().getContent()).readObject();
+                    assertNotNull(proposalSummaries);
+                    JsonArray uuid = proposalSummaries.getJsonArray(Introspection.JSONKeys.UUID);
+                    assertNotNull(uuid);
+                    assertEquals(1, uuid.size());
+                    assertEquals(proposalId, uuid.getString(0));
+                    JsonArray summary = proposalSummaries.getJsonArray(Introspection.JSONKeys.SUMMARY);
+                    assertNotNull(summary);
+                    assertEquals(1, summary.size());
+                    assertEquals("测试提议", summary.getString(0));
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -786,29 +795,116 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
          * 旅行社抢单Proposal。
          */
         {
-            ;
+            HttpPut put = new HttpPut();
+            put.setURI(new URI(itineraryServiceUrlStr + "proposals/agencies/" + proposalId + "/"
+                + agencyIds.getString(agencyIds.size() - 2)));
+            put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(put);
+                int statusCode = response.getStatusLine().getStatusCode();
+                assertEquals(HttpStatus.OK_200, statusCode);
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                put.abort();
+            }
         }
 
         /*
-         * 查询我（旅行社）为候选的Proposal。
+         * 查看我（旅行社）被列为候选的Proposal（概述）。抢单成功后，此时应该少一个Proposal。
          */
         {
-            ;
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(itineraryServiceUrlStr + "proposals/agencies/selected/"
+                + agencyIds.getString(agencyIds.size() - 2)));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonObject proposalSummaries = Json.createReader(response.getEntity().getContent()).readObject();
+                    assertNotNull(proposalSummaries);
+                    JsonArray uuid = proposalSummaries.getJsonArray(Introspection.JSONKeys.UUID);
+                    assertNotNull(uuid);
+                    assertEquals(0, uuid.size());
+                    JsonArray summary = proposalSummaries.getJsonArray(Introspection.JSONKeys.SUMMARY);
+                    assertNotNull(summary);
+                    assertEquals(0, summary.size());
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
         }
 
         {
-            Thread.sleep(1000 * 90);
+            Thread.sleep(1000 * 60);
         }
 
         /*
          * 查询我（旅行社）收到的Proposal。
          */
         {
-            ;
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(itineraryServiceUrlStr + "proposals/agencies/"
+                + agencyIds.getString(agencyIds.size() - 2)));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonArray proposals = Json.createReader(response.getEntity().getContent()).readArray();
+                    assertNotNull(proposals);
+                    assertEquals(1, proposals.size());
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
         }
 
         /*
          * 再次提交Proposal。
          */
+        {
+            ;
+        }
+    }
+
+    @After
+    public void after() {
+        for (int i = 0; i < agencyIds.size(); i++) {
+            HttpDelete delete = new HttpDelete();
+
+            try {
+                delete.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyIds.getString(i)));
+                delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+                HttpResponse response = httpClient.execute(delete);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    String agencyId = Json.createReader(response.getEntity().getContent()).readObject()
+                        .getString(Introspection.JSONKeys.UUID);
+                    assertNotNull(agencyId);
+                    assertEquals(agencyIds.getString(i), agencyId);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } catch (URISyntaxException e) {
+                throw new ProcessingException(e);
+            } finally {
+                delete.abort();
+            }
+        }
     }
 }

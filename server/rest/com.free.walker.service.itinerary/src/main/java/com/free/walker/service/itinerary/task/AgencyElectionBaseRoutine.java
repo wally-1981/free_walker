@@ -63,16 +63,49 @@ public abstract class AgencyElectionBaseRoutine implements MRRoutine {
     public MRRoutine reduce() {
         try {
             List<Agency> candidates = travelBasicDAO.getRespondedAgencyCandidates4Proposal(proposalId);
+            if (candidates.size() <= AGENCY_ELECTION_MAX_SIZE) {
+                result.addAll(candidates);
+                return this;
+            }
 
             List<Agency> topFeedback = reduceByFeedback(candidates, AGENCY_ELECTION_BY_FEEDBACK_SIZE);
             List<Agency> topExperience = reduceByExperience(candidates, AGENCY_ELECTION_BY_EXPERIENCE_SIZE);
             List<Agency> randomSelection = reduceByRandomization(candidates, AGENCY_ELECTION_BY_RANDOMIZATION_SIZE);
 
-            result.addAll(topFeedback);
-            result.addAll(topExperience);
-            result.addAll(randomSelection);
-            if (result.size() > AGENCY_ELECTION_MAX_SIZE) {
-                result = result.subList(0, AGENCY_ELECTION_MAX_SIZE - 1);
+            int cadidateSize = Math.min(AGENCY_ELECTION_BY_FEEDBACK_SIZE + AGENCY_ELECTION_BY_EXPERIENCE_SIZE
+                + AGENCY_ELECTION_BY_RANDOMIZATION_SIZE, AGENCY_ELECTION_MAX_SIZE);
+            for (int i = 1; i <= cadidateSize; i++) {
+                if (i % 3 == 0) {
+                    if (topExperience.isEmpty()) {
+                        if (randomSelection.isEmpty()) {
+                            result.add(topFeedback.remove(0));
+                        } else {
+                            result.add(randomSelection.remove(0));
+                        }
+                    } else {
+                        result.add(topExperience.remove(0));
+                    }
+                } else if (i % 2 == 0) {
+                    if (topFeedback.isEmpty()) {
+                        if (topExperience.isEmpty()) {
+                            result.add(randomSelection.remove(0));
+                        } else {
+                            result.add(topExperience.remove(0));
+                        }
+                    } else {
+                        result.add(topFeedback.remove(0));
+                    }
+                } else {
+                    if (randomSelection.isEmpty()) {
+                        if (topFeedback.isEmpty()) {
+                            result.add(topExperience.remove(0));
+                        } else {
+                            result.add(topFeedback.remove(0));
+                        }
+                    } else {
+                        result.add(randomSelection.remove(0));
+                    }
+                }
             }
         } catch (DatabaseAccessException e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.agency_election_reduce_failed, proposalId), e);

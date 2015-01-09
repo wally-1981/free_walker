@@ -135,12 +135,14 @@ public class ItineraryService {
                 ItineraryRequirement itinerary = (ItineraryRequirement) itineraries.get(0);
                 MRRoutine agencyElectionRoutine = new AgencyElectionRoutine(proposalId, travelBasicDAO,
                     travelRequirementDAO, itinerary.getDeparture(), itinerary.getDestination());
-                AgencyElectionTask.schedule(agencyElectionRoutine, proposalId, delayMins);
+                AgencyElectionTask.schedule(agencyElectionRoutine, proposalId, delayMins, travelBasicDAO,
+                    travelRequirementDAO);
             } else if (itineraries.size() > 1) {
                 ItineraryRequirement itinerary = (ItineraryRequirement) itineraries.get(0);
                 MRRoutine agencyElectionRoutine = new AgencyElectionRoutine(proposalId, travelBasicDAO,
                     travelRequirementDAO, itinerary.getDeparture());
-                AgencyElectionTask.schedule(agencyElectionRoutine, proposalId, delayMins);
+                AgencyElectionTask.schedule(agencyElectionRoutine, proposalId, delayMins, travelBasicDAO,
+                    travelRequirementDAO);
             } else {
                 return Response.status(Status.CONFLICT).build();
             }
@@ -166,12 +168,14 @@ public class ItineraryService {
                 ItineraryRequirement itinerary = (ItineraryRequirement) itineraries.get(0);
                 MRRoutine agencyElectionRoutine = new AgencyElectionReduceRoutine(proposalId, travelBasicDAO,
                     travelRequirementDAO, itinerary.getDeparture(), itinerary.getDestination());
-                AgencyElectionTask.schedule(agencyElectionRoutine, proposalId, -1);
+                AgencyElectionTask.schedule(agencyElectionRoutine, proposalId, -1, travelBasicDAO,
+                    travelRequirementDAO);
             } else if (itineraries.size() > 1) {
                 ItineraryRequirement itinerary = (ItineraryRequirement) itineraries.get(0);
                 MRRoutine agencyElectionRoutine = new AgencyElectionReduceRoutine(proposalId, travelBasicDAO,
                     travelRequirementDAO, itinerary.getDeparture());
-                AgencyElectionTask.schedule(agencyElectionRoutine, proposalId, -1);
+                AgencyElectionTask.schedule(agencyElectionRoutine, proposalId, -1, travelBasicDAO,
+                    travelRequirementDAO);
             } else {
                 return Response.status(Status.CONFLICT).build();
             }
@@ -199,7 +203,7 @@ public class ItineraryService {
             while (proposalIdIter.hasNext()) {
                 String proposalId = proposalIdIter.next();
                 String proposalSummary = proposalsSummary.get(proposalId);
-                proposalIds.add(proposalId);
+                proposalIds.add(UuidUtil.fromCmpUuidStr(proposalId).toString());
                 proposalSummaries.add(proposalSummary);
             }
             JsonObject summaries = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, proposalIds)
