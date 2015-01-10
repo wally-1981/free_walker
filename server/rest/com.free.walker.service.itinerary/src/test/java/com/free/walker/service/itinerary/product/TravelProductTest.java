@@ -41,7 +41,12 @@ public class TravelProductTest {
             departureDateTimeSelections);
 
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
-        TravelProduct aTravelProduct = new SimpleTravelProduct(travelProposal.getUUID());
+        Calendar deadlineDate = Calendar.getInstance();
+        deadlineDate.add(Calendar.DATE, 10);
+        Calendar departureDate = Calendar.getInstance();
+        departureDate.add(Calendar.DATE, 18);
+        TravelProduct aTravelProduct = new SimpleTravelProduct(travelProposal.getUUID(), 12, deadlineDate,
+            departureDate);
 
         TravelLocation departure1 = new TravelLocation(Constants.BARCELONA);
         TravelLocation destination1 = new TravelLocation(Constants.GENEVA);

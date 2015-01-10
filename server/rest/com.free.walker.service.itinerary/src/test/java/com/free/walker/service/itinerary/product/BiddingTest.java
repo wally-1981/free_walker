@@ -39,7 +39,11 @@ public class BiddingTest {
     public void before() {
         {
             UUID proposalId = UUID.randomUUID();
-            travelProduct = new SimpleTravelProduct(proposalId);
+            Calendar deadline = Calendar.getInstance();
+            deadline.add(Calendar.DATE, 10);
+            Calendar departure = Calendar.getInstance();
+            departure.add(Calendar.DATE, 18);
+            travelProduct = new SimpleTravelProduct(proposalId, 68, deadline, departure);
 
             Hotel hotelA = new Hotel();
             Calendar arrivalA = Calendar.getInstance();

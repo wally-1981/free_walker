@@ -25,23 +25,42 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
     private List<TravelProductItem> travelProductItems;
     private UUID productId;
     private UUID proposalId;
-    private int sizeUpperLimit;
-    private Calendar enrolmentDeadlineDateTime;
-    private Calendar departureDateTime;
+    private int capacity;
+    private Calendar deadline;
+    private Calendar departure;
 
     public SimpleTravelProduct() {
         this.productId = UUID.randomUUID();
         this.travelProductItems = new LinkedList<TravelProductItem>();
     }
 
-    public SimpleTravelProduct(UUID travelProposal) {
+    public SimpleTravelProduct(UUID proposalId, int capacity, Calendar deadline, Calendar departure) {
         this();
 
-        if (travelProposal == null) {
+        if (proposalId == null || deadline == null || departure == null) {
             throw new NullPointerException();
         }
 
-        this.proposalId = travelProposal;
+        if (capacity <= 0) {
+            throw new IllegalArgumentException(LocalMessages.getMessage(LocalMessages.illegal_product_capacity,
+                capacity, productId));
+        }
+
+        Calendar now = Calendar.getInstance();
+        if (deadline.compareTo(now) < 0) {
+            throw new IllegalArgumentException(LocalMessages.getMessage(LocalMessages.illegal_product_capacity,
+                deadline, productId, now));
+        }
+
+        if (departure.compareTo(deadline) < 0) {
+            throw new IllegalArgumentException(LocalMessages.getMessage(LocalMessages.illegal_product_capacity,
+                departure, productId, deadline));
+        }
+
+        this.proposalId = proposalId;
+        this.capacity = capacity;
+        this.deadline = deadline;
+        this.departure = departure;
     }
 
     public double getCost() {
@@ -67,16 +86,16 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
         }
         resBuilder.add(Introspection.JSONKeys.ITEMS, items);
 
-        if (sizeUpperLimit > 0) {
-            resBuilder.add(Introspection.JSONKeys.GROUP_CAPACITY, sizeUpperLimit);
+        if (capacity > 0) {
+            resBuilder.add(Introspection.JSONKeys.GROUP_CAPACITY, capacity);
         }
 
-        if (enrolmentDeadlineDateTime != null) {
-            resBuilder.add(Introspection.JSONKeys.DEADLINE_DATETIME, enrolmentDeadlineDateTime.getTimeInMillis());
+        if (deadline != null) {
+            resBuilder.add(Introspection.JSONKeys.DEADLINE_DATETIME, deadline.getTimeInMillis());
         }
 
-        if (departureDateTime != null) {
-            resBuilder.add(Introspection.JSONKeys.DEPARTURE_DATETIME, departureDateTime.getTimeInMillis());
+        if (departure != null) {
+            resBuilder.add(Introspection.JSONKeys.DEPARTURE_DATETIME, departure.getTimeInMillis());
         }
 
         return resBuilder.build();
@@ -119,19 +138,19 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
 
         int sizeUpperLimit = jsObject.getInt(Introspection.JSONKeys.GROUP_CAPACITY, 0);
         if (sizeUpperLimit > 0) {
-            this.sizeUpperLimit = sizeUpperLimit;
+            this.capacity = sizeUpperLimit;
         }
         
         JsonNumber enrolmentDeadlineDateTime = jsObject.getJsonNumber(Introspection.JSONKeys.DEADLINE_DATETIME);
         if (enrolmentDeadlineDateTime != null) {
-            this.enrolmentDeadlineDateTime = Calendar.getInstance();
-            this.enrolmentDeadlineDateTime.setTimeInMillis(enrolmentDeadlineDateTime.longValue());
+            this.deadline = Calendar.getInstance();
+            this.deadline.setTimeInMillis(enrolmentDeadlineDateTime.longValue());
         }
 
         JsonNumber departureDateTime = jsObject.getJsonNumber(Introspection.JSONKeys.DEPARTURE_DATETIME);
         if (departureDateTime != null) {
-            this.departureDateTime = Calendar.getInstance();
-            this.departureDateTime.setTimeInMillis(departureDateTime.longValue());
+            this.departure = Calendar.getInstance();
+            this.departure.setTimeInMillis(departureDateTime.longValue());
         }
 
         return this;

@@ -62,6 +62,9 @@ public class LocalMessages {
     public static final String illegal_hotel_nights = "illegal_hotel_nights";
     public static final String empty_itinerary_location = "empty_itinerary_location";
     public static final String illegal_itinerary_index = "illegal_itinerary_index";
+    public static final String illegal_product_capacity = "illegal_product_capacity";
+    public static final String illegal_product_deadline = "illegal_product_deadline";
+    public static final String illegal_product_departure = "illegal_product_departure";
     public static final String invalid_bidding_item_range = "invalid_bidding_item_range";
     public static final String conflict_bidding_item_range = "conflict_bidding_item_range";
 

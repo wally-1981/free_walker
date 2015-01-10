@@ -46,6 +46,14 @@ import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.product.Bidding;
+import com.free.walker.service.itinerary.product.HotelItem;
+import com.free.walker.service.itinerary.product.ResortItem;
+import com.free.walker.service.itinerary.product.SimpleTravelProduct;
+import com.free.walker.service.itinerary.product.TrafficItem;
+import com.free.walker.service.itinerary.product.TravelProduct;
+import com.free.walker.service.itinerary.product.TrivItem;
+import com.free.walker.service.itinerary.product.Bidding.BiddingItem;
 import com.free.walker.service.itinerary.req.HotelRequirement;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.ResortRequirement;
@@ -152,29 +160,46 @@ public class PlatformService {
         }
 
         {
-            JsonArrayBuilder sampleDataBuilder = Json.createArrayBuilder();
+            JsonArrayBuilder basicSampleDataBuilder = Json.createArrayBuilder();
 
-            TravelLocation dept = new TravelLocation(Constants.TAIBEI);
-            TravelLocation dest = new TravelLocation(Constants.BARCELONA);
+            Agency agency = new Agency();
+            agency.setUuid(UUID.randomUUID().toString());
+            agency.setName("中青旅（湖北分公司）");
+            agency.setTitle("中青旅");
+            agency.setHmd(86);
+            agency.setExp(99999);
+            basicSampleDataBuilder.add(agency.toJSON());
+
+            resBuilder.add("basic_sample_data", basicSampleDataBuilder);
+        }
+
+        TravelProposal proposal;
+        TravelLocation dept;
+        TravelLocation dest;
+        {
+            JsonArrayBuilder requirementSampleDataBuilder = Json.createArrayBuilder();
+
+            dept = new TravelLocation(Constants.TAIBEI);
+            dest = new TravelLocation(Constants.BARCELONA);
             ItineraryRequirement itineraryRequirement = new ItineraryRequirement(dept, dest);
-            TravelProposal proposal = new TravelProposal("台北到巴萨看梅西", itineraryRequirement);
-            sampleDataBuilder.add(proposal.toJSON());
+            proposal = new TravelProposal("台北到巴萨看梅西", itineraryRequirement);
+            requirementSampleDataBuilder.add(proposal.toJSON());
 
             TravelRequirement hotelRequirementA = new HotelRequirement(6);
             TravelRequirement hotelRequirementB = new HotelRequirement(6, Introspection.JSONValues.HOTEL_STAR_STD_5);
             TravelRequirement hotelRequirementC = new HotelRequirement(6, new Hotel(), Calendar.getInstance());
-            sampleDataBuilder.add(hotelRequirementA.toJSON());
-            sampleDataBuilder.add(hotelRequirementB.toJSON());
-            sampleDataBuilder.add(hotelRequirementC.toJSON());
+            requirementSampleDataBuilder.add(hotelRequirementA.toJSON());
+            requirementSampleDataBuilder.add(hotelRequirementB.toJSON());
+            requirementSampleDataBuilder.add(hotelRequirementC.toJSON());
 
             TravelRequirement resortRequirementA = new ResortRequirement(Introspection.JSONValues.TIME_RANGE_12_18);
             TravelRequirement resortRequirementB = new ResortRequirement(Introspection.JSONValues.TIME_RANGE_12_18,
                 Introspection.JSONValues.RESORT_STAR_STD_2A);
             TravelRequirement resortRequirementC = new ResortRequirement(Introspection.JSONValues.TIME_RANGE_12_18,
                 new Resort());
-            sampleDataBuilder.add(resortRequirementA.toJSON());
-            sampleDataBuilder.add(resortRequirementB.toJSON());
-            sampleDataBuilder.add(resortRequirementC.toJSON());
+            requirementSampleDataBuilder.add(resortRequirementA.toJSON());
+            requirementSampleDataBuilder.add(resortRequirementB.toJSON());
+            requirementSampleDataBuilder.add(resortRequirementC.toJSON());
 
             TravelRequirement trafficRequirementA = new TrafficRequirement(
                 Introspection.JSONValues.TRAFFIC_TOOL_TYPE_TRAIN);
@@ -185,21 +210,51 @@ public class PlatformService {
                     Introspection.JSONValues.TIME_RANGE_00_06, Introspection.JSONValues.TIME_RANGE_18_24));
             TravelRequirement trafficRequirementD = new TrafficRequirement(new Flight("CA1981"));
             TravelRequirement trafficRequirementE = new TrafficRequirement(new Train("Z38"));
-            sampleDataBuilder.add(trafficRequirementA.toJSON());
-            sampleDataBuilder.add(trafficRequirementB.toJSON());
-            sampleDataBuilder.add(trafficRequirementC.toJSON());
-            sampleDataBuilder.add(trafficRequirementD.toJSON());
-            sampleDataBuilder.add(trafficRequirementE.toJSON());
+            requirementSampleDataBuilder.add(trafficRequirementA.toJSON());
+            requirementSampleDataBuilder.add(trafficRequirementB.toJSON());
+            requirementSampleDataBuilder.add(trafficRequirementC.toJSON());
+            requirementSampleDataBuilder.add(trafficRequirementD.toJSON());
+            requirementSampleDataBuilder.add(trafficRequirementE.toJSON());
 
-            Agency agency = new Agency();
-            agency.setUuid(UUID.randomUUID().toString());
-            agency.setName("中青旅（湖北分公司）");
-            agency.setTitle("中青旅");
-            agency.setHmd(86);
-            agency.setExp(99999);
-            sampleDataBuilder.add(agency.toJSON());
+            resBuilder.add("requirement_sample_data", requirementSampleDataBuilder);
+        }
 
-            resBuilder.add("sample_data", sampleDataBuilder);
+        {
+            JsonArrayBuilder productSampleDataBuilder = Json.createArrayBuilder();
+
+            Calendar deadline = Calendar.getInstance();
+            deadline.add(Calendar.DATE, 3);
+            Calendar departure = Calendar.getInstance();
+            departure.add(Calendar.DATE, 5);
+            TravelProduct travelProduct = new SimpleTravelProduct(proposal.getUUID(), 68, deadline, departure);
+
+            Calendar hotelArrival = Calendar.getInstance();
+            hotelArrival.add(Calendar.DATE, 7);
+            Calendar hotelDeparture = Calendar.getInstance();
+            hotelDeparture.add(Calendar.DATE, 14);
+            HotelItem hotelItem = new HotelItem(travelProduct, new Hotel(), hotelArrival, hotelDeparture);
+            productSampleDataBuilder.add(hotelItem.toJSON());
+
+            Calendar trafficDeparture = Calendar.getInstance();
+            trafficDeparture.add(Calendar.DATE, 1);
+            TrafficItem trafficItem = new TrafficItem(travelProduct, new Flight("CA1982", dept, dest), trafficDeparture);
+            productSampleDataBuilder.add(trafficItem.toJSON());
+
+            Calendar resortArrival = Calendar.getInstance();
+            resortArrival.add(Calendar.DATE, 2);
+            ResortItem resortItem = new ResortItem(travelProduct, new Resort(), resortArrival);
+            productSampleDataBuilder.add(resortItem.toJSON());
+
+            TrivItem trivItem = new TrivItem(travelProduct);
+            productSampleDataBuilder.add(trivItem.toJSON());
+
+            BiddingItem[] biddingItems = new BiddingItem[] { new BiddingItem(1, 5, 9999), new BiddingItem(6, 8888)};
+            Bidding bidding = new Bidding(travelProduct, biddingItems);
+            productSampleDataBuilder.add(bidding.toJSON());
+
+            productSampleDataBuilder.add(travelProduct.toJSON());
+
+            resBuilder.add("product_sample_data", productSampleDataBuilder);
         }
 
         return Response.ok(resBuilder.build()).build();
