@@ -1,4 +1,4 @@
-package com.free.walker.service.itinerary.rest;
+package com.free.walker.service.itinerary;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
@@ -13,13 +13,15 @@ import org.apache.cxf.jaxrs.provider.jsrjsonp.JsrJsonpProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.handler.SimpleSecurityContextInInterceptor;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
+import com.free.walker.service.itinerary.rest.ItineraryService;
+import com.free.walker.service.itinerary.rest.PlatformService;
+import com.free.walker.service.itinerary.rest.ProductService;
 import com.free.walker.service.itinerary.util.SystemConfigUtil;
 import com.ibm.icu.text.MessageFormat;
 

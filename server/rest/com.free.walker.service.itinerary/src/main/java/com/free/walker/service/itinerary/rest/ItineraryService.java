@@ -44,6 +44,25 @@ import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.UuidUtil;
 import com.ibm.icu.util.Calendar;
 
+/**
+ * <b>ItineraryService</b> provides data access for travel proposal, itinerary
+ * as well as requirment. A proposal can be added and composed by this serice by
+ * adding or inserting itinerary or requirment into the proposal and updating an
+ * existing requirement.<br>
+ * <br>
+ * Besides data access, this service can serve proposal submission, and the
+ * submitted proposals can be retrieved by an agency candidate or the proposal
+ * owner for grabbing or checking my proposal list. The agencies grabbed the
+ * proposal will be further elected by the system automatically in the back-end.
+ * Finally, by this service, the elected agencies can retrive their proposals
+ * for product design and then join the bidding with other elected agencies.<br>
+ * <br>
+ * This service supports consuming and producing data in below listed MIME
+ * types:
+ * <ul>
+ * <li>application/json
+ * </ul>
+ */
 @Path("/service/itinerary/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -56,6 +75,12 @@ public class ItineraryService {
         travelRequirementDAO = DAOFactory.getTravelRequirementDAO(daoClass.getName());
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Search proposals with simple search term. Given the pageNum and pageSize
+     * for retrieving the search results in specific page.<br>
+     */
     @GET
     @Path("/proposals/")
     public Response searchProposals(@QueryParam("pageNum") String pageNum, @QueryParam("pageSize") String pageSize,
@@ -63,18 +88,27 @@ public class ItineraryService {
         return Response.status(Status.NOT_IMPLEMENTED).build();
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve proposals submitted by the current requester within one week.<br>
+     * <br>
+     * The requester can specify <i>?pastDays=n</i> for retrieving old proposals
+     * submitted by him/her. The max n can be set to two weeks, aka 14 days; or
+     * the query will be falled back to 7 days.<br>
+     */
     @GET
     @Context
     @Path("/proposals/my/")
-    public Response getProposals(@Context MessageContext msgCntx) {
+    public Response getProposals(@Context MessageContext msgCntx, @QueryParam("pastDays") int n) {
         Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
         UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
 
-        Calendar weekAgo = Calendar.getInstance();
-        weekAgo.add(Calendar.DATE, -7);
+        Calendar daysAgo = Calendar.getInstance();
+        daysAgo.add(Calendar.DATE, -(Math.abs(n) > 14 || Math.abs(n) == 0 ? 7 : Math.abs(n)));
 
         try {
-            List<TravelProposal> proposals = travelRequirementDAO.getTravelProposalsByAccount(acntId, weekAgo, 7);
+            List<TravelProposal> proposals = travelRequirementDAO.getTravelProposalsByAccount(acntId, daysAgo, 7);
 
             if (proposals.isEmpty()) {
                 JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, acntId.toString()).build();
@@ -93,6 +127,15 @@ public class ItineraryService {
         }
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve proposals for the elected agency within one week by the
+     * specified agency identifier.<br>
+     * <br>
+     * There is no way to retrieve proposals by agency identifier if there is no
+     * product was created by the agency within the week.<br>
+     */
     @GET
     @Path("/proposals/agencies/{agencyId}/")
     public Response getProposals(@PathParam("agencyId") String agencyId) {
@@ -120,6 +163,15 @@ public class ItineraryService {
         }
     }
 
+    /**
+     * <b>POST</b><br>
+     * <br>
+     * Submit the porposal by the given proposal identifier in terms of the
+     * requester. The proposal will be submitted to server for agency election,
+     * after which the proposal will be open for bidding for elected agencies
+     * only, and only the agencies in the first group will be opened by the
+     * proposal submission.<br>
+     */
     @POST
     @Context
     @Path("/proposals/agencies/{proposalId}/")
@@ -147,7 +199,7 @@ public class ItineraryService {
                 return Response.status(Status.CONFLICT).build();
             }
             return Response.status(Status.ACCEPTED).build();
-        } catch(CancellationException e) {
+        } catch (CancellationException e) {
             return Response.status(Status.NO_CONTENT).build();
         } catch (InvalidTravelReqirementException e) {
             return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
@@ -158,6 +210,15 @@ public class ItineraryService {
         }
     }
 
+    /**
+     * <b>POST</b><br>
+     * <br>
+     * Resubmit the proposal to elected agencies in the next group. The proposal
+     * will be open to them for bidding.<br>
+     * <br>
+     * A proposal can not be resubmitted in short interval in hours, or the
+     * resubmitted request will be ignored.<br>
+     */
     @POST
     @Path("/proposals/agencies/{proposalId}/next/")
     public Response resubmitProposal(@PathParam("proposalId") String proposalId) {
@@ -180,7 +241,7 @@ public class ItineraryService {
                 return Response.status(Status.CONFLICT).build();
             }
             return Response.status(Status.ACCEPTED).build();
-        } catch(CancellationException e) {
+        } catch (CancellationException e) {
             return Response.status(Status.NO_CONTENT).build();
         } catch (InvalidTravelReqirementException e) {
             return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
@@ -191,6 +252,18 @@ public class ItineraryService {
         }
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve selected proposals for the agency candidate specified by the
+     * agency identifier.<br>
+     * <br>
+     * The returned proposals will contain proposal summary only without details
+     * of the proposals. The agency can refer to the summary to determine if
+     * joining the election or not by grabbing the proposal or ignore it.<br>
+     * <br>
+     * The proposal details will be visible to the finally elected agencies.<br>
+     */
     @GET
     @Path("/proposals/agencies/selected/{agencyId}/")
     public Response getSelectedProposals(@PathParam("agencyId") String agencyId) {
@@ -214,6 +287,17 @@ public class ItineraryService {
         }
     }
 
+    /**
+     * <b>PUT</b><br>
+     * <br>
+     * Grab the proposal, in terms of the agency specified by the agency
+     * identifier, to confirm the intention of joinning the agency election of
+     * the proposal specified by the proposal identifier.<br>
+     * <br>
+     * The agency election will be taken based on those agencies having
+     * confirmation, all the agencies not confirmed will be ignored by the
+     * election.<br>
+     */
     @PUT
     @Path("/proposals/agencies/{proposalId}/{agencyId}/")
     public Response grabProposal(@PathParam("proposalId") String proposalId, @PathParam("agencyId") String agencyId) {
@@ -225,6 +309,11 @@ public class ItineraryService {
         }
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve the proposal by the given proposal identifier.<br>
+     */
     @GET
     @Path("/proposals/{proposalId}/")
     public Response getProposal(@PathParam("proposalId") String proposalId) {
@@ -250,6 +339,14 @@ public class ItineraryService {
         }
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve the itineraries by the given requirement identifier and the
+     * given reqirement type in <i>?requirementType=itinerary</i> or
+     * <i>?requirementType=proposal</i> for the identified itinerary or all
+     * itineraries in the proposal.<br>
+     */
     @GET
     @Path("/itineraries/{requirementId}/")
     public Response getItinerary(@PathParam("requirementId") String requirementId,
@@ -300,6 +397,11 @@ public class ItineraryService {
         }
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve the requirement by the given requirement identifier.<br>
+     */
     @GET
     @Path("/requirements/{requirementId}/")
     public Response getRequirement(@PathParam("requirementId") String requirementId) {
@@ -326,6 +428,12 @@ public class ItineraryService {
         }
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve all requirements in the itinerary and proposal by the given
+     * itinerary and proposal identifiers.<br>
+     */
     @GET
     @Path("/requirements/{proposalId}/{itineraryId}/")
     public Response getRequirements(@PathParam("proposalId") String proposalId,
@@ -351,6 +459,11 @@ public class ItineraryService {
         }
     }
 
+    /**
+     * <b>DELETE</b><br>
+     * <br>
+     * Remove the requirment by the given requirement and proposal identifers.<br>
+     */
     @DELETE
     @Path("/requirements/{proposalId}/{requirementId}/")
     public Response deleteRequirement(@PathParam("proposalId") String proposalId,
@@ -373,6 +486,12 @@ public class ItineraryService {
         }
     }
 
+    /**
+     * <b>DELETE</b><br>
+     * <br>
+     * Remove the itinerary by the given itinerary and proposal identifers. All
+     * requirements in the removing itinerary will be also be removed.<br>
+     */
     @DELETE
     @Path("/itineraries/{proposalId}/{itineraryId}/")
     public Response deleteItinerary(@PathParam("proposalId") String proposalId,
@@ -395,6 +514,12 @@ public class ItineraryService {
         }
     }
 
+    /**
+     * <b>PUT</b><br>
+     * <br>
+     * Update the requirement by the requirement in the put payload. A valid
+     * requirement identifier should be contained in the payload.<br>
+     */
     @PUT
     @Path("/requirements/")
     public Response updateRequirement(JsonObject travelRequirement) {
@@ -411,6 +536,12 @@ public class ItineraryService {
         }
     }
 
+    /**
+     * <b>POST</b><br>
+     * <br>
+     * Add a proposal given in the post payload. The identier of the newly
+     * created proposal will be returned.<br>
+     */
     @POST
     @Context
     @Path("/proposals/")
@@ -429,6 +560,13 @@ public class ItineraryService {
         }
     }
 
+    /**
+     * <b>POST</b><br>
+     * <br>
+     * Append an itinerary given in the post payload into the proposal specified
+     * by the proposal identifier. The identier of the newly created itinerary
+     * will be returned.<br>
+     */
     @POST
     @Path("/itineraries/{proposalId}/")
     public Response addItinerary(@PathParam("proposalId") String proposalId, JsonObject itineraryRequirement) {
@@ -445,6 +583,13 @@ public class ItineraryService {
         }
     }
 
+    /**
+     * <b>POST</b><br>
+     * <br>
+     * Insert an itinerary given in the post payload into the proposal and after
+     * the itinerary specified by the proposal and itinerary identifiers. The
+     * identier of the newly created itinerary will be returned.<br>
+     */
     @POST
     @Path("/itineraries/{proposalId}/{itineraryId}/")
     public Response insertItinerary(@PathParam("proposalId") String proposalId,
@@ -462,6 +607,13 @@ public class ItineraryService {
         }
     }
 
+    /**
+     * <b>POST</b><br>
+     * <br>
+     * Append a requirement given in the post payload into the last itinerary of
+     * the proposal specified by the proposal identifier. The identier of the
+     * newly created requirement will be returned.<br>
+     */
     @POST
     @Path("/requirements/{proposalId}/")
     public Response addRequirement(@PathParam("proposalId") String proposalId, JsonObject travelRequirement) {
@@ -478,6 +630,13 @@ public class ItineraryService {
         }
     }
 
+    /**
+     * <b>POST</b><br>
+     * <br>
+     * Insert a requirement given in the post payload into the itinerary in the
+     * proposal specified by the itinerary and proposal identifiers. The
+     * identier of the newly created requirement will be returned.<br>
+     */
     @POST
     @Path("/requirements/{proposalId}/{itineraryId}/")
     public Response insertRequirement(@PathParam("proposalId") String proposalId,

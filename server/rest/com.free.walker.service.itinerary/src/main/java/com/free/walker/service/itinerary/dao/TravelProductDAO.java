@@ -62,7 +62,7 @@ public interface TravelProductDAO extends HealthyDAO {
      * Retrieve all products by the specified proposal id. No product item will
      * be included in every returned product.
      * 
-     * @param productId
+     * @param proposalId
      * @return
      * @throws InvalidTravelProductException
      * @throws DatabaseAccessException

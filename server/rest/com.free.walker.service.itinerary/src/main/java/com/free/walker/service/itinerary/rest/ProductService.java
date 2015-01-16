@@ -33,6 +33,15 @@ import com.free.walker.service.itinerary.product.TrivItem;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
+/**
+ * <b>ProductService</b> <b>TBD</b>
+ * 
+ * This service supports consuming and producing data in below listed MIME
+ * types:
+ * <ul>
+ * <li>application/json
+ * </ul>
+ */
 @Path("/service/product/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

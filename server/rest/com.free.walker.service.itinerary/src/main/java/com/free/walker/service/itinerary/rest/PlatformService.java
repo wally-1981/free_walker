@@ -62,6 +62,19 @@ import com.free.walker.service.itinerary.req.TravelProposal;
 import com.free.walker.service.itinerary.req.TravelRequirement;
 import com.ibm.icu.util.Calendar;
 
+/**
+ * <b>PlatformService</b> provides fundamental data management capabilities. The
+ * data managed by this service include data for agency, city, hotel, traffic,
+ * resort, etc. The API consumers can add agency, associate agency locations for
+ * sending or receiving tourists, retrive hotel or resort, etc. Typically, this
+ * service will be consumed by the user interface for system administration.<br>
+ * <br>
+ * This service supports consuming and producing data in below listed MIME
+ * types:
+ * <ul>
+ * <li>application/json
+ * </ul>
+ */
 @Path("/service/platform")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -73,6 +86,15 @@ public class PlatformService {
         travelBasicDAO = DAOFactory.getTravelBasicDAO();
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve introspection data for all services, including PlatformService,
+     * ItineraryService as well as ProductService.<br>
+     * <br>
+     * The introspection data include key, static value as well as payload
+     * sample for consumer references.<br>
+     */
     @GET
     @Path("/introspection/")
     public Response getIntrospection() {
@@ -320,6 +342,14 @@ public class PlatformService {
         return Response.ok().build();
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve the top n most popular tags of travel proposals and products.<br>
+     * <br>
+     * The popular tags are calculated based on daily travel proposals and
+     * products data in the background jobs.<br>
+     */
     @GET
     @Path("/tags/top/{n}/")
     public Response getTags(@PathParam("n") int n) {
@@ -335,6 +365,13 @@ public class PlatformService {
         }
     }
 
+    /**
+     * <b>POST</b><br>
+     * <br>
+     * Add agency given in the post payload. Specify the query parameter
+     * <i>?batch=true</i> and given agencies into a JSONArray to add multiple
+     * agencies in batch mode.<br>
+     */
     @POST
     @Path("/agencies/")
     public Response addAgency(JsonObject agencyJs, @QueryParam("batch") boolean batch) {
@@ -389,6 +426,11 @@ public class PlatformService {
         }
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve the agency by the given agency identifier.<br>
+     */
     @GET
     @Path("/agencies/{agencyId}/")
     public Response getAgency(@PathParam("agencyId") String agencyId) {
@@ -404,6 +446,15 @@ public class PlatformService {
         }
     }
 
+    /**
+     * <b>POST</b><br>
+     * <br>
+     * Associate agency, specified by the agency identifier, to the location,
+     * specified by the location identifier, for sending tourists.<br>
+     * <br>
+     * These associations will enable the system to electe the most suitable
+     * agencies for the submitted proposals by tourists.<br>
+     */
     @POST
     @Path("/agencies/{agencyId}/locations/send/{locationId}/")
     public Response addAgencySendLocation(@PathParam("agencyId") String agencyId,
@@ -420,6 +471,11 @@ public class PlatformService {
         }
     }
 
+    /**
+     * <b>DELETE</b><br>
+     * <br>
+     * Deassociate agency from the location of sending tourists.<br>
+     */
     @DELETE
     @Path("/agencies/{agencyId}/locations/send/{locationId}/")
     public Response removeAgencySendLocation(@PathParam("agencyId") String agencyId,
@@ -434,6 +490,15 @@ public class PlatformService {
         }
     }
 
+    /**
+     * <b>POST</b><br>
+     * <br>
+     * Associate agency, specified by the agency identifier, to the location,
+     * specified by the location identifier, for receiving tourists.<br>
+     * <br>
+     * These associations will enable the system to electe the most suitable
+     * agencies for the submitted proposals by tourists.<br>
+     */
     @POST
     @Path("/agencies/{agencyId}/locations/recv/{locationId}/")
     public Response addAgencyRecvLocation(@PathParam("agencyId") String agencyId,
@@ -450,6 +515,11 @@ public class PlatformService {
         }
     }
 
+    /**
+     * <b>DELETE</b><br>
+     * <br>
+     * Deassociate agency from the location of receiving tourists.<br>
+     */
     @DELETE
     @Path("/agencies/{agencyId}/locations/recv/{locationId}/")
     public Response removeAgencyRecvLocation(@PathParam("agencyId") String agencyId,
@@ -464,6 +534,13 @@ public class PlatformService {
         }
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve agency locations by the given agency identifier and the query
+     * parameter <i>?sendRecv=0</i> for sending locations or <i>?sendRecv=1</i>
+     * for receiving locations.<br>
+     */
     @GET
     @Path("/agencies/{agencyId}/locations/")
     public Response getAgencyLocations(@PathParam("agencyId") String agencyId, @QueryParam("sendRecv") int sendRecv) {
@@ -481,6 +558,13 @@ public class PlatformService {
         }
     }
 
+    /**
+     * <b>DELETE</b><br>
+     * <br>
+     * Remove the agency specified by the agency identifier. The associated
+     * locations for both sending and receiving tourists will be removed as
+     * well.<br>
+     */
     @DELETE
     @Path("/agencies/{agencyId}/")
     public Response removeAgency(@PathParam("agencyId") String agencyId) {
