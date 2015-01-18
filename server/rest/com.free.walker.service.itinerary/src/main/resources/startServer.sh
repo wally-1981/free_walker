@@ -6,4 +6,7 @@
 # Start MongoDB:
 #service mongod start
 
-java -jar ./com.free.walker.service.itinerary-0.0.3.jar -Prod
+# Start ElasticSearch:
+#service elasticsearch start
+
+java -jar ./com.free.walker.service.itinerary-0.0.6.jar -Prod

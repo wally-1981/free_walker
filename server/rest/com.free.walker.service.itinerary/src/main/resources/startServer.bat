@@ -7,4 +7,7 @@
 :: Start MongoDB: (The path to mongod may vary depending on the install location of MongoDB on your system.)
 c:\mongo_server\bin\mongod -dbpath c:\mongo_server\data
 
-java -jar ./com.free.walker.service.itinerary-0.0.3.jar -Prod
+:: Start ElasticSearch: (the path to elasticsearch may vary depending on the install location of ElasticSearch on your system.)
+C:\elastic_search_server\bin\elasticsearch
+
+java -jar ./com.free.walker.service.itinerary-0.0.6.jar -Prod
