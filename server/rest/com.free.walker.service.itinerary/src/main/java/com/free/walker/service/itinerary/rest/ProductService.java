@@ -34,8 +34,15 @@ import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
 /**
- * <b>ProductService</b> <b>TBD</b>
- * 
+ * <b>ProductService</b> provides support for travel product and product item
+ * management. A travel product is consist of product items for hotel, traffic,
+ * resort as well as trivival items. Besides that, a travel product will also
+ * contain a bidding, and product items in a product with valid bidding can not
+ * be modified.<br>
+ * <br>
+ * Meanwhile, this service also provides product public and depublish as well as
+ * product search API.<br>
+ * <br>
  * This service supports consuming and producing data in below listed MIME
  * types:
  * <ul>
@@ -52,25 +59,58 @@ public class ProductService {
         travelProductDAO = DAOFactory.getTravelProductDAO(daoClass.getName());
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Search travel products by simple search term. The result will be returned
+     * with pagination support.<br>
+     */
     @GET
     @Path("/products/")
-    public Response searchProducts(@QueryParam("pageNum") String pageNum, @QueryParam("pageSize") String pageSize,
+    public Response searchProducts(@QueryParam("pageNum") int pageNum, @QueryParam("pageSize") int pageSize,
         @QueryParam("searchTerm") String searchTerm) {
         return Response.status(Status.NOT_IMPLEMENTED).build();
     }
 
+    /**
+     * <b>POST</b><br>
+     * <br>
+     * Publish the product specified by the product identifier, after which the
+     * product will be public and searchable to all.<br>
+     * <br>
+     * Implicitly, the travel product will be published from database to search
+     * engine.<br>
+     */
     @POST
     @Path("/products/public/{productId}")
     public Response publishProduct(@PathParam("productId") String productId) {
         return Response.status(Status.NOT_IMPLEMENTED).build();
     }
 
+    /**
+     * <b>DELETE</b><br>
+     * <br>
+     * Unpublish the product specified by the product identifier, after which
+     * the product will be private.<br>
+     * <br>
+     * Implicitly, the travel product will be unpublished from search engine.<br>
+     */
     @DELETE
     @Path("/products/public/{productId}")
-    public Response depublishProduct(@PathParam("productId") String productId) {
+    public Response unpublishProduct(@PathParam("productId") String productId) {
         return Response.status(Status.NOT_IMPLEMENTED).build();
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve the travel products by the given product identifier or travel
+     * proposal identifier.<br>
+     * <br>
+     * By specifying <i>idType=proposal</i>, all the products for the proposal
+     * will be retrieved; or the identifier will be taken as product id and the
+     * only one product will be retrieved if found.<br>
+     */
     @GET
     @Path("/products/{id}/")
     public Response getProduct(@PathParam("id") String id, @QueryParam("idType") String idType) {
@@ -95,6 +135,11 @@ public class ProductService {
         }
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve all hotel items by the given product identifier.<br>
+     */
     @GET
     @Path("/products/{productId}/hotels/")
     public Response getHotels(@PathParam("productId") String productId) {
@@ -113,6 +158,11 @@ public class ProductService {
         }
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve all traffic items by the given product identifier.<br>
+     */
     @GET
     @Path("/products/{productId}/traffics/")
     public Response getTraffics(@PathParam("productId") String productId) {
@@ -131,6 +181,11 @@ public class ProductService {
         }
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve all resort items by the given product identifier.<br>
+     */
     @GET
     @Path("/products/{productId}/resorts/")
     public Response getResorts(@PathParam("productId") String productId) {
@@ -149,6 +204,11 @@ public class ProductService {
         }
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve all trivial items by the given product identifier.<br>
+     */
     @GET
     @Path("/products/{productId}/items/")
     public Response getItems(@PathParam("productId") String productId) {
@@ -167,6 +227,11 @@ public class ProductService {
         }
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve the product bidding by the given product identifier.<br>
+     */    
     @GET
     @Path("/products/{productId}/bidding/")
     public Response getBidding(@PathParam("productId") String productId) {
@@ -185,6 +250,11 @@ public class ProductService {
         }
     }
 
+    /**
+     * <b>POST</b><br>
+     * <br>
+     * Create a travel product by the given posy payload.<br>
+     */
     @POST
     @Path("/products/")
     public Response addProduct(JsonObject travelProduct) {
@@ -200,6 +270,11 @@ public class ProductService {
         }
     }
 
+    /**
+     * <b>DELETE</b><br>
+     * <br>
+     * Remove the hotel item by the given hotel item identifier.<br>
+     */
     @DELETE
     @Path("/products/{productId}/hotels/{hotelItemId}")
     public Response deleteHotelItem(@PathParam("productId") String productId,
@@ -222,6 +297,11 @@ public class ProductService {
         }
     }
 
+    /**
+     * <b>DELETE</b><br>
+     * <br>
+     * Remove the traffic item by the given traffic item identifier.<br>
+     */
     @DELETE
     @Path("/products/{productId}/traffics/{trafficItemId}")
     public Response deleteTrafficItem(@PathParam("productId") String productId,
@@ -244,6 +324,11 @@ public class ProductService {
         }
     }
 
+    /**
+     * <b>DELETE</b><br>
+     * <br>
+     * Remove the resort item by the given resort item identifier.<br>
+     */
     @DELETE
     @Path("/products/{productId}/resorts/{resortItemId}")
     public Response deleteResortItem(@PathParam("productId") String productId,
@@ -266,6 +351,11 @@ public class ProductService {
         }
     }
 
+    /**
+     * <b>DELETE</b><br>
+     * <br>
+     * Remove the trivial item by the given trivial item identifier.<br>
+     */
     @DELETE
     @Path("/products/{productId}/items/{itemId}")
     public Response deleteTrivItem(@PathParam("productId") String productId, @PathParam("itemId") String itemId) {
@@ -287,6 +377,11 @@ public class ProductService {
         }
     }
 
+    /**
+     * <b>DELETE</b><br>
+     * <br>
+     * Remove the product bidding by the given product identifier.<br>
+     */
     @DELETE
     @Path("/products/{productId}/bidding")
     public Response deleteBidding(@PathParam("productId") String productId) {
@@ -306,6 +401,12 @@ public class ProductService {
         }
     }
 
+    /**
+     * <b>POST</b><br>
+     * <br>
+     * Add the hotel item by the given product identifier and the hotel item in
+     * the post payload.<br>
+     */
     @POST
     @Path("/products/{productId}/hotels/")
     public Response addHotel(@PathParam("productId") String productId, JsonObject hotelItem) {
@@ -321,6 +422,12 @@ public class ProductService {
         }
     }
 
+    /**
+     * <b>POST</b><br>
+     * <br>
+     * Add the traffic item by the given product identifier and the traffic item
+     * in the post payload.<br>
+     */
     @POST
     @Path("/products/{productId}/traffics/")
     public Response addTraffic(@PathParam("productId") String productId, JsonObject trafficItem) {
@@ -336,6 +443,12 @@ public class ProductService {
         }
     }
 
+    /**
+     * <b>POST</b><br>
+     * <br>
+     * Add the resort item by the given product identifier and the resort item
+     * in the post payload.<br>
+     */
     @POST
     @Path("/products/{productId}/resorts/")
     public Response addResort(@PathParam("productId") String productId, JsonObject resortItem) {
@@ -351,6 +464,12 @@ public class ProductService {
         }
     }
 
+    /**
+     * <b>POST</b><br>
+     * <br>
+     * Add the trivial item by the given product identifier and the trivial item
+     * in the post payload.<br>
+     */
     @POST
     @Path("/products/{productId}/items/")
     public Response addItem(@PathParam("productId") String productId, JsonObject item) {
@@ -366,6 +485,12 @@ public class ProductService {
         }
     }
 
+    /**
+     * <b>POST</b><br>
+     * <br>
+     * Set the product bidding by the given product identifier and the bidding
+     * in the post payload.<br>
+     */
     @POST
     @Path("/products/{productId}/bidding/")
     public Response setBidding(@PathParam("productId") String productId, JsonObject bidding) {

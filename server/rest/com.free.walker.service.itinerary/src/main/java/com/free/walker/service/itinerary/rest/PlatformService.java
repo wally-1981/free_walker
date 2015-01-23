@@ -283,6 +283,18 @@ public class PlatformService {
     }
 
     @GET
+    @Path("/regions/{regionId}/")
+    public Response getRegion() {
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("/regions/")
+    public Response addRegion(JsonObject region) {
+        return Response.ok().build();
+    }
+
+    @GET
     @Path("/countries/{countryId}/")
     public Response getCountry() {
         return Response.ok().build();

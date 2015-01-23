@@ -11,7 +11,8 @@ CREATE TABLE `itinerary`.`tag` (
   `frequency` INT(8) UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`name`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC),
-  INDEX `frequency_INDEX` (`frequency` ASC));
+  INDEX `frequency_INDEX` (`frequency` ASC)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `country`
