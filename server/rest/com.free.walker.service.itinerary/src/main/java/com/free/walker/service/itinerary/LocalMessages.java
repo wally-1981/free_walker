@@ -138,6 +138,11 @@ public class LocalMessages {
     public static final String schedule_task_success = "schedule_task_success";
     public static final String schedule_task_failed = "schedule_task_failed";
 
+    public static final String mongodb_create_record = "mongodb_create_record";
+    public static final String mongodb_bulk_create_record = "mongodb_bulk_create_record";
+    public static final String mongodb_update_record = "mongodb_update_record";
+    public static final String mongodb_remove_record = "mongodb_remove_record";
+
     public static final String test_message = "test_message";
     public static final String test_message_with_1_arg = "test_message_with_1_arg";
     public static final String test_message_with_2_args = "test_message_with_2_args";

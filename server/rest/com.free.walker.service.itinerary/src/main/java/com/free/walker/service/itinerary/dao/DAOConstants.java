@@ -20,4 +20,5 @@ public class DAOConstants {
     public static final String itinerary_mongo_database = "itinerary";
     public static final String product_mongo_database = "product";
     public static final String mongo_database_pk = "_id";
+    public static final String mongo_database_op_in = "$in";
 }
