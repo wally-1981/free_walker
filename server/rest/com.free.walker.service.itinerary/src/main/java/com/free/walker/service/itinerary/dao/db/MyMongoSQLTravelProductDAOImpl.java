@@ -35,6 +35,7 @@ import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.MongoDbClientBuilder;
 import com.free.walker.service.itinerary.util.SystemConfigUtil;
 import com.mongodb.BasicDBObject;
+import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.CommandResult;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -48,6 +49,7 @@ import com.mongodb.util.JSON;
 
 public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
     private static final Logger LOG = LoggerFactory.getLogger(MyMongoSQLTravelProductDAOImpl.class);
+    private static final DBObject ID_FIELD = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk, true).get();
 
     private DB productDb;
     private String productMongoDbUrl;
@@ -96,31 +98,31 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
 
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
-        if (productColls.findOne(travelProduct.getProductUUID().toString()) != null) {
+        if (productColls.findOne(travelProduct.getProductUUID().toString(), ID_FIELD) != null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.existed_travel_product,
                 travelProduct.getProductUUID()), travelProduct.getProductUUID());
         }
 
         DBCollection productHotelColls = productDb.getCollection(DAOConstants.PRODUCT_HOTEL_COLL_NAME);
-        if (productHotelColls.findOne(travelProduct.getProductUUID().toString()) != null) {
+        if (productHotelColls.findOne(travelProduct.getProductUUID().toString(), ID_FIELD) != null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.existed_travel_product,
                 travelProduct.getProductUUID()), travelProduct.getProductUUID());
         }
 
         DBCollection productTrafficColls = productDb.getCollection(DAOConstants.PRODUCT_TRAFFIC_COLL_NAME);
-        if (productTrafficColls.findOne(travelProduct.getProductUUID().toString()) != null) {
+        if (productTrafficColls.findOne(travelProduct.getProductUUID().toString(), ID_FIELD) != null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.existed_travel_product,
                 travelProduct.getProductUUID()), travelProduct.getProductUUID());
         }
 
         DBCollection productResortColls = productDb.getCollection(DAOConstants.PRODUCT_RESORT_COLL_NAME);
-        if (productResortColls.findOne(travelProduct.getProductUUID().toString()) != null) {
+        if (productResortColls.findOne(travelProduct.getProductUUID().toString(), ID_FIELD) != null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.existed_travel_product,
                 travelProduct.getProductUUID()), travelProduct.getProductUUID());
         }
 
         DBCollection productTrivColls = productDb.getCollection(DAOConstants.PRODUCT_TRIV_COLL_NAME);
-        if (productTrivColls.findOne(travelProduct.getProductUUID().toString()) != null) {
+        if (productTrivColls.findOne(travelProduct.getProductUUID().toString(), ID_FIELD) != null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.existed_travel_product,
                 travelProduct.getProductUUID()), travelProduct.getProductUUID());
         }
@@ -151,35 +153,35 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
 
         try {
             WriteResult wr = storeProduct(productJs);
-            LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_create_record, wr.toString()));
         } catch (MongoException e) {
             throw new InvalidTravelProductException(travelProduct.getProductUUID(), e);
         }
 
         try {
             WriteResult wr = storeProductItems(travelProduct.getProductUUID(), HotelItem.SUB_TYPE, hotelItemsJs.build());
-            LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
             throw new InvalidTravelProductException(travelProduct.getProductUUID(), e);
         }
 
         try {
             WriteResult wr = storeProductItems(travelProduct.getProductUUID(), TrafficItem.SUB_TYPE, trafficItemsJs.build());
-            LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
             throw new InvalidTravelProductException(travelProduct.getProductUUID(), e);
         }
 
         try {
             WriteResult wr = storeProductItems(travelProduct.getProductUUID(), ResortItem.SUB_TYPE, resortItemsJs.build());
-            LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
             throw new InvalidTravelProductException(travelProduct.getProductUUID(), e);
         }
 
         try {
             WriteResult wr = storeProductItems(travelProduct.getProductUUID(), TrivItem.SUB_TYPE, trivItemsJs.build());
-            LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
             throw new InvalidTravelProductException(travelProduct.getProductUUID(), e);
         }
@@ -194,7 +196,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
 
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
-        if (productColls.findOne(productId.toString()) == null) {
+        if (productColls.findOne(productId.toString(), ID_FIELD) == null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
                 productId), productId);
         }
@@ -225,7 +227,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
 
         try {
             WriteResult wr = storeProductItems(productId, travelProductItem.getType(), itemsBuilder.build());
-            LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
             throw new InvalidTravelProductException(productId, e);
         }
@@ -240,20 +242,20 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
 
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
-        if (productColls.findOne(productId.toString()) == null) {
+        if (productColls.findOne(productId.toString(), ID_FIELD) == null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
                 productId), productId);
         }
 
         DBCollection productBiddingColls = productDb.getCollection(DAOConstants.PRODUCT_BIDDING_COLL_NAME);
-        if (productBiddingColls.findOne(productId.toString()) != null) {
+        if (productBiddingColls.findOne(productId.toString(), ID_FIELD) != null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.existed_product_bidding,
                 productId), productId);
         }
 
         try {
             WriteResult wr = storeProductBidding(productId, bidding.toJSON());
-            LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_create_record, wr.toString()));
         } catch (MongoException e) {
             throw new InvalidTravelProductException(productId, e);
         }
@@ -306,7 +308,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
 
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
-        if (productColls.findOne(productId.toString()) == null) {
+        if (productColls.findOne(productId.toString(), ID_FIELD) == null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
                 productId), productId);
         }
@@ -387,13 +389,13 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
 
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
-        if (productColls.findOne(productId.toString()) == null) {
+        if (productColls.findOne(productId.toString(), ID_FIELD) == null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
                 productId), productId);
         }
 
         DBCollection productBiddingColls = productDb.getCollection(DAOConstants.PRODUCT_BIDDING_COLL_NAME);
-        if (productBiddingColls.findOne(productId.toString()) != null) {
+        if (productBiddingColls.findOne(productId.toString(), ID_FIELD) != null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(
                 LocalMessages.illegal_remove_product_item_operation, productId), productId);
         }
@@ -417,7 +419,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             if (removing) {
                 try {
                     WriteResult wr = storeProductItems(productId, HotelItem.SUB_TYPE, hotelsBuilder.build());
-                    LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+                    LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
                 } catch (MongoException e) {
                     throw new InvalidTravelProductException(productId, e);
                 }
@@ -437,13 +439,13 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
 
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
-        if (productColls.findOne(productId.toString()) == null) {
+        if (productColls.findOne(productId.toString(), ID_FIELD) == null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
                 productId), productId);
         }
 
         DBCollection productBiddingColls = productDb.getCollection(DAOConstants.PRODUCT_BIDDING_COLL_NAME);
-        if (productBiddingColls.findOne(productId.toString()) != null) {
+        if (productBiddingColls.findOne(productId.toString(), ID_FIELD) != null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(
                 LocalMessages.illegal_remove_product_item_operation, productId), productId);
         }
@@ -467,7 +469,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             if (removing) {
                 try {
                     WriteResult wr = storeProductItems(productId, TrafficItem.SUB_TYPE, hotelsBuilder.build());
-                    LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+                    LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
                 } catch (MongoException e) {
                     throw new InvalidTravelProductException(productId, e);
                 }
@@ -487,13 +489,13 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
 
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
-        if (productColls.findOne(productId.toString()) == null) {
+        if (productColls.findOne(productId.toString(), ID_FIELD) == null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
                 productId), productId);
         }
 
         DBCollection productBiddingColls = productDb.getCollection(DAOConstants.PRODUCT_BIDDING_COLL_NAME);
-        if (productBiddingColls.findOne(productId.toString()) != null) {
+        if (productBiddingColls.findOne(productId.toString(), ID_FIELD) != null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(
                 LocalMessages.illegal_remove_product_item_operation, productId), productId);
         }
@@ -517,7 +519,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             if (removing) {
                 try {
                     WriteResult wr = storeProductItems(productId, ResortItem.SUB_TYPE, resortsBuilder.build());
-                    LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+                    LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
                 } catch (MongoException e) {
                     throw new InvalidTravelProductException(productId, e);
                 }
@@ -537,7 +539,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
 
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
-        if (productColls.findOne(productId.toString()) == null) {
+        if (productColls.findOne(productId.toString(), ID_FIELD) == null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
                 productId), productId);
         }
@@ -561,7 +563,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             if (removing) {
                 try {
                     WriteResult wr = storeProductItems(productId, TrivItem.SUB_TYPE, trivsBuilder.build());
-                    LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+                    LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
                 } catch (MongoException e) {
                     throw new InvalidTravelProductException(productId, e);
                 }
@@ -580,7 +582,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
 
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
-        if (productColls.findOne(productId.toString()) == null) {
+        if (productColls.findOne(productId.toString(), ID_FIELD) == null) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
                 productId), productId);
         }
@@ -591,7 +593,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             return null;
         } else {
             WriteResult wr = productBiddingColls.remove(biddingBs);
-            LOG.info("UpsertedId:" + (String) wr.getUpsertedId() + ";N:" + wr.getN());
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_remove_record, wr.toString()));
             JsonObject bidding = Json.createReader(new StringReader(biddingBs.toString())).readObject();
             return new Bidding().fromJSON(bidding);
         }

@@ -140,21 +140,21 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
          */
         try {
             WriteResult wr = storeProposal(proposalJs);
-            LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_create_record, wr.toString()));
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_create_record, wr.toString()));
         } catch (MongoException e) {
             throw new InvalidTravelReqirementException(travelProposal.getUUID(), e);
         }
 
         try {
             BulkWriteResult bwr = storeItineraries(itinerariesJs);
-            LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_bulk_create_record, bwr.toString()));
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_bulk_create_record, bwr.toString()));
         } catch (MongoException e) {
             throw new InvalidTravelReqirementException(travelProposal.getUUID(), e);
         }
 
         try {
             WriteResult wr = storeProposalRequirements(travelProposal.getUUID(), itineraryIdsJs.build());
-            LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
             throw new InvalidTravelReqirementException(travelProposal.getUUID(), e);
         }
@@ -189,7 +189,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         } else {
             try {
                 WriteResult wr = storeProposalBid(travelProposalId, accoutId, Json.createArrayBuilder().build());
-                LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
+                LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
             } catch (MongoException e) {
                 throw new InvalidTravelReqirementException(travelProposalId, e);
             }
@@ -231,7 +231,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
             try {
                 WriteResult wr = storeProposalBid(travelProposalId, UUID.fromString((String) ownerBs),
                     agenciesJs.build());
-                LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
+                LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
             } catch (MongoException e) {
                 throw new InvalidTravelReqirementException(travelProposalId, e);
             }
@@ -293,14 +293,14 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
          */
         try {
             WriteResult wr = storeItinerary(itineraryRequirement.toJSON());
-            LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_create_record, wr.toString()));
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_create_record, wr.toString()));
         } catch (MongoException e) {
             throw new InvalidTravelReqirementException(itineraryRequirement.getUUID(), e);
         }
 
         try {
             WriteResult wr = storeProposalRequirements(travelProposalId, requirementsBuilder.build());
-            LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
             throw new InvalidTravelReqirementException(travelProposalId, e);
         }
@@ -375,14 +375,14 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
          */
         try {
             WriteResult wr = storeRequirement(travelRequirement.toJSON());
-            LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
             throw new InvalidTravelReqirementException(travelRequirement.getUUID(), e);
         }
 
         try {
             WriteResult wr = storeProposalRequirements(travelProposalId, requirementsBuilder.build());
-            LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
             throw new InvalidTravelReqirementException(travelProposalId, e);
         }
@@ -445,10 +445,10 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         try {
             if (travelRequirement.isItinerary()) {
                 WriteResult wr = storeItinerary(travelRequirement.toJSON());
-                LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_create_record, wr.toString()));
+                LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_create_record, wr.toString()));
             } else {
                 WriteResult wr = storeRequirement(travelRequirement.toJSON());
-                LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
+                LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
             }
         } catch (MongoException e) {
             throw new InvalidTravelReqirementException(travelRequirement.getUUID(), e);
@@ -456,7 +456,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
 
         try {
             WriteResult wr = storeProposalRequirements(travelProposalId, requirementsBuilder.build());
-            LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
             throw new InvalidTravelReqirementException(travelProposalId, e);
         }
@@ -919,7 +919,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
 
         try {
             WriteResult wr = storeRequirement(travelRequirement.toJSON());
-            LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
             throw new InvalidTravelReqirementException(travelRequirement.getUUID(), e);
         }
@@ -1009,7 +1009,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
             if (removing) {
                 try {
                     WriteResult wr = storeProposalRequirements(travelProposalId, requirementsBuilder.build());
-                    LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
+                    LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
                 } catch (MongoException e) {
                     throw new InvalidTravelReqirementException(travelProposalId, e);
                 }
@@ -1020,7 +1020,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
                 BasicDBObjectBuilder requirementIdsBuilder = new BasicDBObjectBuilder().add(
                     DAOConstants.mongo_database_pk, new BasicDBObject(DAOConstants.mongo_database_op_in, ids));
                 WriteResult wr = requirementColls.remove(requirementIdsBuilder.get());
-                LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_remove_record, wr.toString()));
+                LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_remove_record, wr.toString()));
             } catch (MongoException e) {
                 throw new InvalidTravelReqirementException(travelRequirementId, e);
             }
@@ -1028,7 +1028,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
             try {
                 WriteResult wr = itineraryColls.remove(new BasicDBObject(DAOConstants.mongo_database_pk,
                     travelRequirementId.toString()));
-                LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_remove_record, wr.toString()));
+                LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_remove_record, wr.toString()));
             } catch (MongoException e) {
                 throw new InvalidTravelReqirementException(travelRequirementId, e);
             }
@@ -1058,7 +1058,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
             if (removing) {
                 try {
                     WriteResult wr = storeProposalRequirements(travelProposalId, requirementsBuilder.build());
-                    LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
+                    LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
                 } catch (MongoException e) {
                     throw new InvalidTravelReqirementException(travelProposalId, e);
                 }
@@ -1067,7 +1067,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
             try {
                 WriteResult wr = requirementColls.remove(new BasicDBObject(DAOConstants.mongo_database_pk,
                     travelRequirementId.toString()));
-                LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_remove_record, wr.toString()));
+                LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_remove_record, wr.toString()));
             } catch (MongoException e) {
                 throw new InvalidTravelReqirementException(travelRequirementId, e);
             }
