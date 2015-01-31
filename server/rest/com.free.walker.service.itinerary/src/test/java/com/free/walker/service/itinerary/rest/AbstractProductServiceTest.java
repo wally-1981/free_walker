@@ -1175,5 +1175,59 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                 get.abort();
             }
         }
+
+        /*
+         * 发布Product。
+         */
+        {
+            HttpPost post = new HttpPost();
+            post.setURI(new URI(productServiceUrlStr + "products/public/" + productId));
+            post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(post);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonObject product = Json.createReader(response.getEntity().getContent()).readObject();
+                    assertNotNull(product);
+                    String productUuid = product.getString(Introspection.JSONKeys.UUID);
+                    assertNotNull(productUuid);
+                    assertEquals(productId, productUuid);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                post.abort();
+            }
+        }
+
+        /*
+         * 取消发布Product。
+         */
+        {
+            HttpDelete delete = new HttpDelete();
+            delete.setURI(new URI(productServiceUrlStr + "products/public/" + productId));
+            delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(delete);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonObject product = Json.createReader(response.getEntity().getContent()).readObject();
+                    assertNotNull(product);
+                    String productUuid = product.getString(Introspection.JSONKeys.UUID);
+                    assertNotNull(productUuid);
+                    assertEquals(productId, productUuid);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                delete.abort();
+            }
+        }
     }
 }

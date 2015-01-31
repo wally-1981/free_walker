@@ -275,11 +275,28 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         return travelProductBiddings.remove(productId);
     }
 
-    public UUID publishProduct(UUID productId) throws DatabaseAccessException {
+    public UUID publishProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {
+        if (productId == null) {
+            throw new NullPointerException();
+        }
+
+        if (!travelProducts.containsKey(productId)) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
+                productId), productId);
+        }
+
         return productId;
     }
 
-    public UUID unpublishProduct(UUID productId) throws DatabaseAccessException {
+    public UUID unpublishProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {
+        if (productId == null) {
+            throw new NullPointerException();
+        }
+
+        if (!travelProducts.containsKey(productId)) {
+            return null;
+        }
+
         return productId;
     }
 }

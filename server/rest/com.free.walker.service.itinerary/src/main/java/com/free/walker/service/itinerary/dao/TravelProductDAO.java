@@ -164,16 +164,18 @@ public interface TravelProductDAO extends HealthyDAO {
      * 
      * @param productId
      * @return
+     * @throws InvalidTravelProductException
      * @throws DatabaseAccessException
      */
-    public UUID publishProduct(UUID productId) throws DatabaseAccessException;
+    public UUID publishProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException;
 
     /**
      * Unpublish the product from the search engine.
      * 
      * @param productId
      * @return
+     * @throws InvalidTravelProductException
      * @throws DatabaseAccessException
      */
-    public UUID unpublishProduct(UUID productId) throws DatabaseAccessException;
+    public UUID unpublishProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException;
 }

@@ -89,7 +89,15 @@ public class ProductService {
     @POST
     @Path("/products/public/{productId}")
     public Response publishProduct(@PathParam("productId") String productId) {
-        return Response.status(Status.NOT_IMPLEMENTED).build();
+        try {
+            productId = travelProductDAO.publishProduct(UuidUtil.fromUuidStr(productId)).toString();
+            JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productId).build();
+            return Response.ok(res).build();
+        } catch (InvalidTravelProductException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
     }
 
     /**
@@ -103,7 +111,22 @@ public class ProductService {
     @DELETE
     @Path("/products/public/{productId}")
     public Response unpublishProduct(@PathParam("productId") String productId) {
-        return Response.status(Status.NOT_IMPLEMENTED).build();
+        try {
+            UUID productUuid = travelProductDAO.unpublishProduct(UuidUtil.fromUuidStr(productId));
+
+            if (productUuid == null) {
+                JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productId).build();
+                return Response.status(Status.NOT_FOUND).entity(res).build();
+            }
+
+            JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productUuid.toString())
+                .build();
+            return Response.ok(res).build();
+        } catch (InvalidTravelProductException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
     }
 
     /**

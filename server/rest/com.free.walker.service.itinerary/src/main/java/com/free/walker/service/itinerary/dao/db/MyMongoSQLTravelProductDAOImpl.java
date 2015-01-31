@@ -18,6 +18,10 @@ import javax.json.JsonObjectBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
+import org.elasticsearch.action.delete.DeleteRequestBuilder;
+import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.index.IndexRequestBuilder;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +44,7 @@ import com.free.walker.service.itinerary.util.ElasticSearchClientBuilder;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.MongoDbClientBuilder;
 import com.free.walker.service.itinerary.util.SystemConfigUtil;
+import com.free.walker.service.itinerary.util.UuidUtil;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.CommandResult;
@@ -206,35 +211,35 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             WriteResult wr = storeProduct(productJs);
             LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_create_record, wr.toString()));
         } catch (MongoException e) {
-            throw new InvalidTravelProductException(travelProduct.getProductUUID(), e);
+            throw new DatabaseAccessException(e);
         }
 
         try {
             WriteResult wr = storeProductItems(travelProduct.getProductUUID(), HotelItem.SUB_TYPE, hotelItemsJs.build());
             LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
-            throw new InvalidTravelProductException(travelProduct.getProductUUID(), e);
+            throw new DatabaseAccessException(e);
         }
 
         try {
             WriteResult wr = storeProductItems(travelProduct.getProductUUID(), TrafficItem.SUB_TYPE, trafficItemsJs.build());
             LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
-            throw new InvalidTravelProductException(travelProduct.getProductUUID(), e);
+            throw new DatabaseAccessException(e);
         }
 
         try {
             WriteResult wr = storeProductItems(travelProduct.getProductUUID(), ResortItem.SUB_TYPE, resortItemsJs.build());
             LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
-            throw new InvalidTravelProductException(travelProduct.getProductUUID(), e);
+            throw new DatabaseAccessException(e);
         }
 
         try {
             WriteResult wr = storeProductItems(travelProduct.getProductUUID(), TrivItem.SUB_TYPE, trivItemsJs.build());
             LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
-            throw new InvalidTravelProductException(travelProduct.getProductUUID(), e);
+            throw new DatabaseAccessException(e);
         }
 
         return travelProduct.getProductUUID();
@@ -280,7 +285,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             WriteResult wr = storeProductItems(productId, travelProductItem.getType(), itemsBuilder.build());
             LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
-            throw new InvalidTravelProductException(productId, e);
+            throw new DatabaseAccessException(e);
         }
 
         return travelProductItem.getUUID();
@@ -308,7 +313,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             WriteResult wr = storeProductBidding(productId, bidding.toJSON());
             LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_create_record, wr.toString()));
         } catch (MongoException e) {
-            throw new InvalidTravelProductException(productId, e);
+            throw new DatabaseAccessException(e);
         }
 
         return productId;
@@ -472,7 +477,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
                     WriteResult wr = storeProductItems(productId, HotelItem.SUB_TYPE, hotelsBuilder.build());
                     LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
                 } catch (MongoException e) {
-                    throw new InvalidTravelProductException(productId, e);
+                    throw new DatabaseAccessException(e);
                 }
                 return hotelItemId;
             } else {
@@ -522,7 +527,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
                     WriteResult wr = storeProductItems(productId, TrafficItem.SUB_TYPE, hotelsBuilder.build());
                     LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
                 } catch (MongoException e) {
-                    throw new InvalidTravelProductException(productId, e);
+                    throw new DatabaseAccessException(e);
                 }
                 return trafficItemId;
             } else {
@@ -572,7 +577,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
                     WriteResult wr = storeProductItems(productId, ResortItem.SUB_TYPE, resortsBuilder.build());
                     LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
                 } catch (MongoException e) {
-                    throw new InvalidTravelProductException(productId, e);
+                    throw new DatabaseAccessException(e);
                 }
                 return resortItemId;
             } else {
@@ -616,7 +621,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
                     WriteResult wr = storeProductItems(productId, TrivItem.SUB_TYPE, trivsBuilder.build());
                     LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
                 } catch (MongoException e) {
-                    throw new InvalidTravelProductException(productId, e);
+                    throw new DatabaseAccessException(e);
                 }
                 return trivItemId;
             } else {
@@ -709,13 +714,47 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
     }
 
-    public UUID publishProduct(UUID productId) throws DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
+    public UUID publishProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {
+        if (productId == null) {
+            throw new NullPointerException();
+        }
+
+        DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
+        DBObject productBs = productColls.findOne(productId.toString());
+        if (productBs == null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
+                productId), productId);
+        } else {
+            JsonObject product = Json.createReader(new StringReader(productBs.toString())).readObject();
+            String productUuid = product.getString(DAOConstants.mongo_database_pk);
+            IndexRequestBuilder requestBuilder = esClient.prepareIndex(DAOConstants.elasticsearch_product_index,
+                DAOConstants.elasticsearch_product_type, productUuid);
+            IndexResponse response = requestBuilder.setSource(product.toString()).execute().actionGet();
+
+            LOG.error(LocalMessages.getMessage(response.isCreated() ? LocalMessages.product_index_created
+                : LocalMessages.product_index_updated, productUuid, response.getIndex(), response.getType(), response
+                .getId(), response.getVersion(), response.getHeaders(), response.isCreated()));
+            return UuidUtil.fromUuidStr(response.getId());
+        }
     }
 
-    public UUID unpublishProduct(UUID productId) throws DatabaseAccessException {
-        // TODO Auto-generated method stub
-        return null;
+    public UUID unpublishProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {
+        if (productId == null) {
+            throw new NullPointerException();
+        }
+
+        String productUuid = productId.toString();
+        DeleteRequestBuilder requestBuilder = esClient.prepareDelete(DAOConstants.elasticsearch_product_index,
+            DAOConstants.elasticsearch_product_type, productUuid);
+        DeleteResponse response = requestBuilder.execute().actionGet();
+        if (response.isFound()) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.product_index_deleted, productUuid, response.getIndex(),
+                response.getType(), response.getId(), response.getVersion(), response.getHeaders()));
+            return UuidUtil.fromUuidStr(response.getId());
+        } else {
+            LOG.error(LocalMessages.getMessage(LocalMessages.product_index_not_found, productUuid, response.getIndex(),
+                response.getType(), response.getId(), response.getVersion(), response.getHeaders()));
+            return null;
+        }
     }
 }

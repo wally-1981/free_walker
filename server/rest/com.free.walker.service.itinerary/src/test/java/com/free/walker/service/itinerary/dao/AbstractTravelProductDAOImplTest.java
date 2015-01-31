@@ -529,7 +529,58 @@ public abstract class AbstractTravelProductDAOImplTest {
     public void testUnsetBidding() throws InvalidTravelProductException, DatabaseAccessException {
         UUID productId = travelProductDAO.createProduct(travelProduct);
         productId = travelProductDAO.setBidding(productId, bidding);
-        travelProductDAO.unsetBidding(productId);
+        Bidding bidding = travelProductDAO.unsetBidding(productId);
+        assertNotNull(bidding);
+    }
+
+    @Test
+    public void testPublishProductWithNullProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.publishProduct(null);
+    }
+
+    @Test
+    public void testPublishProductWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID wrongProductId = UUID.randomUUID();
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, wrongProductId));
+        travelProductDAO.publishProduct(wrongProductId);
+    }
+
+    @Test
+    public void testPublishProduct() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        travelProductDAO.addItem(productId, hotelItem);
+        productId = travelProductDAO.setBidding(productId, bidding);
+        UUID productUuid = travelProductDAO.publishProduct(productId);
+        assertNotNull(productUuid);
+        assertEquals(productId.toString(), productUuid.toString());
+
+        assertNotNull(travelProductDAO.publishProduct(productId));
+        assertEquals(productId.toString(), travelProductDAO.publishProduct(productId).toString());
+    }
+
+    @Test
+    public void testUnpublishProductWithNullProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.unpublishProduct(null);
+    }
+
+    @Test
+    public void testUnpublishNotExistedProduct() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID wrongProductId = UUID.randomUUID();
+        assertNull(travelProductDAO.unpublishProduct(wrongProductId));
+    }
+
+    @Test
+    public void testUnpublishProduct() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        travelProductDAO.addItem(productId, hotelItem);
+        productId = travelProductDAO.setBidding(productId, bidding);
+        UUID productUuid = travelProductDAO.publishProduct(productId);
+        UUID unpublishedProductUuid = travelProductDAO.unpublishProduct(productUuid);
+        assertNotNull(unpublishedProductUuid);
+        assertEquals(productUuid.toString(), unpublishedProductUuid.toString());
     }
 
     @After
