@@ -80,6 +80,11 @@ public class ProductService {
      * <br>
      * Implicitly, the travel product will be published from database to search
      * engine.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>N/A</i><br>
+     * <br>
      */
     @POST
     @Path("/products/public/{productId}")

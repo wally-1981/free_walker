@@ -3,4 +3,4 @@
 # Start MySQL:
 #service mysql start
 
-java -jar ./com.free.walker.service.itinerary-0.0.6.jar -Devo
+java -jar ./com.free.walker.service.itinerary-0.0.8.jar -Devo

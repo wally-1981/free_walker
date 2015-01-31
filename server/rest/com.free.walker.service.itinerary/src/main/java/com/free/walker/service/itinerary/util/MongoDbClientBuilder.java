@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.dao.DAOConstants;
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoException;
 import com.mongodb.ServerAddress;
 
 public class MongoDbClientBuilder {
@@ -23,16 +23,12 @@ public class MongoDbClientBuilder {
 
     private static final int DEFAULT_DB_PORT = 27017;
 
-    private MongoClient client;
-
-    public DB build(String dbName, Properties config) throws UnknownHostException {
-        if (config == null || config.getProperty(DAOConstants.mongo_database_url) == null || dbName == null
-            || dbName.trim().length() == 0) {
+    public MongoClient build(Properties config) throws UnknownHostException, MongoException {
+        if (config == null || config.getProperty(DAOConstants.mongo_database_url) == null) {
             throw new NullPointerException();
         }
 
         String mongoDatabaseUrl = config.getProperty(DAOConstants.mongo_database_url);
-        mongoDatabaseUrl = new StringBuilder(dbName).append(mongoDatabaseUrl).toString();
 
         List<ServerAddress> hostAddresses = new ArrayList<ServerAddress>();
         String dbHosts = mongoDatabaseUrl.substring(mongoDatabaseUrl.indexOf(AT) + AT.length());
@@ -50,13 +46,10 @@ public class MongoDbClientBuilder {
             }
         }
 
-        if (hostAddresses.isEmpty() || dbName == null || dbName.length() == 0) {
+        if (hostAddresses.isEmpty()) {
             throw new IllegalArgumentException();
         } else {
-            if (client == null) {
-                client = new MongoClient(hostAddresses);
-            }
-            return client.getDB(dbName);
+            return new MongoClient(hostAddresses);
         }
     }
 }

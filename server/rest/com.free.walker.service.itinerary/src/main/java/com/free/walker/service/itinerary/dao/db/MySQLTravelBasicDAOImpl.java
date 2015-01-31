@@ -60,6 +60,10 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
             throw new IllegalStateException(e);
         } catch (IOException e) {
             throw new IllegalStateException(e);
+        } finally {
+            if (!pingPersistence()) {
+                throw new IllegalStateException();
+            }
         }
     }
 
@@ -73,7 +77,7 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
             } else {
                 return false;
             }
-        } catch(Exception e) {
+        } catch(RuntimeException e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_init_failure, mysqlDatabaseUrl, mysqlDatabaseDriver), e);
             return false;
         } finally {

@@ -43,6 +43,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import com.mongodb.QueryBuilder;
 import com.mongodb.WriteConcern;
@@ -53,9 +54,9 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
     private static final Logger LOG = LoggerFactory.getLogger(MyMongoSQLTravelRequirementDAOImpl.class);
     private static final DBObject ID_FIELD = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk, true).get();
 
-    private DB itineraryDb;
+    private MongoClient mdbClient;
     private String itineraryMongoDbUrl;
-    private String mongoDbDriver;
+    private DB itineraryDb;
 
     private static class SingletonHolder {
         private static final TravelRequirementDAO INSTANCE = new MyMongoSQLTravelRequirementDAOImpl();
@@ -68,13 +69,21 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
     private MyMongoSQLTravelRequirementDAOImpl() {
         try {
             Properties config = SystemConfigUtil.getApplicationConfig();
-            itineraryDb = new MongoDbClientBuilder().build(DAOConstants.itinerary_mongo_database, config);
-            mongoDbDriver = DB.class.getName();
+            mdbClient = new MongoDbClientBuilder().build(config);
             itineraryMongoDbUrl = config.getProperty(DAOConstants.mongo_database_url);
+            itineraryDb = mdbClient.getDB(DAOConstants.itinerary_mongo_database);
         } catch (UnknownHostException e) {
             throw new IllegalStateException(e);
         } catch (IOException e) {
             throw new IllegalStateException(e);
+        } finally {
+            if (!pingPersistence()){
+                if (mdbClient == null) {
+                    mdbClient.close();
+                    mdbClient = null;
+                }
+                throw new IllegalStateException();
+            }
         }
     }
 
@@ -84,13 +93,14 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
             CommandResult cr = itineraryDb.command(ping);
             if (!cr.ok()) {
                 return false;
+            } else {
+                return true;
             }
-        } catch (MongoException e) {
-            LOG.error(LocalMessages.getMessage(LocalMessages.dao_init_failure, itineraryMongoDbUrl, mongoDbDriver), e);
+        } catch (RuntimeException e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_init_failure, itineraryMongoDbUrl,
+                MongoClient.class.getName()), e);
             return false;
         }
-
-        return true;
     }
 
     public UUID createProposal(UUID anctId, TravelProposal travelProposal) throws InvalidTravelReqirementException,

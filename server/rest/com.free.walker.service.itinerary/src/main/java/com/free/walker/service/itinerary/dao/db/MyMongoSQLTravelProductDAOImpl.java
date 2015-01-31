@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -14,6 +15,10 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
+import org.elasticsearch.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +36,7 @@ import com.free.walker.service.itinerary.product.TrafficItem;
 import com.free.walker.service.itinerary.product.TravelProduct;
 import com.free.walker.service.itinerary.product.TravelProductItem;
 import com.free.walker.service.itinerary.product.TrivItem;
+import com.free.walker.service.itinerary.util.ElasticSearchClientBuilder;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.MongoDbClientBuilder;
 import com.free.walker.service.itinerary.util.SystemConfigUtil;
@@ -41,6 +47,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import com.mongodb.QueryBuilder;
 import com.mongodb.WriteConcern;
@@ -51,9 +58,13 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
     private static final Logger LOG = LoggerFactory.getLogger(MyMongoSQLTravelProductDAOImpl.class);
     private static final DBObject ID_FIELD = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk, true).get();
 
-    private DB productDb;
+    private MongoClient mdbClient;
     private String productMongoDbUrl;
-    private String mongoDbDriver;
+
+    private Client esClient;
+    private String esUrl;
+
+    private DB productDb;
 
     private static class SingletonHolder {
         private static final TravelProductDAO INSTANCE = new MyMongoSQLTravelProductDAOImpl();
@@ -66,29 +77,69 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
     private MyMongoSQLTravelProductDAOImpl() {
         try {
             Properties config = SystemConfigUtil.getApplicationConfig();
-            productDb = new MongoDbClientBuilder().build(DAOConstants.product_mongo_database, config);
-            mongoDbDriver = DB.class.getName();
-            productMongoDbUrl = config.getProperty(DAOConstants.mongo_database_url);
+
+            mdbClient = new MongoDbClientBuilder().build(config);
+            productMongoDbUrl = StringUtils.join(DAOConstants.product_mongo_database,
+                config.getProperty(DAOConstants.mongo_database_url));
+            productDb = mdbClient.getDB(DAOConstants.product_mongo_database);
+
+            esClient = new ElasticSearchClientBuilder().build(config);
+            esUrl = config.getProperty(DAOConstants.elasticsearch_url);
         } catch (UnknownHostException e) {
             throw new IllegalStateException(e);
         } catch (IOException e) {
             throw new IllegalStateException(e);
+        } finally {
+            if (!pingPersistence()){
+                if (mdbClient != null) {
+                    mdbClient.close();
+                    mdbClient = null;
+                }
+
+                if (esClient != null) {
+                    esClient.close();
+                    esClient = null;
+                }
+                throw new IllegalStateException();
+            }
         }
     }
 
     public boolean pingPersistence() {
+        boolean result = false;
+
         DBObject ping = new BasicDBObject("ping", "1");
         try {
             CommandResult cr = productDb.command(ping);
             if (!cr.ok()) {
                 return false;
+            } else {
+                result = true;
             }
-        } catch (MongoException e) {
-            LOG.error(LocalMessages.getMessage(LocalMessages.dao_init_failure, productMongoDbUrl, mongoDbDriver), e);
+        } catch (RuntimeException e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_init_failure, productMongoDbUrl,
+                MongoClient.class.getName()), e);
             return false;
         }
 
-        return true;
+        try {
+            ClusterHealthStatus esHealthStatus = esClient.admin().cluster().health(new ClusterHealthRequest()).get()
+                .getStatus();
+            if (ClusterHealthStatus.RED.equals(esHealthStatus)) {
+                LOG.error(LocalMessages.getMessage(LocalMessages.elasticsearch_abnormal_status, esHealthStatus));
+                return false;
+            } else if (ClusterHealthStatus.YELLOW.equals(esHealthStatus)) {
+                LOG.warn(LocalMessages.getMessage(LocalMessages.elasticsearch_abnormal_status, esHealthStatus));
+                return true;
+            } else {
+                result = result && true;
+            }
+        } catch (InterruptedException | ExecutionException | RuntimeException e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_init_failure, esUrl, Client.class.getName()), e);
+            return false;
+        }
+
+        return result;
     }
 
     public UUID createProduct(TravelProduct travelProduct) throws InvalidTravelProductException,
@@ -656,5 +707,15 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             DBObject productQuery = QueryBuilder.start(DAOConstants.mongo_database_pk).is(productId.toString()).get();
             return productTrivColls.update(productQuery, trivBs, true, false, WriteConcern.MAJORITY);
         }
+    }
+
+    public UUID publishProduct(UUID productId) throws DatabaseAccessException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public UUID unpublishProduct(UUID productId) throws DatabaseAccessException {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

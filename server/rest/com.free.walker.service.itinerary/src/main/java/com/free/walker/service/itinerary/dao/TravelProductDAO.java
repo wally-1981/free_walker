@@ -35,8 +35,8 @@ public interface TravelProductDAO extends HealthyDAO {
         DatabaseAccessException;
 
     /**
-     * Set the specicied bidding for the product assciating with the specified
-     * bidding.
+     * Set the bidding for the product identified the specified product
+     * identifier.
      * 
      * @param productId
      * @param bidding
@@ -148,5 +148,32 @@ public interface TravelProductDAO extends HealthyDAO {
     public UUID removeTrivItem(UUID productId, UUID trivItemId) throws InvalidTravelProductException,
         DatabaseAccessException;
 
+    /**
+     * Unset the bidding for the product identified the specified product
+     * identifier.
+     * 
+     * @param productId
+     * @return
+     * @throws InvalidTravelProductException
+     * @throws DatabaseAccessException
+     */
     public Bidding unsetBidding(UUID productId) throws InvalidTravelProductException, DatabaseAccessException;
+
+    /**
+     * Publish the product to the search engine for indexing.
+     * 
+     * @param productId
+     * @return
+     * @throws DatabaseAccessException
+     */
+    public UUID publishProduct(UUID productId) throws DatabaseAccessException;
+
+    /**
+     * Unpublish the product from the search engine.
+     * 
+     * @param productId
+     * @return
+     * @throws DatabaseAccessException
+     */
+    public UUID unpublishProduct(UUID productId) throws DatabaseAccessException;
 }

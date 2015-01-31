@@ -274,4 +274,12 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
 
         return travelProductBiddings.remove(productId);
     }
+
+    public UUID publishProduct(UUID productId) throws DatabaseAccessException {
+        return productId;
+    }
+
+    public UUID unpublishProduct(UUID productId) throws DatabaseAccessException {
+        return productId;
+    }
 }

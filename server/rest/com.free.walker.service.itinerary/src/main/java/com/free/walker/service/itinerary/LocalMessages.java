@@ -143,6 +143,8 @@ public class LocalMessages {
     public static final String mongodb_update_record = "mongodb_update_record";
     public static final String mongodb_remove_record = "mongodb_remove_record";
 
+    public static final String elasticsearch_abnormal_status = "elasticsearch_abnormal_status";
+
     public static final String test_message = "test_message";
     public static final String test_message_with_1_arg = "test_message_with_1_arg";
     public static final String test_message_with_2_args = "test_message_with_2_args";

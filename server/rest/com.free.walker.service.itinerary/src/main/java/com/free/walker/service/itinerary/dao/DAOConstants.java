@@ -16,6 +16,7 @@ public class DAOConstants {
     public static final String mysql_database_url = "mysql_database_url";
     public static final String mysql_database_driver = "mysql_database_driver";
     public static final String mongo_database_url = "mongo_database_url";
+    public static final String elasticsearch_url = "elasticsearch_url";
 
     public static final String itinerary_mongo_database = "itinerary";
     public static final String product_mongo_database = "product";
