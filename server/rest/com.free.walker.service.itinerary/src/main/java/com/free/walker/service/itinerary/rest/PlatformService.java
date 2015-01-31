@@ -16,6 +16,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -47,13 +48,13 @@ import com.free.walker.service.itinerary.dao.TravelBasicDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.product.Bidding;
+import com.free.walker.service.itinerary.product.Bidding.BiddingItem;
 import com.free.walker.service.itinerary.product.HotelItem;
 import com.free.walker.service.itinerary.product.ResortItem;
 import com.free.walker.service.itinerary.product.SimpleTravelProduct;
 import com.free.walker.service.itinerary.product.TrafficItem;
 import com.free.walker.service.itinerary.product.TravelProduct;
 import com.free.walker.service.itinerary.product.TrivItem;
-import com.free.walker.service.itinerary.product.Bidding.BiddingItem;
 import com.free.walker.service.itinerary.req.HotelRequirement;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.ResortRequirement;
@@ -97,9 +98,13 @@ public class PlatformService {
      */
     @GET
     @Path("/introspection/")
-    public Response getIntrospection() {
+    public Response getIntrospection(@QueryParam("section") String section, @QueryParam("part") int part,
+        @QueryParam("range") int range) {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
+        part = part == 0 ? 0 : Math.abs(part);
+        range = range == 0 ? part + 1 : Math.abs(range);
 
+        if (section == null || "test_data".equals(section))
         {
             JsonObjectBuilder valueDataBuilder = Json.createObjectBuilder();
             Field[] fields = Introspection.TestValues.class.getFields();
@@ -131,6 +136,7 @@ public class PlatformService {
             resBuilder.add("test_data", valueDataBuilder);
         }
 
+        if (section == null || "key_data".equals(section))
         {
             JsonObjectBuilder keyDataBuilder = Json.createObjectBuilder();
             Field[] fields = Introspection.JSONKeys.class.getFields();
@@ -150,6 +156,7 @@ public class PlatformService {
             resBuilder.add("key_data", keyDataBuilder);
         }
 
+        if (section == null || "value_data".equals(section))
         {
             JsonObjectBuilder valueDataBuilder = Json.createObjectBuilder();
             Field[] fields = Introspection.JSONValues.class.getFields();
@@ -181,6 +188,7 @@ public class PlatformService {
             resBuilder.add("value_data", valueDataBuilder);
         }
 
+        if (section == null || "basic_sample_data".equals(section))
         {
             JsonArrayBuilder basicSampleDataBuilder = Json.createArrayBuilder();
 
@@ -192,19 +200,23 @@ public class PlatformService {
             agency.setExp(99999);
             basicSampleDataBuilder.add(agency.toJSON());
 
-            resBuilder.add("basic_sample_data", basicSampleDataBuilder);
+            if (section == null) {
+                resBuilder.add("basic_sample_data", basicSampleDataBuilder.build());
+            } else {
+                if (!splitIntrospection(resBuilder, basicSampleDataBuilder, "basic_sample_data", part, range)) {
+                    return Response.status(Status.NOT_FOUND).build();
+                }
+            }
         }
 
-        TravelProposal proposal;
-        TravelLocation dept;
-        TravelLocation dest;
+        if (section == null || "requirement_sample_data".equals(section))
         {
             JsonArrayBuilder requirementSampleDataBuilder = Json.createArrayBuilder();
 
-            dept = new TravelLocation(Constants.TAIBEI);
-            dest = new TravelLocation(Constants.BARCELONA);
+            TravelLocation dept = new TravelLocation(Constants.TAIBEI);
+            TravelLocation dest = new TravelLocation(Constants.BARCELONA);
             ItineraryRequirement itineraryRequirement = new ItineraryRequirement(dept, dest);
-            proposal = new TravelProposal("台北到巴萨看梅西", itineraryRequirement);
+            TravelProposal proposal = new TravelProposal("台北到巴萨看梅西", itineraryRequirement);
             requirementSampleDataBuilder.add(proposal.toJSON());
 
             TravelRequirement hotelRequirementA = new HotelRequirement(6);
@@ -238,11 +250,23 @@ public class PlatformService {
             requirementSampleDataBuilder.add(trafficRequirementD.toJSON());
             requirementSampleDataBuilder.add(trafficRequirementE.toJSON());
 
-            resBuilder.add("requirement_sample_data", requirementSampleDataBuilder);
+            if (section == null) {
+                resBuilder.add("requirement_sample_data", requirementSampleDataBuilder.build());
+            } else {
+                if (!splitIntrospection(resBuilder, requirementSampleDataBuilder, "requirement_sample_data", part, range)) {
+                    return Response.status(Status.NOT_FOUND).build();
+                }
+            }
         }
 
+        if (section == null || "product_sample_data".equals(section))
         {
             JsonArrayBuilder productSampleDataBuilder = Json.createArrayBuilder();
+
+            TravelLocation dept = new TravelLocation(Constants.TAIBEI);
+            TravelLocation dest = new TravelLocation(Constants.BARCELONA);
+            ItineraryRequirement itineraryRequirement = new ItineraryRequirement(dept, dest);
+            TravelProposal proposal = new TravelProposal("台北到巴萨看梅西", itineraryRequirement);
 
             Calendar deadline = Calendar.getInstance();
             deadline.add(Calendar.DATE, 3);
@@ -276,7 +300,13 @@ public class PlatformService {
 
             productSampleDataBuilder.add(travelProduct.toJSON());
 
-            resBuilder.add("product_sample_data", productSampleDataBuilder);
+            if (section == null) {
+                resBuilder.add("product_sample_data", productSampleDataBuilder.build());
+            } else {
+                if (!splitIntrospection(resBuilder, productSampleDataBuilder, "product_sample_data", part, range)) {
+                    return Response.status(Status.NOT_FOUND).build();
+                }
+            }
         }
 
         return Response.ok(resBuilder.build()).build();
@@ -383,6 +413,11 @@ public class PlatformService {
      * Add agency given in the post payload. Specify the query parameter
      * <i>?batch=true</i> and given agencies into a JSONArray to add multiple
      * agencies in batch mode.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>http://&lt;host_name&gt;:&lt;port&gt;/service/platform/introspection?section=basic_sample_data&part=0</i><br>
+     * <br>
      */
     @POST
     @Path("/agencies/")
@@ -466,6 +501,11 @@ public class PlatformService {
      * <br>
      * These associations will enable the system to electe the most suitable
      * agencies for the submitted proposals by tourists.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>N/A</i><br>
+     * <br>
      */
     @POST
     @Path("/agencies/{agencyId}/locations/send/{locationId}/")
@@ -510,6 +550,11 @@ public class PlatformService {
      * <br>
      * These associations will enable the system to electe the most suitable
      * agencies for the submitted proposals by tourists.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>http://&lt;host_name&gt;:&lt;port&gt;/service/platform/agencies/&#123;agencyId&#125;/locations/recv/&#123;locationId&#125;/</i><br>
+     * <br>
      */
     @POST
     @Path("/agencies/{agencyId}/locations/recv/{locationId}/")
@@ -587,5 +632,17 @@ public class PlatformService {
         } catch (DatabaseAccessException e) {
             return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
         }
+    }
+
+    private boolean splitIntrospection(JsonObjectBuilder builder, JsonArrayBuilder sectionBuilder, String section,
+        int part, int range) {
+        JsonArray sampleData = sectionBuilder.build();
+        List<JsonValue> data = sampleData.subList(part, Math.min(sampleData.size(), part + range));
+        JsonArrayBuilder tmpBuilder = Json.createArrayBuilder();
+        for (int i = 0; i < data.size(); i++) {
+            tmpBuilder.add(data.get(i));
+        }
+        builder.add(section, tmpBuilder);
+        return true;
     }
 }

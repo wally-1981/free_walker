@@ -297,6 +297,11 @@ public class ItineraryService {
      * The agency election will be taken based on those agencies having
      * confirmation, all the agencies not confirmed will be ignored by the
      * election.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>N/A</i><br>
+     * <br>
      */
     @PUT
     @Path("/proposals/agencies/{proposalId}/{agencyId}/")
@@ -519,6 +524,11 @@ public class ItineraryService {
      * <br>
      * Update the requirement by the requirement in the put payload. A valid
      * requirement identifier should be contained in the payload.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>http://&lt;host_name&gt;:&lt;port&gt;/service/platform/introspection?section=requirement_sample_data&part=1&range=11</i><br>
+     * <br>
      */
     @PUT
     @Path("/requirements/")
@@ -541,6 +551,11 @@ public class ItineraryService {
      * <br>
      * Add a proposal given in the post payload. The identier of the newly
      * created proposal will be returned.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>http://&lt;host_name&gt;:&lt;port&gt;/service/platform/introspection?section=requirement_sample_data&part=0</i><br>
+     * <br>
      */
     @POST
     @Context
