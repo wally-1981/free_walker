@@ -254,6 +254,11 @@ public class ProductService {
      * <b>POST</b><br>
      * <br>
      * Create a travel product by the given posy payload.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>http://&lt;host_name&gt;:&lt;port&gt;/service/platform/introspection?section=product_sample_data&part=5</i><br>
+     * <br>
      */
     @POST
     @Path("/products/")
@@ -406,6 +411,11 @@ public class ProductService {
      * <br>
      * Add the hotel item by the given product identifier and the hotel item in
      * the post payload.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>http://&lt;host_name&gt;:&lt;port&gt;/service/platform/introspection?section=product_sample_data&part=0</i><br>
+     * <br>
      */
     @POST
     @Path("/products/{productId}/hotels/")
@@ -427,6 +437,11 @@ public class ProductService {
      * <br>
      * Add the traffic item by the given product identifier and the traffic item
      * in the post payload.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>http://&lt;host_name&gt;:&lt;port&gt;/service/platform/introspection?section=product_sample_data&part=1</i><br>
+     * <br>
      */
     @POST
     @Path("/products/{productId}/traffics/")
@@ -448,6 +463,11 @@ public class ProductService {
      * <br>
      * Add the resort item by the given product identifier and the resort item
      * in the post payload.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>http://&lt;host_name&gt;:&lt;port&gt;/service/platform/introspection?section=product_sample_data&part=2</i><br>
+     * <br>
      */
     @POST
     @Path("/products/{productId}/resorts/")
@@ -469,6 +489,11 @@ public class ProductService {
      * <br>
      * Add the trivial item by the given product identifier and the trivial item
      * in the post payload.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>http://&lt;host_name&gt;:&lt;port&gt;/service/platform/introspection?section=product_sample_data&part=3</i><br>
+     * <br>
      */
     @POST
     @Path("/products/{productId}/items/")
@@ -490,6 +515,11 @@ public class ProductService {
      * <br>
      * Set the product bidding by the given product identifier and the bidding
      * in the post payload.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>http://&lt;host_name&gt;:&lt;port&gt;/service/platform/introspection?section=product_sample_data&part=4</i><br>
+     * <br>
      */
     @POST
     @Path("/products/{productId}/bidding/")

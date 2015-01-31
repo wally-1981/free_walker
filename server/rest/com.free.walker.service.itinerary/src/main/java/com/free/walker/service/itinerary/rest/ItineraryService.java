@@ -171,6 +171,11 @@ public class ItineraryService {
      * after which the proposal will be open for bidding for elected agencies
      * only, and only the agencies in the first group will be opened by the
      * proposal submission.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>N/A</i><br>
+     * <br>
      */
     @POST
     @Context
@@ -218,6 +223,11 @@ public class ItineraryService {
      * <br>
      * A proposal can not be resubmitted in short interval in hours, or the
      * resubmitted request will be ignored.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>N/A</i><br>
+     * <br>
      */
     @POST
     @Path("/proposals/agencies/{proposalId}/next/")
@@ -527,7 +537,7 @@ public class ItineraryService {
      * <br>
      * <b>Sample Payload:</b><br>
      * <br>
-     * <i>http://&lt;host_name&gt;:&lt;port&gt;/service/platform/introspection?section=requirement_sample_data&part=1&range=11</i><br>
+     * <i>http://&lt;host_name&gt;:&lt;port&gt;/service/platform/introspection?section=requirement_sample_data&part=2&range=12</i><br>
      * <br>
      */
     @PUT
@@ -581,6 +591,11 @@ public class ItineraryService {
      * Append an itinerary given in the post payload into the proposal specified
      * by the proposal identifier. The identier of the newly created itinerary
      * will be returned.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>http://&lt;host_name&gt;:&lt;port&gt;/service/platform/introspection?section=requirement_sample_data&part=1</i><br>
+     * <br>
      */
     @POST
     @Path("/itineraries/{proposalId}/")
@@ -604,6 +619,11 @@ public class ItineraryService {
      * Insert an itinerary given in the post payload into the proposal and after
      * the itinerary specified by the proposal and itinerary identifiers. The
      * identier of the newly created itinerary will be returned.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>http://&lt;host_name&gt;:&lt;port&gt;/service/platform/introspection?section=requirement_sample_data&part=1</i><br>
+     * <br>
      */
     @POST
     @Path("/itineraries/{proposalId}/{itineraryId}/")
@@ -628,6 +648,11 @@ public class ItineraryService {
      * Append a requirement given in the post payload into the last itinerary of
      * the proposal specified by the proposal identifier. The identier of the
      * newly created requirement will be returned.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>http://&lt;host_name&gt;:&lt;port&gt;/service/platform/introspection?section=requirement_sample_data&part=2&range=12</i><br>
+     * <br>
      */
     @POST
     @Path("/requirements/{proposalId}/")
@@ -651,6 +676,11 @@ public class ItineraryService {
      * Insert a requirement given in the post payload into the itinerary in the
      * proposal specified by the itinerary and proposal identifiers. The
      * identier of the newly created requirement will be returned.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>http://&lt;host_name&gt;:&lt;port&gt;/service/platform/introspection?section=requirement_sample_data&part=2&range=12</i><br>
+     * <br>
      */
     @POST
     @Path("/requirements/{proposalId}/{itineraryId}/")

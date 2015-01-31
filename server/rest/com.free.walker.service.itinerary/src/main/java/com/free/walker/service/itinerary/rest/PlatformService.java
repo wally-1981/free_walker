@@ -218,6 +218,7 @@ public class PlatformService {
             ItineraryRequirement itineraryRequirement = new ItineraryRequirement(dept, dest);
             TravelProposal proposal = new TravelProposal("台北到巴萨看梅西", itineraryRequirement);
             requirementSampleDataBuilder.add(proposal.toJSON());
+            requirementSampleDataBuilder.add(itineraryRequirement.toJSON());
 
             TravelRequirement hotelRequirementA = new HotelRequirement(6);
             TravelRequirement hotelRequirementB = new HotelRequirement(6, Introspection.JSONValues.HOTEL_STAR_STD_5);
@@ -553,7 +554,7 @@ public class PlatformService {
      * <br>
      * <b>Sample Payload:</b><br>
      * <br>
-     * <i>http://&lt;host_name&gt;:&lt;port&gt;/service/platform/agencies/&#123;agencyId&#125;/locations/recv/&#123;locationId&#125;/</i><br>
+     * <i>N/A</i><br>
      * <br>
      */
     @POST
