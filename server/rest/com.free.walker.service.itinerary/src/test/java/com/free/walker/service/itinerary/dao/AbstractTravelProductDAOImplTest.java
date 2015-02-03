@@ -13,14 +13,17 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.Flight;
 import com.free.walker.service.itinerary.basic.Hotel;
 import com.free.walker.service.itinerary.basic.Resort;
 import com.free.walker.service.itinerary.basic.Train;
+import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
 import com.free.walker.service.itinerary.product.Bidding;
+import com.free.walker.service.itinerary.product.Bidding.BiddingItem;
 import com.free.walker.service.itinerary.product.HotelItem;
 import com.free.walker.service.itinerary.product.ResortItem;
 import com.free.walker.service.itinerary.product.SimpleTravelProduct;
@@ -28,7 +31,8 @@ import com.free.walker.service.itinerary.product.TrafficItem;
 import com.free.walker.service.itinerary.product.TravelProduct;
 import com.free.walker.service.itinerary.product.TravelProductItem;
 import com.free.walker.service.itinerary.product.TrivItem;
-import com.free.walker.service.itinerary.product.Bidding.BiddingItem;
+import com.free.walker.service.itinerary.req.ItineraryRequirement;
+import com.free.walker.service.itinerary.req.TravelProposal;
 import com.free.walker.service.itinerary.traffic.TrafficTool;
 import com.ibm.icu.util.Calendar;
 
@@ -41,6 +45,8 @@ public abstract class AbstractTravelProductDAOImplTest {
     private ResortItem resortItem;
     private TrivItem trivItem;
     private Bidding bidding;
+    private TravelProposal travelProposal;
+    private TravelProduct travelProductWrongProposal;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -48,12 +54,20 @@ public abstract class AbstractTravelProductDAOImplTest {
     @Before
     public void before() {
         {
+            TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+            TravelLocation departure = new TravelLocation(Constants.BARCELONA);
+            ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
+            travelProposal = new TravelProposal(itineraryRequirement);
+        }
+
+        {
             UUID proposalId = UUID.randomUUID();
             Calendar deadline = Calendar.getInstance();
             deadline.add(Calendar.DATE, 10);
             Calendar departure = Calendar.getInstance();
             departure.add(Calendar.DATE, 18);
-            travelProduct = new SimpleTravelProduct(proposalId, 36, deadline, departure);
+            travelProduct = new SimpleTravelProduct(travelProposal.getUUID(), 36, deadline, departure);
+            travelProductWrongProposal = new SimpleTravelProduct(proposalId, 36, deadline, departure);
 
             Hotel hotelA = new Hotel();
             Calendar arrivalA = Calendar.getInstance();
@@ -536,28 +550,31 @@ public abstract class AbstractTravelProductDAOImplTest {
     @Test
     public void testPublishProductWithNullProductId() throws InvalidTravelProductException, DatabaseAccessException {
         thrown.expect(NullPointerException.class);
-        travelProductDAO.publishProduct(null);
+        travelProductDAO.publishProduct(null, travelProposal);
     }
 
     @Test
-    public void testPublishProductWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID wrongProductId = UUID.randomUUID();
-        thrown.expect(InvalidTravelProductException.class);
-        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, wrongProductId));
-        travelProductDAO.publishProduct(wrongProductId);
+    public void testPublishProductWithNullProposalId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.publishProduct(travelProduct, null);
+    }
+
+    @Test
+    public void testPublishProductWithMisProposalId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(IllegalArgumentException.class);
+        travelProductDAO.publishProduct(travelProductWrongProposal, travelProposal);
     }
 
     @Test
     public void testPublishProduct() throws InvalidTravelProductException, DatabaseAccessException {
         UUID productId = travelProductDAO.createProduct(travelProduct);
-        travelProductDAO.addItem(productId, hotelItem);
         productId = travelProductDAO.setBidding(productId, bidding);
-        UUID productUuid = travelProductDAO.publishProduct(productId);
+        UUID productUuid = travelProductDAO.publishProduct(travelProduct, travelProposal);
         assertNotNull(productUuid);
         assertEquals(productId.toString(), productUuid.toString());
 
-        assertNotNull(travelProductDAO.publishProduct(productId));
-        assertEquals(productId.toString(), travelProductDAO.publishProduct(productId).toString());
+        assertNotNull(travelProductDAO.publishProduct(travelProduct, travelProposal));
+        assertEquals(productId.toString(), travelProductDAO.publishProduct(travelProduct, travelProposal).toString());
     }
 
     @Test
@@ -574,10 +591,7 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testUnpublishProduct() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
-        travelProductDAO.addItem(productId, hotelItem);
-        productId = travelProductDAO.setBidding(productId, bidding);
-        UUID productUuid = travelProductDAO.publishProduct(productId);
+        UUID productUuid = travelProductDAO.publishProduct(travelProduct, travelProposal);
         UUID unpublishedProductUuid = travelProductDAO.unpublishProduct(productUuid);
         assertNotNull(unpublishedProductUuid);
         assertEquals(productUuid.toString(), unpublishedProductUuid.toString());

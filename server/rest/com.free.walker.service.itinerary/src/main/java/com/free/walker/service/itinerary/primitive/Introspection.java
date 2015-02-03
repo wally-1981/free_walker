@@ -47,6 +47,7 @@ public class Introspection {
         public static final String OWNER = "owner";
         public static final String REF_UUID = "ref_uuid";
         public static final String REF_LINK = "ref_link";
+        public static final String REF_ENTITY = "ref_entity";
         public static final String LOGIN = "login";
         public static final String MOBILE = "mobile";
         public static final String EMAIL = "email";

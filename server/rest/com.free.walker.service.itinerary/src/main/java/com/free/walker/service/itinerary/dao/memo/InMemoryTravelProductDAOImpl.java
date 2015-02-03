@@ -18,6 +18,7 @@ import com.free.walker.service.itinerary.product.TrafficItem;
 import com.free.walker.service.itinerary.product.TravelProduct;
 import com.free.walker.service.itinerary.product.TravelProductItem;
 import com.free.walker.service.itinerary.product.TrivItem;
+import com.free.walker.service.itinerary.req.TravelProposal;
 
 public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
     protected Map<UUID, TravelProduct> travelProducts;
@@ -275,17 +276,18 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         return travelProductBiddings.remove(productId);
     }
 
-    public UUID publishProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {
-        if (productId == null) {
+    public UUID publishProduct(TravelProduct product, TravelProposal proposal) throws InvalidTravelProductException, DatabaseAccessException {
+        if (product == null || proposal == null) {
             throw new NullPointerException();
         }
 
-        if (!travelProducts.containsKey(productId)) {
-            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
-                productId), productId);
+        if (!product.getProposalUUID().equals(proposal.getUUID())) {
+            throw new IllegalArgumentException();
         }
 
-        return productId;
+        travelProducts.put(product.getProductUUID(), product);
+
+        return product.getProductUUID();
     }
 
     public UUID unpublishProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {

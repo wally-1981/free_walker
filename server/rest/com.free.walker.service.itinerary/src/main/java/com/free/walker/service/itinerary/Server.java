@@ -40,10 +40,10 @@ public class Server {
         ProductService productSvr = null;
         if (mode.equals(MODE_SINGLE_DEVO)) {
             itinerarySvr = new ItineraryService(InMemoryTravelRequirementDAOImpl.class);
-            productSvr = new ProductService(InMemoryTravelProductDAOImpl.class);
+            productSvr = new ProductService(InMemoryTravelProductDAOImpl.class, InMemoryTravelRequirementDAOImpl.class);
         } else if (mode.equals(MODE_SINGLE_PROD)) {
             itinerarySvr = new ItineraryService(MyMongoSQLTravelRequirementDAOImpl.class);
-            productSvr = new ProductService(MyMongoSQLTravelProductDAOImpl.class);
+            productSvr = new ProductService(MyMongoSQLTravelProductDAOImpl.class, MyMongoSQLTravelRequirementDAOImpl.class);
         } else {
             throw new IllegalArgumentException();
         }

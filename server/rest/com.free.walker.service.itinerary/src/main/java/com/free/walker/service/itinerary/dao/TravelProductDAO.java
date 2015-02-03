@@ -8,6 +8,7 @@ import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
 import com.free.walker.service.itinerary.product.Bidding;
 import com.free.walker.service.itinerary.product.TravelProduct;
 import com.free.walker.service.itinerary.product.TravelProductItem;
+import com.free.walker.service.itinerary.req.TravelProposal;
 
 public interface TravelProductDAO extends HealthyDAO {
     /**
@@ -162,12 +163,14 @@ public interface TravelProductDAO extends HealthyDAO {
     /**
      * Publish the product to the search engine for indexing.
      * 
-     * @param productId
+     * @param product
+     * @param proposal
      * @return
      * @throws InvalidTravelProductException
      * @throws DatabaseAccessException
      */
-    public UUID publishProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException;
+    public UUID publishProduct(TravelProduct product, TravelProposal proposal) throws InvalidTravelProductException,
+        DatabaseAccessException;
 
     /**
      * Unpublish the product from the search engine.

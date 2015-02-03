@@ -40,8 +40,10 @@ import com.free.walker.service.itinerary.product.TrafficItem;
 import com.free.walker.service.itinerary.product.TravelProduct;
 import com.free.walker.service.itinerary.product.TravelProductItem;
 import com.free.walker.service.itinerary.product.TrivItem;
+import com.free.walker.service.itinerary.req.TravelProposal;
 import com.free.walker.service.itinerary.util.ElasticSearchClientBuilder;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
+import com.free.walker.service.itinerary.util.JsonObjectUtil;
 import com.free.walker.service.itinerary.util.MongoDbClientBuilder;
 import com.free.walker.service.itinerary.util.SystemConfigUtil;
 import com.free.walker.service.itinerary.util.UuidUtil;
@@ -714,28 +716,28 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
     }
 
-    public UUID publishProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {
-        if (productId == null) {
+    public UUID publishProduct(TravelProduct product, TravelProposal proposal) throws InvalidTravelProductException, DatabaseAccessException {
+        if (product == null || proposal == null) {
             throw new NullPointerException();
         }
 
-        DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
-        DBObject productBs = productColls.findOne(productId.toString());
-        if (productBs == null) {
-            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
-                productId), productId);
-        } else {
-            JsonObject product = Json.createReader(new StringReader(productBs.toString())).readObject();
-            String productUuid = product.getString(DAOConstants.mongo_database_pk);
-            IndexRequestBuilder requestBuilder = esClient.prepareIndex(DAOConstants.elasticsearch_product_index,
-                DAOConstants.elasticsearch_product_type, productUuid);
-            IndexResponse response = requestBuilder.setSource(product.toString()).execute().actionGet();
-
-            LOG.error(LocalMessages.getMessage(response.isCreated() ? LocalMessages.product_index_created
-                : LocalMessages.product_index_updated, productUuid, response.getIndex(), response.getType(), response
-                .getId(), response.getVersion(), response.getHeaders(), response.isCreated()));
-            return UuidUtil.fromUuidStr(response.getId());
+        if (!product.getProposalUUID().equals(proposal.getUUID())) {
+            throw new IllegalArgumentException();
         }
+
+        JsonObject productJs = product.toJSON();
+        JsonObject proposalJs = proposal.toJSON();
+        JsonObject aggregatedProduct = JsonObjectUtil.merge(productJs, Introspection.JSONKeys.REF_ENTITY, proposalJs);
+
+        String productId = product.getProductUUID().toString();
+        IndexRequestBuilder requestBuilder = esClient.prepareIndex(DAOConstants.elasticsearch_product_index,
+            DAOConstants.elasticsearch_product_type, productId);
+        IndexResponse response = requestBuilder.setSource(aggregatedProduct.toString()).execute().actionGet();
+
+        LOG.error(LocalMessages.getMessage(response.isCreated() ? LocalMessages.product_index_created
+            : LocalMessages.product_index_updated, productId, response.getIndex(), response.getType(),
+            response.getId(), response.getVersion(), response.getHeaders(), response.isCreated()));
+        return UuidUtil.fromUuidStr(response.getId());
     }
 
     public UUID unpublishProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException {

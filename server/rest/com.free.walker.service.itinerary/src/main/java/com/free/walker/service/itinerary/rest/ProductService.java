@@ -20,8 +20,10 @@ import javax.ws.rs.core.Response.Status;
 
 import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.TravelProductDAO;
+import com.free.walker.service.itinerary.dao.TravelRequirementDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
+import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.product.Bidding;
 import com.free.walker.service.itinerary.product.HotelItem;
@@ -30,6 +32,8 @@ import com.free.walker.service.itinerary.product.TrafficItem;
 import com.free.walker.service.itinerary.product.TravelProduct;
 import com.free.walker.service.itinerary.product.TravelProductItem;
 import com.free.walker.service.itinerary.product.TrivItem;
+import com.free.walker.service.itinerary.req.TravelProposal;
+import com.free.walker.service.itinerary.req.TravelRequirement;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
@@ -54,9 +58,11 @@ import com.free.walker.service.itinerary.util.UuidUtil;
 @Consumes(MediaType.APPLICATION_JSON)
 public class ProductService {
     private TravelProductDAO travelProductDAO;
+    private TravelRequirementDAO requirementDao;
 
-    public ProductService(Class<?> daoClass) {
-        travelProductDAO = DAOFactory.getTravelProductDAO(daoClass.getName());
+    public ProductService(Class<?> productDaoClass, Class<?> requirementDaoClass) {
+        travelProductDAO = DAOFactory.getTravelProductDAO(productDaoClass.getName());
+        requirementDao = DAOFactory.getTravelRequirementDAO(requirementDaoClass.getName());
     }
 
     /**
@@ -90,10 +96,39 @@ public class ProductService {
     @Path("/products/public/{productId}")
     public Response publishProduct(@PathParam("productId") String productId) {
         try {
-            productId = travelProductDAO.publishProduct(UuidUtil.fromUuidStr(productId)).toString();
+            UUID productUuid = UuidUtil.fromUuidStr(productId);
+            TravelProduct product = travelProductDAO.getProduct(productUuid);
+            if (product == null) {
+                JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productId).build();
+                return Response.status(Status.NOT_FOUND).entity(res).build();
+            }
+
+            List<TravelProductItem> hotelItems = travelProductDAO.getItems(productUuid, HotelItem.SUB_TYPE);
+            product.getTravelProductItems().addAll(hotelItems);
+            List<TravelProductItem> trafficItems = travelProductDAO.getItems(productUuid, TrafficItem.SUB_TYPE);
+            product.getTravelProductItems().addAll(trafficItems);
+            List<TravelProductItem> resortItems = travelProductDAO.getItems(productUuid, ResortItem.SUB_TYPE);
+            product.getTravelProductItems().addAll(resortItems);
+            List<TravelProductItem> trivItems = travelProductDAO.getItems(productUuid, TrivItem.SUB_TYPE);
+            product.getTravelProductItems().addAll(trivItems);
+
+            TravelProposal proposal = (TravelProposal) requirementDao.getRequirement(product.getProposalUUID(),
+                Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL);
+            if (proposal == null) {
+                JsonObject res = Json.createObjectBuilder()
+                    .add(Introspection.JSONKeys.UUID, product.getProposalUUID().toString()).build();
+                return Response.status(Status.NOT_FOUND).entity(res).build();
+            }
+
+            List<TravelRequirement> itineraries = requirementDao.getItineraryRequirements(product.getProposalUUID());
+            proposal.getTravelRequirements().addAll(itineraries);
+
+            productId = travelProductDAO.publishProduct(product, proposal).toString();
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productId).build();
             return Response.ok(res).build();
         } catch (InvalidTravelProductException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+        }  catch (InvalidTravelReqirementException e) {
             return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
         } catch (DatabaseAccessException e) {
             return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
