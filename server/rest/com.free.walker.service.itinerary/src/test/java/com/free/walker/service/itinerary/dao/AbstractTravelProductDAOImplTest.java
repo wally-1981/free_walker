@@ -569,7 +569,7 @@ public abstract class AbstractTravelProductDAOImplTest {
     public void testPublishProduct() throws InvalidTravelProductException, DatabaseAccessException {
         UUID productId = travelProductDAO.createProduct(travelProduct);
         productId = travelProductDAO.setBidding(productId, bidding);
-        UUID productUuid = travelProductDAO.publishProduct(travelProduct, travelProposal);
+        UUID productUuid = travelProductDAO.publishProduct(travelProduct.getCore(), travelProposal);
         assertNotNull(productUuid);
         assertEquals(productId.toString(), productUuid.toString());
 

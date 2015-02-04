@@ -734,7 +734,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             DAOConstants.elasticsearch_product_type, productId);
         IndexResponse response = requestBuilder.setSource(aggregatedProduct.toString()).execute().actionGet();
 
-        LOG.error(LocalMessages.getMessage(response.isCreated() ? LocalMessages.product_index_created
+        LOG.info(LocalMessages.getMessage(response.isCreated() ? LocalMessages.product_index_created
             : LocalMessages.product_index_updated, productId, response.getIndex(), response.getType(),
             response.getId(), response.getVersion(), response.getHeaders(), response.isCreated()));
         return UuidUtil.fromUuidStr(response.getId());
@@ -750,11 +750,11 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             DAOConstants.elasticsearch_product_type, productUuid);
         DeleteResponse response = requestBuilder.execute().actionGet();
         if (response.isFound()) {
-            LOG.error(LocalMessages.getMessage(LocalMessages.product_index_deleted, productUuid, response.getIndex(),
+            LOG.info(LocalMessages.getMessage(LocalMessages.product_index_deleted, productUuid, response.getIndex(),
                 response.getType(), response.getId(), response.getVersion(), response.getHeaders()));
             return UuidUtil.fromUuidStr(response.getId());
         } else {
-            LOG.error(LocalMessages.getMessage(LocalMessages.product_index_not_found, productUuid, response.getIndex(),
+            LOG.info(LocalMessages.getMessage(LocalMessages.product_index_not_found, productUuid, response.getIndex(),
                 response.getType(), response.getId(), response.getVersion(), response.getHeaders()));
             return null;
         }
