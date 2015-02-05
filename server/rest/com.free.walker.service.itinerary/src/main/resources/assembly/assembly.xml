@@ -14,6 +14,10 @@
 			<outputDirectory>\setup</outputDirectory>
 		</fileSet>
 		<fileSet>
+			<directory>${project.basedir}\src\main\resources\db\query_template</directory>
+			<outputDirectory>\setup</outputDirectory>
+		</fileSet>
+		<fileSet>
 			<directory>${project.basedir}\target\lib</directory>
 			<outputDirectory>\lib</outputDirectory>
 		</fileSet>
