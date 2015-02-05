@@ -148,6 +148,8 @@ public class LocalMessages {
     public static final String product_index_updated = "product_index_updated";
     public static final String product_index_deleted = "product_index_deleted";
     public static final String product_index_not_found = "product_index_not_found";
+    public static final String product_index_searched = "product_index_searched";
+    public static final String product_search_hit = "product_search_hit";
 
     public static final String test_message = "test_message";
     public static final String test_message_with_1_arg = "test_message_with_1_arg";

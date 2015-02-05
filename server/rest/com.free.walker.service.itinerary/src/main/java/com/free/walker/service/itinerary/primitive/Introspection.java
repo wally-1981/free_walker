@@ -34,6 +34,10 @@ public class Introspection {
         public static final String TRAIN = "train";
         public static final String FLIGHT = "flight";
 
+        public static final String HITS = "hits";
+        public static final String TOTAL_HITS_NUMBER = "total_hits_number";
+        public static final String MAX_HIT_SCORE = "max_hit_score";
+
         /*
          * JSONArray Keys
          */

@@ -10,6 +10,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -66,12 +67,17 @@ public class ProductService {
     }
 
     /**
-     * <b>GET</b><br>
+     * <b>PUT</b><br>
      * <br>
      * Search travel products by simple search term. The result will be returned
      * with pagination support.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>N/A</i><br>
+     * <br>
      */
-    @GET
+    @PUT
     @Path("/products/")
     public Response searchProducts(@QueryParam("pageNum") int pageNum, @QueryParam("pageSize") int pageSize,
         @QueryParam("searchTerm") String searchTerm) {

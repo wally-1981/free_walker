@@ -1,7 +1,10 @@
 package com.free.walker.service.itinerary.dao;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+
+import javax.json.JsonObject;
 
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
@@ -181,4 +184,18 @@ public interface TravelProductDAO extends HealthyDAO {
      * @throws DatabaseAccessException
      */
     public UUID unpublishProduct(UUID productId) throws InvalidTravelProductException, DatabaseAccessException;
+
+    /**
+     * Search the travel product by the given template name and parameters
+     * result set specified by the pageNum and pageSize.
+     * 
+     * @param templateName
+     * @param templageParams
+     * @param pageNum
+     * @param pageSize
+     * @return
+     * @throws DatabaseAccessException
+     */
+    public JsonObject searchProduct(String templateName, Map<String, String> templageParams, int pageNum, int pageSize)
+        throws DatabaseAccessException;
 }

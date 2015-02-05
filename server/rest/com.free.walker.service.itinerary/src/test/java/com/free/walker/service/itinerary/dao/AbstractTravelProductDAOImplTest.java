@@ -3,9 +3,14 @@ package com.free.walker.service.itinerary.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+
+import javax.json.JsonObject;
 
 import org.junit.After;
 import org.junit.Before;
@@ -22,6 +27,7 @@ import com.free.walker.service.itinerary.basic.Train;
 import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
+import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.product.Bidding;
 import com.free.walker.service.itinerary.product.Bidding.BiddingItem;
 import com.free.walker.service.itinerary.product.HotelItem;
@@ -575,6 +581,56 @@ public abstract class AbstractTravelProductDAOImplTest {
 
         assertNotNull(travelProductDAO.publishProduct(travelProduct, travelProposal));
         assertEquals(productId.toString(), travelProductDAO.publishProduct(travelProduct, travelProposal).toString());
+    }
+
+    @Test
+    public void testSearchProductWithNullTemplateName() throws DatabaseAccessException {
+        Map<String, String> templateParams = new HashMap<String, String>();
+        templateParams.put("test_template_key", "test_template_value");
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.searchProduct(null, templateParams, 0, 25);
+    }
+
+    @Test
+    public void testSearchProductWithEmptyTemplateName() throws DatabaseAccessException {
+        Map<String, String> templateParams = new HashMap<String, String>();
+        templateParams.put("test_template_key", "test_template_value");
+        thrown.expect(IllegalArgumentException.class);
+        travelProductDAO.searchProduct("", templateParams, 0, 25);
+    }
+
+    @Test
+    public void testSearchProductWithNullTemplateParams() throws DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.searchProduct("test_template", null, 0, 25);
+    }
+
+    @Test
+    public void testSearchProductWithZeroPageSize() throws DatabaseAccessException {
+        Map<String, String> templateParams = new HashMap<String, String>();
+        templateParams.put("test_template_key", "test_template_value");
+        thrown.expect(IllegalArgumentException.class);
+        travelProductDAO.searchProduct("test_template", templateParams, 20, 0);
+    }
+
+    @Test
+    public void testSearchProductWithMissingTemplate() throws DatabaseAccessException {
+        Map<String, String> templateParams = new HashMap<String, String>();
+        templateParams.put("test_template_key", "test_template_value");
+        thrown.expect(RuntimeException.class);
+        travelProductDAO.searchProduct("missing_template", templateParams, 0, 25);
+    }
+
+    @Test
+    public void testSearchProduct() throws DatabaseAccessException {
+        Map<String, String> templateParams = new HashMap<String, String>();
+        JsonObject products = travelProductDAO.searchProduct("test_template", templateParams, 0, 2);
+        assertNotNull(products);
+        assertTrue(products.containsKey(Introspection.JSONKeys.TOTAL_HITS_NUMBER));
+        assertTrue(products.containsKey(Introspection.JSONKeys.MAX_HIT_SCORE));
+        assertTrue(products.containsKey(Introspection.JSONKeys.HITS));
+        assertTrue(products.getJsonArray(Introspection.JSONKeys.HITS).size() == 0
+            || products.getJsonArray(Introspection.JSONKeys.HITS).size() == 2);
     }
 
     @Test

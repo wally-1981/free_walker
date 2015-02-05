@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -22,7 +24,11 @@ import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.script.ScriptService.ScriptType;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +53,7 @@ import com.free.walker.service.itinerary.util.JsonObjectUtil;
 import com.free.walker.service.itinerary.util.MongoDbClientBuilder;
 import com.free.walker.service.itinerary.util.SystemConfigUtil;
 import com.free.walker.service.itinerary.util.UuidUtil;
+import com.ibm.icu.util.Calendar;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.CommandResult;
@@ -758,5 +765,55 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
                 response.getType(), response.getId(), response.getVersion(), response.getHeaders()));
             return null;
         }
+    }
+
+    public JsonObject searchProduct(String templateName, Map<String, String> templageParams, int pageNum, int pageSize)
+        throws DatabaseAccessException {
+        if (templateName == null || templageParams == null) {
+            throw new NullPointerException();
+        }
+
+        if (templateName.trim().length() == 0 || pageSize == 0) {
+            throw new IllegalArgumentException();
+        }
+
+        pageNum = Math.abs(pageNum);
+        pageSize = Math.abs(pageSize);
+        templageParams.put("from", String.valueOf(pageSize * pageNum));
+        templageParams.put("size", String.valueOf(pageSize));
+
+        Calendar yearAgo = Calendar.getInstance();
+        yearAgo.add(Calendar.YEAR, -1);
+
+        SearchResponse response = esClient.prepareSearch(DAOConstants.elasticsearch_product_index)
+            .setTypes(DAOConstants.elasticsearch_product_type)
+            .setTemplateName(templateName)
+            .setTemplateType(ScriptType.INDEXED)
+            .setTemplateParams(templageParams)
+            .get();
+
+        SearchHits hits = response.getHits();
+        LOG.info(LocalMessages.getMessage(LocalMessages.product_index_searched, templateName,
+            templageParams.toString(), pageNum, pageSize, response.isTimedOut(), response.isTerminatedEarly(),
+            response.getTookInMillis(), response.getTotalShards(), response.getSuccessfulShards(),
+            response.getFailedShards()));
+
+        JsonObjectBuilder resultBuilder = Json.createObjectBuilder();
+        resultBuilder.add(Introspection.JSONKeys.TOTAL_HITS_NUMBER, hits.getTotalHits());
+        resultBuilder.add(Introspection.JSONKeys.MAX_HIT_SCORE, hits.getMaxScore());
+        JsonArrayBuilder resultArrayBuilder = Json.createArrayBuilder();
+        Iterator<SearchHit> hitsIter = hits.iterator();
+        while (hitsIter.hasNext()) {
+            SearchHit searchHit = (SearchHit) hitsIter.next();
+
+            LOG.info(LocalMessages.getMessage(LocalMessages.product_search_hit, searchHit.id(), searchHit.getIndex(),
+                searchHit.getType(), searchHit.getId(), searchHit.getVersion(), searchHit.getScore()));
+
+            JsonObject hitSource = Json.createReader(new StringReader(searchHit.getSourceAsString())).readObject();
+            resultArrayBuilder.add(hitSource);
+        }
+        resultBuilder.add(Introspection.JSONKeys.HITS, resultArrayBuilder);
+
+        return resultBuilder.build();
     }
 }
