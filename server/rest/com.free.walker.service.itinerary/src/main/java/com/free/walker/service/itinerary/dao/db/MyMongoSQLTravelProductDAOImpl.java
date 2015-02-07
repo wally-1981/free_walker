@@ -799,8 +799,8 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             response.getFailedShards()));
 
         JsonObjectBuilder resultBuilder = Json.createObjectBuilder();
-        resultBuilder.add(Introspection.JSONKeys.TOTAL_HITS_NUMBER, hits.getTotalHits());
-        resultBuilder.add(Introspection.JSONKeys.MAX_HIT_SCORE, hits.getMaxScore());
+        resultBuilder.add(DAOConstants.elasticsearch_total_hits_number, hits.getTotalHits());
+        resultBuilder.add(DAOConstants.elasticsearch_max_hit_score, hits.getMaxScore());
         JsonArrayBuilder resultArrayBuilder = Json.createArrayBuilder();
         Iterator<SearchHit> hitsIter = hits.iterator();
         while (hitsIter.hasNext()) {
@@ -812,7 +812,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             JsonObject hitSource = Json.createReader(new StringReader(searchHit.getSourceAsString())).readObject();
             resultArrayBuilder.add(hitSource);
         }
-        resultBuilder.add(Introspection.JSONKeys.HITS, resultArrayBuilder);
+        resultBuilder.add(DAOConstants.elasticsearch_hits, resultArrayBuilder);
 
         return resultBuilder.build();
     }
