@@ -787,7 +787,6 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
 
         JsonObjectBuilder resultBuilder = Json.createObjectBuilder();
         resultBuilder.add(Introspection.JSONKeys.TOTAL_HITS_NUMBER, hits.getTotalHits());
-        resultBuilder.add(Introspection.JSONKeys.MAX_HIT_SCORE, hits.getMaxScore());
         JsonArrayBuilder resultArrayBuilder = Json.createArrayBuilder();
         Iterator<SearchHit> hitsIter = hits.iterator();
         while (hitsIter.hasNext()) {

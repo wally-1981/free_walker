@@ -2,13 +2,60 @@ POST /_search/template/test_template
 {
     "template": {
         "query": {
-        	"range": {
-        		"deadline_datetime": {
-        			"gte": "0"
-        		}
-        	}
+            "range": {
+                "deadline_datetime": {
+                    "gte": "0"
+                }
+            }
         },
         "from": "{{from}}",
-        "size": "{{size}}"
+        "size": "{{size}}",
+        "min_score": 0.01
+    }
+}
+
+POST /_search/template/product_departure
+{
+    "template": {
+        "query": {
+       	    "multi_match": {
+        	   "query": "{{term}}",
+                "type": "best_fields",
+                "fields": [
+                    "ref_entity.requirements.departure.city.name",
+                    "ref_entity.requirements.departure.city.pinyin_name",
+                    "ref_entity.requirements.departure.city.chinese_name"
+                ]
+            }
+        },
+        "from": "{{from}}",
+        "size": "{{size}}",
+        "sort": [
+            { "{{sort_key}}": { "order": "{{sort_order}}", "unmapped_type": "{{sort_type}}", "missing": "_last" } }
+        ],
+        "min_score": 0.01
+    }
+}
+
+POST /_search/template/product_destination
+{
+    "template": {
+        "query": {
+       	    "multi_match": {
+                "query": "{{term}}",
+                "type": "best_fields",
+                "fields": [
+                    "ref_entity.requirements.destination.city.name",
+                    "ref_entity.requirements.destination.city.pinyin_name",
+                    "ref_entity.requirements.destination.city.chinese_name"
+                ]
+            }
+        },
+        "from": "{{from}}",
+        "size": "{{size}}",
+        "sort": [
+             { "{{sort_key}}": { "order": "{{sort_order}}", "unmapped_type": "{{sort_type}}", "missing": "_last" } }
+        ],
+        "min_score": 0.01
     }
 }

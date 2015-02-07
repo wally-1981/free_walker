@@ -82,11 +82,6 @@ public class SearchCriteriaTest {
 
     @Test
     public void testValidateWithInvalidSortType() {
-        JsonObjectBuilder jsBuilder1 = Json.createObjectBuilder();
-        jsBuilder1.add(Introspection.JSONKeys.TERM, "find me");
-        jsBuilder1.add(Introspection.JSONKeys.TEMPLATE, "test_template");
-        assertFalse(SearchCriteria.validate(jsBuilder1.build()));
-
         JsonObjectBuilder jsBuilder2 = Json.createObjectBuilder();
         jsBuilder2.add(Introspection.JSONKeys.TERM, "find me");
         jsBuilder2.add(Introspection.JSONKeys.TEMPLATE, "test_template");

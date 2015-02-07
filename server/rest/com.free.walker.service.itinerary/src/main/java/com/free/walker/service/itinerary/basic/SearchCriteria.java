@@ -49,7 +49,8 @@ public class SearchCriteria implements Serializable {
 
         String sortType = jsObject.getString(Introspection.JSONKeys.SORT_TYPE, "");
         int sortTypeId = jsObject.getInt(Introspection.JSONKeys.SORT_TYPE, 0);
-        valid &= (SortType.isValid(sortTypeId) || SortType.isValid(sortType));
+        valid &= (!jsObject.containsKey(Introspection.JSONKeys.SORT_TYPE) ||
+            SortType.isValid(sortTypeId) || SortType.isValid(sortType));
         if (!valid) {
             LOG.warn(LocalMessages.getMessage(LocalMessages.invalid_sort_type_invalid, sortType, sortTypeId));
             return valid;
@@ -98,7 +99,7 @@ public class SearchCriteria implements Serializable {
 
         SortType sT1 = SortType.getSortType(jsObject.getString(Introspection.JSONKeys.SORT_TYPE, null));
         SortType sT2 = SortType.getSortType(jsObject.getInt(Introspection.JSONKeys.SORT_TYPE, 0));
-        sortType = sT1 == null  ? sT2 : sT1;
+        sortType = sT1 == null  ? (sT2 == null ? SortType.DOUBLE : sT2) : sT1;
 
         return this;
     }

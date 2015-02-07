@@ -599,17 +599,23 @@ public abstract class AbstractTravelProductDAOImplTest {
     }
 
     @Test
-    public void testSearchProduct() throws DatabaseAccessException {
+    public void testSearchProduct() throws DatabaseAccessException, InvalidTravelProductException, InterruptedException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        productId = travelProductDAO.setBidding(productId, bidding);
+        UUID productUuid = travelProductDAO.publishProduct(travelProduct.getCore(), travelProposal);
+
+        Thread.sleep(3000);
+
         Map<String, String> templateParams = new HashMap<String, String>();
-        templateParams.put("from", String.valueOf(0 * 2));
-        templateParams.put("size", String.valueOf(2));
+        templateParams.put(DAOConstants.elasticsearch_from, String.valueOf(0 * 2));
+        templateParams.put(DAOConstants.elasticsearch_size, String.valueOf(2));
         JsonObject products = travelProductDAO.searchProduct(QueryTemplate.TEST_TEMPLACE, templateParams);
         assertNotNull(products);
         assertTrue(products.containsKey(Introspection.JSONKeys.TOTAL_HITS_NUMBER));
-        assertTrue(products.containsKey(Introspection.JSONKeys.MAX_HIT_SCORE));
         assertTrue(products.containsKey(Introspection.JSONKeys.HITS));
-        assertTrue(products.getJsonArray(Introspection.JSONKeys.HITS).size() == 0
-            || products.getJsonArray(Introspection.JSONKeys.HITS).size() == 2);
+        assertTrue(products.getJsonArray(Introspection.JSONKeys.HITS).size() > 0);
+
+        travelProductDAO.unpublishProduct(productUuid);
     }
 
     @Test

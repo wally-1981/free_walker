@@ -3,6 +3,7 @@ package com.free.walker.service.itinerary.rest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,6 +22,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -254,7 +256,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
     }
 
     @Test
-    public void testAll() throws URISyntaxException {
+    public void testAll() throws URISyntaxException, InterruptedException {
         /*
          * 新建一个Product，同时添加初始的ProductItem。
          */
@@ -1200,6 +1202,48 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                 throw new ProcessingException(e);
             } finally {
                 post.abort();
+            }
+        }
+
+        /*
+         * Sleep for 3 seconds and let the search engine ready for query of the
+         * newly published product.
+         */
+        Thread.sleep(3000);
+
+        /*
+         * 检索Product。
+         */
+        {
+            JsonObjectBuilder searchCriteria = Json.createObjectBuilder();
+            searchCriteria.add(Introspection.JSONKeys.TERM, "*");
+            searchCriteria.add(Introspection.JSONKeys.TEMPLATE, Introspection.JSONValues.TEST_TEMPLACE_AS_INT);
+            searchCriteria.add(Introspection.JSONKeys.PAGE_NUM, 0);
+            searchCriteria.add(Introspection.JSONKeys.PAGE_SIZE, 2);
+
+            HttpPut put = new HttpPut();
+            put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
+            put.setURI(new URI(productServiceUrlStr + "products/"));
+            put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(put);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonObject products = Json.createReader(response.getEntity().getContent()).readObject();
+                    assertNotNull(products);
+                    long hitsNumber = products.getJsonNumber(Introspection.JSONKeys.TOTAL_HITS_NUMBER).longValue();
+                    JsonArray hits = products.getJsonArray(Introspection.JSONKeys.HITS);
+                    assertTrue(hitsNumber > 0);
+                    assertNotNull(hits);
+                    assertTrue(hits.size() > 0);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                put.abort();
             }
         }
 

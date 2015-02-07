@@ -316,8 +316,8 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
 
         JsonObjectBuilder resultBuilder = Json.createObjectBuilder();
         resultBuilder.add(Introspection.JSONKeys.TOTAL_HITS_NUMBER, 1000);
-        resultBuilder.add(Introspection.JSONKeys.MAX_HIT_SCORE, 1.0);
-        resultBuilder.add(Introspection.JSONKeys.HITS, Json.createArrayBuilder());
+        resultBuilder.add(Introspection.JSONKeys.HITS, Json.createArrayBuilder()
+            .add(Json.createObjectBuilder().build()));
 
         return resultBuilder.build();
     }
