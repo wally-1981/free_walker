@@ -1,3 +1,34 @@
+#######################################################################################################################
+# Please use below command to execute below script:
+# curl -XPOST <host_name>:<port>/_search/template/<template_name>
+#
+# You can refer to http://curl.haxx.se for installing curl tool in your installing server.
+#
+# For Example:
+# curl -XPOST localhost:9200/_search/template/product_departure
+# {
+#     "template": {
+#         "query": {
+#             "multi_match": {
+#                "query": "{{term}}",
+#                 "type": "best_fields",
+#                 "fields": [
+#                     "ref_entity.requirements.departure.city.name",
+#                     "ref_entity.requirements.departure.city.pinyin_name",
+#                     "ref_entity.requirements.departure.city.chinese_name"
+#                 ]
+#             }
+#         },
+#         "from": "{{from}}",
+#         "size": "{{size}}",
+#         "sort": [
+#             { "{{sort_key}}": { "order": "{{sort_order}}", "unmapped_type": "{{sort_type}}", "missing": "_last" } }
+#         ],
+#         "min_score": 0.01
+#     }
+# }
+#######################################################################################################################
+
 POST /_search/template/test_template
 {
     "template": {
