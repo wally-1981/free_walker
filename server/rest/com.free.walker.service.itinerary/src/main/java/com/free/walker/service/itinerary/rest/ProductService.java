@@ -1,6 +1,8 @@
 package com.free.walker.service.itinerary.rest;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.json.Json;
@@ -19,6 +21,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.free.walker.service.itinerary.basic.SearchCriteria;
+import com.free.walker.service.itinerary.dao.DAOConstants;
 import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.TravelProductDAO;
 import com.free.walker.service.itinerary.dao.TravelRequirementDAO;
@@ -79,9 +83,27 @@ public class ProductService {
      */
     @PUT
     @Path("/products/")
-    public Response searchProducts(@QueryParam("pageNum") int pageNum, @QueryParam("pageSize") int pageSize,
-        @QueryParam("searchTerm") String searchTerm) {
-        return Response.status(Status.NOT_IMPLEMENTED).build();
+    public Response searchProducts(JsonObject searchCriteria) {
+        SearchCriteria criteria = new SearchCriteria().fromJSON(searchCriteria);
+        if (criteria == null) {
+            return Response.status(Status.BAD_REQUEST).entity(searchCriteria).build();
+        } else {
+            Map<String, String> templageParams = new HashMap<String, String>();
+            int from = criteria.getPageSize() * criteria.getPageNum();
+            int size = criteria.getPageSize();
+            templageParams.put(DAOConstants.elasticsearch_term, criteria.getSearchTerm());
+            templageParams.put(DAOConstants.elasticsearch_from, String.valueOf(from));
+            templageParams.put(DAOConstants.elasticsearch_size, String.valueOf(size));
+            templageParams.put(DAOConstants.elasticsearch_sort_key, criteria.getSortKey());
+            templageParams.put(DAOConstants.elasticsearch_sort_order, criteria.getSortOrder().toString());
+            templageParams.put(DAOConstants.elasticsearch_sort_type, criteria.getSortType().nameValue());
+            try {
+                JsonObject results = travelProductDAO.searchProduct(criteria.getTemplate(), templageParams);
+                return Response.status(Status.OK).entity(results.toString()).build();
+            } catch (DatabaseAccessException e) {
+                return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+            }
+        }
     }
 
     /**

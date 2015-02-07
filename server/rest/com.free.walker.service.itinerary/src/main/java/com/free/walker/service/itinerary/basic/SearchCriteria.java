@@ -29,7 +29,7 @@ public class SearchCriteria implements Serializable {
     private SortOrder sortOrder;
     private SortType sortType;
 
-    public static boolean validate(JsonObject jsObject) {
+    protected static boolean validate(JsonObject jsObject) {
         boolean valid = true;
 
         String term = jsObject.getString(Introspection.JSONKeys.TERM, null);
@@ -79,7 +79,7 @@ public class SearchCriteria implements Serializable {
         }
 
         pageNum = jsObject.getInt(Introspection.JSONKeys.PAGE_NUM, -1);
-        if (pageNum <= 0) {
+        if (pageNum < 0) {
             pageNum = DEFAULT_PAGE_NUMBER;
         }
 
@@ -90,7 +90,7 @@ public class SearchCriteria implements Serializable {
 
         int sOInt = jsObject.getInt(Introspection.JSONKeys.SORT_ORDER, SortOrder.DESC.ordinal());
         String sOStr = jsObject.getString(Introspection.JSONKeys.SORT_ORDER, SortOrder.DESC.toString());
-        if (Introspection.JSONValues.SORT_ASC_ORDER_AS_INT == sOInt || SortOrder.ASC.toString().equals(sOStr)) {
+        if (SortOrder.ASC.ordinal() == sOInt || SortOrder.ASC.toString().equals(sOStr)) {
             sortOrder = SortOrder.ASC;
         } else {
             sortOrder = SortOrder.DESC;

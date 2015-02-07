@@ -38,6 +38,7 @@ import com.free.walker.service.itinerary.dao.TravelProductDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
 import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.primitive.QueryTemplate;
 import com.free.walker.service.itinerary.product.Bidding;
 import com.free.walker.service.itinerary.product.HotelItem;
 import com.free.walker.service.itinerary.product.ResortItem;
@@ -53,7 +54,6 @@ import com.free.walker.service.itinerary.util.JsonObjectUtil;
 import com.free.walker.service.itinerary.util.MongoDbClientBuilder;
 import com.free.walker.service.itinerary.util.SystemConfigUtil;
 import com.free.walker.service.itinerary.util.UuidUtil;
-import com.ibm.icu.util.Calendar;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.CommandResult;
@@ -767,40 +767,27 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
     }
 
-    public JsonObject searchProduct(String templateName, Map<String, String> templageParams, int pageNum, int pageSize)
+    public JsonObject searchProduct(QueryTemplate template, Map<String, String> templageParams)
         throws DatabaseAccessException {
-        if (templateName == null || templageParams == null) {
+        if (template == null || templageParams == null) {
             throw new NullPointerException();
         }
 
-        if (templateName.trim().length() == 0 || pageSize == 0) {
-            throw new IllegalArgumentException();
-        }
-
-        pageNum = Math.abs(pageNum);
-        pageSize = Math.abs(pageSize);
-        templageParams.put("from", String.valueOf(pageSize * pageNum));
-        templageParams.put("size", String.valueOf(pageSize));
-
-        Calendar yearAgo = Calendar.getInstance();
-        yearAgo.add(Calendar.YEAR, -1);
-
         SearchResponse response = esClient.prepareSearch(DAOConstants.elasticsearch_product_index)
             .setTypes(DAOConstants.elasticsearch_product_type)
-            .setTemplateName(templateName)
+            .setTemplateName(template.nameValue())
             .setTemplateType(ScriptType.INDEXED)
             .setTemplateParams(templageParams)
             .get();
 
         SearchHits hits = response.getHits();
-        LOG.info(LocalMessages.getMessage(LocalMessages.product_index_searched, templateName,
-            templageParams.toString(), pageNum, pageSize, response.isTimedOut(), response.isTerminatedEarly(),
-            response.getTookInMillis(), response.getTotalShards(), response.getSuccessfulShards(),
-            response.getFailedShards()));
+        LOG.info(LocalMessages.getMessage(LocalMessages.product_index_searched, template.nameValue(),
+            templageParams.toString(), response.isTimedOut(), response.isTerminatedEarly(), response.getTookInMillis(),
+            response.getTotalShards(), response.getSuccessfulShards(), response.getFailedShards()));
 
         JsonObjectBuilder resultBuilder = Json.createObjectBuilder();
-        resultBuilder.add(DAOConstants.elasticsearch_total_hits_number, hits.getTotalHits());
-        resultBuilder.add(DAOConstants.elasticsearch_max_hit_score, hits.getMaxScore());
+        resultBuilder.add(Introspection.JSONKeys.TOTAL_HITS_NUMBER, hits.getTotalHits());
+        resultBuilder.add(Introspection.JSONKeys.MAX_HIT_SCORE, hits.getMaxScore());
         JsonArrayBuilder resultArrayBuilder = Json.createArrayBuilder();
         Iterator<SearchHit> hitsIter = hits.iterator();
         while (hitsIter.hasNext()) {
@@ -812,7 +799,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             JsonObject hitSource = Json.createReader(new StringReader(searchHit.getSourceAsString())).readObject();
             resultArrayBuilder.add(hitSource);
         }
-        resultBuilder.add(DAOConstants.elasticsearch_hits, resultArrayBuilder);
+        resultBuilder.add(Introspection.JSONKeys.HITS, resultArrayBuilder);
 
         return resultBuilder.build();
     }

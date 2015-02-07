@@ -12,10 +12,11 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import com.free.walker.service.itinerary.LocalMessages;
-import com.free.walker.service.itinerary.dao.DAOConstants;
 import com.free.walker.service.itinerary.dao.TravelProductDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
+import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.primitive.QueryTemplate;
 import com.free.walker.service.itinerary.product.Bidding;
 import com.free.walker.service.itinerary.product.HotelItem;
 import com.free.walker.service.itinerary.product.ResortItem;
@@ -307,24 +308,16 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         return productId;
     }
 
-    public JsonObject searchProduct(String templateName, Map<String, String> templageParams, int pageNum, int pageSize)
+    public JsonObject searchProduct(QueryTemplate template, Map<String, String> templageParams)
         throws DatabaseAccessException {
-        if (templateName == null || templageParams == null) {
+        if (template == null || templageParams == null) {
             throw new NullPointerException();
         }
 
-        if (templateName.trim().length() == 0 || pageSize == 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if ("missing_template".equals(templateName)) {
-            throw new RuntimeException();
-        }
-
         JsonObjectBuilder resultBuilder = Json.createObjectBuilder();
-        resultBuilder.add(DAOConstants.elasticsearch_total_hits_number, 1000);
-        resultBuilder.add(DAOConstants.elasticsearch_max_hit_score, 1.0);
-        resultBuilder.add(DAOConstants.elasticsearch_hits, Json.createArrayBuilder());
+        resultBuilder.add(Introspection.JSONKeys.TOTAL_HITS_NUMBER, 1000);
+        resultBuilder.add(Introspection.JSONKeys.MAX_HIT_SCORE, 1.0);
+        resultBuilder.add(Introspection.JSONKeys.HITS, Json.createArrayBuilder());
 
         return resultBuilder.build();
     }
