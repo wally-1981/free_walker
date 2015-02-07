@@ -15,8 +15,15 @@
 		</fileSet>
 		<fileSet>
 			<directory>${project.basedir}\src\main\resources\db\query_template</directory>
-			<outputDirectory>\setup</outputDirectory>
+			<outputDirectory>\setup\query_template</outputDirectory>
 		</fileSet>
+		<fileSet>
+            <directory>${project.basedir}\src\main\resources\db</directory>
+            <outputDirectory>\setup</outputDirectory>
+            <includes>
+                <include>setup.*</include>
+            </includes>
+        </fileSet>
 		<fileSet>
 			<directory>${project.basedir}\target\lib</directory>
 			<outputDirectory>\lib</outputDirectory>
