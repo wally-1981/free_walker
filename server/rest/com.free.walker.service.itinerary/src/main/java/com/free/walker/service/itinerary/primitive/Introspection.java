@@ -1,5 +1,7 @@
 package com.free.walker.service.itinerary.primitive;
 
+import org.elasticsearch.search.sort.SortOrder;
+
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
@@ -34,9 +36,13 @@ public class Introspection {
         public static final String TRAIN = "train";
         public static final String FLIGHT = "flight";
 
-        public static final String HITS = "hits";
-        public static final String TOTAL_HITS_NUMBER = "total_hits_number";
-        public static final String MAX_HIT_SCORE = "max_hit_score";
+        public static final String TERM = "term";
+        public static final String TEMPLATE = "template";
+        public static final String PAGE_NUM = "page_num";
+        public static final String PAGE_SIZE = "page_size";
+        public static final String SORT_KEY = "sort_key";
+        public static final String SORT_ORDER = "sort_order";
+        public static final String SORT_TYPE = "sort_type";
 
         /*
          * JSONArray Keys
@@ -145,6 +151,27 @@ public class Introspection {
         public static final int ACCOUNT_TYPE_QQ = AccountType.QQ.ordinal();
         public static final int ACCOUNT_TYPE_ALIPAY = AccountType.AliPay.ordinal();
         public static final int ACCOUNT_TYPE_WEIBO = AccountType.WeiBo.ordinal();
+
+        public static final int TEST_TEMPLACE_AS_INT = QueryTemplate.TEST_TEMPLACE.enumValue();
+        public static final int PRODUCT_DEPARTURE_TEMPLATE_AS_INT = QueryTemplate.PRODUCT_DEPARTURE.enumValue();
+        public static final int PRODUCT_DESTINATION_TEMPLATE_AS_INT = QueryTemplate.PRODUCT_DESTINATION.enumValue();
+        public static final String TEST_TEMPLACE_AS_STR = QueryTemplate.TEST_TEMPLACE.nameValue();
+        public static final String PRODUCT_DEPARTURE_TEMPLATE_AS_STR = QueryTemplate.PRODUCT_DEPARTURE.nameValue();
+        public static final String PRODUCT_DESTINATION_TEMPLATE_AS_STR = QueryTemplate.PRODUCT_DESTINATION.nameValue();
+
+        public static final int SORT_LONG_TYPE_AS_INT = SortType.LONG.enumValue();
+        public static final int SORT_INT_TYPE_AS_INT = SortType.INT.enumValue();
+        public static final int SORT_FLOAT_TYPE_AS_INT = SortType.FLOAT.enumValue();
+        public static final int SORT_DOUBLE_TYPE_AS_INT = SortType.DOUBLE.enumValue();
+        public static final String SORT_LONG_TYPE_AS_STR = SortType.LONG.nameValue();
+        public static final String SORT_INT_TYPE_AS_STR = SortType.INT.nameValue();
+        public static final String SORT_FLOAT_TYPE_AS_STR = SortType.FLOAT.nameValue();
+        public static final String SORT_DOUBLE_TYPE_AS_STR = SortType.DOUBLE.nameValue();
+
+        public static final int SORT_ASC_ORDER_AS_INT = SortOrder.ASC.ordinal();
+        public static final int SORT_DESC_ORDER_AS_INT = SortOrder.DESC.ordinal();
+        public static final String SORT_ASC_ORDER_AS_STR = SortOrder.ASC.toString();
+        public static final String SORT_DESC_ORDER_AS_STR = SortOrder.DESC.toString();
     }
 
     public static class TestValues {

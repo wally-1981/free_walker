@@ -15,6 +15,8 @@ import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOIm
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelProductDAOImplTest;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImplTest;
 import com.free.walker.service.itinerary.primitive.IntrospectionTest;
+import com.free.walker.service.itinerary.primitive.QueryTemplateTest;
+import com.free.walker.service.itinerary.primitive.SortTypeTest;
 import com.free.walker.service.itinerary.product.BiddingTest;
 import com.free.walker.service.itinerary.product.TravelProductTest;
 import com.free.walker.service.itinerary.req.HotelRequirementTest;
@@ -32,6 +34,8 @@ import com.free.walker.service.itinerary.util.UuidUtilTest;
 @Suite.SuiteClasses({
     LocalMessagesTest.class,
     IntrospectionTest.class,
+    QueryTemplateTest.class,
+    SortTypeTest.class,
 
     JsonObjectHelperTest.class,
     UuidUtilTest.class,
