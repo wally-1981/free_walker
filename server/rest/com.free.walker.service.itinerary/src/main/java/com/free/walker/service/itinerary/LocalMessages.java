@@ -151,6 +151,10 @@ public class LocalMessages {
     public static final String product_index_searched = "product_index_searched";
     public static final String product_search_hit = "product_search_hit";
 
+    public static final String invalid_term_invalid = "invalid_term_invalid";
+    public static final String invalid_template_invalid = "invalid_template_invalid";
+    public static final String invalid_sort_type_invalid = "invalid_sort_type_invalid";
+
     public static final String test_message = "test_message";
     public static final String test_message_with_1_arg = "test_message_with_1_arg";
     public static final String test_message_with_2_args = "test_message_with_2_args";

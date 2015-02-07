@@ -27,7 +27,6 @@ import com.free.walker.service.itinerary.basic.Train;
 import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
-import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.product.Bidding;
 import com.free.walker.service.itinerary.product.Bidding.BiddingItem;
 import com.free.walker.service.itinerary.product.HotelItem;
@@ -626,11 +625,11 @@ public abstract class AbstractTravelProductDAOImplTest {
         Map<String, String> templateParams = new HashMap<String, String>();
         JsonObject products = travelProductDAO.searchProduct("test_template", templateParams, 0, 2);
         assertNotNull(products);
-        assertTrue(products.containsKey(Introspection.JSONKeys.TOTAL_HITS_NUMBER));
-        assertTrue(products.containsKey(Introspection.JSONKeys.MAX_HIT_SCORE));
-        assertTrue(products.containsKey(Introspection.JSONKeys.HITS));
-        assertTrue(products.getJsonArray(Introspection.JSONKeys.HITS).size() == 0
-            || products.getJsonArray(Introspection.JSONKeys.HITS).size() == 2);
+        assertTrue(products.containsKey(DAOConstants.elasticsearch_total_hits_number));
+        assertTrue(products.containsKey(DAOConstants.elasticsearch_max_hit_score));
+        assertTrue(products.containsKey(DAOConstants.elasticsearch_hits));
+        assertTrue(products.getJsonArray(DAOConstants.elasticsearch_hits).size() == 0
+            || products.getJsonArray(DAOConstants.elasticsearch_hits).size() == 2);
     }
 
     @Test
