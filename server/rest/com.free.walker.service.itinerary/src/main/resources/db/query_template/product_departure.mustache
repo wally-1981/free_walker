@@ -1,0 +1,21 @@
+{
+    "template": {
+        "query": {
+       	    "multi_match": {
+        	   "query": "{{term}}",
+                "type": "best_fields",
+                "fields": [
+                    "ref_entity.requirements.departure.city.name",
+                    "ref_entity.requirements.departure.city.pinyin_name",
+                    "ref_entity.requirements.departure.city.chinese_name"
+                ]
+            }
+        },
+        "from": "{{from}}",
+        "size": "{{size}}",
+        "sort": [
+            { "{{sort_key}}": { "order": "{{sort_order}}", "unmapped_type": "{{sort_type}}", "missing": "_last" } }
+        ],
+        "min_score": 0.01
+    }
+}

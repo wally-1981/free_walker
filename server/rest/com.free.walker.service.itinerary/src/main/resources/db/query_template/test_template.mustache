@@ -1,0 +1,14 @@
+{
+    "template": {
+        "query": {
+            "range": {
+                "deadline_datetime": {
+                    "gte": "0"
+                }
+            }
+        },
+        "from": "{{from}}",
+        "size": "{{size}}",
+        "min_score": 0.01
+    }
+}
