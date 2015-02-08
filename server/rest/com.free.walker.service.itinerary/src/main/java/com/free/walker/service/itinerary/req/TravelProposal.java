@@ -12,6 +12,7 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonException;
+import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
@@ -28,11 +29,13 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
     private String proposalTitle;
     private List<TravelRequirement> travelRequirements;
     private Set<String> proposalTags;
+    private double budget;
 
     public TravelProposal() {
         this.travelRequirements = new ArrayList<TravelRequirement>();
         this.proposalTags = new HashSet<String>();
         this.proposalTitle = Constants.NEW_PROPOSAL;
+        this.budget = 1.8;
         this.authorAccountId = Constants.DEFAULT_ACCOUNT.getUuid();
     }
 
@@ -51,6 +54,7 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
         this.travelRequirements.add(itineraryRequirement);
         this.proposalTags = new HashSet<String>();
         this.proposalTitle = proposalTitle;
+        this.budget = 1.8;
         this.authorAccountId = Constants.DEFAULT_ACCOUNT.getUuid();
     }
 
@@ -95,6 +99,7 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
         resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL);
         resBuilder.add(Introspection.JSONKeys.AUTHOR, authorAccountId);
         resBuilder.add(Introspection.JSONKeys.TITLE, proposalTitle);
+        resBuilder.add(Introspection.JSONKeys.BUDGET, budget);
 
         JsonArrayBuilder requirements = Json.createArrayBuilder();
         for (TravelRequirement travelRequirement : travelRequirements) {
@@ -138,6 +143,11 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
                 Introspection.JSONKeys.TITLE, title));
         } else {
             proposalTitle = title;
+        }
+
+        JsonNumber budget = jsObject.getJsonNumber(Introspection.JSONKeys.BUDGET);
+        if (budget != null) {
+            this.budget = budget.doubleValue();
         }
 
         String author = jsObject.getString(Introspection.JSONKeys.AUTHOR, null);

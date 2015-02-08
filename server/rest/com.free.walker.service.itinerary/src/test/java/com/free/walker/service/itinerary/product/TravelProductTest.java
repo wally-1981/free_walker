@@ -46,7 +46,7 @@ public class TravelProductTest {
         Calendar departureDate = Calendar.getInstance();
         departureDate.add(Calendar.DATE, 18);
         TravelProduct aTravelProduct = new SimpleTravelProduct(travelProposal.getUUID(), 12, deadlineDate,
-            departureDate);
+            departureDate, departure);
 
         TravelLocation departure1 = new TravelLocation(Constants.BARCELONA);
         TravelLocation destination1 = new TravelLocation(Constants.GENEVA);

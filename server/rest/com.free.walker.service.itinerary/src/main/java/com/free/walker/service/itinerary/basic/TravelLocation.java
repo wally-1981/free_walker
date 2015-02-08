@@ -14,6 +14,7 @@ public class TravelLocation implements Serializable {
     private City city;
     private Province province;
     private Country country;
+    private Region region;
     private Continent continent;
 
     public TravelLocation() {
@@ -32,6 +33,10 @@ public class TravelLocation implements Serializable {
         this.country = country;
     }
 
+    public TravelLocation(Region region) {
+        this.region = region;
+    }
+
     public TravelLocation(Continent continent) {
         this.continent = continent;
     }
@@ -45,6 +50,8 @@ public class TravelLocation implements Serializable {
             res.add(Introspection.JSONKeys.PROVINCE, province.toJSON());
         } else if (country != null) {
             res.add(Introspection.JSONKeys.COUNTRY, country.toJSON());
+        } else if (region != null) {
+            res.add(Introspection.JSONKeys.REGION, region.toJSON());
         } else if (continent != null) {
             res.add(Introspection.JSONKeys.CONTINENT, continent.toJSON());
         } else {
@@ -54,10 +61,11 @@ public class TravelLocation implements Serializable {
         return res.build();
     }
 
-    public Object fromJSON(JsonObject jsObject) throws JsonException {
+    public TravelLocation fromJSON(JsonObject jsObject) throws JsonException {
         JsonObject cityObj = jsObject.getJsonObject(Introspection.JSONKeys.CITY);
         JsonObject provinceObj = jsObject.getJsonObject(Introspection.JSONKeys.PROVINCE);
         JsonObject countryObj = jsObject.getJsonObject(Introspection.JSONKeys.COUNTRY);
+        JsonObject regionObj = jsObject.getJsonObject(Introspection.JSONKeys.REGION);
         JsonObject continentObj = jsObject.getJsonObject(Introspection.JSONKeys.CONTINENT);
 
         if (cityObj != null) {            
@@ -66,6 +74,8 @@ public class TravelLocation implements Serializable {
             province = new Province().fromJSON(provinceObj);
         } else if (countryObj != null) {
             country = new Country().fromJSON(countryObj);
+        } else if (regionObj != null) {
+            region = new Region().fromJSON(regionObj);
         } else if (continentObj != null) {
             continent = new Continent().fromJSON(continentObj);
         } else {
@@ -83,6 +93,8 @@ public class TravelLocation implements Serializable {
             return province.getUuid();
         } else if (country != null) {
             return country.getUuid();
+        } else if (region != null) {
+            return region.getUuid();
         } else if (continent != null) {
             return continent.getUuid();
         } else {
@@ -97,6 +109,8 @@ public class TravelLocation implements Serializable {
             return province.getName();
         } else if (country != null) {
             return country.getName();
+        } else if (region != null) {
+            return region.getName();
         } else if (continent != null) {
             return continent.getName();
         } else {
@@ -111,6 +125,8 @@ public class TravelLocation implements Serializable {
             return province.getChineseName();
         } else if (country != null) {
             return country.getChineseName();
+        } else if (region != null) {
+            return region.getChineseName();
         } else if (continent != null) {
             return continent.getChineseName();
         } else {
@@ -125,6 +141,8 @@ public class TravelLocation implements Serializable {
             return province.getPinyinName();
         } else if (country != null) {
             return country.getPinyinName();
+        } else if (region != null) {
+            return region.getPinyinName();
         } else if (continent != null) {
             return continent.getPinyinName();
         } else {

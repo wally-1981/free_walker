@@ -53,6 +53,7 @@ public abstract class AbstractTravelProductDAOImplTest {
     private TrivItem trivItem;
     private Bidding bidding;
     private TravelProposal travelProposal;
+    private ItineraryRequirement itineraryRequirement;
     private TravelProduct travelProductWrongProposal;
 
     @Rule
@@ -63,7 +64,7 @@ public abstract class AbstractTravelProductDAOImplTest {
         {
             TravelLocation destination = new TravelLocation(Constants.TAIBEI);
             TravelLocation departure = new TravelLocation(Constants.BARCELONA);
-            ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
+            itineraryRequirement = new ItineraryRequirement(destination, departure);
             travelProposal = new TravelProposal(itineraryRequirement);
         }
 
@@ -73,8 +74,10 @@ public abstract class AbstractTravelProductDAOImplTest {
             deadline.add(Calendar.DATE, 10);
             Calendar departure = Calendar.getInstance();
             departure.add(Calendar.DATE, 18);
-            travelProduct = new SimpleTravelProduct(travelProposal.getUUID(), 36, deadline, departure);
-            travelProductWrongProposal = new SimpleTravelProduct(proposalId, 36, deadline, departure);
+            travelProduct = new SimpleTravelProduct(travelProposal.getUUID(), 36, deadline, departure,
+                itineraryRequirement.getDeparture());
+            travelProductWrongProposal = new SimpleTravelProduct(proposalId, 36, deadline, departure,
+                itineraryRequirement.getDeparture());
 
             Hotel hotelA = new Hotel();
             Calendar arrivalA = Calendar.getInstance();

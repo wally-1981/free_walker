@@ -29,6 +29,7 @@ public class Introspection {
         public static final String CITY = "city";
         public static final String PROVINCE = "province";
         public static final String COUNTRY = "country";
+        public static final String REGION = "region";
         public static final String CONTINENT = "continent";
         public static final String HOTEL = "hotel";
         public static final String RESORT = "resort";
@@ -66,6 +67,7 @@ public class Introspection {
         public static final String AUTHOR = "author";
         public static final String NAME = "name";
         public static final String TITLE = "title";
+        public static final String BUDGET = "budget";
         public static final String SUMMARY = "summary";
         public static final String LOCATION = "location";
         public static final String DATE = "date";

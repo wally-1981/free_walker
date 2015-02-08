@@ -273,7 +273,7 @@ public class PlatformService {
             deadline.add(Calendar.DATE, 3);
             Calendar departure = Calendar.getInstance();
             departure.add(Calendar.DATE, 5);
-            TravelProduct travelProduct = new SimpleTravelProduct(proposal.getUUID(), 68, deadline, departure);
+            TravelProduct travelProduct = new SimpleTravelProduct(proposal.getUUID(), 68, deadline, departure, dept);
 
             Calendar hotelArrival = Calendar.getInstance();
             hotelArrival.add(Calendar.DATE, 7);

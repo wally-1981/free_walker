@@ -16,9 +16,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.basic.Flight;
 import com.free.walker.service.itinerary.basic.Hotel;
 import com.free.walker.service.itinerary.basic.Resort;
+import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.product.Bidding;
 import com.free.walker.service.itinerary.product.HotelItem;
@@ -39,11 +41,13 @@ public class BiddingTest {
     public void before() {
         {
             UUID proposalId = UUID.randomUUID();
+            TravelLocation departureLocation = new TravelLocation(Constants.TAIBEI);
+
             Calendar deadline = Calendar.getInstance();
             deadline.add(Calendar.DATE, 10);
             Calendar departure = Calendar.getInstance();
             departure.add(Calendar.DATE, 18);
-            travelProduct = new SimpleTravelProduct(proposalId, 68, deadline, departure);
+            travelProduct = new SimpleTravelProduct(proposalId, 68, deadline, departure, departureLocation);
 
             Hotel hotelA = new Hotel();
             Calendar arrivalA = Calendar.getInstance();

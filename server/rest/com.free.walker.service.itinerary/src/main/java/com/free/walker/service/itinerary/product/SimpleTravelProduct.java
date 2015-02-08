@@ -15,6 +15,7 @@ import javax.json.JsonValue;
 
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.Renewable;
+import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
@@ -28,13 +29,15 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
     private int capacity;
     private Calendar deadline;
     private Calendar departure;
+    private TravelLocation departureLocation;
 
     public SimpleTravelProduct() {
         this.productId = UUID.randomUUID();
         this.travelProductItems = new LinkedList<TravelProductItem>();
     }
 
-    public SimpleTravelProduct(UUID proposalId, int capacity, Calendar deadline, Calendar departure) {
+    public SimpleTravelProduct(UUID proposalId, int capacity, Calendar deadline, Calendar departure,
+        TravelLocation departureLocation) {
         this();
 
         if (proposalId == null || deadline == null || departure == null) {
@@ -61,6 +64,7 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
         this.capacity = capacity;
         this.deadline = deadline;
         this.departure = departure;
+        this.departureLocation = departureLocation;
     }
 
     public double getCost() {
@@ -96,6 +100,10 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
 
         if (departure != null) {
             resBuilder.add(Introspection.JSONKeys.DEPARTURE_DATETIME, departure.getTimeInMillis());
+        }
+
+        if (departureLocation != null) {
+            resBuilder.add(Introspection.JSONKeys.DEPARTURE, departureLocation.toJSON());
         }
 
         return resBuilder.build();
@@ -151,6 +159,11 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
         if (departureDateTime != null) {
             this.departure = Calendar.getInstance();
             this.departure.setTimeInMillis(departureDateTime.longValue());
+        }
+
+        JsonObject departureLocation = jsObject.getJsonObject(Introspection.JSONKeys.DEPARTURE);
+        if (departureLocation != null) {
+            this.departureLocation = new TravelLocation().fromJSON(departureLocation);
         }
 
         return this;
