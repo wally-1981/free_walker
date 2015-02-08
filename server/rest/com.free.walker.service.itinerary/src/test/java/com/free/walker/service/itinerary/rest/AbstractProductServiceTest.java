@@ -1212,7 +1212,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
         Thread.sleep(3000);
 
         /*
-         * 检索Product。
+         * 检索所有Product。
          */
         {
             JsonObjectBuilder searchCriteria = Json.createObjectBuilder();
@@ -1240,6 +1240,342 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
                 }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                put.abort();
+            }
+        }
+
+        /*
+         * 根据目的地检索Product。
+         */
+        {
+            JsonObjectBuilder searchCriteria = Json.createObjectBuilder();
+            searchCriteria.add(Introspection.JSONKeys.TERM, "Taibei");
+            searchCriteria.add(Introspection.JSONKeys.TEMPLATE,
+                Introspection.JSONValues.PRODUCT_DESTINATION_TEMPLATE_AS_INT);
+            searchCriteria.add(Introspection.JSONKeys.PAGE_NUM, 0);
+            searchCriteria.add(Introspection.JSONKeys.PAGE_SIZE, 2);
+
+            HttpPut put = new HttpPut();
+            put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
+            put.setURI(new URI(productServiceUrlStr + "products/"));
+            put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(put);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonObject products = Json.createReader(response.getEntity().getContent()).readObject();
+                    assertNotNull(products);
+                    long hitsNumber = products.getJsonNumber(Introspection.JSONKeys.TOTAL_HITS_NUMBER).longValue();
+                    JsonArray hits = products.getJsonArray(Introspection.JSONKeys.HITS);
+                    assertTrue(hitsNumber > 0);
+                    assertNotNull(hits);
+                    assertTrue(hits.size() > 0);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                put.abort();
+            }
+        }
+
+        /*
+         * 根据目的地拼音检索Product。
+         */
+        {
+            JsonObjectBuilder searchCriteria = Json.createObjectBuilder();
+            searchCriteria.add(Introspection.JSONKeys.TERM, "taibei");
+            searchCriteria.add(Introspection.JSONKeys.TEMPLATE,
+                Introspection.JSONValues.PRODUCT_DESTINATION_TEMPLATE_AS_INT);
+
+            HttpPut put = new HttpPut();
+            put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
+            put.setURI(new URI(productServiceUrlStr + "products/"));
+            put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(put);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonObject products = Json.createReader(response.getEntity().getContent()).readObject();
+                    assertNotNull(products);
+                    long hitsNumber = products.getJsonNumber(Introspection.JSONKeys.TOTAL_HITS_NUMBER).longValue();
+                    JsonArray hits = products.getJsonArray(Introspection.JSONKeys.HITS);
+                    assertTrue(hitsNumber > 0);
+                    assertNotNull(hits);
+                    assertTrue(hits.size() > 0);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                put.abort();
+            }
+        }
+
+        /*
+         * 根据目的地中文名检索Product。
+         */
+        {
+            JsonObjectBuilder searchCriteria = Json.createObjectBuilder();
+            searchCriteria.add(Introspection.JSONKeys.TERM, "台北");
+            searchCriteria.add(Introspection.JSONKeys.TEMPLATE,
+                Introspection.JSONValues.PRODUCT_DESTINATION_TEMPLATE_AS_INT);
+            searchCriteria.add(Introspection.JSONKeys.PAGE_NUM, 0);
+            searchCriteria.add(Introspection.JSONKeys.PAGE_SIZE, 2);
+            searchCriteria.add(Introspection.JSONKeys.SORT_KEY, Introspection.JSONKeys.DEPARTURE_DATETIME);
+            searchCriteria.add(Introspection.JSONKeys.SORT_ORDER, Introspection.JSONValues.SORT_ASC_ORDER_AS_INT);
+            searchCriteria.add(Introspection.JSONKeys.SORT_TYPE, Introspection.JSONValues.SORT_LONG_TYPE_AS_INT);
+
+            HttpPut put = new HttpPut();
+            put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
+            put.setURI(new URI(productServiceUrlStr + "products/"));
+            put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(put);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonObject products = Json.createReader(response.getEntity().getContent()).readObject();
+                    assertNotNull(products);
+                    long hitsNumber = products.getJsonNumber(Introspection.JSONKeys.TOTAL_HITS_NUMBER).longValue();
+                    JsonArray hits = products.getJsonArray(Introspection.JSONKeys.HITS);
+                    assertTrue(hitsNumber > 0);
+                    assertNotNull(hits);
+                    assertTrue(hits.size() > 0);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                put.abort();
+            }
+        }
+
+        /*
+         * 根据出发地检索Product。
+         */
+        {
+            JsonObjectBuilder searchCriteria = Json.createObjectBuilder();
+            searchCriteria.add(Introspection.JSONKeys.TERM, "Barcelona");
+            searchCriteria.add(Introspection.JSONKeys.TEMPLATE,
+                Introspection.JSONValues.PRODUCT_DEPARTURE_TEMPLATE_AS_STR);
+            searchCriteria.add(Introspection.JSONKeys.PAGE_NUM, 0);
+            searchCriteria.add(Introspection.JSONKeys.PAGE_SIZE, 2);
+
+            HttpPut put = new HttpPut();
+            put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
+            put.setURI(new URI(productServiceUrlStr + "products/"));
+            put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(put);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonObject products = Json.createReader(response.getEntity().getContent()).readObject();
+                    assertNotNull(products);
+                    long hitsNumber = products.getJsonNumber(Introspection.JSONKeys.TOTAL_HITS_NUMBER).longValue();
+                    JsonArray hits = products.getJsonArray(Introspection.JSONKeys.HITS);
+                    assertTrue(hitsNumber > 0);
+                    assertNotNull(hits);
+                    assertTrue(hits.size() > 0);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                put.abort();
+            }
+        }
+
+        /*
+         * 根据出发地拼音检索Product。
+         */
+        {
+            JsonObjectBuilder searchCriteria = Json.createObjectBuilder();
+            searchCriteria.add(Introspection.JSONKeys.TERM, "basailuona");
+            searchCriteria.add(Introspection.JSONKeys.TEMPLATE,
+                Introspection.JSONValues.PRODUCT_DEPARTURE_TEMPLATE_AS_STR);
+
+            HttpPut put = new HttpPut();
+            put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
+            put.setURI(new URI(productServiceUrlStr + "products/"));
+            put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(put);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonObject products = Json.createReader(response.getEntity().getContent()).readObject();
+                    assertNotNull(products);
+                    long hitsNumber = products.getJsonNumber(Introspection.JSONKeys.TOTAL_HITS_NUMBER).longValue();
+                    JsonArray hits = products.getJsonArray(Introspection.JSONKeys.HITS);
+                    assertTrue(hitsNumber > 0);
+                    assertNotNull(hits);
+                    assertTrue(hits.size() > 0);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                put.abort();
+            }
+        }
+
+        /*
+         * 根据出发地中文名检索Product。
+         */
+        {
+            JsonObjectBuilder searchCriteria = Json.createObjectBuilder();
+            searchCriteria.add(Introspection.JSONKeys.TERM, "巴塞罗纳");
+            searchCriteria.add(Introspection.JSONKeys.TEMPLATE,
+                Introspection.JSONValues.PRODUCT_DEPARTURE_TEMPLATE_AS_STR);
+            searchCriteria.add(Introspection.JSONKeys.PAGE_NUM, 0);
+            searchCriteria.add(Introspection.JSONKeys.PAGE_SIZE, 2);
+            searchCriteria.add(Introspection.JSONKeys.SORT_KEY, Introspection.JSONKeys.DEPARTURE_DATETIME);
+            searchCriteria.add(Introspection.JSONKeys.SORT_ORDER, Introspection.JSONValues.SORT_ASC_ORDER_AS_STR);
+            searchCriteria.add(Introspection.JSONKeys.SORT_TYPE, Introspection.JSONValues.SORT_LONG_TYPE_AS_STR);
+
+            HttpPut put = new HttpPut();
+            put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
+            put.setURI(new URI(productServiceUrlStr + "products/"));
+            put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(put);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonObject products = Json.createReader(response.getEntity().getContent()).readObject();
+                    assertNotNull(products);
+                    long hitsNumber = products.getJsonNumber(Introspection.JSONKeys.TOTAL_HITS_NUMBER).longValue();
+                    JsonArray hits = products.getJsonArray(Introspection.JSONKeys.HITS);
+                    assertTrue(hitsNumber > 0);
+                    assertNotNull(hits);
+                    assertTrue(hits.size() > 0);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                put.abort();
+            }
+        }
+
+        /*
+         * 根据出发地中文名检索Product, 太阳作为出发地，无法匹配任何产品。
+         */
+        {
+            JsonObjectBuilder searchCriteria = Json.createObjectBuilder();
+            searchCriteria.add(Introspection.JSONKeys.TERM, "太阳");
+            searchCriteria.add(Introspection.JSONKeys.TEMPLATE,
+                Introspection.JSONValues.PRODUCT_DEPARTURE_TEMPLATE_AS_STR);
+
+            HttpPut put = new HttpPut();
+            put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
+            put.setURI(new URI(productServiceUrlStr + "products/"));
+            put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(put);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonObject products = Json.createReader(response.getEntity().getContent()).readObject();
+                    assertNotNull(products);
+                    long hitsNumber = products.getJsonNumber(Introspection.JSONKeys.TOTAL_HITS_NUMBER).longValue();
+                    JsonArray hits = products.getJsonArray(Introspection.JSONKeys.HITS);
+                    assertTrue(hitsNumber == 0 || hitsNumber == 1000);
+                    assertNotNull(hits);
+                    assertTrue(hits.size() == 0 || hits.size() == 1);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                put.abort();
+            }
+        }
+
+        /*
+         * 根据出发地中文名检索Product，无检索词导致无效搜索请求。
+         */
+        {
+            JsonObjectBuilder searchCriteria = Json.createObjectBuilder();
+            searchCriteria.add(Introspection.JSONKeys.TEMPLATE,
+                Introspection.JSONValues.PRODUCT_DEPARTURE_TEMPLATE_AS_STR);
+
+            HttpPut put = new HttpPut();
+            put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
+            put.setURI(new URI(productServiceUrlStr + "products/"));
+            put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(put);
+                int statusCode = response.getStatusLine().getStatusCode();
+                assertEquals(HttpStatus.BAD_REQUEST_400, statusCode);
+                JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                assertNotNull(error);
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                put.abort();
+            }
+        }
+
+        /*
+         * 根据出发地中文名检索Product，无效检索模板导致无效搜索请求。
+         */
+        {
+            JsonObjectBuilder searchCriteria = Json.createObjectBuilder();
+            searchCriteria.add(Introspection.JSONKeys.TERM, "巴塞罗纳");
+            searchCriteria.add(Introspection.JSONKeys.TEMPLATE, "missing_template");
+
+            HttpPut put = new HttpPut();
+            put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
+            put.setURI(new URI(productServiceUrlStr + "products/"));
+            put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(put);
+                int statusCode = response.getStatusLine().getStatusCode();
+                assertEquals(HttpStatus.BAD_REQUEST_400, statusCode);
+                JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                assertNotNull(error);
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                put.abort();
+            }
+        }
+
+        /*
+         * 根据出发地中文名检索Product，非法排序类型导致无效搜索请求。
+         */
+        {
+            JsonObjectBuilder searchCriteria = Json.createObjectBuilder();
+            searchCriteria.add(Introspection.JSONKeys.TERM, "巴塞罗纳");
+            searchCriteria.add(Introspection.JSONKeys.TEMPLATE,
+                Introspection.JSONValues.PRODUCT_DEPARTURE_TEMPLATE_AS_STR);
+            searchCriteria.add(Introspection.JSONKeys.SORT_TYPE, "string");
+
+            HttpPut put = new HttpPut();
+            put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
+            put.setURI(new URI(productServiceUrlStr + "products/"));
+            put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(put);
+                int statusCode = response.getStatusLine().getStatusCode();
+                assertEquals(HttpStatus.BAD_REQUEST_400, statusCode);
+                JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                assertNotNull(error);
             } catch (IOException e) {
                 throw new ProcessingException(e);
             } finally {
