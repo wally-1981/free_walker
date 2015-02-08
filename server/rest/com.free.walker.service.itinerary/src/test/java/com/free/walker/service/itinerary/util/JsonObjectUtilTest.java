@@ -49,7 +49,7 @@ public class JsonObjectUtilTest {
     @Test
     public void testMerge() throws InvalidTravelReqirementException {
         JsonObject mergedJs = JsonObjectUtil.merge(Json.createObjectBuilder().add("a", 1).add("b", 2).build(), "ns",
-            Json.createObjectBuilder().add("d", 3).add("e", 4).build());
+            Json.createObjectBuilder().add("d", 3).add("e", 4).build()).build();
 
         assertNotNull(mergedJs);
 

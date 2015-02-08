@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -33,7 +35,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.free.walker.service.itinerary.LocalMessages;
+import com.free.walker.service.itinerary.basic.Continent;
+import com.free.walker.service.itinerary.basic.StringTriple;
+import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.dao.DAOConstants;
+import com.free.walker.service.itinerary.dao.DAOFactory;
+import com.free.walker.service.itinerary.dao.TravelBasicDAO;
 import com.free.walker.service.itinerary.dao.TravelProductDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
@@ -47,7 +54,9 @@ import com.free.walker.service.itinerary.product.TrafficItem;
 import com.free.walker.service.itinerary.product.TravelProduct;
 import com.free.walker.service.itinerary.product.TravelProductItem;
 import com.free.walker.service.itinerary.product.TrivItem;
+import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.TravelProposal;
+import com.free.walker.service.itinerary.req.TravelRequirement;
 import com.free.walker.service.itinerary.util.ElasticSearchClientBuilder;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.JsonObjectUtil;
@@ -79,6 +88,8 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
     private String esUrl;
 
     private DB productDb;
+
+    private TravelBasicDAO travelBasicDao;
 
     private static class SingletonHolder {
         private static final TravelProductDAO INSTANCE = new MyMongoSQLTravelProductDAOImpl();
@@ -117,6 +128,8 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
                 throw new IllegalStateException();
             }
         }
+
+        travelBasicDao = DAOFactory.getTravelBasicDAO();
     }
 
     public boolean pingPersistence() {
@@ -732,14 +745,84 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             throw new IllegalArgumentException();
         }
 
+        JsonArrayBuilder departuresRelBuilder = Json.createArrayBuilder();
+        {
+            Set<String> depaIds = new HashSet<String>();
+            TravelLocation departure = (TravelLocation) product.adapt(Introspection.JSONKeys.DEPARTURE,
+                TravelLocation.class);
+            departuresRelBuilder.add(departure.getName());
+            departuresRelBuilder.add(departure.getChineseName());
+            departuresRelBuilder.add(departure.getPinyinName());
+            Object[] departureIds = departure.getRelatedLocations();
+            for (int i = 0; i < departureIds.length; i++) {
+                if (departureIds[i] instanceof Continent) {
+                    Continent continent = (Continent) departureIds[i];
+                    departuresRelBuilder.add(continent.getName());
+                    departuresRelBuilder.add(continent.getChineseName());
+                    departuresRelBuilder.add(continent.getPinyinName());
+                } else {
+                    depaIds.add(((UUID) departureIds[i]).toString());
+                }
+            }
+
+            List<StringTriple> locationNames = travelBasicDao.getLocationIndexTermsByLocatoinIds(
+                new ArrayList<String>(depaIds));
+            List<StringTriple> regionNames = travelBasicDao.getRegionIndexTermsByRegionalLocatoinIds(
+                new ArrayList<String>(depaIds));
+            locationNames.addAll(regionNames);
+            for (int i = 0; i < locationNames.size(); i++) {
+                StringTriple names = locationNames.get(i);
+                departuresRelBuilder.add(names.getPrimary()).add(names.getSecondary()).add(names.getTertius());
+            }
+        }
+
+        JsonArrayBuilder destinationsRelBuilder = Json.createArrayBuilder();
+        {
+            Set<String> destIds = new HashSet<String>();
+            Iterator<TravelRequirement> reqs = proposal.getTravelRequirements().iterator();
+            while (reqs.hasNext()) {
+                TravelRequirement travelRequirement = (TravelRequirement) reqs.next();
+                if (travelRequirement.isItinerary()) {
+                    TravelLocation destination = ((ItineraryRequirement) travelRequirement).getDestination();
+                    destinationsRelBuilder.add(destination.getName());
+                    destinationsRelBuilder.add(destination.getChineseName());
+                    destinationsRelBuilder.add(destination.getPinyinName());
+                    Object[] destinationIds = destination.getRelatedLocations();
+                    for (int i = 0; i < destinationIds.length; i++) {
+                        if (destinationIds[i] instanceof Continent) {
+                            Continent continent = (Continent) destinationIds[i];
+                            destinationsRelBuilder.add(continent.getName());
+                            destinationsRelBuilder.add(continent.getChineseName());
+                            destinationsRelBuilder.add(continent.getPinyinName());
+                        } else {
+                            destIds.add(((UUID) destinationIds[i]).toString());
+                        }
+                    }
+                }
+            }
+            List<StringTriple> locationNames = travelBasicDao.getLocationIndexTermsByLocatoinIds(
+                new ArrayList<String>(destIds));
+            List<StringTriple> regionNames = travelBasicDao.getRegionIndexTermsByRegionalLocatoinIds(
+                new ArrayList<String>(destIds));
+            locationNames.addAll(regionNames);
+            for (int i = 0; i < locationNames.size(); i++) {
+                StringTriple names = locationNames.get(i);
+                destinationsRelBuilder.add(names.getPrimary()).add(names.getSecondary()).add(names.getTertius());
+            }
+        }
+
         JsonObject productJs = product.toJSON();
         JsonObject proposalJs = proposal.toJSON();
-        JsonObject aggregatedProduct = JsonObjectUtil.merge(productJs, Introspection.JSONKeys.REF_ENTITY, proposalJs);
+        JsonObjectBuilder aggregatedProductBuilder = JsonObjectUtil.merge(productJs, Introspection.JSONKeys.REF_ENTITY,
+            proposalJs);
+        aggregatedProductBuilder.add(Introspection.JSONKeys.DEPARTURE_REL, departuresRelBuilder);
+        aggregatedProductBuilder.add(Introspection.JSONKeys.DESTINATION_REL, destinationsRelBuilder);
+        String aggregatedProductJs = aggregatedProductBuilder.build().toString();
 
         String productId = product.getProductUUID().toString();
         IndexRequestBuilder requestBuilder = esClient.prepareIndex(DAOConstants.elasticsearch_product_index,
             DAOConstants.elasticsearch_product_type, productId);
-        IndexResponse response = requestBuilder.setSource(aggregatedProduct.toString()).execute().actionGet();
+        IndexResponse response = requestBuilder.setSource(aggregatedProductJs).execute().actionGet();
 
         LOG.info(LocalMessages.getMessage(response.isCreated() ? LocalMessages.product_index_created
             : LocalMessages.product_index_updated, productId, response.getIndex(), response.getType(),

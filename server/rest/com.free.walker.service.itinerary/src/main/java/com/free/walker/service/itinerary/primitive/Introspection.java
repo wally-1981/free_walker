@@ -81,7 +81,9 @@ public class Introspection {
         public static final String ARRIVAL_DATETIME = "arrival_datetime";
         public static final String DEPARTURE_DATETIME = "departure_datetime";
         public static final String DESTINATION = "destination";
+        public static final String DESTINATION_REL = "destination_rel";
         public static final String DEPARTURE = "departure";
+        public static final String DEPARTURE_REL = "departure_rel";
         public static final String TIME_RANGE_START = "time_range_start";
         public static final String TIME_RANGE_OFFSET = "time_range_offset";
         public static final String TRAFFIC_TOOL_TYPE = "traffice_tool_type";

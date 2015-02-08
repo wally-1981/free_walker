@@ -8,7 +8,7 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
 public class JsonObjectUtil {
-    public static JsonObject merge(JsonObject primary, String secondaryKey, JsonObject secondary) {
+    public static JsonObjectBuilder merge(JsonObject primary, String secondaryKey, JsonObject secondary) {
         if (primary == null || secondary == null || secondaryKey == null) {
             throw new NullPointerException();
         }
@@ -28,6 +28,6 @@ public class JsonObjectUtil {
 
         builder.add(secondaryKey, secondary);
 
-        return builder.build();
+        return builder;
     }
 }

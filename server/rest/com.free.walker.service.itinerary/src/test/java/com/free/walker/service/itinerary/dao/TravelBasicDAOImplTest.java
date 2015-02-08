@@ -6,9 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.junit.After;
@@ -22,6 +24,7 @@ import com.free.walker.service.itinerary.basic.Agency;
 import com.free.walker.service.itinerary.basic.City;
 import com.free.walker.service.itinerary.basic.Country;
 import com.free.walker.service.itinerary.basic.Province;
+import com.free.walker.service.itinerary.basic.StringTriple;
 import com.free.walker.service.itinerary.basic.Tag;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
@@ -351,6 +354,54 @@ public class TravelBasicDAOImplTest {
         assertNotNull(last.getName());
         assertNotNull(last.getChineseName());
         assertNotNull(last.getPinyinName());
+    }
+
+    @Test
+    public void testGetLocationIndexTermsByLocatoinIds() throws DatabaseAccessException {
+        List<String> locationIds = new ArrayList<String>();
+        locationIds.add("689ddfcdeffd4937b56707c4c8907378");
+        locationIds.add("cc0968e70fe34cc99f5b3a6898a04506");
+        locationIds.add("fbb3821586c04c1abca1edc25ddde4fc");
+        locationIds.add(UUID.randomUUID().toString());
+        List<StringTriple> names = travelBasicDAO.getLocationIndexTermsByLocatoinIds(locationIds);
+        assertNotNull(names);
+        assertTrue(names.size() == 3);
+        Set<String> nameSet = new HashSet<String>();
+        for (int i = 0; i < names.size(); i++) {
+            nameSet.add(names.get(i).getPrimary());
+            nameSet.add(names.get(i).getSecondary());
+            nameSet.add(names.get(i).getTertius());
+        }
+        assertTrue(nameSet.size() == 9);
+        assertTrue(nameSet.contains("北京"));
+        assertTrue(nameSet.contains("beijing"));
+        assertTrue(nameSet.contains("Beijing"));
+        assertTrue(nameSet.contains("美国"));
+        assertTrue(nameSet.contains("meiguo"));
+        assertTrue(nameSet.contains("America"));
+        assertTrue(nameSet.contains("亚利桑那"));
+        assertTrue(nameSet.contains("yalisangna"));
+        assertTrue(nameSet.contains("Arizona"));
+    }
+
+    @Test
+    public void testGetRegionIndexTermsByRegionalLocatoinIds() throws DatabaseAccessException {
+        List<String> locationIds = new ArrayList<String>();
+        locationIds.add("3ae5a40430a046328e7596671e7e1622");
+        locationIds.add("ef72692dbd2b49a9bc73b74b5ce0b0cb");
+        List<StringTriple> names = travelBasicDAO.getRegionIndexTermsByRegionalLocatoinIds(locationIds);
+        assertNotNull(names);
+        assertTrue(names.size() == 1);
+        Set<String> nameSet = new HashSet<String>();
+        for (int i = 0; i < names.size(); i++) {
+            nameSet.add(names.get(i).getPrimary());
+            nameSet.add(names.get(i).getSecondary());
+            nameSet.add(names.get(i).getTertius());
+        }
+        assertTrue(nameSet.size() == 3);
+        assertTrue(nameSet.contains("日韩"));
+        assertTrue(nameSet.contains("rihan"));
+        assertTrue(nameSet.contains("JapanKorea"));
     }
 
     @Test

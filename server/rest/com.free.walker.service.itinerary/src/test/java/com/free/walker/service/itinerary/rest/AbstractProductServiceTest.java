@@ -142,6 +142,11 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             productBuilder.add(Introspection.JSONKeys.GROUP_CAPACITY, 60);
             productBuilder.add(Introspection.JSONKeys.DEADLINE_DATETIME, enrollmentDeadlineDatetime.getTimeInMillis());
             productBuilder.add(Introspection.JSONKeys.DEPARTURE_DATETIME, departureDatetime.getTimeInMillis());
+            JsonObjectBuilder departureBuilder = Json.createObjectBuilder();
+            JsonObjectBuilder deptCityBuilder = Json.createObjectBuilder();
+            deptCityBuilder.add(Introspection.JSONKeys.UUID, "84844276-3036-47dd-90e0-f095cfa98da5");
+            departureBuilder.add(Introspection.JSONKeys.CITY, deptCityBuilder);
+            productBuilder.add(Introspection.JSONKeys.DEPARTURE, departureBuilder);
 
             JsonObjectBuilder hotelItemBuilder = Json.createObjectBuilder();
             hotelItemBuilder.add(Introspection.JSONKeys.SUB_TYPE, Introspection.JSONValues.SUB_TYPE_HOTEL_ITEM);

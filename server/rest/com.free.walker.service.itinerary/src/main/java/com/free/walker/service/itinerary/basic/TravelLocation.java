@@ -150,6 +150,22 @@ public class TravelLocation implements Serializable {
         }
     }
 
+    public Object[] getRelatedLocations() {
+        if (city != null) {
+            return city.getRelatedLocations();
+        } else if (province != null) {
+            return new TravelLocation[0];
+        } else if (country != null) {
+            return new TravelLocation[0];
+        } else if (region != null) {
+            return new TravelLocation[0];
+        } else if (continent != null) {
+            return new TravelLocation[0];
+        } else {
+            return new TravelLocation[0];
+        }
+    }
+
     public ValueType getValueType() {
         return JsonValue.ValueType.NULL;
     }

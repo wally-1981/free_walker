@@ -151,6 +151,26 @@
 			uuid = unhex(replace(#{uuid}, '-', ''))
 	</select>
 
+    <select id="getLocationNamesByLocatoinIds" parameterType="List" resultType="StringTriple">
+        <foreach collection="locationIds" item="locationId" index="index" separator="union">
+            select name as 'primary', chinese_name as secondary, pinyin_name as tertius from city where uuid = unhex(replace(#{locationId}, '-', ''))
+            union
+            <if test="locationId != '00000000-0000-0000-0000-000000000000'">
+            select name as 'primary', chinese_name as secondary, pinyin_name as tertius from province where uuid = unhex(replace(#{locationId}, '-', ''))
+            union
+            </if>
+            select name as 'primary', chinese_name as secondary, pinyin_name as tertius from country where uuid = unhex(replace(#{locationId}, '-', ''))
+        </foreach>
+    </select>
+
+    <select id="getRegionNamesByRegionalLocatoinIds" parameterType="List" resultType="StringTriple">
+        <foreach collection="locationIds" item="locationId" index="index" separator="union">
+            select r.name as 'primary', r.chinese_name as secondary, r.pinyin_name as tertius
+            from regional_location rl, region r
+            where rl.region_uuid = r.uuid and rl.location_uuid = unhex(replace(#{locationId}, '-', ''))
+        </foreach>
+    </select>
+
 	<select id="getAgency" resultType="Agency">
 		select
 			<include refid="agencyColumns"/>

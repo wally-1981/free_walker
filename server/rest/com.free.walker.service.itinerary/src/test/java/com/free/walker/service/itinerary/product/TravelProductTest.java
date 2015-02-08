@@ -1,6 +1,8 @@
 package com.free.walker.service.itinerary.product;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -10,10 +12,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.free.walker.service.itinerary.Constants;
+import com.free.walker.service.itinerary.basic.City;
 import com.free.walker.service.itinerary.basic.Flight;
 import com.free.walker.service.itinerary.basic.Hotel;
 import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
+import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.TravelProposal;
 import com.ibm.icu.util.Calendar;
@@ -68,5 +72,13 @@ public class TravelProductTest {
         assertEquals(2, aTravelProduct.getTravelProductItems().size());
         assertTrue(aTravelProduct.getTravelProductItems().get(0) instanceof TrafficItem);
         assertTrue(aTravelProduct.getTravelProductItems().get(1) instanceof HotelItem);
+
+        assertNotNull(aTravelProduct.adapt(Introspection.JSONKeys.DEPARTURE, TravelLocation.class));
+        assertNull(aTravelProduct.adapt(Introspection.JSONKeys.DEPARTURE, City.class));
+        assertNull(aTravelProduct.adapt(Introspection.JSONKeys.DEPARTURE_DATETIME, TravelLocation.class));
+
+        assertNotNull(aTravelProduct.getCore().adapt(Introspection.JSONKeys.DEPARTURE, TravelLocation.class));
+        assertNull(aTravelProduct.getCore().adapt(Introspection.JSONKeys.DEPARTURE, City.class));
+        assertNull(aTravelProduct.getCore().adapt(Introspection.JSONKeys.DEPARTURE_DATETIME, TravelLocation.class));
     }
 }

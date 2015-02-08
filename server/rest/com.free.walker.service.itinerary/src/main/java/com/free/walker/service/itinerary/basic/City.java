@@ -203,4 +203,8 @@ public class City implements Serializable, Loadable {
     public void setContinentId(int continentId) {
         this.continentId = continentId;
     }
+
+    public Object[] getRelatedLocations() {
+        return new Object[] { provinceUuid, countryUuid, Continent.getContinent(continentId) };
+    }
 }

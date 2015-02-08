@@ -977,6 +977,30 @@ INSERT INTO itinerary.city (uuid, name, chinese_name, pinyin_name, province_uuid
 UNLOCK TABLES;
 
 --
+-- Table structure for table `regional_location`
+--
+
+DROP TABLE IF EXISTS `regional_location`;
+CREATE TABLE `regional_location` (
+  `id` int(32) unsigned NOT NULL AUTO_INCREMENT,
+  `region_uuid` binary(16) NOT NULL,
+  `location_uuid` binary(16) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `location_association`
+--
+
+LOCK TABLES `regional_location` WRITE;
+
+INSERT INTO itinerary.regional_location (region_uuid, location_uuid) VALUES (UNHEX('50443044f4dc4c96882552c88ff97939'),UNHEX('3ae5a40430a046328e7596671e7e1622'));
+INSERT INTO itinerary.regional_location (region_uuid, location_uuid) VALUES (UNHEX('50443044f4dc4c96882552c88ff97939'),UNHEX('ef72692dbd2b49a9bc73b74b5ce0b0cb'));
+
+UNLOCK TABLES;
+
+--
 -- Table structure for table `location_association`
 --
 

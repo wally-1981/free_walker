@@ -1,5 +1,8 @@
 package com.free.walker.service.itinerary.basic;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
@@ -12,6 +15,8 @@ import com.free.walker.service.itinerary.primitive.ContinentID;
 import com.free.walker.service.itinerary.primitive.Introspection;
 
 public class Continent implements Serializable {
+    private static final Map<Integer, Continent> CONTINENTS = new HashMap<Integer, Continent>();
+
     private static final Continent ASIA = new Continent(Introspection.JSONValues.CONTINENT_ID_ASIA,
         "Asia", "亚洲", "yazhou");
     private static final Continent EUROPE = new Continent(Introspection.JSONValues.CONTINENT_ID_EUROPE,
@@ -32,6 +37,10 @@ public class Continent implements Serializable {
     private String chineseName;
     private String pinyinName;
 
+    public static Continent getContinent(int continentId) {
+        return CONTINENTS.get(continentId);
+    }
+
     protected Continent() {
         ;
     }
@@ -45,6 +54,8 @@ public class Continent implements Serializable {
         this.name = name;
         this.chineseName = chineseName;
         this.pinyinName = pinyinName;
+
+        CONTINENTS.put(id.enumValue(), this);
     }
 
     public JsonObject toJSON() throws JsonException {

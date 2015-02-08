@@ -8,6 +8,7 @@ import com.free.walker.service.itinerary.basic.City;
 import com.free.walker.service.itinerary.basic.Country;
 import com.free.walker.service.itinerary.basic.Province;
 import com.free.walker.service.itinerary.basic.Region;
+import com.free.walker.service.itinerary.basic.StringTriple;
 import com.free.walker.service.itinerary.basic.Tag;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 
@@ -19,6 +20,12 @@ public interface TravelBasicDAO extends HealthyDAO {
     public List<Province> getAllProvinces() throws DatabaseAccessException;
 
     public List<City> getAllCities() throws DatabaseAccessException;
+
+    public List<StringTriple> getLocationIndexTermsByLocatoinIds(List<String> locationIds)
+        throws DatabaseAccessException;
+
+    public List<StringTriple> getRegionIndexTermsByRegionalLocatoinIds(List<String> locationIds)
+        throws DatabaseAccessException;
 
     public boolean hasLocationByTerm(String term) throws DatabaseAccessException;
 

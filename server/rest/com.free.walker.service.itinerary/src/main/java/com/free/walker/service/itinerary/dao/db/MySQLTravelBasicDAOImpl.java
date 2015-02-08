@@ -21,6 +21,7 @@ import com.free.walker.service.itinerary.basic.Country;
 import com.free.walker.service.itinerary.basic.Province;
 import com.free.walker.service.itinerary.basic.Region;
 import com.free.walker.service.itinerary.basic.StringPair;
+import com.free.walker.service.itinerary.basic.StringTriple;
 import com.free.walker.service.itinerary.basic.Tag;
 import com.free.walker.service.itinerary.dao.DAOConstants;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
@@ -133,6 +134,34 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
             BasicMapper basicMapper = session.getMapper(BasicMapper.class);
             List<City> cities = basicMapper.getAllCities();
             return cities;
+        }  catch(Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public List<StringTriple> getLocationIndexTermsByLocatoinIds(List<String> locationIds)
+        throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            return basicMapper.getLocationNamesByLocatoinIds(locationIds);
+        }  catch(Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public List<StringTriple> getRegionIndexTermsByRegionalLocatoinIds(List<String> locationIds)
+        throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            return basicMapper.getRegionNamesByRegionalLocatoinIds(locationIds);
         }  catch(Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);

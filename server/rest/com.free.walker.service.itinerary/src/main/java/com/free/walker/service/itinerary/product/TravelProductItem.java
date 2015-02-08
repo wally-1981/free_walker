@@ -48,6 +48,10 @@ public abstract class TravelProductItem implements TravelProduct, Renewable {
         return JsonValue.ValueType.NULL;
     }
 
+    public Object adapt(String attributeName, Class<?> attributeType) {
+        return travelProduct.adapt(attributeName, attributeType);
+    }
+
     public abstract String getType();
 
     public abstract UUID getUUID();

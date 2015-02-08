@@ -148,7 +148,7 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
         if (sizeUpperLimit > 0) {
             this.capacity = sizeUpperLimit;
         }
-        
+
         JsonNumber enrolmentDeadlineDateTime = jsObject.getJsonNumber(Introspection.JSONKeys.DEADLINE_DATETIME);
         if (enrolmentDeadlineDateTime != null) {
             this.deadline = Calendar.getInstance();
@@ -162,7 +162,10 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
         }
 
         JsonObject departureLocation = jsObject.getJsonObject(Introspection.JSONKeys.DEPARTURE);
-        if (departureLocation != null) {
+        if (departureLocation == null) {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.DEPARTURE, productId));
+        } else {
             this.departureLocation = new TravelLocation().fromJSON(departureLocation);
         }
 
@@ -183,5 +186,14 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
 
     public ValueType getValueType() {
         return JsonValue.ValueType.NULL;
+    }
+
+    public Object adapt(String attributeName, Class<?> attributeType) {
+        if (Introspection.JSONKeys.DEPARTURE.equals(attributeName)
+            && departureLocation.getClass().equals(attributeType)) {
+            return departureLocation;
+        } else {
+            return null;
+        }
     }
 }

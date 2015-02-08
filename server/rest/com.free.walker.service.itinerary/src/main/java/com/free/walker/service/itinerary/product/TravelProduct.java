@@ -15,4 +15,6 @@ public interface TravelProduct extends Serializable {
     public double getCost();
 
     public List<TravelProductItem> getTravelProductItems();
+
+    public Object adapt(String attributeName, Class<?> attributeType);
 }

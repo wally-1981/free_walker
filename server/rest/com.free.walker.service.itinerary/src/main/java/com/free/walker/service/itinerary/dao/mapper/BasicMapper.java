@@ -11,6 +11,7 @@ import com.free.walker.service.itinerary.basic.Country;
 import com.free.walker.service.itinerary.basic.Province;
 import com.free.walker.service.itinerary.basic.Region;
 import com.free.walker.service.itinerary.basic.StringPair;
+import com.free.walker.service.itinerary.basic.StringTriple;
 import com.free.walker.service.itinerary.basic.Tag;
 
 public interface BasicMapper {
@@ -31,6 +32,10 @@ public interface BasicMapper {
     public Province getProvince(@Param("uuid") String uuid);
 
     public City getCity(@Param("uuid") String uuid);
+
+    public List<StringTriple> getLocationNamesByLocatoinIds(@Param("locationIds") List<String> locationIds);
+
+    public List<StringTriple> getRegionNamesByRegionalLocatoinIds(@Param("locationIds") List<String> locationIds);
 
     public Agency getAgency(@Param("uuid") String uuid);
 
