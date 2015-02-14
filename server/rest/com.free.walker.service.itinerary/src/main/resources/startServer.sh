@@ -9,4 +9,4 @@
 # Start ElasticSearch:
 #service elasticsearch start
 
-java -jar ./com.free.walker.service.itinerary-0.0.8.jar -Prod
+java -jar ./com.free.walker.service.itinerary-0.0.10.jar -Prod
