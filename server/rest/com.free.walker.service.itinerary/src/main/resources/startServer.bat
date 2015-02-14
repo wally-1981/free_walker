@@ -8,6 +8,6 @@
 c:\mongo_server\bin\mongod -dbpath c:\mongo_server\data
 
 :: Start ElasticSearch: (the path to elasticsearch may vary depending on the install location of ElasticSearch on your system.)
-C:\elastic_search_server\bin\elasticsearch
+c:\elastic_search_server\bin\elasticsearch
 
 java -jar ./com.free.walker.service.itinerary-0.0.10.jar -Prod

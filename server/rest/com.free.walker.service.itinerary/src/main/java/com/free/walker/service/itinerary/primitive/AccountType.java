@@ -1,11 +1,15 @@
 package com.free.walker.service.itinerary.primitive;
 
 public enum AccountType {
-    MASTER, WeChat, QQ, AliPay, WeiBo;
+    ADMIN, MASTER, AGENCY, WeChat, QQ, AliPay, WeiBo;
 
     public static AccountType valueOf(int ordinal) {
-        if (ordinal == MASTER.ordinal()) {
+        if (ordinal == ADMIN.ordinal()) {
+            return ADMIN;
+        } else if (ordinal == MASTER.ordinal()) {
             return MASTER;
+        } else if (ordinal == AGENCY.ordinal()) {
+            return AGENCY;
         } else if (ordinal == WeChat.ordinal()) {
             return WeChat;
         } else if (ordinal == QQ.ordinal()) {
@@ -15,7 +19,27 @@ public enum AccountType {
         } else if (ordinal == WeiBo.ordinal()) {
             return WeiBo;
         } else {
-            return MASTER;
+            return null;
+        }
+    }
+
+    public static boolean isTouristAccount(int ordinal) {
+        if (ordinal == ADMIN.ordinal()) {
+            return false;
+        } else if (ordinal == MASTER.ordinal()) {
+            return true;
+        } else if (ordinal == AGENCY.ordinal()) {
+            return false;
+        } else if (ordinal == WeChat.ordinal()) {
+            return true;
+        } else if (ordinal == QQ.ordinal()) {
+            return true;
+        } else if (ordinal == AliPay.ordinal()) {
+            return true;
+        } else if (ordinal == WeiBo.ordinal()) {
+            return true;
+        } else {
+            return false;
         }
     }
 }

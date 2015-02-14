@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.free.walker.service.itinerary.LocalMessages;
+import com.free.walker.service.itinerary.basic.Account;
 import com.free.walker.service.itinerary.basic.Continent;
 import com.free.walker.service.itinerary.basic.StringTriple;
 import com.free.walker.service.itinerary.basic.TravelLocation;
@@ -44,6 +45,7 @@ import com.free.walker.service.itinerary.dao.TravelBasicDAO;
 import com.free.walker.service.itinerary.dao.TravelProductDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
+import com.free.walker.service.itinerary.primitive.AccountType;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.primitive.ProductStatus;
 import com.free.walker.service.itinerary.primitive.QueryTemplate;
@@ -64,6 +66,7 @@ import com.free.walker.service.itinerary.util.JsonObjectUtil;
 import com.free.walker.service.itinerary.util.MongoDbClientBuilder;
 import com.free.walker.service.itinerary.util.SystemConfigUtil;
 import com.free.walker.service.itinerary.util.UuidUtil;
+import com.ibm.icu.util.Calendar;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.CommandResult;
@@ -170,9 +173,9 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         return result;
     }
 
-    public UUID createProduct(TravelProduct travelProduct) throws InvalidTravelProductException,
+    public UUID createProduct(UUID anctId, TravelProduct travelProduct) throws InvalidTravelProductException,
         DatabaseAccessException {
-        if (travelProduct == null) {
+        if (anctId == null || travelProduct == null) {
             throw new NullPointerException();
         }
 
@@ -231,7 +234,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         JsonObject productJs = travelProduct.getCore().toJSON();
 
         try {
-            WriteResult wr = storeProduct(productJs);
+            WriteResult wr = storeProduct(productJs, anctId);
             LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_create_record, wr.toString()));
         } catch (MongoException e) {
             throw new DatabaseAccessException(e);
@@ -378,6 +381,75 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
 
         return result;
+    }
+
+    public List<TravelProduct> getProducts(Account account, ProductStatus status) throws InvalidTravelProductException,
+        DatabaseAccessException {
+        if (account == null || status == null) {
+            throw new NullPointerException();
+        }
+
+        if (ProductStatus.DRAFT_PRODUCT.equals(status) || ProductStatus.PRIVATE_PRODUCT.equals(status)) {
+            Calendar since = Calendar.getInstance();
+            since.add(Calendar.MONTH, -6);
+
+            List<TravelProduct> result = new ArrayList<TravelProduct>();
+            DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
+            BasicDBObject query1 = new BasicDBObject(Introspection.JSONKeys.STATUS, status.enumValue());
+            BasicDBObject query2 = new BasicDBObject(Introspection.JSONKeys.OWNER, account.getUuid().toString());
+            BasicDBObject query3 = new BasicDBObject(Introspection.JSONKeys.DEADLINE_DATETIME, new BasicDBObject(
+                "$gte", since.getTimeInMillis()));
+            BasicDBObject productQuery = new BasicDBObject("$and", new BasicDBObject[] { query1, query2, query3 });
+            DBCursor productsCr = productColls.find(productQuery);
+            try {
+                while (productsCr.hasNext()) {
+                    JsonObject product = Json.createReader(new StringReader(productsCr.next().toString())).readObject();
+                    result.add(JsonObjectHelper.toProduct(product, true));
+                }
+            } finally {
+                productsCr.close();
+            }
+            return result;
+        } else {
+            SearchResponse response = null;
+            String templateName = null;
+            Map<String, String> templageParams = null;
+            if (AccountType.isTouristAccount(account.getAccountType().ordinal())) {
+                response = esClient.prepareSearch(DAOConstants.elasticsearch_product_index)
+                    .setTypes(DAOConstants.elasticsearch_product_type)
+                    .setTemplateName(templateName)
+                    .setTemplateType(ScriptType.INDEXED)
+                    .setTemplateParams(templageParams)
+                    .get();
+            } else {
+                response = esClient.prepareSearch(DAOConstants.elasticsearch_product_index)
+                    .setTypes(DAOConstants.elasticsearch_product_type)
+                    .setTemplateName(templateName)
+                    .setTemplateType(ScriptType.INDEXED)
+                    .setTemplateParams(templageParams)
+                    .get();
+            }
+
+            SearchHits hits = response.getHits();
+            LOG.info(LocalMessages.getMessage(LocalMessages.product_index_searched, templateName,
+                templageParams.toString(), response.isTimedOut(), response.isTerminatedEarly(),
+                response.getTookInMillis(), response.getTotalShards(), response.getSuccessfulShards(),
+                response.getFailedShards()));
+
+            List<TravelProduct> result = new ArrayList<TravelProduct>();
+            Iterator<SearchHit> hitsIter = hits.iterator();
+            while (hitsIter.hasNext()) {
+                SearchHit searchHit = (SearchHit) hitsIter.next();
+
+                LOG.info(LocalMessages.getMessage(LocalMessages.product_search_hit, searchHit.id(),
+                    searchHit.getIndex(), searchHit.getType(), searchHit.getId(), searchHit.getVersion(),
+                    searchHit.getScore()));
+
+                JsonObject hitSource = Json.createReader(new StringReader(searchHit.getSourceAsString())).readObject();
+                result.add(JsonObjectHelper.toProduct(hitSource, true));
+            }
+            return result;
+        }
     }
 
     public List<TravelProductItem> getItems(UUID productId, String itemType) throws InvalidTravelProductException,
@@ -678,7 +750,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
     }
 
-    public UUID updateProductStatus(UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
+    public UUID updateProductStatus(UUID accountId, UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
         throws InvalidTravelProductException, DatabaseAccessException {
         if (productId == null || newStatus == null) {
             throw new NullPointerException();
@@ -700,9 +772,16 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             }
         }
 
+        if (!accountId.toString().equals(travelProduct.get(Introspection.JSONKeys.OWNER))) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(
+                LocalMessages.illegal_submit_product_operation, productId, accountId), productId);
+        }
+
         try {
             travelProduct.put(Introspection.JSONKeys.STATUS, newStatus.enumValue());
-            DBObject productQuery = QueryBuilder.start(DAOConstants.mongo_database_pk).is(productId.toString()).get();
+            BasicDBObject query1 = new BasicDBObject(DAOConstants.mongo_database_pk, productId.toString());
+            BasicDBObject query2 = new BasicDBObject(Introspection.JSONKeys.OWNER, accountId.toString());
+            BasicDBObject productQuery = new BasicDBObject("$and", new BasicDBObject[] { query1, query2 });
             WriteResult wr = productColls.update(productQuery, travelProduct, false, false, WriteConcern.MAJORITY);
             LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
@@ -712,11 +791,12 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         return productId;
     }
 
-    private WriteResult storeProduct(JsonObject product) {
+    private WriteResult storeProduct(JsonObject product, UUID accountId) {
         String productId = product.getString(Introspection.JSONKeys.UUID);
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
         DBObject proposalBs = (DBObject) JSON.parse(product.toString());
         proposalBs.put(DAOConstants.mongo_database_pk, productId);
+        proposalBs.put(Introspection.JSONKeys.OWNER, accountId.toString());
         return productColls.insert(proposalBs, WriteConcern.MAJORITY);
     }
 

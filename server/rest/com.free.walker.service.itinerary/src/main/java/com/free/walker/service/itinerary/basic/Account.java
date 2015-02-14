@@ -100,6 +100,10 @@ public class Account implements Serializable {
         return accountId.toString();
     }
 
+    public AccountType getAccountType() {
+        return accountType;
+    }
+
     public ValueType getValueType() {
         return JsonValue.ValueType.NULL;
     }

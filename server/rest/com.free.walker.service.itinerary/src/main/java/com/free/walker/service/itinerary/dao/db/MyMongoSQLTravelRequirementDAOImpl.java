@@ -175,14 +175,14 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         return travelProposal.getUUID();
     }
 
-    public UUID startProposalBid(UUID travelProposalId, UUID accoutId) throws InvalidTravelReqirementException,
+    public UUID startProposalBid(UUID travelProposalId, UUID accountId) throws InvalidTravelReqirementException,
         DatabaseAccessException {
-        if (travelProposalId == null || accoutId == null) {
+        if (travelProposalId == null || accountId == null) {
             throw new NullPointerException();
         }
 
         DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
-        if (proposalColls.findOne(travelProposalId.toString(), ID_FIELD) == null) {
+        if (proposalColls.findOne(travelProposalId.toString()) == null) {
             throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
                 travelProposalId), travelProposalId);
         }
@@ -190,15 +190,15 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         DBCollection proposalAgencyColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_SUBMISSION_COLL_NAME);
         DBObject proposalAgency = proposalAgencyColls.findOne(travelProposalId.toString());
         if (proposalAgency != null) {
-            if (!accoutId.toString().equals(proposalAgency.get(Introspection.JSONKeys.OWNER))) {
+            if (!accountId.toString().equals(proposalAgency.get(Introspection.JSONKeys.OWNER))) {
                 throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                    LocalMessages.illegal_submit_proposal_operation, travelProposalId, accoutId), travelProposalId);
+                    LocalMessages.illegal_submit_proposal_operation, travelProposalId, accountId), travelProposalId);
             } else {
                 return travelProposalId;
             }
         } else {
             try {
-                WriteResult wr = storeProposalBid(travelProposalId, accoutId, Json.createArrayBuilder().build());
+                WriteResult wr = storeProposalBid(travelProposalId, accountId, Json.createArrayBuilder().build());
                 LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
             } catch (MongoException e) {
                 throw new InvalidTravelReqirementException(travelProposalId, e);

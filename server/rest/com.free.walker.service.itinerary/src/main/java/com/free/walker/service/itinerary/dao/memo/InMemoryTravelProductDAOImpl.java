@@ -2,9 +2,11 @@ package com.free.walker.service.itinerary.dao.memo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.json.Json;
@@ -12,6 +14,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import com.free.walker.service.itinerary.LocalMessages;
+import com.free.walker.service.itinerary.basic.Account;
 import com.free.walker.service.itinerary.dao.TravelProductDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
@@ -32,6 +35,7 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
     protected Map<UUID, TravelProduct> travelProducts;
     protected Map<UUID, List<TravelProductItem>> travelProductItems;
     protected Map<UUID, Bidding> travelProductBiddings;
+    protected Map<String, Set<TravelProduct>> travelProductsByAccount;
 
     private static class SingletonHolder {
         private static final TravelProductDAO INSTANCE = new InMemoryTravelProductDAOImpl();
@@ -41,6 +45,7 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         travelProducts = new HashMap<UUID, TravelProduct>();
         travelProductItems = new HashMap<UUID, List<TravelProductItem>>();
         travelProductBiddings = new HashMap<UUID, Bidding>();
+        travelProductsByAccount = new HashMap<String, Set<TravelProduct>>();
     }
 
     public static TravelProductDAO getInstance() {
@@ -51,9 +56,9 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         return true;
     }
 
-    public UUID createProduct(TravelProduct travelProduct) throws InvalidTravelProductException,
+    public UUID createProduct(UUID anctId, TravelProduct travelProduct) throws InvalidTravelProductException,
         DatabaseAccessException {
-        if (travelProduct == null) {
+        if (anctId == null || travelProduct == null) {
             throw new NullPointerException();
         }
 
@@ -71,6 +76,15 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         List<TravelProductItem> items = new ArrayList<TravelProductItem>(travelProduct.getTravelProductItems());
         travelProduct.getTravelProductItems().clear();
         travelProductItems.put(travelProduct.getProductUUID(), items);
+
+        if (travelProductsByAccount.containsKey(anctId.toString())) {
+            travelProductsByAccount.get(anctId.toString()).add(travelProduct);
+        } else {
+            Set<TravelProduct> products = new HashSet<TravelProduct>();
+            products.add(travelProduct);
+            travelProductsByAccount.put(anctId.toString(), products);
+        }
+
         return travelProduct.getProductUUID();
     }
 
@@ -131,6 +145,28 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
             TravelProduct product = iter.next();
             if (product.getProposalUUID().equals(proposalId)) {
                 result.add(product);
+            }
+        }
+
+        return result;
+    }
+
+    public List<TravelProduct> getProducts(Account account, ProductStatus status) throws InvalidTravelProductException,
+        DatabaseAccessException {
+        if (account == null || status == null) {
+            throw new NullPointerException();
+        }
+
+        List<TravelProduct> result = new ArrayList<TravelProduct>();
+        Set<TravelProduct> products = travelProductsByAccount.get(account.getUuid());
+        if (products == null) {
+            return result;
+        }
+
+        for (Iterator<TravelProduct> iterator = products.iterator(); iterator.hasNext();) {
+            TravelProduct travelProduct = iterator.next();
+            if (status.equals(travelProduct.getStatus())) {
+                result.add(travelProduct);
             }
         }
 
@@ -284,7 +320,7 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         return travelProductBiddings.remove(productId);
     }
 
-    public UUID updateProductStatus(UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
+    public UUID updateProductStatus(UUID accountId, UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
         throws InvalidTravelProductException, DatabaseAccessException {
         if (productId == null || newStatus == null) {
             throw new NullPointerException();
@@ -303,6 +339,12 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
                     LocalMessages.miss_travel_product_status, productId, oldStatus.enumValue(),
                     currentStatus.enumValue()));
             }
+        }
+
+        Set<TravelProduct> products = travelProductsByAccount.get(accountId.toString());
+        if (products == null || !products.contains(travelProduct)) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(
+                LocalMessages.illegal_submit_product_operation, productId, accountId), productId);
         }
 
         ((SimpleTravelProduct) travelProduct.getCore()).setStatus(newStatus);

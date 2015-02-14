@@ -26,6 +26,7 @@ public class Introspection {
         public static final String TAGS = "tags";
         public static final String AGENCIES = "agencies";
 
+        public static final String STATUS = "status";
         public static final String CITY = "city";
         public static final String PROVINCE = "province";
         public static final String COUNTRY = "country";
@@ -142,6 +143,13 @@ public class Introspection {
         public static final ContinentID CONTINENT_ID_OCEANIA = new ContinentID(5);
         public static final ContinentID CONTINENT_ID_AFRICA = new ContinentID(6);
         public static final ContinentID CONTINENT_ID_ANTARCTICA = new ContinentID(7);
+
+        public static final ProductStatus DRAFT_PRODUCT = ProductStatus.DRAFT_PRODUCT;
+        public static final ProductStatus PRIVATE_PRODUCT = ProductStatus.PRIVATE_PRODUCT;
+        public static final ProductStatus PUBLIC_STATUS = ProductStatus.PUBLIC_STATUS;
+        public static final ProductStatus ACTIVE_PRODUCT = ProductStatus.ACTIVE_PRODUCT;
+        public static final ProductStatus ING_PRODUCT = ProductStatus.ING_PRODUCT;
+        public static final ProductStatus ARCHIVED_PRODUCT = ProductStatus.ARCHIVED_PRODUCT;
 
         public static final String SUB_TYPE_HOTEL = HotelRequirement.SUB_TYPE;
         public static final String SUB_TYPE_TRAFFIC = TrafficRequirement.SUB_TYPE;

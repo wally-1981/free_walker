@@ -147,6 +147,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             deptCityBuilder.add(Introspection.JSONKeys.UUID, "84844276-3036-47dd-90e0-f095cfa98da5");
             departureBuilder.add(Introspection.JSONKeys.CITY, deptCityBuilder);
             productBuilder.add(Introspection.JSONKeys.DEPARTURE, departureBuilder);
+            productBuilder.add(Introspection.JSONKeys.STATUS, Introspection.JSONValues.DRAFT_PRODUCT.enumValue());
 
             JsonObjectBuilder hotelItemBuilder = Json.createObjectBuilder();
             hotelItemBuilder.add(Introspection.JSONKeys.SUB_TYPE, Introspection.JSONValues.SUB_TYPE_HOTEL_ITEM);
@@ -1180,6 +1181,51 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                 throw new ProcessingException(e);
             } finally {
                 get.abort();
+            }
+        }
+
+        /*
+         * 发布Draft状态的Product，必然失败。
+         */
+        {
+            HttpPost post = new HttpPost();
+            post.setURI(new URI(productServiceUrlStr + "products/public/" + productId));
+            post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(post);
+                int statusCode = response.getStatusLine().getStatusCode();
+                assertEquals(HttpStatus.CONFLICT_409, statusCode);
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                post.abort();
+            }
+        }
+
+        /*
+         * 提交Product，Product状态从Draft自动更新为Private。
+         */
+        {
+            HttpPut put = new HttpPut();
+            put.setURI(new URI(productServiceUrlStr + "products/" + productId));
+            put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = httpClient.execute(put);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonObject product = Json.createReader(response.getEntity().getContent()).readObject();
+                    assertNotNull(product);
+                    String productUuid = product.getString(Introspection.JSONKeys.UUID);
+                    assertNotNull(productUuid);
+                    assertEquals(productId, productUuid);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                put.abort();
             }
         }
 

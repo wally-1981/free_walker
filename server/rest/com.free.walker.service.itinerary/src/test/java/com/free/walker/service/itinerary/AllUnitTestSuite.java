@@ -16,6 +16,7 @@ import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelProductDAOImplTe
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOImplTest;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelProductDAOImplTest;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImplTest;
+import com.free.walker.service.itinerary.primitive.AccountTypeTest;
 import com.free.walker.service.itinerary.primitive.IntrospectionTest;
 import com.free.walker.service.itinerary.primitive.QueryTemplateTest;
 import com.free.walker.service.itinerary.primitive.SortTypeTest;
@@ -38,6 +39,7 @@ import com.free.walker.service.itinerary.util.UuidUtilTest;
     IntrospectionTest.class,
     QueryTemplateTest.class,
     SortTypeTest.class,
+    AccountTypeTest.class,
 
     JsonObjectHelperTest.class,
     UuidUtilTest.class,

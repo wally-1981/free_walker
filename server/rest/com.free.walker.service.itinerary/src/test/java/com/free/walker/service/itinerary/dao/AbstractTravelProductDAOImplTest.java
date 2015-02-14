@@ -1,6 +1,7 @@
 package com.free.walker.service.itinerary.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -42,6 +43,7 @@ import com.free.walker.service.itinerary.product.TrivItem;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.TravelProposal;
 import com.free.walker.service.itinerary.traffic.TrafficTool;
+import com.free.walker.service.itinerary.util.UuidUtil;
 import com.ibm.icu.util.Calendar;
 
 public abstract class AbstractTravelProductDAOImplTest {
@@ -147,25 +149,33 @@ public abstract class AbstractTravelProductDAOImplTest {
     }
 
     @Test
+    public void testCreateTravelProductWithNullAccount() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.createProduct(null, null);
+    }
+
+    @Test
     public void testCreateTravelProductWithNullProduct() throws InvalidTravelProductException, DatabaseAccessException {
         thrown.expect(NullPointerException.class);
-        travelProductDAO.createProduct(null);
+        travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), null);
     }
 
     @Test
     public void testCreateTravelProductWithDup() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         assertNotNull(productId);
 
         thrown.expect(InvalidTravelProductException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.existed_travel_product,
             travelProduct.getProductUUID()));
-        travelProductDAO.createProduct(travelProduct);
+        travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProduct);
     }
 
     @Test
     public void testCreateTravelProduct() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         assertNotNull(productId);
     }
 
@@ -187,7 +197,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testAddHotel() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         assertNotNull(productId);
 
         productId = travelProductDAO.addItem(productId, hotelItem);
@@ -204,7 +215,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testAddTraffic() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         assertNotNull(productId);
 
         productId = travelProductDAO.addItem(productId, trafficItem);
@@ -220,7 +232,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testAddResort() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         assertNotNull(productId);
 
         productId = travelProductDAO.addItem(productId, resortItem);
@@ -236,7 +249,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testAddTriv() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         assertNotNull(productId);
 
         productId = travelProductDAO.addItem(productId, trivItem);
@@ -261,7 +275,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testSetBiddingTwice() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         assertNotNull(productId);
 
         productId = travelProductDAO.setBidding(productId, bidding);
@@ -274,7 +289,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testSetBidding() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         assertNotNull(productId);
 
         productId = travelProductDAO.setBidding(productId, bidding);
@@ -294,7 +310,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testGetProduct() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
 
         TravelProduct travelProduct = travelProductDAO.getProduct(productId);
         assertNotNull(travelProduct);
@@ -316,7 +333,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testGetHotelItems() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         UUID itemId = travelProductDAO.addItem(productId, hotelItem);
         assertNotNull(itemId);
 
@@ -345,7 +363,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testGetTrafficItems() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         UUID itemId = travelProductDAO.addItem(productId, trafficItem);
         assertNotNull(itemId);
 
@@ -374,7 +393,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testGetResortItems() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         UUID itemId = travelProductDAO.addItem(productId, resortItem);
         assertNotNull(itemId);
 
@@ -394,7 +414,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testGetBidding() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         productId = travelProductDAO.setBidding(productId, bidding);
         Bidding bidding = travelProductDAO.getBidding(productId);
         assertNotNull(bidding);
@@ -422,7 +443,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testRemoveHotelItemWithBidding() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         productId = travelProductDAO.setBidding(productId, bidding);
         thrown.expect(InvalidTravelProductException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_remove_product_item_operation, productId));
@@ -431,7 +453,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testRemoveHotelItem() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         UUID hotelItemId = travelProductDAO.removeHotelItem(productId, hotelItem.getUUID());
         assertNotNull(hotelItemId);
     }
@@ -458,7 +481,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testRemoveTrafficItemWithBidding() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         productId = travelProductDAO.setBidding(productId, bidding);
         thrown.expect(InvalidTravelProductException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_remove_product_item_operation, productId));
@@ -467,7 +491,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testRemoveTrafficItem() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         UUID trafficItemId = travelProductDAO.removeTrafficItem(productId, trafficItem.getUUID());
         assertNotNull(trafficItemId);
     }
@@ -494,7 +519,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testRemoveResortItemWithBidding() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         productId = travelProductDAO.setBidding(productId, bidding);
         thrown.expect(InvalidTravelProductException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_remove_product_item_operation, productId));
@@ -503,7 +529,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testRemoveResortItem() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         UUID resortItemId = travelProductDAO.removeResortItem(productId, resortItem.getUUID());
         assertNotNull(resortItemId);
     }
@@ -530,7 +557,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testRemoveTrivItem() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         productId = travelProductDAO.setBidding(productId, bidding);
         UUID trivItemId = travelProductDAO.removeTrivItem(productId, trivItem.getUUID());
         assertNotNull(trivItemId);
@@ -552,37 +580,94 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testUnsetBidding() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         productId = travelProductDAO.setBidding(productId, bidding);
         Bidding bidding = travelProductDAO.unsetBidding(productId);
         assertNotNull(bidding);
     }
 
     @Test
-    public void testUpdateProductStatusWithNullProductId() throws InvalidTravelProductException, DatabaseAccessException {
+    public void testGetProductsWithNullAccount() throws InvalidTravelProductException, DatabaseAccessException {
         thrown.expect(NullPointerException.class);
-        travelProductDAO.updateProductStatus(null, null, null);
+        travelProductDAO.getProducts(null, null);
     }
 
     @Test
-    public void testUpdateProductStatusWithNullNewStatus() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+    public void testGetProductsWithNullStatus() throws InvalidTravelProductException, DatabaseAccessException {
         thrown.expect(NullPointerException.class);
-        travelProductDAO.updateProductStatus(productId, null, null);
+        travelProductDAO.getProducts(Constants.DEFAULT_ACCOUNT, null);
     }
 
     @Test
-    public void testUpdateProductStatusWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
+    public void testGetProductsWithMissMatchStatus() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
+        assertNotNull(productId);
+
+        List<TravelProduct> travelProducts = travelProductDAO.getProducts(Constants.DEFAULT_ACCOUNT,
+            ProductStatus.PRIVATE_PRODUCT);
+        assertNotNull(travelProducts);
+        Map<UUID, TravelProduct> result = new HashMap<UUID, TravelProduct>();
+        for (int i = 0; i < travelProducts.size(); i++) {
+            result.put(travelProducts.get(i).getProductUUID(), travelProducts.get(i));
+        }
+        assertFalse(result.containsKey(productId));
+    }
+
+    @Test
+    public void testGetProducts() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
+        assertNotNull(productId);
+
+        List<TravelProduct> travelProducts = travelProductDAO.getProducts(Constants.DEFAULT_ACCOUNT,
+            ProductStatus.DRAFT_PRODUCT);
+        assertNotNull(travelProducts);
+        assertTrue(travelProducts.size() >= 1);
+        Map<UUID, TravelProduct> result = new HashMap<UUID, TravelProduct>();
+        for (int i = 0; i < travelProducts.size(); i++) {
+            result.put(travelProducts.get(i).getProductUUID(), travelProducts.get(i));
+        }
+        assertTrue(result.containsKey(productId));
+        assertNotNull(result.get(productId));
+        assertEquals(travelProduct.getProposalUUID(), result.get(productId).getProposalUUID());
+    }
+
+    @Test
+    public void testUpdateProductStatusWithNullProductId() throws InvalidTravelProductException,
+        DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.updateProductStatus(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), null, null,
+            null);
+    }
+
+    @Test
+    public void testUpdateProductStatusWithNullNewStatus() throws InvalidTravelProductException,
+        DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.updateProductStatus(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), productId,
+            null, null);
+    }
+
+    @Test
+    public void testUpdateProductStatusWithWrongProductId() throws InvalidTravelProductException,
+        DatabaseAccessException {
         UUID wrongProductId = UUID.randomUUID();
         thrown.expect(InvalidTravelProductException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, wrongProductId));
-        travelProductDAO.updateProductStatus(wrongProductId, null, ProductStatus.PUBLIC_STATUS);
+        travelProductDAO.updateProductStatus(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), wrongProductId,
+            null, ProductStatus.PUBLIC_STATUS);
     }
 
     @Test
     public void testUpdateProductStatusWithoutOldStatus() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
-        productId = travelProductDAO.updateProductStatus(productId, null, ProductStatus.PUBLIC_STATUS);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
+        productId = travelProductDAO.updateProductStatus(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            productId, null, ProductStatus.PUBLIC_STATUS);
         TravelProduct updatedProduct = travelProductDAO.getProduct(productId);
         ProductStatus currentProductStatus = updatedProduct.getStatus();
         assertNotNull(currentProductStatus);
@@ -592,18 +677,34 @@ public abstract class AbstractTravelProductDAOImplTest {
     @Test
     public void testUpdateProductStatusWithMissOldStatus() throws InvalidTravelProductException,
         DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         thrown.expect(InvalidTravelProductException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.miss_travel_product_status, productId,
             ProductStatus.PRIVATE_PRODUCT.enumValue(), ProductStatus.DRAFT_PRODUCT.enumValue()));
-        travelProductDAO.updateProductStatus(productId, ProductStatus.PRIVATE_PRODUCT, ProductStatus.PUBLIC_STATUS);
+        travelProductDAO.updateProductStatus(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), productId,
+            ProductStatus.PRIVATE_PRODUCT, ProductStatus.PUBLIC_STATUS);
+    }
+
+    @Test
+    public void testUpdateProductStatusWithDifferentAccount() throws InvalidTravelProductException,
+        DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
+        UUID accountId = UUID.randomUUID();
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_submit_product_operation, productId,
+            accountId));
+        travelProductDAO.updateProductStatus(accountId, travelProduct.getProductUUID(), ProductStatus.DRAFT_PRODUCT,
+            ProductStatus.PRIVATE_PRODUCT);
     }
 
     @Test
     public void testUpdateProductStatus() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
-        productId = travelProductDAO.updateProductStatus(travelProduct.getProductUUID(), ProductStatus.DRAFT_PRODUCT,
-            ProductStatus.PRIVATE_PRODUCT);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
+        productId = travelProductDAO.updateProductStatus(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct.getProductUUID(), ProductStatus.DRAFT_PRODUCT, ProductStatus.PRIVATE_PRODUCT);
         TravelProduct updatedProduct = travelProductDAO.getProduct(productId);
         ProductStatus currentProductStatus = updatedProduct.getStatus();
         assertNotNull(currentProductStatus);
@@ -630,7 +731,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testPublishProduct() throws InvalidTravelProductException, DatabaseAccessException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         productId = travelProductDAO.setBidding(productId, bidding);
         UUID productUuid = travelProductDAO.publishProduct(travelProduct.getCore(), travelProposal);
         assertNotNull(productUuid);
@@ -656,7 +758,8 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testSearchProduct() throws DatabaseAccessException, InvalidTravelProductException, InterruptedException {
-        UUID productId = travelProductDAO.createProduct(travelProduct);
+        UUID productId = travelProductDAO.createProduct(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()),
+            travelProduct);
         productId = travelProductDAO.setBidding(productId, bidding);
         UUID productUuid = travelProductDAO.publishProduct(travelProduct.getCore(), travelProposal);
 

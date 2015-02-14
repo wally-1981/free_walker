@@ -18,6 +18,7 @@ import com.free.walker.service.itinerary.Renewable;
 import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
 import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.primitive.ProductStatus;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.UuidUtil;
 import com.ibm.icu.util.Calendar;
@@ -30,6 +31,7 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
     private Calendar deadline;
     private Calendar departure;
     private TravelLocation departureLocation;
+    private ProductStatus productStatus;
 
     public SimpleTravelProduct() {
         this.productId = UUID.randomUUID();
@@ -65,6 +67,7 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
         this.deadline = deadline;
         this.departure = departure;
         this.departureLocation = departureLocation;
+        this.productStatus = Introspection.JSONValues.DRAFT_PRODUCT;
     }
 
     public double getCost() {
@@ -104,6 +107,10 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
 
         if (departureLocation != null) {
             resBuilder.add(Introspection.JSONKeys.DEPARTURE, departureLocation.toJSON());
+        }
+
+        if (productStatus != null) {
+            resBuilder.add(Introspection.JSONKeys.STATUS, productStatus.enumValue());
         }
 
         return resBuilder.build();
@@ -169,11 +176,28 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
             this.departureLocation = new TravelLocation().fromJSON(departureLocation);
         }
 
+        int productEnum = jsObject.getInt(Introspection.JSONKeys.STATUS, 0);
+        ProductStatus productStatus = ProductStatus.valueOf(productEnum);
+        if (productStatus != null) {
+            this.productStatus = productStatus;
+        } else {
+            throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
+                Introspection.JSONKeys.STATUS, productEnum));
+        }
+
         return this;
     }
 
     public TravelProduct getCore() {
         return this;
+    }
+
+    public ProductStatus getStatus() {
+        return productStatus;
+    }
+
+    public void setStatus(ProductStatus productStatus) {
+        this.productStatus = productStatus;
     }
 
     public UUID getProductUUID() {
