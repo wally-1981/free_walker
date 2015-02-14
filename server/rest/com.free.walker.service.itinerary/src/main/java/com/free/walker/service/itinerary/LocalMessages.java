@@ -67,6 +67,7 @@ public class LocalMessages {
     public static final String illegal_product_departure = "illegal_product_departure";
     public static final String invalid_bidding_item_range = "invalid_bidding_item_range";
     public static final String conflict_bidding_item_range = "conflict_bidding_item_range";
+    public static final String illegal_submit_product_operation = "illegal_submit_product_operation";
 
     public static final String missing_travel_requirement = "missing_travel_requirement";
     public static final String existed_travel_requirement = "existed_travel_requirement";

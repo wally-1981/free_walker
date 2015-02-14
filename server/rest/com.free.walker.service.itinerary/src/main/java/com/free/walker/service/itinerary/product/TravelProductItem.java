@@ -5,6 +5,7 @@ import java.util.UUID;
 import javax.json.JsonValue;
 
 import com.free.walker.service.itinerary.Renewable;
+import com.free.walker.service.itinerary.primitive.ProductStatus;
 
 public abstract class TravelProductItem implements TravelProduct, Renewable {
     protected TravelProduct travelProduct;
@@ -30,6 +31,10 @@ public abstract class TravelProductItem implements TravelProduct, Renewable {
 
     public TravelProduct getCore() {
         return travelProduct.getCore();
+    }
+
+    public ProductStatus getStatus() {
+        return travelProduct.getStatus();
     }
 
     public boolean isTriv() {

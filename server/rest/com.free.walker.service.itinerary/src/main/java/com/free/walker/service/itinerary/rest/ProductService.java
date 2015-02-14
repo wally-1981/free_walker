@@ -17,10 +17,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.cxf.jaxrs.ext.MessageContext;
+
+import com.free.walker.service.itinerary.basic.Account;
 import com.free.walker.service.itinerary.basic.SearchCriteria;
 import com.free.walker.service.itinerary.dao.DAOConstants;
 import com.free.walker.service.itinerary.dao.DAOFactory;
@@ -30,6 +34,7 @@ import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.primitive.ProductStatus;
 import com.free.walker.service.itinerary.product.Bidding;
 import com.free.walker.service.itinerary.product.HotelItem;
 import com.free.walker.service.itinerary.product.ResortItem;
@@ -121,14 +126,25 @@ public class ProductService {
      * <br>
      */
     @POST
+    @Context
     @Path("/products/public/{productId}")
-    public Response publishProduct(@PathParam("productId") String productId) {
+    public Response publishProduct(@PathParam("productId") String productId, @Context MessageContext msgCntx) {
         try {
+            Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
+            UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
+
             UUID productUuid = UuidUtil.fromUuidStr(productId);
             TravelProduct product = travelProductDAO.getProduct(productUuid);
             if (product == null) {
                 JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productId).build();
                 return Response.status(Status.NOT_FOUND).entity(res).build();
+            }
+            if (!ProductStatus.PRIVATE_PRODUCT.equals(product.getStatus())) {
+                JsonObject res = Json.createObjectBuilder()
+                    .add(Introspection.JSONKeys.UUID, productId)
+                    .add(Introspection.JSONKeys.STATUS, product.getStatus().enumValue())
+                    .build();
+                return Response.status(Status.CONFLICT).entity(res).build();
             }
 
             List<TravelProductItem> hotelItems = travelProductDAO.getItems(productUuid, HotelItem.SUB_TYPE);
@@ -151,6 +167,8 @@ public class ProductService {
             List<TravelRequirement> itineraries = requirementDao.getItineraryRequirements(product.getProposalUUID());
             proposal.getTravelRequirements().addAll(itineraries);
 
+            travelProductDAO.updateProductStatus(acntId, productUuid, ProductStatus.PRIVATE_PRODUCT,
+                ProductStatus.PUBLIC_STATUS);
             productId = travelProductDAO.publishProduct(product, proposal).toString();
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productId).build();
             return Response.ok(res).build();
@@ -183,6 +201,36 @@ public class ProductService {
             }
 
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productUuid.toString())
+                .build();
+            return Response.ok(res).build();
+        } catch (InvalidTravelProductException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
+    }
+
+    /**
+     * <b>PUT</b><br>
+     * <br>
+     * Submit the product by the given product identifier. The product will be
+     * submitted to the owner of the proposal the product regarding with.<br>
+     * <br>
+     * <b>Sample Payload:</b><br>
+     * <br>
+     * <i>N/A</i><br>
+     * <br>
+     */
+    @PUT
+    @Context
+    @Path("/products/{productId}/")
+    public Response submitProduct(@PathParam("productId") String productId, @Context MessageContext msgCntx) {
+        try {
+            Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
+            UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
+            UUID submittedProductId = travelProductDAO.updateProductStatus(acntId, UuidUtil.fromUuidStr(productId),
+                ProductStatus.DRAFT_PRODUCT, ProductStatus.PRIVATE_PRODUCT);
+            JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, submittedProductId.toString())
                 .build();
             return Response.ok(res).build();
         } catch (InvalidTravelProductException e) {
@@ -352,11 +400,14 @@ public class ProductService {
      * <br>
      */
     @POST
+    @Context
     @Path("/products/")
-    public Response addProduct(JsonObject travelProduct) {
+    public Response addProduct(JsonObject travelProduct, @Context MessageContext msgCntx) {
         try {
+            Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
+            UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
             TravelProduct product = JsonObjectHelper.toProduct(travelProduct);
-            String productId = travelProductDAO.createProduct(product).toString();
+            String productId = travelProductDAO.createProduct(acntId, product).toString();
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productId).build();
             return Response.ok(res).build();
         } catch (InvalidTravelProductException e) {

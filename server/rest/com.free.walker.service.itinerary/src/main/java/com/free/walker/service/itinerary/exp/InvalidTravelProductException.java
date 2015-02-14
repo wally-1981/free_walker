@@ -22,9 +22,9 @@ public class InvalidTravelProductException extends IllegalAccessException implem
         super(message);
     }
 
-    public InvalidTravelProductException(String message, UUID travelRequirementId) {
+    public InvalidTravelProductException(String message, UUID travelProductId) {
         super(message);
-        this.context = travelRequirementId.toString();
+        this.context = travelProductId.toString();
     }
 
     public InvalidTravelProductException(String message, String context) {
@@ -32,15 +32,15 @@ public class InvalidTravelProductException extends IllegalAccessException implem
         this.context = context;
     }
 
-    public InvalidTravelProductException(UUID travelRequirementId, MongoException e) {
+    public InvalidTravelProductException(UUID travelProductId, MongoException e) {
         super(e.getMessage());
-        this.context = travelRequirementId.toString();
+        this.context = travelProductId.toString();
         this.errorCode = new ErrorCode(ErrorCode.ErrorCodeType.MONGO_DB_ERROR, e.getCode());
     }
 
-    public InvalidTravelProductException(UUID travelRequirementId, ErrorCode errorCode) {
+    public InvalidTravelProductException(UUID travelProductId, ErrorCode errorCode) {
         super();
-        this.context = travelRequirementId.toString();
+        this.context = travelProductId.toString();
         this.errorCode = errorCode;
     }
 

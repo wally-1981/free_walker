@@ -170,9 +170,9 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         return result;
     }
 
-    public UUID createProduct(TravelProduct travelProduct) throws InvalidTravelProductException,
+    public UUID createProduct(UUID anctId, TravelProduct travelProduct) throws InvalidTravelProductException,
         DatabaseAccessException {
-        if (travelProduct == null) {
+        if (anctId == null || travelProduct == null) {
             throw new NullPointerException();
         }
 
@@ -231,7 +231,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         JsonObject productJs = travelProduct.getCore().toJSON();
 
         try {
-            WriteResult wr = storeProduct(productJs);
+            WriteResult wr = storeProduct(productJs, anctId);
             LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_create_record, wr.toString()));
         } catch (MongoException e) {
             throw new DatabaseAccessException(e);
@@ -678,7 +678,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
     }
 
-    public UUID updateProductStatus(UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
+    public UUID updateProductStatus(UUID accountId, UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
         throws InvalidTravelProductException, DatabaseAccessException {
         if (productId == null || newStatus == null) {
             throw new NullPointerException();
@@ -700,9 +700,16 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             }
         }
 
+        if (!accountId.toString().equals(travelProduct.get(Introspection.JSONKeys.OWNER))) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(
+                LocalMessages.illegal_submit_product_operation, productId, accountId), productId);
+        }
+
         try {
             travelProduct.put(Introspection.JSONKeys.STATUS, newStatus.enumValue());
-            DBObject productQuery = QueryBuilder.start(DAOConstants.mongo_database_pk).is(productId.toString()).get();
+            BasicDBObject query1 = new BasicDBObject(DAOConstants.mongo_database_pk, productId.toString());
+            BasicDBObject query2 = new BasicDBObject(Introspection.JSONKeys.OWNER, accountId.toString());
+            BasicDBObject productQuery = new BasicDBObject("$and", new BasicDBObject[] { query1, query2 });
             WriteResult wr = productColls.update(productQuery, travelProduct, false, false, WriteConcern.MAJORITY);
             LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
@@ -712,11 +719,12 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         return productId;
     }
 
-    private WriteResult storeProduct(JsonObject product) {
+    private WriteResult storeProduct(JsonObject product, UUID accountId) {
         String productId = product.getString(Introspection.JSONKeys.UUID);
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
         DBObject proposalBs = (DBObject) JSON.parse(product.toString());
         proposalBs.put(DAOConstants.mongo_database_pk, productId);
+        proposalBs.put(Introspection.JSONKeys.OWNER, accountId.toString());
         return productColls.insert(proposalBs, WriteConcern.MAJORITY);
     }
 

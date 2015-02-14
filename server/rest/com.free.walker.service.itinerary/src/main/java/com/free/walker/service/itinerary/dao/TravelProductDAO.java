@@ -20,12 +20,13 @@ public interface TravelProductDAO extends HealthyDAO {
      * Create the specified product, and all attached initial product items will
      * be created either.
      * 
+     * @param accountId
      * @param travelProduct
      * @return
      * @throws InvalidTravelProductException
      * @throws DatabaseAccessException
      */
-    public UUID createProduct(TravelProduct travelProduct) throws InvalidTravelProductException,
+    public UUID createProduct(UUID accountId, TravelProduct travelProduct) throws InvalidTravelProductException,
         DatabaseAccessException;
 
     /**
@@ -169,6 +170,7 @@ public interface TravelProductDAO extends HealthyDAO {
      * Update the product status from the old status to the new status for the
      * product given by the product identifier.
      * 
+     * @param accountId
      * @param productId
      * @param oldStatus
      * @param newStatus
@@ -176,7 +178,7 @@ public interface TravelProductDAO extends HealthyDAO {
      * @throws InvalidTravelProductException
      * @throws DatabaseAccessException
      */
-    public UUID updateProductStatus(UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
+    public UUID updateProductStatus(UUID accountId, UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
         throws InvalidTravelProductException, DatabaseAccessException;
 
     /**

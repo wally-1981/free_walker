@@ -54,6 +54,23 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
+    public void testCreateTravelProposalWithDup() throws InvalidTravelReqirementException, DatabaseAccessException {
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
+        ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
+        TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
+
+        UUID proposalId = travelRequirementDAO.createProposal(
+            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        assertNotNull(proposalId);
+
+        thrown.expect(InvalidTravelReqirementException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.existed_travel_requirement,
+            travelProposal.getUUID()));
+        travelRequirementDAO.createProposal(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+    }
+
+    @Test
     public void testCreateTravelProposal() throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);

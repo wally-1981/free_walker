@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.free.walker.service.itinerary.Serializable;
+import com.free.walker.service.itinerary.primitive.ProductStatus;
 
 public interface TravelProduct extends Serializable {
     public UUID getProductUUID();
@@ -11,6 +12,8 @@ public interface TravelProduct extends Serializable {
     public UUID getProposalUUID();
 
     public TravelProduct getCore();
+
+    public ProductStatus getStatus();
 
     public double getCost();
 
