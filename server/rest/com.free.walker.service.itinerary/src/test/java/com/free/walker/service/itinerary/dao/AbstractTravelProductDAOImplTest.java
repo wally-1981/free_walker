@@ -28,6 +28,7 @@ import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
 import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.primitive.ProductStatus;
 import com.free.walker.service.itinerary.primitive.QueryTemplate;
 import com.free.walker.service.itinerary.product.Bidding;
 import com.free.walker.service.itinerary.product.Bidding.BiddingItem;
@@ -555,6 +556,58 @@ public abstract class AbstractTravelProductDAOImplTest {
         productId = travelProductDAO.setBidding(productId, bidding);
         Bidding bidding = travelProductDAO.unsetBidding(productId);
         assertNotNull(bidding);
+    }
+
+    @Test
+    public void testUpdateProductStatusWithNullProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.updateProductStatus(null, null, null);
+    }
+
+    @Test
+    public void testUpdateProductStatusWithNullNewStatus() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        thrown.expect(NullPointerException.class);
+        travelProductDAO.updateProductStatus(productId, null, null);
+    }
+
+    @Test
+    public void testUpdateProductStatusWithWrongProductId() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID wrongProductId = UUID.randomUUID();
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, wrongProductId));
+        travelProductDAO.updateProductStatus(wrongProductId, null, ProductStatus.PUBLIC_STATUS);
+    }
+
+    @Test
+    public void testUpdateProductStatusWithoutOldStatus() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        productId = travelProductDAO.updateProductStatus(productId, null, ProductStatus.PUBLIC_STATUS);
+        TravelProduct updatedProduct = travelProductDAO.getProduct(productId);
+        ProductStatus currentProductStatus = updatedProduct.getStatus();
+        assertNotNull(currentProductStatus);
+        assertEquals(ProductStatus.PUBLIC_STATUS, currentProductStatus);
+    }
+
+    @Test
+    public void testUpdateProductStatusWithMissOldStatus() throws InvalidTravelProductException,
+        DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        thrown.expect(InvalidTravelProductException.class);
+        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.miss_travel_product_status, productId,
+            ProductStatus.PRIVATE_PRODUCT.enumValue(), ProductStatus.DRAFT_PRODUCT.enumValue()));
+        travelProductDAO.updateProductStatus(productId, ProductStatus.PRIVATE_PRODUCT, ProductStatus.PUBLIC_STATUS);
+    }
+
+    @Test
+    public void testUpdateProductStatus() throws InvalidTravelProductException, DatabaseAccessException {
+        UUID productId = travelProductDAO.createProduct(travelProduct);
+        productId = travelProductDAO.updateProductStatus(travelProduct.getProductUUID(), ProductStatus.DRAFT_PRODUCT,
+            ProductStatus.PRIVATE_PRODUCT);
+        TravelProduct updatedProduct = travelProductDAO.getProduct(productId);
+        ProductStatus currentProductStatus = updatedProduct.getStatus();
+        assertNotNull(currentProductStatus);
+        assertEquals(ProductStatus.PRIVATE_PRODUCT, currentProductStatus);
     }
 
     @Test

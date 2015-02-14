@@ -45,6 +45,7 @@ import com.free.walker.service.itinerary.dao.TravelProductDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
 import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.primitive.ProductStatus;
 import com.free.walker.service.itinerary.primitive.QueryTemplate;
 import com.free.walker.service.itinerary.product.Bidding;
 import com.free.walker.service.itinerary.product.HotelItem;
@@ -675,6 +676,40 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             JsonObject bidding = Json.createReader(new StringReader(biddingBs.toString())).readObject();
             return new Bidding().fromJSON(bidding);
         }
+    }
+
+    public UUID updateProductStatus(UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
+        throws InvalidTravelProductException, DatabaseAccessException {
+        if (productId == null || newStatus == null) {
+            throw new NullPointerException();
+        }
+
+        DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
+        DBObject travelProduct = productColls.findOne(productId.toString());
+        if (travelProduct == null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
+                productId), productId);
+        }
+        if (oldStatus != null) {
+            Integer statusEnum = (Integer) travelProduct.get(Introspection.JSONKeys.STATUS);
+            ProductStatus currentStatus = ProductStatus.valueOf(statusEnum);
+            if (!oldStatus.equals(currentStatus)) {
+                throw new InvalidTravelProductException(LocalMessages.getMessage(
+                    LocalMessages.miss_travel_product_status, productId, oldStatus.enumValue(),
+                    currentStatus.enumValue()));
+            }
+        }
+
+        try {
+            travelProduct.put(Introspection.JSONKeys.STATUS, newStatus.enumValue());
+            DBObject productQuery = QueryBuilder.start(DAOConstants.mongo_database_pk).is(productId.toString()).get();
+            WriteResult wr = productColls.update(productQuery, travelProduct, false, false, WriteConcern.MAJORITY);
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
+        } catch (MongoException e) {
+            throw new DatabaseAccessException(e);
+        }
+
+        return productId;
     }
 
     private WriteResult storeProduct(JsonObject product) {

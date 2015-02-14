@@ -16,10 +16,12 @@ import com.free.walker.service.itinerary.dao.TravelProductDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
 import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.primitive.ProductStatus;
 import com.free.walker.service.itinerary.primitive.QueryTemplate;
 import com.free.walker.service.itinerary.product.Bidding;
 import com.free.walker.service.itinerary.product.HotelItem;
 import com.free.walker.service.itinerary.product.ResortItem;
+import com.free.walker.service.itinerary.product.SimpleTravelProduct;
 import com.free.walker.service.itinerary.product.TrafficItem;
 import com.free.walker.service.itinerary.product.TravelProduct;
 import com.free.walker.service.itinerary.product.TravelProductItem;
@@ -280,6 +282,32 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         }
 
         return travelProductBiddings.remove(productId);
+    }
+
+    public UUID updateProductStatus(UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
+        throws InvalidTravelProductException, DatabaseAccessException {
+        if (productId == null || newStatus == null) {
+            throw new NullPointerException();
+        }
+
+        TravelProduct travelProduct = travelProducts.get(productId);
+        if (travelProduct == null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.missing_travel_product,
+                productId), productId);
+        }
+
+        if (oldStatus != null) {
+            ProductStatus currentStatus = travelProduct.getStatus();
+            if (!oldStatus.equals(currentStatus)) {
+                throw new InvalidTravelProductException(LocalMessages.getMessage(
+                    LocalMessages.miss_travel_product_status, productId, oldStatus.enumValue(),
+                    currentStatus.enumValue()));
+            }
+        }
+
+        ((SimpleTravelProduct) travelProduct.getCore()).setStatus(newStatus);
+
+        return productId;
     }
 
     public UUID publishProduct(TravelProduct product, TravelProposal proposal) throws InvalidTravelProductException, DatabaseAccessException {

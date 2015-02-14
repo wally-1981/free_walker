@@ -8,6 +8,7 @@ import javax.json.JsonObject;
 
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
+import com.free.walker.service.itinerary.primitive.ProductStatus;
 import com.free.walker.service.itinerary.primitive.QueryTemplate;
 import com.free.walker.service.itinerary.product.Bidding;
 import com.free.walker.service.itinerary.product.TravelProduct;
@@ -163,6 +164,20 @@ public interface TravelProductDAO extends HealthyDAO {
      * @throws DatabaseAccessException
      */
     public Bidding unsetBidding(UUID productId) throws InvalidTravelProductException, DatabaseAccessException;
+
+    /**
+     * Update the product status from the old status to the new status for the
+     * product given by the product identifier.
+     * 
+     * @param productId
+     * @param oldStatus
+     * @param newStatus
+     * @return
+     * @throws InvalidTravelProductException
+     * @throws DatabaseAccessException
+     */
+    public UUID updateProductStatus(UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
+        throws InvalidTravelProductException, DatabaseAccessException;
 
     /**
      * Publish the product to the search engine for indexing.
