@@ -275,6 +275,12 @@ public class ProductService {
         }
     }
 
+    /**
+     * <b>GET</b><br>
+     * <br>
+     * Retrieve the travel products of the current account.<br>
+     * <br>
+     */
     @GET
     @Context
     @Path("/products/my/{statusId}/")
