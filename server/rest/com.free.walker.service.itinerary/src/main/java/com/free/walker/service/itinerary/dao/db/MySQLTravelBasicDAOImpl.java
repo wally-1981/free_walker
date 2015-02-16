@@ -144,6 +144,14 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
 
     public List<StringTriple> getLocationIndexTermsByLocatoinIds(List<String> locationIds)
         throws DatabaseAccessException {
+        if (locationIds == null) {
+            throw new NullPointerException();
+        }
+
+        if (locationIds.isEmpty()) {
+            return new ArrayList<StringTriple>();
+        }
+
         SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
         try {
             BasicMapper basicMapper = session.getMapper(BasicMapper.class);
@@ -158,6 +166,14 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
 
     public List<StringTriple> getRegionIndexTermsByRegionalLocatoinIds(List<String> locationIds)
         throws DatabaseAccessException {
+        if (locationIds == null) {
+            throw new NullPointerException();
+        }
+
+        if (locationIds.isEmpty()) {
+            return new ArrayList<StringTriple>();
+        }
+
         SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
         try {
             BasicMapper basicMapper = session.getMapper(BasicMapper.class);
@@ -702,6 +718,14 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
     }
 
     public void markAgencyCandidatesAsElected(String proposalId, List<String> agencyIds) throws DatabaseAccessException {
+        if (agencyIds == null) {
+            throw new NullPointerException();
+        }
+
+        if (agencyIds.isEmpty()) {
+            return;
+        }
+
         SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
         try {
             BasicMapper basicMapper = session.getMapper(BasicMapper.class);

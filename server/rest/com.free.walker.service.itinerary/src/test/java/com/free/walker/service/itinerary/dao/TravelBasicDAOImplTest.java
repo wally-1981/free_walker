@@ -357,6 +357,19 @@ public class TravelBasicDAOImplTest {
     }
 
     @Test
+    public void testGetLocationIndexTermsByLocatoinIdsWithNull() throws DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelBasicDAO.getLocationIndexTermsByLocatoinIds(null);
+    }
+
+    @Test
+    public void testGetLocationIndexTermsByLocatoinIdsWithEmpty() throws DatabaseAccessException {
+        List<StringTriple> names = travelBasicDAO.getLocationIndexTermsByLocatoinIds(new ArrayList<String>());
+        assertNotNull(names);
+        assertTrue(names.isEmpty());
+    }
+
+    @Test
     public void testGetLocationIndexTermsByLocatoinIds() throws DatabaseAccessException {
         List<String> locationIds = new ArrayList<String>();
         locationIds.add("689ddfcdeffd4937b56707c4c8907378");
@@ -382,6 +395,19 @@ public class TravelBasicDAOImplTest {
         assertTrue(nameSet.contains("亚利桑那"));
         assertTrue(nameSet.contains("yalisangna"));
         assertTrue(nameSet.contains("Arizona"));
+    }
+
+    @Test
+    public void testGetRegionIndexTermsByRegionalLocatoinIdsWithNull() throws DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelBasicDAO.getRegionIndexTermsByRegionalLocatoinIds(null);
+    }
+
+    @Test
+    public void testGetRegionIndexTermsByRegionalLocatoinIdsWithEmpty() throws DatabaseAccessException {
+        List<StringTriple> names = travelBasicDAO.getRegionIndexTermsByRegionalLocatoinIds(new ArrayList<String>());
+        assertNotNull(names);
+        assertTrue(names.isEmpty());
     }
 
     @Test
@@ -955,6 +981,18 @@ public class TravelBasicDAOImplTest {
         assertNotNull(agenciesAll);
         assertFalse(agenciesAll.isEmpty());
         assertEquals(candidates.size(), agenciesAll.size());
+    }
+
+    @Test
+    public void testMarkAgencyCandidatesAsElectedWithNullAgency() throws DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelBasicDAO.markAgencyCandidatesAsElected(UUID.randomUUID().toString(), null);
+    }
+
+    @Test
+    public void testMarkAgencyCandidatesAsElectedWithEmptyAgency() throws DatabaseAccessException {
+        travelBasicDAO.markAgencyCandidatesAsElected(UUID.randomUUID().toString(), new ArrayList<String>());
+        assertTrue(true);
     }
 
     @Test
