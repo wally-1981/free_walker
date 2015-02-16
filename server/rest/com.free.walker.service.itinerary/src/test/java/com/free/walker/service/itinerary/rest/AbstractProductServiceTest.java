@@ -16,6 +16,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.ProcessingException;
 
+import org.apache.cxf.helpers.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -31,11 +32,14 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.ibm.icu.util.Calendar;
 
 public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractProductServiceTest.class);
     private HttpClient httpClient;
 
     private JsonObject proposal;
@@ -99,12 +103,15 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                 post.setEntity(new StringEntity(proposal.toString(), ContentType.APPLICATION_JSON));
                 post.setURI(new URI(itineraryServiceUrlStr + "proposals/"));
                 post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-
+                post.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_ACCOUNT);
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
                     JsonObject proposal = Json.createReader(response.getEntity().getContent()).readObject();
                     proposalId = proposal.getString(Introspection.JSONKeys.UUID);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -271,6 +278,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             post.setEntity(new StringEntity(product.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(productServiceUrlStr + "products/"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            post.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -279,6 +287,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     assertNotNull(product);
                     productId = product.getString(Introspection.JSONKeys.UUID);
                     assertNotNull(productId);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -297,6 +308,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -312,6 +324,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
 
                     JsonArray productItems = product.getJsonArray(Introspection.JSONKeys.ITEMS);
                     assertEquals(0, productItems.size());
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -330,6 +345,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + proposalId + "?idType=proposal"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -352,6 +368,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                         JsonArray productItems = product.getJsonArray(Introspection.JSONKeys.ITEMS);
                         assertEquals(0, productItems.size());
                     }
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -370,6 +389,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/hotels"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -391,6 +411,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                             hotelItem.getJsonNumber(Introspection.JSONKeys.DEPARTURE_DATETIME).longValue());
                         assertNotNull(hotelItem.getJsonObject(Introspection.JSONKeys.HOTEL));
                     }
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -409,6 +432,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/traffics"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -428,6 +452,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                             trafficItem.getJsonNumber(Introspection.JSONKeys.DATE).longValue());
                         assertNotNull(trafficItem.getJsonObject(Introspection.JSONKeys.TRAFFIC));
                     }
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -446,6 +473,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/resorts"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -465,6 +493,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                             resortItem.getJsonNumber(Introspection.JSONKeys.DATE).longValue());
                         assertNotNull(resortItem.getJsonObject(Introspection.JSONKeys.RESORT));
                     }
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -483,6 +514,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/items"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -499,6 +531,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                         assertEquals(Introspection.JSONValues.SUB_TYPE_TRIV_ITEM,
                             trivItem.getString(Introspection.JSONKeys.SUB_TYPE));
                     }
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -517,6 +552,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/bidding"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -538,6 +574,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             post.setEntity(new StringEntity(newHotel.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(productServiceUrlStr + "products/" + productId + "/hotels"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            post.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -546,6 +583,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     assertNotNull(hotelItem);
                     assertNotNull(hotelItem.getString(Introspection.JSONKeys.UUID));
                     assertFalse(hotelItem.getString(Introspection.JSONKeys.UUID).equals(hotelItemId));
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -565,6 +605,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             post.setEntity(new StringEntity(newTraffic.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(productServiceUrlStr + "products/" + productId + "/traffics"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            post.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -573,6 +614,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     assertNotNull(trafficItem);
                     assertNotNull(trafficItem.getString(Introspection.JSONKeys.UUID));
                     assertFalse(trafficItem.getString(Introspection.JSONKeys.UUID).equals(trafficItemId));
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -592,6 +636,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             post.setEntity(new StringEntity(newResort.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(productServiceUrlStr + "products/" + productId + "/resorts"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            post.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -600,6 +645,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     assertNotNull(resortItem);
                     assertNotNull(resortItem.getString(Introspection.JSONKeys.UUID));
                     assertFalse(resortItem.getString(Introspection.JSONKeys.UUID).equals(resortItemId));
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -619,6 +667,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             post.setEntity(new StringEntity(newTriv.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(productServiceUrlStr + "products/" + productId + "/items"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            post.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -627,6 +676,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     assertNotNull(trivItem);
                     assertNotNull(trivItem.getString(Introspection.JSONKeys.UUID));
                     assertFalse(trivItem.getString(Introspection.JSONKeys.UUID).equals(trivItemId));
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -645,6 +697,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/hotels"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -680,6 +733,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                             hotelItem.getJsonNumber(Introspection.JSONKeys.DEPARTURE_DATETIME).longValue());
                         assertNotNull(hotelItem.getJsonObject(Introspection.JSONKeys.HOTEL));
                     }
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -698,6 +754,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/traffics"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -729,6 +786,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                             trafficItem.getJsonNumber(Introspection.JSONKeys.DATE).longValue());
                         assertNotNull(trafficItem.getJsonObject(Introspection.JSONKeys.TRAFFIC));
                     }
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -747,6 +807,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/resorts"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -778,6 +839,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                             resortItem.getJsonNumber(Introspection.JSONKeys.DATE).longValue());
                         assertNotNull(resortItem.getJsonObject(Introspection.JSONKeys.RESORT));
                     }
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -796,6 +860,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/items"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -821,6 +886,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                         assertEquals(Introspection.JSONValues.SUB_TYPE_TRIV_ITEM,
                             trivItem.getString(Introspection.JSONKeys.SUB_TYPE));
                     }
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -840,12 +908,16 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             post.setEntity(new StringEntity(bidding.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(productServiceUrlStr + "products/" + productId + "/bidding"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            post.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
                     JsonObject biddingItem = Json.createReader(response.getEntity().getContent()).readObject();
                     assertNotNull(biddingItem);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -864,6 +936,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(productServiceUrlStr + "products/" + productId + "/hotels/" + hotelItemId));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            delete.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -884,6 +957,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/bidding"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -909,6 +983,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(productServiceUrlStr + "products/" + productId + "/bidding"));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            delete.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -916,6 +991,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     JsonObject bidding = Json.createReader(response.getEntity().getContent()).readObject();
                     assertNotNull(bidding);
                     assertEquals(productId, bidding.getString(Introspection.JSONKeys.UUID));
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -934,6 +1012,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(productServiceUrlStr + "products/" + productId + "/hotels/" + hotelItemId));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            delete.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -941,6 +1020,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     JsonObject hotelItem = Json.createReader(response.getEntity().getContent()).readObject();
                     assertNotNull(hotelItem);
                     assertEquals(hotelItemId, hotelItem.getString(Introspection.JSONKeys.UUID));
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -959,6 +1041,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(productServiceUrlStr + "products/" + productId + "/traffics/" + trafficItemId));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            delete.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -966,6 +1049,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     JsonObject trafficItem = Json.createReader(response.getEntity().getContent()).readObject();
                     assertNotNull(trafficItem);
                     assertEquals(trafficItemId, trafficItem.getString(Introspection.JSONKeys.UUID));
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -984,6 +1070,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(productServiceUrlStr + "products/" + productId + "/resorts/" + resortItemId));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            delete.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -991,6 +1078,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     JsonObject resortItem = Json.createReader(response.getEntity().getContent()).readObject();
                     assertNotNull(resortItem);
                     assertEquals(resortItemId, resortItem.getString(Introspection.JSONKeys.UUID));
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -1009,6 +1099,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(productServiceUrlStr + "products/" + productId + "/items/" + trivItemId));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            delete.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1016,6 +1107,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     JsonObject trivItem = Json.createReader(response.getEntity().getContent()).readObject();
                     assertNotNull(trivItem);
                     assertEquals(trivItemId, trivItem.getString(Introspection.JSONKeys.UUID));
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -1034,6 +1128,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/hotels"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1056,6 +1151,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                         assertNotNull(hotelItem.getJsonObject(Introspection.JSONKeys.HOTEL));
                         assertFalse(hotelItem.getString(Introspection.JSONKeys.UUID).equals(hotelItemId));
                     }
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -1074,6 +1172,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/traffics"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1094,6 +1193,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                         assertNotNull(trafficItem.getJsonObject(Introspection.JSONKeys.TRAFFIC));
                         assertFalse(trafficItem.getString(Introspection.JSONKeys.UUID).equals(trafficItemId));
                     }
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -1112,6 +1214,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/resorts"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1132,6 +1235,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                         assertNotNull(resortItem.getJsonObject(Introspection.JSONKeys.RESORT));
                         assertFalse(resortItem.getString(Introspection.JSONKeys.UUID).equals(resortItemId));
                     }
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -1150,6 +1256,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/items"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1173,6 +1280,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                         assertEquals("随身Wifi", bidding.getString(Introspection.JSONKeys.TITLE));
                         assertEquals(108.8, bidding.getJsonNumber(Introspection.JSONKeys.PRICE).doubleValue(), 0.1);
                     }
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -1191,6 +1301,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpPost post = new HttpPost();
             post.setURI(new URI(productServiceUrlStr + "products/public/" + productId));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            post.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1223,6 +1334,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpPut put = new HttpPut();
             put.setURI(new URI(productServiceUrlStr + "products/" + productId));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            put.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1232,6 +1344,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     String productUuid = product.getString(Introspection.JSONKeys.UUID);
                     assertNotNull(productUuid);
                     assertEquals(productId, productUuid);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -1264,6 +1379,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpPost post = new HttpPost();
             post.setURI(new URI(productServiceUrlStr + "products/public/" + productId));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            post.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1273,6 +1389,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     String productUuid = product.getString(Introspection.JSONKeys.UUID);
                     assertNotNull(productUuid);
                     assertEquals(productId, productUuid);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -1304,6 +1423,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            put.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1315,6 +1435,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     assertTrue(hitsNumber > 0);
                     assertNotNull(hits);
                     assertTrue(hits.size() > 0);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -1355,6 +1478,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            put.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1366,6 +1490,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     assertTrue(hitsNumber > 0);
                     assertNotNull(hits);
                     assertTrue(hits.size() > 0);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -1390,6 +1517,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            put.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1401,6 +1529,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     assertTrue(hitsNumber > 0);
                     assertNotNull(hits);
                     assertTrue(hits.size() > 0);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -1430,6 +1561,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            put.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1441,6 +1573,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     assertTrue(hitsNumber > 0);
                     assertNotNull(hits);
                     assertTrue(hits.size() > 0);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -1467,6 +1602,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            put.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1478,6 +1614,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     assertTrue(hitsNumber > 0);
                     assertNotNull(hits);
                     assertTrue(hits.size() > 0);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -1502,6 +1641,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            put.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1513,6 +1653,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     assertTrue(hitsNumber > 0);
                     assertNotNull(hits);
                     assertTrue(hits.size() > 0);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -1542,6 +1685,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            put.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1553,6 +1697,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     assertTrue(hitsNumber > 0);
                     assertNotNull(hits);
                     assertTrue(hits.size() > 0);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -1577,6 +1724,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            put.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1588,6 +1736,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     assertTrue(hitsNumber == 0 || hitsNumber == 1000);
                     assertNotNull(hits);
                     assertTrue(hits.size() == 0 || hits.size() == 1);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -1611,6 +1762,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            put.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1636,6 +1788,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            put.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1663,6 +1816,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            put.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1683,6 +1837,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(productServiceUrlStr + "products/public/" + productId));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            delete.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1692,6 +1847,9 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                     String productUuid = product.getString(Introspection.JSONKeys.UUID);
                     assertNotNull(productUuid);
                     assertEquals(productId, productUuid);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());

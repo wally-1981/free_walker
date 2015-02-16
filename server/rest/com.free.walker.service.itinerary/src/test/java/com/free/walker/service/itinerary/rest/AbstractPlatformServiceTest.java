@@ -2,6 +2,7 @@ package com.free.walker.service.itinerary.rest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URI;
@@ -13,6 +14,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.ProcessingException;
 
+import org.apache.cxf.helpers.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -27,10 +29,13 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.free.walker.service.itinerary.primitive.Introspection;
 
 public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractPlatformServiceTest.class);
     private HttpClient httpClient;
 
     protected String platformServiceUrlStr;
@@ -62,7 +67,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
     @Test
     public void testAll() throws URISyntaxException {
         /*
-         * 获取Web服务自省。
+         * 未认证用户
          */
         {
             HttpGet get = new HttpGet();
@@ -71,9 +76,31 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
+                assertEquals(HttpStatus.UNAUTHORIZED_401, statusCode);
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
+        }
+
+        /*
+         * 获取Web服务自省。
+         */
+        {
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(platformServiceUrlStr + "introspection/"));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
+            try {
+                HttpResponse response = httpClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
                     JsonObject introspection = Json.createReader(response.getEntity().getContent()).readObject();
                     assertNotNull(introspection);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -92,6 +119,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "tags/top/2"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -99,6 +127,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
                     JsonArray tags = Json.createReader(response.getEntity().getContent()).readArray();
                     assertNotNull(tags);
                     assertEquals(2, tags.size());
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -118,6 +149,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             post.setEntity(new StringEntity(agency.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(platformServiceUrlStr + "agencies/"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            post.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -126,6 +158,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
                     assertNotNull(agency);
                     agencyId = agency.getString(Introspection.JSONKeys.UUID);
                     assertNotNull(agencyId);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -144,6 +179,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpPost post = new HttpPost();
             post.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId + "/locations/send/" + sendLocationId));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            post.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -162,6 +198,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpPost post = new HttpPost();
             post.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId + "/locations/recv/" + recvLocationId));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            post.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -180,6 +217,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -192,6 +230,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
                     assertEquals(2, agency.getInt(Introspection.JSONKeys.STAR));
                     assertEquals(87, agency.getInt(Introspection.JSONKeys.HMD));
                     assertEquals(9999, agency.getInt(Introspection.JSONKeys.EXP));
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -210,6 +251,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId + "/locations?sendRecv=0"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -219,6 +261,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
                     JsonArray locationIds = locationJs.getJsonArray(Introspection.JSONKeys.LOCATION);
                     assertNotNull(locationIds);
                     assertEquals(1, locationIds.size());
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -237,6 +282,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId + "/locations?sendRecv=1"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -246,6 +292,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
                     JsonArray locationIds = locationJs.getJsonArray(Introspection.JSONKeys.LOCATION);
                     assertNotNull(locationIds);
                     assertEquals(1, locationIds.size());
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -264,6 +313,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId + "/locations/recv/" + recvLocationId));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            delete.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -282,6 +332,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId + "/locations?sendRecv=1"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -291,6 +342,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
                     JsonArray locationIds = locationJs.getJsonArray(Introspection.JSONKeys.LOCATION);
                     assertNotNull(locationIds);
                     assertEquals(0, locationIds.size());
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -309,6 +363,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            delete.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -316,6 +371,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
                     JsonObject agency = Json.createReader(response.getEntity().getContent()).readObject();
                     assertNotNull(agency);
                     assertEquals(agencyId, agency.getString(Introspection.JSONKeys.UUID));
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -334,6 +392,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -352,6 +411,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId + "/locations?sendRecv=0"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -361,6 +421,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
                     JsonArray locationIds = locationJs.getJsonArray(Introspection.JSONKeys.LOCATION);
                     assertNotNull(locationIds);
                     assertEquals(0, locationIds.size());
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
@@ -375,6 +438,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId + "/locations?sendRecv=1"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
             try {
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -384,6 +448,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
                     JsonArray locationIds = locationJs.getJsonArray(Introspection.JSONKeys.LOCATION);
                     assertNotNull(locationIds);
                     assertEquals(0, locationIds.size());
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
                 } else {
                     JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
                     throw new ProcessingException(error.toString());
