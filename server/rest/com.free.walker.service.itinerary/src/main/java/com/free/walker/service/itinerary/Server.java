@@ -17,7 +17,7 @@ import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImpl;
-import com.free.walker.service.itinerary.handler.SimpleSecurityContextInInterceptor;
+import com.free.walker.service.itinerary.handler.AccountRecognitionInterceptor;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
 import com.free.walker.service.itinerary.rest.ItineraryService;
 import com.free.walker.service.itinerary.rest.PlatformService;
@@ -71,7 +71,7 @@ public class Server {
             throw new IllegalArgumentException();
         }
 
-        sf.getInInterceptors().add(new SimpleSecurityContextInInterceptor());
+        sf.getInInterceptors().add(new AccountRecognitionInterceptor());
 
         sf.create();
 
