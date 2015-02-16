@@ -198,7 +198,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
 
         try {
             WriteResult wr = storeProposalBid(travelProposalId, Json.createArrayBuilder().build(), account.getUuid());
-            LOG.info(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
+            LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
         } catch (MongoException e) {
             throw new InvalidTravelReqirementException(travelProposalId, e);
         }
