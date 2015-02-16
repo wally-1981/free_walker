@@ -69,7 +69,7 @@ public class Account implements Serializable {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.MOBILE, mobile));
         } else {
-            this.login = mobile;
+            this.mobile = mobile;
         }
 
         String email = jsObject.getString(Introspection.JSONKeys.EMAIL, null);
