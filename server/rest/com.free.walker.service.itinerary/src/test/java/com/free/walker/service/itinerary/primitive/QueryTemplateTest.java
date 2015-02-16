@@ -22,7 +22,9 @@ public class QueryTemplateTest {
         assertTrue(QueryTemplate.isValid(1));
         assertTrue(QueryTemplate.isValid(2));
         assertTrue(QueryTemplate.isValid(3));
-        assertFalse(QueryTemplate.isValid(4));
+        assertTrue(QueryTemplate.isValid(4));
+        assertTrue(QueryTemplate.isValid(5));
+        assertFalse(QueryTemplate.isValid(6));
     }
 
     @Test
@@ -30,6 +32,8 @@ public class QueryTemplateTest {
         assertEquals(1, QueryTemplate.TEST_TEMPLACE.enumValue());
         assertEquals(2, QueryTemplate.PRODUCT_DEPARTURE.enumValue());
         assertEquals(3, QueryTemplate.PRODUCT_DESTINATION.enumValue());
+        assertEquals(4, QueryTemplate.PRODUCT_OWNER.enumValue());
+        assertEquals(5, QueryTemplate.PROPOSAL_OWNER.enumValue());
     }
 
     @Test
@@ -37,5 +41,7 @@ public class QueryTemplateTest {
         assertEquals("test_template", QueryTemplate.TEST_TEMPLACE.nameValue());
         assertEquals("product_departure", QueryTemplate.PRODUCT_DEPARTURE.nameValue());
         assertEquals("product_destination", QueryTemplate.PRODUCT_DESTINATION.nameValue());
+        assertEquals("product_owner", QueryTemplate.PRODUCT_OWNER.nameValue());
+        assertEquals("proposal_owner", QueryTemplate.PROPOSAL_OWNER.nameValue());
     }
 }

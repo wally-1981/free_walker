@@ -95,6 +95,8 @@ public class Introspection {
         public static final String PRICE = "price";
         public static final String BIDDING = "bidding";
         public static final String FREQUENCY = "frequency";
+        public static final String PRODUCT_OWNER = "product_owner";
+        public static final String PROPOSAL_OWNER = "proposal_owner";
 
         public static final String ERROR_CODE = "error_code";
         public static final String ERROR_TYPE = "error_type";
@@ -169,9 +171,13 @@ public class Introspection {
         public static final int TEST_TEMPLACE_AS_INT = QueryTemplate.TEST_TEMPLACE.enumValue();
         public static final int PRODUCT_DEPARTURE_TEMPLATE_AS_INT = QueryTemplate.PRODUCT_DEPARTURE.enumValue();
         public static final int PRODUCT_DESTINATION_TEMPLATE_AS_INT = QueryTemplate.PRODUCT_DESTINATION.enumValue();
+        public static final int PRODUCT_OWNER_TEMPLATE_AS_INT = QueryTemplate.PRODUCT_OWNER.enumValue();
+        public static final int PROPOSAL_OWNER_TEMPLATE_AS_INT = QueryTemplate.PROPOSAL_OWNER.enumValue();
         public static final String TEST_TEMPLACE_AS_STR = QueryTemplate.TEST_TEMPLACE.nameValue();
         public static final String PRODUCT_DEPARTURE_TEMPLATE_AS_STR = QueryTemplate.PRODUCT_DEPARTURE.nameValue();
         public static final String PRODUCT_DESTINATION_TEMPLATE_AS_STR = QueryTemplate.PRODUCT_DESTINATION.nameValue();
+        public static final String PRODUCT_OWNER_TEMPLATE_AS_STR = QueryTemplate.PRODUCT_OWNER.nameValue();
+        public static final String PROPOSAL_OWNER_TEMPLATE_AS_STR = QueryTemplate.PROPOSAL_OWNER.nameValue();
 
         public static final int SORT_LONG_TYPE_AS_INT = SortType.LONG.enumValue();
         public static final int SORT_INT_TYPE_AS_INT = SortType.INT.enumValue();

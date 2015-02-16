@@ -26,6 +26,9 @@ public class DAOConstants {
     public static final String elasticsearch_product_index = "products";
     public static final String elasticsearch_product_type = "product";
     public static final String elasticsearch_term = "term";
+    public static final String elasticsearch_product_status = "product_status";
+    public static final String elasticsearch_proposal_owner = "proposal_owner";
+    public static final String elasticsearch_product_owner = "product_owner";
     public static final String elasticsearch_from = "from";
     public static final String elasticsearch_size = "size";
     public static final String elasticsearch_sort_key = "sort_key";

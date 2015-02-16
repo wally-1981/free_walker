@@ -71,7 +71,7 @@ public class SearchCriteriaTest {
 
         JsonObjectBuilder jsBuilder7 = Json.createObjectBuilder();
         jsBuilder7.add(Introspection.JSONKeys.TERM, "find me");
-        jsBuilder7.add(Introspection.JSONKeys.TEMPLATE, 4);
+        jsBuilder7.add(Introspection.JSONKeys.TEMPLATE, 6);
         assertFalse(SearchCriteria.validate(jsBuilder7.build()));
 
         JsonObjectBuilder jsBuilder8 = Json.createObjectBuilder();
