@@ -196,6 +196,7 @@ public class Introspection {
 
     public static class TestValues {
         public static final String DEFAULT_ACCOUNT = Constants.DEFAULT_ACCOUNT.getUuid();
+        public static final String DEFAULT_AGENCY_ACCOUNT = Constants.DEFAULT_AGENCY_ACCOUNT.getUuid();
         public static final String DEFAULT_PROPOSAL_TITLE = Constants.NEW_PROPOSAL;
     }
 

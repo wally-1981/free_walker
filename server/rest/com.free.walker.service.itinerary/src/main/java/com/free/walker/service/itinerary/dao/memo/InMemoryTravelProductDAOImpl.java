@@ -13,11 +13,15 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.Account;
+import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.TravelProductDAO;
+import com.free.walker.service.itinerary.dao.TravelRequirementDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
+import com.free.walker.service.itinerary.primitive.AccountType;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.primitive.ProductStatus;
 import com.free.walker.service.itinerary.primitive.QueryTemplate;
@@ -37,6 +41,8 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
     protected Map<UUID, Bidding> travelProductBiddings;
     protected Map<String, Set<TravelProduct>> travelProductsByAccount;
 
+    private TravelRequirementDAO travelRequirementDao;
+
     private static class SingletonHolder {
         private static final TravelProductDAO INSTANCE = new InMemoryTravelProductDAOImpl();
     }
@@ -46,6 +52,7 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         travelProductItems = new HashMap<UUID, List<TravelProductItem>>();
         travelProductBiddings = new HashMap<UUID, Bidding>();
         travelProductsByAccount = new HashMap<String, Set<TravelProduct>>();
+        travelRequirementDao = DAOFactory.getTravelRequirementDAO(InMemoryTravelRequirementDAOImpl.class.getName());
     }
 
     public static TravelProductDAO getInstance() {
@@ -56,9 +63,9 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         return true;
     }
 
-    public UUID createProduct(UUID anctId, TravelProduct travelProduct) throws InvalidTravelProductException,
+    public UUID createProduct(Account account, TravelProduct travelProduct) throws InvalidTravelProductException,
         DatabaseAccessException {
-        if (anctId == null || travelProduct == null) {
+        if (account == null || travelProduct == null) {
             throw new NullPointerException();
         }
 
@@ -77,12 +84,12 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         travelProduct.getTravelProductItems().clear();
         travelProductItems.put(travelProduct.getProductUUID(), items);
 
-        if (travelProductsByAccount.containsKey(anctId.toString())) {
-            travelProductsByAccount.get(anctId.toString()).add(travelProduct);
+        if (travelProductsByAccount.containsKey(account.getUuid())) {
+            travelProductsByAccount.get(account.getUuid()).add(travelProduct);
         } else {
             Set<TravelProduct> products = new HashSet<TravelProduct>();
             products.add(travelProduct);
-            travelProductsByAccount.put(anctId.toString(), products);
+            travelProductsByAccount.put(account.getUuid(), products);
         }
 
         return travelProduct.getProductUUID();
@@ -158,15 +165,27 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         }
 
         List<TravelProduct> result = new ArrayList<TravelProduct>();
-        Set<TravelProduct> products = travelProductsByAccount.get(account.getUuid());
-        if (products == null) {
-            return result;
-        }
 
-        for (Iterator<TravelProduct> iterator = products.iterator(); iterator.hasNext();) {
-            TravelProduct travelProduct = iterator.next();
-            if (status.equals(travelProduct.getStatus())) {
-                result.add(travelProduct);
+        if (AccountType.isTouristAccount(account.getAccountType().ordinal())) {
+            Iterator<TravelProduct> products = travelProducts.values().iterator();
+            while (products.hasNext()) {
+                TravelProduct product = (TravelProduct) products.next();
+                Account proposalOwner = travelRequirementDao.getTravelProposalOwner(product.getProposalUUID());
+                if (status.equals(product.getStatus()) && account.equals(proposalOwner)) {
+                    result.add(product);
+                }
+            }
+        } else {
+            Set<TravelProduct> products = travelProductsByAccount.get(account.getUuid());
+            if (products == null) {
+                return result;
+            }
+
+            for (Iterator<TravelProduct> iterator = products.iterator(); iterator.hasNext();) {
+                TravelProduct travelProduct = iterator.next();
+                if (status.equals(travelProduct.getStatus())) {
+                    result.add(travelProduct);
+                }
             }
         }
 
@@ -320,9 +339,9 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         return travelProductBiddings.remove(productId);
     }
 
-    public UUID updateProductStatus(UUID accountId, UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
+    public UUID updateProductStatus(Account account, UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
         throws InvalidTravelProductException, DatabaseAccessException {
-        if (productId == null || newStatus == null) {
+        if (account == null || productId == null || newStatus == null) {
             throw new NullPointerException();
         }
 
@@ -341,10 +360,10 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
             }
         }
 
-        Set<TravelProduct> products = travelProductsByAccount.get(accountId.toString());
+        Set<TravelProduct> products = travelProductsByAccount.get(account.getUuid());
         if (products == null || !products.contains(travelProduct)) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(
-                LocalMessages.illegal_submit_product_operation, productId, accountId), productId);
+                LocalMessages.illegal_submit_product_operation, productId, account.getUuid()), productId);
         }
 
         ((SimpleTravelProduct) travelProduct.getCore()).setStatus(newStatus);
@@ -359,6 +378,18 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
 
         if (!product.getProposalUUID().equals(proposal.getUUID())) {
             throw new IllegalArgumentException();
+        }
+
+        Account proposalOwner = travelRequirementDao.getTravelProposalOwner(proposal.getUUID());
+        if (proposalOwner == null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.miss_travel_proposal_owner,
+                proposal.getUUID()), proposal.getUUID());
+        }
+
+        Account productOwner = this.getTravelProductOwner(product.getProductUUID());
+        if (productOwner == null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.miss_travel_product_owner,
+                product.getProductUUID()), product.getProductUUID());
         }
 
         travelProducts.put(product.getProductUUID(), product);
@@ -390,5 +421,32 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
             .add(Json.createObjectBuilder().build()));
 
         return resultBuilder.build();
+    }
+
+    public Account getTravelProductOwner(UUID productId) throws DatabaseAccessException {
+        if (productId == null) {
+            throw new NullPointerException();
+        }
+
+        Iterator<String> accountIdIter = travelProductsByAccount.keySet().iterator();
+        while (accountIdIter.hasNext()) {
+            String accountId = (String) accountIdIter.next();
+            Iterator<TravelProduct> productIter = travelProductsByAccount.get(accountId).iterator();
+            while (productIter.hasNext()) {
+                TravelProduct product = (TravelProduct) productIter.next();
+                if (productId.equals(product.getProductUUID())) {
+                    if (Constants.DEFAULT_ACCOUNT.getUuid().equals(accountId)) {
+                        return Constants.DEFAULT_ACCOUNT;
+                    } else if (Constants.DEFAULT_AGENCY_ACCOUNT.getUuid().equals(accountId)) {
+                        return Constants.DEFAULT_AGENCY_ACCOUNT;
+                    } else if (Constants.ADMIN_ACCOUNT.getUuid().equals(accountId)) {
+                        return Constants.ADMIN_ACCOUNT;
+                    } else {
+                        continue;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

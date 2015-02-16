@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -31,9 +32,11 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.script.ScriptService.ScriptType;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.Account;
 import com.free.walker.service.itinerary.basic.Continent;
@@ -43,12 +46,14 @@ import com.free.walker.service.itinerary.dao.DAOConstants;
 import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
 import com.free.walker.service.itinerary.dao.TravelProductDAO;
+import com.free.walker.service.itinerary.dao.TravelRequirementDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
 import com.free.walker.service.itinerary.primitive.AccountType;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.primitive.ProductStatus;
 import com.free.walker.service.itinerary.primitive.QueryTemplate;
+import com.free.walker.service.itinerary.primitive.SortType;
 import com.free.walker.service.itinerary.product.Bidding;
 import com.free.walker.service.itinerary.product.HotelItem;
 import com.free.walker.service.itinerary.product.ResortItem;
@@ -94,6 +99,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
     private DB productDb;
 
     private TravelBasicDAO travelBasicDao;
+    private TravelRequirementDAO travelRequirementDao;
 
     private static class SingletonHolder {
         private static final TravelProductDAO INSTANCE = new MyMongoSQLTravelProductDAOImpl();
@@ -134,6 +140,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
 
         travelBasicDao = DAOFactory.getTravelBasicDAO();
+        travelRequirementDao = DAOFactory.getTravelRequirementDAO(MyMongoSQLTravelRequirementDAOImpl.class.getName());
     }
 
     public boolean pingPersistence() {
@@ -173,9 +180,9 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         return result;
     }
 
-    public UUID createProduct(UUID anctId, TravelProduct travelProduct) throws InvalidTravelProductException,
+    public UUID createProduct(Account account, TravelProduct travelProduct) throws InvalidTravelProductException,
         DatabaseAccessException {
-        if (anctId == null || travelProduct == null) {
+        if (account == null || travelProduct == null) {
             throw new NullPointerException();
         }
 
@@ -234,7 +241,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         JsonObject productJs = travelProduct.getCore().toJSON();
 
         try {
-            WriteResult wr = storeProduct(productJs, anctId);
+            WriteResult wr = storeProduct(productJs, account.getUuid());
             LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_create_record, wr.toString()));
         } catch (MongoException e) {
             throw new DatabaseAccessException(e);
@@ -411,27 +418,39 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             }
             return result;
         } else {
+            Map<String, String> templageParams = new HashMap<String, String>();
+            templageParams.put(DAOConstants.elasticsearch_product_status, String.valueOf(status.enumValue()));
+            templageParams.put(DAOConstants.elasticsearch_from, String.valueOf(0));
+            templageParams.put(DAOConstants.elasticsearch_sort_key, Introspection.JSONKeys.DEADLINE_DATETIME);
+            templageParams.put(DAOConstants.elasticsearch_sort_order, SortOrder.DESC.toString());
+            templageParams.put(DAOConstants.elasticsearch_sort_type, SortType.LONG.nameValue());
+
             SearchResponse response = null;
-            String templateName = null;
-            Map<String, String> templageParams = null;
+            QueryTemplate template = null;
             if (AccountType.isTouristAccount(account.getAccountType().ordinal())) {
+                templageParams.put(DAOConstants.elasticsearch_size, String.valueOf(100));
+                templageParams.put(DAOConstants.elasticsearch_proposal_owner, account.getUuid());
+                template = QueryTemplate.getQueryTemplate(Introspection.JSONValues.PROPOSAL_OWNER_TEMPLATE_AS_INT);
                 response = esClient.prepareSearch(DAOConstants.elasticsearch_product_index)
                     .setTypes(DAOConstants.elasticsearch_product_type)
-                    .setTemplateName(templateName)
+                    .setTemplateName(template.nameValue())
                     .setTemplateType(ScriptType.INDEXED)
                     .setTemplateParams(templageParams)
                     .get();
             } else {
+                templageParams.put(DAOConstants.elasticsearch_size, String.valueOf(500));
+                templageParams.put(DAOConstants.elasticsearch_product_owner, account.getUuid());
+                template = QueryTemplate.getQueryTemplate(Introspection.JSONValues.PRODUCT_OWNER_TEMPLATE_AS_INT);
                 response = esClient.prepareSearch(DAOConstants.elasticsearch_product_index)
                     .setTypes(DAOConstants.elasticsearch_product_type)
-                    .setTemplateName(templateName)
+                    .setTemplateName(template.nameValue())
                     .setTemplateType(ScriptType.INDEXED)
                     .setTemplateParams(templageParams)
                     .get();
             }
 
             SearchHits hits = response.getHits();
-            LOG.info(LocalMessages.getMessage(LocalMessages.product_index_searched, templateName,
+            LOG.info(LocalMessages.getMessage(LocalMessages.product_index_searched, template.nameValue(),
                 templageParams.toString(), response.isTimedOut(), response.isTerminatedEarly(),
                 response.getTookInMillis(), response.getTotalShards(), response.getSuccessfulShards(),
                 response.getFailedShards()));
@@ -750,9 +769,9 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
     }
 
-    public UUID updateProductStatus(UUID accountId, UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
+    public UUID updateProductStatus(Account account, UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
         throws InvalidTravelProductException, DatabaseAccessException {
-        if (productId == null || newStatus == null) {
+        if (account == null || productId == null || newStatus == null) {
             throw new NullPointerException();
         }
 
@@ -772,15 +791,15 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             }
         }
 
-        if (!accountId.toString().equals(travelProduct.get(Introspection.JSONKeys.OWNER))) {
+        if (!account.getUuid().equals(travelProduct.get(Introspection.JSONKeys.OWNER))) {
             throw new InvalidTravelProductException(LocalMessages.getMessage(
-                LocalMessages.illegal_submit_product_operation, productId, accountId), productId);
+                LocalMessages.illegal_submit_product_operation, productId, account.getUuid()), productId);
         }
 
         try {
             travelProduct.put(Introspection.JSONKeys.STATUS, newStatus.enumValue());
             BasicDBObject query1 = new BasicDBObject(DAOConstants.mongo_database_pk, productId.toString());
-            BasicDBObject query2 = new BasicDBObject(Introspection.JSONKeys.OWNER, accountId.toString());
+            BasicDBObject query2 = new BasicDBObject(Introspection.JSONKeys.OWNER, account.getUuid());
             BasicDBObject productQuery = new BasicDBObject("$and", new BasicDBObject[] { query1, query2 });
             WriteResult wr = productColls.update(productQuery, travelProduct, false, false, WriteConcern.MAJORITY);
             LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_update_record, wr.toString()));
@@ -791,12 +810,12 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         return productId;
     }
 
-    private WriteResult storeProduct(JsonObject product, UUID accountId) {
+    private WriteResult storeProduct(JsonObject product, String accountId) {
         String productId = product.getString(Introspection.JSONKeys.UUID);
         DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
         DBObject proposalBs = (DBObject) JSON.parse(product.toString());
         proposalBs.put(DAOConstants.mongo_database_pk, productId);
-        proposalBs.put(Introspection.JSONKeys.OWNER, accountId.toString());
+        proposalBs.put(Introspection.JSONKeys.OWNER, accountId);
         return productColls.insert(proposalBs, WriteConcern.MAJORITY);
     }
 
@@ -851,7 +870,8 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
     }
 
-    public UUID publishProduct(TravelProduct product, TravelProposal proposal) throws InvalidTravelProductException, DatabaseAccessException {
+    public UUID publishProduct(TravelProduct product, TravelProposal proposal) throws InvalidTravelProductException,
+        DatabaseAccessException {
         if (product == null || proposal == null) {
             throw new NullPointerException();
         }
@@ -926,12 +946,26 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             }
         }
 
+        Account proposalOwner = travelRequirementDao.getTravelProposalOwner(proposal.getUUID());
+        if (proposalOwner == null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.miss_travel_proposal_owner,
+                proposal.getUUID()), proposal.getUUID());
+        }
+
+        Account productOwner = this.getTravelProductOwner(product.getProductUUID());
+        if (productOwner == null) {
+            throw new InvalidTravelProductException(LocalMessages.getMessage(LocalMessages.miss_travel_product_owner,
+                product.getProductUUID()), product.getProductUUID());
+        }
+
         JsonObject productJs = product.toJSON();
         JsonObject proposalJs = proposal.toJSON();
         JsonObjectBuilder aggregatedProductBuilder = JsonObjectUtil.merge(productJs, Introspection.JSONKeys.REF_ENTITY,
             proposalJs);
         aggregatedProductBuilder.add(Introspection.JSONKeys.DEPARTURE_REL, departuresRelBuilder);
         aggregatedProductBuilder.add(Introspection.JSONKeys.DESTINATION_REL, destinationsRelBuilder);
+        aggregatedProductBuilder.add(Introspection.JSONKeys.PRODUCT_OWNER, productOwner.toJSON());
+        aggregatedProductBuilder.add(Introspection.JSONKeys.PROPOSAL_OWNER, proposalOwner.toJSON());
         String aggregatedProductJs = aggregatedProductBuilder.build().toString();
 
         String productId = product.getProductUUID().toString();
@@ -999,5 +1033,30 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         resultBuilder.add(Introspection.JSONKeys.HITS, resultArrayBuilder);
 
         return resultBuilder.build();
+    }
+
+    public Account getTravelProductOwner(UUID productId) throws DatabaseAccessException {
+        if (productId == null) {
+            throw new NullPointerException();
+        }
+
+        DBCollection productColls = productDb.getCollection(DAOConstants.PRODUCT_COLL_NAME);
+        DBObject productBs = productColls.findOne(productId.toString());
+        if (productBs == null) {
+            return null;
+        } else {
+            JsonObject product = Json.createReader(new StringReader(productBs.toString())).readObject();
+            String productOwnerId = product.getString(Introspection.JSONKeys.OWNER, null);
+            // TODO: query the user registry by identifier for the account. 
+            if (Constants.DEFAULT_ACCOUNT.getUuid().equals(productOwnerId)) {
+                return Constants.DEFAULT_ACCOUNT;
+            } else if (Constants.DEFAULT_AGENCY_ACCOUNT.getUuid().equals(productOwnerId)) {
+                return Constants.DEFAULT_AGENCY_ACCOUNT;
+            } else if (Constants.ADMIN_ACCOUNT.getUuid().equals(productOwnerId)) {
+                return Constants.ADMIN_ACCOUNT;
+            } else {
+                return null;
+            }
+        }
     }
 }

@@ -184,8 +184,7 @@ public class ItineraryService {
         @QueryParam("delayMins") int delayMins) {
         try {
             Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
-            UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
-            travelRequirementDAO.startProposalBid(UuidUtil.fromUuidStr(proposalId), acntId);
+            travelRequirementDAO.startProposalBid(UuidUtil.fromUuidStr(proposalId), acnt);
             List<TravelRequirement> itineraries = travelRequirementDAO.getItineraryRequirements(UuidUtil
                 .fromUuidStr(proposalId));
             if (itineraries.size() == 1) {
@@ -573,9 +572,8 @@ public class ItineraryService {
     public Response addProposal(JsonObject travelProposal, @Context MessageContext msgCntx) {
         try {
             Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
-            UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
             TravelRequirement proposal = JsonObjectHelper.toRequirement(travelProposal);
-            String proposalId = travelRequirementDAO.createProposal(acntId, (TravelProposal) proposal).toString();
+            String proposalId = travelRequirementDAO.createProposal(acnt, (TravelProposal) proposal).toString();
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, proposalId).build();
             return Response.ok(res).build();
         } catch (InvalidTravelReqirementException e) {

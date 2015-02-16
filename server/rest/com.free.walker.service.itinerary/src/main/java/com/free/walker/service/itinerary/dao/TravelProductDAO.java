@@ -21,13 +21,13 @@ public interface TravelProductDAO extends HealthyDAO {
      * Create the specified product, and all attached initial product items will
      * be created either.
      * 
-     * @param accountId
+     * @param account
      * @param travelProduct
      * @return
      * @throws InvalidTravelProductException
      * @throws DatabaseAccessException
      */
-    public UUID createProduct(UUID accountId, TravelProduct travelProduct) throws InvalidTravelProductException,
+    public UUID createProduct(Account account, TravelProduct travelProduct) throws InvalidTravelProductException,
         DatabaseAccessException;
 
     /**
@@ -80,7 +80,7 @@ public interface TravelProductDAO extends HealthyDAO {
 
     /**
      * 
-     * @param accountId
+     * @param account
      * @param status
      * @return
      * @throws InvalidTravelProductException
@@ -182,7 +182,7 @@ public interface TravelProductDAO extends HealthyDAO {
      * Update the product status from the old status to the new status for the
      * product given by the product identifier.
      * 
-     * @param accountId
+     * @param account
      * @param productId
      * @param oldStatus
      * @param newStatus
@@ -190,7 +190,7 @@ public interface TravelProductDAO extends HealthyDAO {
      * @throws InvalidTravelProductException
      * @throws DatabaseAccessException
      */
-    public UUID updateProductStatus(UUID accountId, UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
+    public UUID updateProductStatus(Account account, UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
         throws InvalidTravelProductException, DatabaseAccessException;
 
     /**
@@ -226,4 +226,13 @@ public interface TravelProductDAO extends HealthyDAO {
      */
     public JsonObject searchProduct(QueryTemplate queryTemplate, Map<String, String> templageParams)
         throws DatabaseAccessException;
+
+    /**
+     * Retrieve the owner of the product specified by the product identifier.
+     * 
+     * @param travelProposalId
+     * @return
+     * @throws DatabaseAccessException
+     */
+    public Account getTravelProductOwner(UUID productId) throws DatabaseAccessException;
 }

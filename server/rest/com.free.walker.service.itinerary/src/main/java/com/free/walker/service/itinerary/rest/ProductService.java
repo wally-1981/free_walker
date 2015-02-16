@@ -132,7 +132,6 @@ public class ProductService {
     public Response publishProduct(@PathParam("productId") String productId, @Context MessageContext msgCntx) {
         try {
             Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
-            UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
 
             UUID productUuid = UuidUtil.fromUuidStr(productId);
             TravelProduct product = travelProductDAO.getProduct(productUuid);
@@ -168,7 +167,7 @@ public class ProductService {
             List<TravelRequirement> itineraries = requirementDao.getItineraryRequirements(product.getProposalUUID());
             proposal.getTravelRequirements().addAll(itineraries);
 
-            travelProductDAO.updateProductStatus(acntId, productUuid, ProductStatus.PRIVATE_PRODUCT,
+            travelProductDAO.updateProductStatus(acnt, productUuid, ProductStatus.PRIVATE_PRODUCT,
                 ProductStatus.PUBLIC_STATUS);
             productId = travelProductDAO.publishProduct(product, proposal).toString();
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productId).build();
@@ -228,8 +227,7 @@ public class ProductService {
     public Response submitProduct(@PathParam("productId") String productId, @Context MessageContext msgCntx) {
         try {
             Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
-            UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
-            UUID submittedProductId = travelProductDAO.updateProductStatus(acntId, UuidUtil.fromUuidStr(productId),
+            UUID submittedProductId = travelProductDAO.updateProductStatus(acnt, UuidUtil.fromUuidStr(productId),
                 ProductStatus.DRAFT_PRODUCT, ProductStatus.PRIVATE_PRODUCT);
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, submittedProductId.toString())
                 .build();
@@ -444,9 +442,8 @@ public class ProductService {
     public Response addProduct(JsonObject travelProduct, @Context MessageContext msgCntx) {
         try {
             Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
-            UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
             TravelProduct product = JsonObjectHelper.toProduct(travelProduct);
-            String productId = travelProductDAO.createProduct(acntId, product).toString();
+            String productId = travelProductDAO.createProduct(acnt, product).toString();
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productId).build();
             return Response.ok(res).build();
         } catch (InvalidTravelProductException e) {

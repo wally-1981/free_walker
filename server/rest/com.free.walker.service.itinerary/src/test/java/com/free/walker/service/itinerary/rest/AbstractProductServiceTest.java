@@ -1203,6 +1203,20 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
         }
 
         /*
+         * 根据Proposal Owner获取Draft状态的Product
+         */
+        {
+            ;
+        }
+
+        /*
+         * 根据Product Owner获取Draft状态的Product
+         */
+        {
+            ;
+        }
+
+        /*
          * 提交Product，Product状态从Draft自动更新为Private。
          */
         {
@@ -1227,6 +1241,20 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             } finally {
                 put.abort();
             }
+        }
+
+        /*
+         * 根据Proposal Owner获取Private状态的Product
+         */
+        {
+            ;
+        }
+
+        /*
+         * 根据Product Owner获取Private状态的Product
+         */
+        {
+            ;
         }
 
         /*
@@ -1296,6 +1324,20 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
             } finally {
                 put.abort();
             }
+        }
+
+        /*
+         * 根据Product Owner获取Public状态的Product
+         */
+        {
+            ;
+        }
+
+        /*
+         * 根据Proposal Owner获取Public状态的Product
+         */
+        {
+            ;
         }
 
         /*

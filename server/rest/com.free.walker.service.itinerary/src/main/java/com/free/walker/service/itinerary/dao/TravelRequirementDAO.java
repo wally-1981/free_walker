@@ -3,6 +3,7 @@ package com.free.walker.service.itinerary.dao;
 import java.util.List;
 import java.util.UUID;
 
+import com.free.walker.service.itinerary.basic.Account;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
@@ -15,13 +16,13 @@ public interface TravelRequirementDAO extends HealthyDAO {
      * Create the specified proposal, and all attached initial itineraries will
      * be created either as ordered.
      * 
-     * @param accountId
+     * @param account
      * @param travelProposal
      * @return
      * @throws InvalidTravelReqirementException
      * @throws DatabaseAccessException
      */
-    public UUID createProposal(UUID accountId, TravelProposal travelProposal) throws InvalidTravelReqirementException,
+    public UUID createProposal(Account account, TravelProposal travelProposal) throws InvalidTravelReqirementException,
         DatabaseAccessException;
 
     /**
@@ -29,12 +30,12 @@ public interface TravelRequirementDAO extends HealthyDAO {
      * the bidding.
      * 
      * @param travelProposalId
-     * @param accountId
+     * @param account
      * @return
      * @throws InvalidTravelReqirementException
      * @throws DatabaseAccessException
      */
-    public UUID startProposalBid(UUID travelProposalId, UUID accountId) throws InvalidTravelReqirementException,
+    public UUID startProposalBid(UUID travelProposalId, Account account) throws InvalidTravelReqirementException,
         DatabaseAccessException;
 
     /**
@@ -224,4 +225,13 @@ public interface TravelRequirementDAO extends HealthyDAO {
      */
     public List<TravelProposal> getTravelProposalsByAccount(UUID accountId, Calendar since, int numberOfDay)
         throws InvalidTravelReqirementException, DatabaseAccessException;
+
+    /**
+     * Retrieve the owner of the proposal specified by the proposal identifier.
+     * 
+     * @param travelProposalId
+     * @return
+     * @throws DatabaseAccessException
+     */
+    public Account getTravelProposalOwner(UUID travelProposalId) throws DatabaseAccessException;
 }

@@ -16,6 +16,7 @@ import org.junit.rules.ExpectedException;
 
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
+import com.free.walker.service.itinerary.basic.Account;
 import com.free.walker.service.itinerary.basic.TravelLocation;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
@@ -50,7 +51,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     public void testCreateTravelProposalWithNullProposal() throws InvalidTravelReqirementException,
         DatabaseAccessException {
         thrown.expect(NullPointerException.class);
-        travelRequirementDAO.createProposal(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), null);
+        travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, null);
     }
 
     @Test
@@ -60,14 +61,13 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
         assertNotNull(proposalId);
 
         thrown.expect(InvalidTravelReqirementException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.existed_travel_requirement,
             travelProposal.getUUID()));
-        travelRequirementDAO.createProposal(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
     }
 
     @Test
@@ -77,8 +77,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         assertNotNull(travelRequirementDAO.getRequirement(proposalId,
             Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL));
@@ -116,8 +115,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         thrown.expect(NullPointerException.class);
         travelRequirementDAO.addRequirement(proposalId, null);
@@ -131,7 +129,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        travelRequirementDAO.createProposal(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         TravelLocation destination2 = new TravelLocation(Constants.BARCELONA);
         TravelLocation departure2 = new TravelLocation(Constants.WUHAN);
@@ -151,8 +149,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         thrown.expect(InvalidTravelReqirementException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.existed_travel_requirement,
@@ -168,8 +165,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         TravelLocation destination2 = new TravelLocation(Constants.BARCELONA);
         TravelLocation departure2 = new TravelLocation(Constants.WUHAN);
@@ -210,8 +206,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         TravelRequirement hotelRequirement = new HotelRequirement(12);
 
@@ -260,8 +255,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         TravelRequirement hotelRequirement = new HotelRequirement(12);
 
@@ -277,8 +271,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         thrown.expect(NullPointerException.class);
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement.getUUID(), null);
@@ -292,7 +285,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        travelRequirementDAO.createProposal(UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         TravelRequirement hotelRequirement = new HotelRequirement(12);
 
@@ -310,8 +303,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         TravelRequirement hotelRequirement = new HotelRequirement(12);
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement.getUUID(), hotelRequirement);
@@ -333,8 +325,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         TravelRequirement hotelRequirement = new HotelRequirement(12);
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement.getUUID(), hotelRequirement);
@@ -353,8 +344,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         TravelLocation destination2 = new TravelLocation(Constants.BARCELONA);
         TravelLocation departure2 = new TravelLocation(Constants.TAIBEI);
@@ -373,8 +363,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         TravelRequirement hotelRequirement = new HotelRequirement(12);
 
@@ -410,8 +399,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         TravelLocation destination2 = new TravelLocation(Constants.BARCELONA);
         TravelLocation departure2 = new TravelLocation(Constants.GENEVA);
@@ -524,8 +512,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         UUID itineraryId = UUID.randomUUID();
 
@@ -562,8 +549,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         UUID requirementId = UUID.randomUUID();
 
@@ -600,8 +586,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         UUID requirementId = UUID.randomUUID();
 
@@ -676,8 +661,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
         TravelRequirement hotelRequirement = new HotelRequirement(12);
         travelRequirementDAO.addRequirement(proposalId, hotelRequirement);
 
@@ -729,8 +713,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         thrown.expect(NullPointerException.class);
         travelRequirementDAO.removeRequirement(proposalId, null);
@@ -746,8 +729,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         TravelLocation destination2 = new TravelLocation(Constants.BARCELONA);
         TravelLocation departure2 = new TravelLocation(Constants.TAIBEI);
@@ -765,8 +747,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         thrown.expect(InvalidTravelReqirementException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_delete_travel_requirement_operation,
@@ -782,8 +763,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         thrown.expect(InvalidTravelReqirementException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_delete_travel_requirement_operation,
@@ -798,8 +778,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         TravelLocation destination2 = new TravelLocation(Constants.BARCELONA);
         TravelLocation departure2 = new TravelLocation(Constants.TAIBEI);
@@ -843,8 +822,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         TravelRequirement hotelRequirement = new HotelRequirement(12);
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement.getUUID(), hotelRequirement);
@@ -892,12 +870,12 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testStartProposalBidWithWrongProposal() throws InvalidTravelReqirementException, DatabaseAccessException {
+    public void testStartProposalBidWithWrongProposal() throws InvalidTravelReqirementException,
+        DatabaseAccessException {
         UUID wrongProposalId = UUID.randomUUID();
         thrown.expect(InvalidTravelReqirementException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_proposal, wrongProposalId));
-        travelRequirementDAO.startProposalBid(wrongProposalId,
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()));
+        travelRequirementDAO.startProposalBid(wrongProposalId, Constants.DEFAULT_ACCOUNT);
     }
 
     @Test
@@ -907,11 +885,44 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
-        assertEquals(proposalId, travelRequirementDAO.startProposalBid(proposalId,
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid())));
+        assertEquals(proposalId, travelRequirementDAO.startProposalBid(proposalId, Constants.DEFAULT_ACCOUNT));
+    }
+
+    @Test
+    public void testStartProposalBidTwice() throws InvalidTravelReqirementException,
+        DatabaseAccessException {
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
+        ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
+        TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
+
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
+
+        travelRequirementDAO.startProposalBid(proposalId, Constants.DEFAULT_ACCOUNT);
+
+        thrown.expect(InvalidTravelReqirementException.class);
+        travelRequirementDAO.startProposalBid(proposalId, Constants.DEFAULT_ACCOUNT);
+    }
+
+    @Test
+    public void testStartProposalBidAfterJoin() throws InvalidTravelReqirementException,
+        DatabaseAccessException {
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
+        ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
+        TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
+
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
+
+        travelRequirementDAO.startProposalBid(proposalId, Constants.DEFAULT_ACCOUNT);
+
+        UUID agencyId = UUID.randomUUID();
+        travelRequirementDAO.joinProposalBid(proposalId, agencyId);
+
+        thrown.expect(InvalidTravelReqirementException.class);
+        travelRequirementDAO.startProposalBid(proposalId, Constants.DEFAULT_ACCOUNT);
     }
 
     @Test
@@ -922,15 +933,14 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
-        travelRequirementDAO.startProposalBid(proposalId, UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()));
+        travelRequirementDAO.startProposalBid(proposalId, Constants.DEFAULT_ACCOUNT);
 
         thrown.expect(InvalidTravelReqirementException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_submit_proposal_operation, proposalId,
             Constants.ADMIN_ACCOUNT.getUuid()));
-        travelRequirementDAO.startProposalBid(proposalId, UuidUtil.fromUuidStr(Constants.ADMIN_ACCOUNT.getUuid()));
+        travelRequirementDAO.startProposalBid(proposalId, Constants.ADMIN_ACCOUNT);
     }
 
     @Test
@@ -952,8 +962,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
         thrown.expect(InvalidTravelReqirementException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_proposal_bidding, proposalId));
@@ -967,13 +976,41 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
-        travelRequirementDAO.startProposalBid(proposalId, UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()));
+        travelRequirementDAO.startProposalBid(proposalId, Constants.DEFAULT_ACCOUNT);
 
         UUID agencyId = UUID.randomUUID();
         assertEquals(agencyId, travelRequirementDAO.joinProposalBid(proposalId, agencyId));
+        Calendar since = Calendar.getInstance();
+        since.add(Calendar.DATE, -1);
+        List<TravelProposal> proposals = travelRequirementDAO.getTravelProposalsByAgency(agencyId, since, 1);
+        assertNotNull(proposals);
+        assertEquals(1, proposals.size());
+        assertEquals(proposalId, proposals.get(0).getUUID());
+    }
+
+    @Test
+    public void testJoinProposalBidTwice() throws InvalidTravelReqirementException,
+        DatabaseAccessException {
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
+        ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
+        TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
+
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
+
+        travelRequirementDAO.startProposalBid(proposalId, Constants.DEFAULT_ACCOUNT);
+
+        UUID agencyId = UUID.randomUUID();
+        travelRequirementDAO.joinProposalBid(proposalId, agencyId);
+        travelRequirementDAO.joinProposalBid(proposalId, agencyId);
+        Calendar since = Calendar.getInstance();
+        since.add(Calendar.DATE, -1);
+        List<TravelProposal> proposals = travelRequirementDAO.getTravelProposalsByAgency(agencyId, since, 1);
+        assertNotNull(proposals);
+        assertEquals(1, proposals.size());
+        assertEquals(proposalId, proposals.get(0).getUUID());
     }
 
     @Test
@@ -983,16 +1020,30 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
 
-        UUID proposalId = travelRequirementDAO.createProposal(
-            UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
 
-        travelRequirementDAO.startProposalBid(proposalId, UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()));
+        travelRequirementDAO.startProposalBid(proposalId, Constants.DEFAULT_ACCOUNT);
 
         UUID agencyId1 = UUID.randomUUID();
         assertEquals(agencyId1, travelRequirementDAO.joinProposalBid(proposalId, agencyId1));
 
         UUID agencyId2 = UUID.randomUUID();
         assertEquals(agencyId2, travelRequirementDAO.joinProposalBid(proposalId, agencyId2));
+
+        Calendar since = Calendar.getInstance();
+        since.add(Calendar.DATE, -1);
+        {
+            List<TravelProposal> proposals = travelRequirementDAO.getTravelProposalsByAgency(agencyId1, since, 1);
+            assertNotNull(proposals);
+            assertEquals(1, proposals.size());
+            assertEquals(proposalId, proposals.get(0).getUUID());
+        }
+        {
+            List<TravelProposal> proposals = travelRequirementDAO.getTravelProposalsByAgency(agencyId2, since, 1);
+            assertNotNull(proposals);
+            assertEquals(1, proposals.size());
+            assertEquals(proposalId, proposals.get(0).getUUID());
+        }
     }
 
     @Test
@@ -1005,29 +1056,25 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     @Test
     public void testGetProposalsByAccountId() throws InvalidTravelReqirementException, DatabaseAccessException {
         UUID proposalId1 = null;
-        {            
+        {
             TravelLocation destination = new TravelLocation(Constants.TAIBEI);
             TravelLocation departure = new TravelLocation(Constants.BARCELONA);
             ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
             TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
-            
-            proposalId1 = travelRequirementDAO.createProposal(
-                UuidUtil.fromUuidStr(Constants.ADMIN_ACCOUNT.getUuid()), travelProposal);
-            travelRequirementDAO.startProposalBid(proposalId1,
-                UuidUtil.fromUuidStr(Constants.ADMIN_ACCOUNT.getUuid()));
+
+            proposalId1 = travelRequirementDAO.createProposal(Constants.ADMIN_ACCOUNT, travelProposal);
+            travelRequirementDAO.startProposalBid(proposalId1, Constants.ADMIN_ACCOUNT);
         }
 
         UUID proposalId2 = null;
-        {            
+        {
             TravelLocation destination = new TravelLocation(Constants.TAIBEI);
             TravelLocation departure = new TravelLocation(Constants.BARCELONA);
             ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
             TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
-            
-            proposalId2 = travelRequirementDAO.createProposal(
-                UuidUtil.fromUuidStr(Constants.ADMIN_ACCOUNT.getUuid()), travelProposal);
-            travelRequirementDAO.startProposalBid(proposalId2,
-                UuidUtil.fromUuidStr(Constants.ADMIN_ACCOUNT.getUuid()));
+
+            proposalId2 = travelRequirementDAO.createProposal(Constants.ADMIN_ACCOUNT, travelProposal);
+            travelRequirementDAO.startProposalBid(proposalId2, Constants.ADMIN_ACCOUNT);
         }
 
         Calendar since = Calendar.getInstance();
@@ -1054,24 +1101,20 @@ public abstract class AbstractTravelRequirementDAOImplTest {
             TravelLocation departure = new TravelLocation(Constants.BARCELONA);
             ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
             TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
-            
-            proposalId1 = travelRequirementDAO.createProposal(
-                UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
-            travelRequirementDAO.startProposalBid(proposalId1,
-                UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()));
+
+            proposalId1 = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
+            travelRequirementDAO.startProposalBid(proposalId1, Constants.DEFAULT_ACCOUNT);
         }
 
         UUID proposalId2 = null;
-        {            
+        {
             TravelLocation destination = new TravelLocation(Constants.TAIBEI);
             TravelLocation departure = new TravelLocation(Constants.BARCELONA);
             ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
             TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
-            
-            proposalId2 = travelRequirementDAO.createProposal(
-                UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()), travelProposal);
-            travelRequirementDAO.startProposalBid(proposalId2,
-                UuidUtil.fromUuidStr(Constants.DEFAULT_ACCOUNT.getUuid()));
+
+            proposalId2 = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
+            travelRequirementDAO.startProposalBid(proposalId2, Constants.DEFAULT_ACCOUNT);
         }
 
         UUID agencyId1 = UUID.randomUUID();
@@ -1084,17 +1127,17 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         Calendar since = Calendar.getInstance();
         since.add(Calendar.DATE, -1);
 
-        List<TravelProposal> travelProposals4Agency1 = travelRequirementDAO.getTravelProposalsByAgency(
-            agencyId1, since, 1);
-        List<TravelProposal> travelProposals4Agency2 = travelRequirementDAO.getTravelProposalsByAgency(
-            agencyId2, since, 1);
+        List<TravelProposal> travelProposals4Agency1 = travelRequirementDAO.getTravelProposalsByAgency(agencyId1,
+            since, 1);
+        List<TravelProposal> travelProposals4Agency2 = travelRequirementDAO.getTravelProposalsByAgency(agencyId2,
+            since, 1);
 
         assertNotNull(travelProposals4Agency1);
         assertEquals(2, travelProposals4Agency1.size());
         if (proposalId1.toString().equals(travelProposals4Agency1.get(0).getUUID().toString())) {
             assertEquals(proposalId1.toString(), travelProposals4Agency1.get(0).getUUID().toString());
             assertEquals(proposalId2.toString(), travelProposals4Agency1.get(1).getUUID().toString());
-        } else {            
+        } else {
             assertEquals(proposalId1.toString(), travelProposals4Agency1.get(1).getUUID().toString());
             assertEquals(proposalId2.toString(), travelProposals4Agency1.get(0).getUUID().toString());
         }
@@ -1102,6 +1145,31 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         assertNotNull(travelProposals4Agency2);
         assertEquals(1, travelProposals4Agency2.size());
         assertEquals(proposalId2.toString(), travelProposals4Agency2.get(0).getUUID().toString());
+    }
+
+    @Test
+    public void testGetTravelProposalOwnerWithNullProposalId() throws DatabaseAccessException {
+        thrown.expect(NullPointerException.class);
+        travelRequirementDAO.getTravelProposalOwner(null);
+    }
+
+    @Test
+    public void testGetTravelProposalOwnerWithWrongProposalId() throws DatabaseAccessException {
+        Account proposalOwner = travelRequirementDAO.getTravelProposalOwner(UUID.randomUUID());
+        assertNull(proposalOwner);
+    }
+
+    @Test
+    public void testGetProposalOwner() throws InvalidTravelReqirementException, DatabaseAccessException {
+        TravelLocation destination = new TravelLocation(Constants.TAIBEI);
+        TravelLocation departure = new TravelLocation(Constants.BARCELONA);
+        ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
+        TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
+
+        UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
+        Account proposalOwner = travelRequirementDAO.getTravelProposalOwner(proposalId);
+        assertNotNull(proposalOwner);
+        assertEquals(proposalOwner.getUuid(), Constants.DEFAULT_ACCOUNT.getUuid());
     }
 
     @After

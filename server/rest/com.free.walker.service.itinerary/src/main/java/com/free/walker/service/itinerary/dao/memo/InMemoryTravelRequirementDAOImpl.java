@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
+import com.free.walker.service.itinerary.basic.Account;
 import com.free.walker.service.itinerary.dao.TravelRequirementDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
@@ -21,7 +23,7 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
     protected Map<UUID, List<TravelRequirement>> travelProposals;
     protected Map<UUID, TravelRequirement> travelRequirements;
     protected Map<UUID, List<UUID>> proposalAgencies;
-    protected Map<UUID, UUID> proposalOwners;
+    protected Map<UUID, Account> proposalOwners;
 
     private static class SingletonHolder {
         private static final TravelRequirementDAO INSTANCE = new InMemoryTravelRequirementDAOImpl();
@@ -35,15 +37,15 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
         travelProposals = new HashMap<UUID, List<TravelRequirement>>();
         travelRequirements = new HashMap<UUID, TravelRequirement>();
         proposalAgencies = new HashMap<UUID, List<UUID>>();
-        proposalOwners = new HashMap<UUID, UUID>();
+        proposalOwners = new HashMap<UUID, Account>();
     }
 
     public boolean pingPersistence() {
         return true;
     }
 
-    public UUID createProposal(UUID accountId, TravelProposal travelProposal) throws InvalidTravelReqirementException {
-        if (travelProposal == null) {
+    public UUID createProposal(Account account, TravelProposal travelProposal) throws InvalidTravelReqirementException {
+        if (account == null || travelProposal == null) {
             throw new NullPointerException();
         }
 
@@ -73,12 +75,14 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
         }
         itineraryRequirements.clear();
 
+        proposalOwners.put(travelProposal.getUUID(), account);
+
         return travelProposal.getUUID();
     }
 
-    public UUID startProposalBid(UUID travelProposalId, UUID accountId) throws InvalidTravelReqirementException,
+    public UUID startProposalBid(UUID travelProposalId, Account account) throws InvalidTravelReqirementException,
         DatabaseAccessException {
-        if (travelProposalId == null || accountId == null) {
+        if (travelProposalId == null || account == null) {
             throw new NullPointerException();
         }
 
@@ -88,17 +92,14 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
                 travelProposalId), travelProposalId);
         }
 
-        if (proposalOwners.get(travelProposalId) == null) {
-            proposalOwners.put(travelProposalId, accountId);
-        } else {
-            if (!accountId.equals(proposalOwners.get(travelProposalId))) {
-                throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                    LocalMessages.illegal_submit_proposal_operation, travelProposalId, accountId), travelProposalId);
-            }
+        if (!account.equals(proposalOwners.get(travelProposalId))) {
+            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
+                LocalMessages.illegal_submit_proposal_operation, travelProposalId, account.getUuid()),
+                travelProposalId);
         }
 
         if (proposalAgencies.containsKey(travelProposalId)) {
-            return travelProposalId;
+            throw new InvalidTravelReqirementException(travelProposalId.toString());
         } else {
             proposalAgencies.put(travelProposalId, new ArrayList<UUID>());
             return travelProposalId;
@@ -605,12 +606,34 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
         Iterator<UUID> proposalIds = proposalOwners.keySet().iterator();
         while (proposalIds.hasNext()) {
             UUID proposalId = proposalIds.next();
-            UUID proposalOwner = proposalOwners.get(proposalId);
-            if (accountId.equals(proposalOwner)) {
+            Account proposalOwner = proposalOwners.get(proposalId);
+            if (accountId.toString().equals(proposalOwner.getUuid())) {
                 result.add((TravelProposal) travelRequirements.get(proposalId));
             }
         }
 
         return result;
+    }
+
+    public Account getTravelProposalOwner(UUID travelProposalId) throws DatabaseAccessException {
+        if (travelProposalId == null) {
+            throw new NullPointerException();
+        }
+
+        if (!travelRequirements.containsKey(travelProposalId)) {
+            return null;
+        }
+
+        Account proposalOwner = proposalOwners.get(travelProposalId);
+        String proposalOwnerId = proposalOwner.getUuid();
+        if (Constants.DEFAULT_ACCOUNT.getUuid().equals(proposalOwnerId)) {
+            return Constants.DEFAULT_ACCOUNT;
+        } else if (Constants.DEFAULT_AGENCY_ACCOUNT.getUuid().equals(proposalOwnerId)) {
+            return Constants.DEFAULT_AGENCY_ACCOUNT;
+        } else if (Constants.ADMIN_ACCOUNT.getUuid().equals(proposalOwnerId)) {
+            return Constants.ADMIN_ACCOUNT;
+        } else {
+            return null;
+        }
     }
 }

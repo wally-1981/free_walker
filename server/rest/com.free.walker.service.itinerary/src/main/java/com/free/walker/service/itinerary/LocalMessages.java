@@ -79,6 +79,8 @@ public class LocalMessages {
     public static final String missing_location = "missing_location";
     public static final String missing_agency = "missing_agency";
     public static final String miss_travel_product_status = "miss_travel_product_status";
+    public static final String miss_travel_product_owner = "miss_travel_product_owner";
+    public static final String miss_travel_proposal_owner = "miss_travel_proposal_owner";
 
     public static final String illegal_location_association = "illegal_location_association";
     public static final String illegal_port_association = "illegal_port_association";
@@ -156,6 +158,8 @@ public class LocalMessages {
     public static final String invalid_term_invalid = "invalid_term_invalid";
     public static final String invalid_template_invalid = "invalid_template_invalid";
     public static final String invalid_sort_type_invalid = "invalid_sort_type_invalid";
+
+    public static final String unauthorized_account = "unauthorized_account";
 
     public static final String test_message = "test_message";
     public static final String test_message_with_1_arg = "test_message_with_1_arg";
