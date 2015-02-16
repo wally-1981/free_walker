@@ -1,0 +1,25 @@
+{
+    "template": {
+        "query": {
+            "filtered": {
+                "query": {
+                  "match": {
+                    "product_owner.uuid": "{{product_owner}}"
+                  }
+                },
+                "filter": {
+                    "term": {
+                        "status": "{{product_status}}"
+                    }
+                }
+            }
+        },
+        "from": "{{from}}",
+        "size": "{{size}}",
+        "sort": [
+             { "{{sort_key}}": { "order": "{{sort_order}}", "unmapped_type": "{{sort_type}}", "missing": "_last" } }
+        ],
+        "min_score": 0.01,
+        "track_scores": true
+    }
+}
