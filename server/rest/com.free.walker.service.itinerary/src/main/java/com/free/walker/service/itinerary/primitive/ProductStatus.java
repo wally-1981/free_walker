@@ -5,7 +5,7 @@ import com.free.walker.service.itinerary.Enumable;
 public class ProductStatus implements Enumable {
     public static final ProductStatus DRAFT_PRODUCT = new ProductStatus(-20);
     public static final ProductStatus PRIVATE_PRODUCT = new ProductStatus(-10);
-    public static final ProductStatus PUBLIC_STATUS = new ProductStatus(10);
+    public static final ProductStatus PUBLIC_PRODUCT = new ProductStatus(10);
     public static final ProductStatus ACTIVE_PRODUCT = new ProductStatus(20);
     public static final ProductStatus ING_PRODUCT = new ProductStatus(30);
     public static final ProductStatus ARCHIVED_PRODUCT = new ProductStatus(40);
@@ -15,8 +15,8 @@ public class ProductStatus implements Enumable {
             return DRAFT_PRODUCT;
         } else if (ordinal == PRIVATE_PRODUCT.enumValue) {
             return PRIVATE_PRODUCT;
-        } else if (ordinal == PUBLIC_STATUS.enumValue) {
-            return PUBLIC_STATUS;
+        } else if (ordinal == PUBLIC_PRODUCT.enumValue) {
+            return PUBLIC_PRODUCT;
         } else if (ordinal == ACTIVE_PRODUCT.enumValue) {
             return ACTIVE_PRODUCT;
         } else if (ordinal == ING_PRODUCT.enumValue) {

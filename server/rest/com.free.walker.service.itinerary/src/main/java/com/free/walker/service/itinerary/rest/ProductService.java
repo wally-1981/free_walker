@@ -139,12 +139,16 @@ public class ProductService {
                 JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productId).build();
                 return Response.status(Status.NOT_FOUND).entity(res).build();
             }
-            if (!ProductStatus.PRIVATE_PRODUCT.equals(product.getStatus())) {
-                JsonObject res = Json.createObjectBuilder()
-                    .add(Introspection.JSONKeys.UUID, productId)
-                    .add(Introspection.JSONKeys.STATUS, product.getStatus().enumValue())
-                    .build();
+            if (!ProductStatus.PRIVATE_PRODUCT.equals(product.getStatus()) &&
+                !ProductStatus.PUBLIC_PRODUCT.equals(product.getStatus())) {
+                JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productId)
+                    .add(Introspection.JSONKeys.STATUS, product.getStatus().enumValue()).build();
                 return Response.status(Status.CONFLICT).entity(res).build();
+            }
+
+            if (ProductStatus.PRIVATE_PRODUCT.equals(product.getStatus())) {
+                product = travelProductDAO.updateProductStatus(acnt, productUuid, ProductStatus.PRIVATE_PRODUCT,
+                    ProductStatus.PUBLIC_PRODUCT);
             }
 
             List<TravelProductItem> hotelItems = travelProductDAO.getItems(productUuid, HotelItem.SUB_TYPE);
@@ -167,13 +171,7 @@ public class ProductService {
             List<TravelRequirement> itineraries = requirementDao.getItineraryRequirements(product.getProposalUUID());
             proposal.getTravelRequirements().addAll(itineraries);
 
-            if (ProductStatus.PUBLIC_STATUS.equals(product.getStatus())) {
-                productId = travelProductDAO.publishProduct(product, proposal).toString();
-            } else {
-                TravelProduct updatedTravelProduct = travelProductDAO.updateProductStatus(acnt, productUuid,
-                    ProductStatus.PRIVATE_PRODUCT, ProductStatus.PUBLIC_STATUS);
-                productId = travelProductDAO.publishProduct(updatedTravelProduct, proposal).toString();
-            }
+            productId = travelProductDAO.publishProduct(product, proposal).toString();
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productId).build();
             return Response.ok(res).build();
         } catch (InvalidTravelProductException e) {

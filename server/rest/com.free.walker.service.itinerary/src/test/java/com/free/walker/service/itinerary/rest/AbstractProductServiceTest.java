@@ -1545,7 +1545,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
         {
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/my/"
-                + Introspection.JSONValues.PUBLIC_STATUS.enumValue()));
+                + Introspection.JSONValues.PUBLIC_PRODUCT.enumValue()));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
             try {
@@ -1584,7 +1584,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
         {
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/my/"
-                + Introspection.JSONValues.PUBLIC_STATUS.enumValue()));
+                + Introspection.JSONValues.PUBLIC_PRODUCT.enumValue()));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_ACCOUNT);
             try {

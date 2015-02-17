@@ -148,7 +148,7 @@ public class Introspection {
 
         public static final ProductStatus DRAFT_PRODUCT = ProductStatus.DRAFT_PRODUCT;
         public static final ProductStatus PRIVATE_PRODUCT = ProductStatus.PRIVATE_PRODUCT;
-        public static final ProductStatus PUBLIC_STATUS = ProductStatus.PUBLIC_STATUS;
+        public static final ProductStatus PUBLIC_PRODUCT = ProductStatus.PUBLIC_PRODUCT;
         public static final ProductStatus ACTIVE_PRODUCT = ProductStatus.ACTIVE_PRODUCT;
         public static final ProductStatus ING_PRODUCT = ProductStatus.ING_PRODUCT;
         public static final ProductStatus ARCHIVED_PRODUCT = ProductStatus.ARCHIVED_PRODUCT;

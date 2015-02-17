@@ -645,17 +645,17 @@ public abstract class AbstractTravelProductDAOImplTest {
         thrown.expect(InvalidTravelProductException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_product, wrongProductId));
         travelProductDAO.updateProductStatus(Constants.DEFAULT_AGENCY_ACCOUNT, wrongProductId, null,
-            ProductStatus.PUBLIC_STATUS);
+            ProductStatus.PUBLIC_PRODUCT);
     }
 
     @Test
     public void testUpdateProductStatusWithoutOldStatus() throws InvalidTravelProductException, DatabaseAccessException {
         UUID productId = travelProductDAO.createProduct(Constants.DEFAULT_AGENCY_ACCOUNT, travelProduct);
         TravelProduct updatedProduct = travelProductDAO.updateProductStatus(Constants.DEFAULT_AGENCY_ACCOUNT, productId, null,
-            ProductStatus.PUBLIC_STATUS);
+            ProductStatus.PUBLIC_PRODUCT);
         ProductStatus currentProductStatus = updatedProduct.getStatus();
         assertNotNull(currentProductStatus);
-        assertEquals(ProductStatus.PUBLIC_STATUS, currentProductStatus);
+        assertEquals(ProductStatus.PUBLIC_PRODUCT, currentProductStatus);
     }
 
     @Test
@@ -666,7 +666,7 @@ public abstract class AbstractTravelProductDAOImplTest {
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.miss_travel_product_status, productId,
             ProductStatus.PRIVATE_PRODUCT.enumValue(), ProductStatus.DRAFT_PRODUCT.enumValue()));
         travelProductDAO.updateProductStatus(Constants.DEFAULT_AGENCY_ACCOUNT, productId,
-            ProductStatus.PRIVATE_PRODUCT, ProductStatus.PUBLIC_STATUS);
+            ProductStatus.PRIVATE_PRODUCT, ProductStatus.PUBLIC_PRODUCT);
     }
 
     @Test
@@ -715,6 +715,8 @@ public abstract class AbstractTravelProductDAOImplTest {
         UUID productUuid = travelProductDAO.publishProduct(travelProduct, travelProposal);
         assertNotNull(productUuid);
         assertEquals(productId.toString(), productUuid.toString());
+
+        travelProductDAO.unpublishProduct(productUuid);
     }
 
     @Test
@@ -729,6 +731,8 @@ public abstract class AbstractTravelProductDAOImplTest {
         assertNotNull(travelProductDAO.publishProduct(travelProduct, travelProposal));
         assertEquals(productId.toString(), travelProductDAO.publishProduct(travelProduct, travelProposal)
             .toString());
+
+        travelProductDAO.unpublishProduct(productUuid);
     }
 
     @Test
@@ -771,13 +775,13 @@ public abstract class AbstractTravelProductDAOImplTest {
         UUID productId = travelProductDAO.createProduct(Constants.DEFAULT_AGENCY_ACCOUNT, travelProduct);
         productId = travelProductDAO.setBidding(productId, bidding);
         TravelProduct product = travelProductDAO.updateProductStatus(Constants.DEFAULT_AGENCY_ACCOUNT, productId,
-            ProductStatus.DRAFT_PRODUCT, ProductStatus.PUBLIC_STATUS);
+            ProductStatus.DRAFT_PRODUCT, ProductStatus.PUBLIC_PRODUCT);
         UUID productUuid = travelProductDAO.publishProduct(product, travelProposal);
 
         Thread.sleep(3000);
 
         List<TravelProduct> userAccountProducts = travelProductDAO.getProducts(Constants.DEFAULT_ACCOUNT,
-            ProductStatus.PUBLIC_STATUS);
+            ProductStatus.PUBLIC_PRODUCT);
         assertNotNull(userAccountProducts);
         assertTrue(userAccountProducts.size() >= 1);
         Map<UUID, TravelProduct> result = new HashMap<UUID, TravelProduct>();
@@ -797,13 +801,13 @@ public abstract class AbstractTravelProductDAOImplTest {
         UUID productId = travelProductDAO.createProduct(Constants.DEFAULT_AGENCY_ACCOUNT, travelProduct);
         productId = travelProductDAO.setBidding(productId, bidding);
         TravelProduct product = travelProductDAO.updateProductStatus(Constants.DEFAULT_AGENCY_ACCOUNT, productId,
-            ProductStatus.DRAFT_PRODUCT, ProductStatus.PUBLIC_STATUS);
+            ProductStatus.DRAFT_PRODUCT, ProductStatus.PUBLIC_PRODUCT);
         UUID productUuid = travelProductDAO.publishProduct(product, travelProposal);
 
         Thread.sleep(3000);
 
         List<TravelProduct> agencyAccountProducts = travelProductDAO.getProducts(Constants.DEFAULT_AGENCY_ACCOUNT,
-            ProductStatus.PUBLIC_STATUS);
+            ProductStatus.PUBLIC_PRODUCT);
         assertNotNull(agencyAccountProducts);
         assertTrue(agencyAccountProducts.size() >= 1);
         Map<UUID, TravelProduct> result = new HashMap<UUID, TravelProduct>();
