@@ -1,6 +1,8 @@
 package com.free.walker.service.itinerary.dao.memo;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -34,6 +36,7 @@ import com.free.walker.service.itinerary.product.TravelProduct;
 import com.free.walker.service.itinerary.product.TravelProductItem;
 import com.free.walker.service.itinerary.product.TrivItem;
 import com.free.walker.service.itinerary.req.TravelProposal;
+import com.ibm.icu.util.Calendar;
 
 public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
     protected Map<UUID, TravelProduct> travelProducts;
@@ -189,6 +192,24 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
             }
         }
 
+        Collections.sort(result, new Comparator<TravelProduct>() {
+            public int compare(TravelProduct a, TravelProduct b) {
+                Calendar aDeadline = (Calendar) a.adapt(Introspection.JSONKeys.DEADLINE_DATETIME, Calendar.class);
+                Calendar bDeadline = (Calendar) b.adapt(Introspection.JSONKeys.DEADLINE_DATETIME, Calendar.class);
+                if (aDeadline == null || bDeadline == null) {
+                    return 0;
+                }
+
+                if (aDeadline.getTimeInMillis() > bDeadline.getTimeInMillis()) {
+                    return -1;
+                } else if (aDeadline.getTimeInMillis() < bDeadline.getTimeInMillis()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+
         return result;
     }
 
@@ -339,8 +360,8 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         return travelProductBiddings.remove(productId);
     }
 
-    public UUID updateProductStatus(Account account, UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
-        throws InvalidTravelProductException, DatabaseAccessException {
+    public TravelProduct updateProductStatus(Account account, UUID productId, ProductStatus oldStatus,
+        ProductStatus newStatus) throws InvalidTravelProductException, DatabaseAccessException {
         if (account == null || productId == null || newStatus == null) {
             throw new NullPointerException();
         }
@@ -368,7 +389,7 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
 
         ((SimpleTravelProduct) travelProduct.getCore()).setStatus(newStatus);
 
-        return productId;
+        return travelProduct;
     }
 
     public UUID publishProduct(TravelProduct product, TravelProposal proposal) throws InvalidTravelProductException, DatabaseAccessException {
@@ -379,6 +400,8 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         if (!product.getProposalUUID().equals(proposal.getUUID())) {
             throw new IllegalArgumentException();
         }
+
+        product = product.getCore();
 
         Account proposalOwner = travelRequirementDao.getTravelProposalOwner(proposal.getUUID());
         if (proposalOwner == null) {

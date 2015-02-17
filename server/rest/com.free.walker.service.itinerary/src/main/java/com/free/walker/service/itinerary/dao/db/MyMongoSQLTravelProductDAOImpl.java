@@ -407,7 +407,8 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             BasicDBObject query3 = new BasicDBObject(Introspection.JSONKeys.DEADLINE_DATETIME, new BasicDBObject(
                 "$gte", since.getTimeInMillis()));
             BasicDBObject productQuery = new BasicDBObject("$and", new BasicDBObject[] { query1, query2, query3 });
-            DBCursor productsCr = productColls.find(productQuery);
+            BasicDBObject sorter = new BasicDBObject(Introspection.JSONKeys.DEADLINE_DATETIME, -1);
+            DBCursor productsCr = productColls.find(productQuery).sort(sorter).limit(300);
             try {
                 while (productsCr.hasNext()) {
                     JsonObject product = Json.createReader(new StringReader(productsCr.next().toString())).readObject();
@@ -769,8 +770,8 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
     }
 
-    public UUID updateProductStatus(Account account, UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
-        throws InvalidTravelProductException, DatabaseAccessException {
+    public TravelProduct updateProductStatus(Account account, UUID productId, ProductStatus oldStatus,
+        ProductStatus newStatus) throws InvalidTravelProductException, DatabaseAccessException {
         if (account == null || productId == null || newStatus == null) {
             throw new NullPointerException();
         }
@@ -807,7 +808,8 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             throw new DatabaseAccessException(e);
         }
 
-        return productId;
+        JsonObject product = Json.createReader(new StringReader(travelProduct.toString())).readObject();
+        return JsonObjectHelper.toProduct(product, true);
     }
 
     private WriteResult storeProduct(JsonObject product, String accountId) {
@@ -879,6 +881,8 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         if (!product.getProposalUUID().equals(proposal.getUUID())) {
             throw new IllegalArgumentException();
         }
+
+        product = product.getCore();
 
         JsonArrayBuilder departuresRelBuilder = Json.createArrayBuilder();
         {

@@ -21,6 +21,7 @@ import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.TravelProposal;
 import com.ibm.icu.util.Calendar;
+import com.ibm.icu.util.GregorianCalendar;
 
 public class TravelProductTest {
     @Before
@@ -80,5 +81,9 @@ public class TravelProductTest {
         assertNotNull(aTravelProduct.getCore().adapt(Introspection.JSONKeys.DEPARTURE, TravelLocation.class));
         assertNull(aTravelProduct.getCore().adapt(Introspection.JSONKeys.DEPARTURE, City.class));
         assertNull(aTravelProduct.getCore().adapt(Introspection.JSONKeys.DEPARTURE_DATETIME, TravelLocation.class));
+
+        assertNotNull(aTravelProduct.adapt(Introspection.JSONKeys.DEADLINE_DATETIME, Calendar.class));
+        assertNotNull(aTravelProduct.adapt(Introspection.JSONKeys.DEADLINE_DATETIME, GregorianCalendar.class));
+        assertNull(aTravelProduct.adapt(Introspection.JSONKeys.DEADLINE_DATETIME, java.util.GregorianCalendar.class));
     }
 }

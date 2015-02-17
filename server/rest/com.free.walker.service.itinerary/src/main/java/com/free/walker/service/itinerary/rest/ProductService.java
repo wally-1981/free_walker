@@ -167,9 +167,13 @@ public class ProductService {
             List<TravelRequirement> itineraries = requirementDao.getItineraryRequirements(product.getProposalUUID());
             proposal.getTravelRequirements().addAll(itineraries);
 
-            travelProductDAO.updateProductStatus(acnt, productUuid, ProductStatus.PRIVATE_PRODUCT,
-                ProductStatus.PUBLIC_STATUS);
-            productId = travelProductDAO.publishProduct(product, proposal).toString();
+            if (ProductStatus.PUBLIC_STATUS.equals(product.getStatus())) {
+                productId = travelProductDAO.publishProduct(product, proposal).toString();
+            } else {
+                TravelProduct updatedTravelProduct = travelProductDAO.updateProductStatus(acnt, productUuid,
+                    ProductStatus.PRIVATE_PRODUCT, ProductStatus.PUBLIC_STATUS);
+                productId = travelProductDAO.publishProduct(updatedTravelProduct, proposal).toString();
+            }
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productId).build();
             return Response.ok(res).build();
         } catch (InvalidTravelProductException e) {
@@ -227,10 +231,10 @@ public class ProductService {
     public Response submitProduct(@PathParam("productId") String productId, @Context MessageContext msgCntx) {
         try {
             Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
-            UUID submittedProductId = travelProductDAO.updateProductStatus(acnt, UuidUtil.fromUuidStr(productId),
+            TravelProduct submittedProduct = travelProductDAO.updateProductStatus(acnt, UuidUtil.fromUuidStr(productId),
                 ProductStatus.DRAFT_PRODUCT, ProductStatus.PRIVATE_PRODUCT);
-            JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, submittedProductId.toString())
-                .build();
+            JsonObject res = Json.createObjectBuilder()
+                .add(Introspection.JSONKeys.UUID, submittedProduct.getProductUUID().toString()).build();
             return Response.ok(res).build();
         } catch (InvalidTravelProductException e) {
             return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();

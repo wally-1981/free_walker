@@ -190,7 +190,7 @@ public interface TravelProductDAO extends HealthyDAO {
      * @throws InvalidTravelProductException
      * @throws DatabaseAccessException
      */
-    public UUID updateProductStatus(Account account, UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
+    public TravelProduct updateProductStatus(Account account, UUID productId, ProductStatus oldStatus, ProductStatus newStatus)
         throws InvalidTravelProductException, DatabaseAccessException;
 
     /**

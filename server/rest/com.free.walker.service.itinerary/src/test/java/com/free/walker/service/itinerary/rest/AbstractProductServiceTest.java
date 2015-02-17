@@ -1317,14 +1317,59 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
          * 根据Proposal Owner获取Draft状态的Product
          */
         {
-            ;
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(productServiceUrlStr + "products/my/"
+                + Introspection.JSONValues.DRAFT_PRODUCT.enumValue()));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_ACCOUNT);
+            try {
+                HttpResponse response = httpClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                assertEquals(HttpStatus.CONFLICT_409, statusCode);
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
         }
 
         /*
          * 根据Product Owner获取Draft状态的Product
          */
         {
-            ;
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(productServiceUrlStr + "products/my/"
+                + Introspection.JSONValues.DRAFT_PRODUCT.enumValue()));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
+            try {
+                HttpResponse response = httpClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonArray products = Json.createReader(response.getEntity().getContent()).readArray();
+                    assertNotNull(products);
+                    assertTrue(products.size() >= 1);
+                    JsonObject product = products.getJsonObject(0);
+                    assertEquals(productId, product.getString(Introspection.JSONKeys.UUID));
+                    assertEquals(60, product.getInt(Introspection.JSONKeys.GROUP_CAPACITY));
+                    assertEquals(enrollmentDeadlineDatetime.getTimeInMillis(),
+                        product.getJsonNumber(Introspection.JSONKeys.DEADLINE_DATETIME).longValue());
+                    assertEquals(departureDatetime.getTimeInMillis(),
+                        product.getJsonNumber(Introspection.JSONKeys.DEPARTURE_DATETIME).longValue());
+                    JsonArray productItems = product.getJsonArray(Introspection.JSONKeys.ITEMS);
+                    assertEquals(0, productItems.size());
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
         }
 
         /*
@@ -1362,14 +1407,59 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
          * 根据Proposal Owner获取Private状态的Product
          */
         {
-            ;
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(productServiceUrlStr + "products/my/"
+                + Introspection.JSONValues.PRIVATE_PRODUCT.enumValue()));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_ACCOUNT);
+            try {
+                HttpResponse response = httpClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                assertEquals(HttpStatus.CONFLICT_409, statusCode);
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
         }
 
         /*
          * 根据Product Owner获取Private状态的Product
          */
         {
-            ;
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(productServiceUrlStr + "products/my/"
+                + Introspection.JSONValues.PRIVATE_PRODUCT.enumValue()));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
+            try {
+                HttpResponse response = httpClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonArray products = Json.createReader(response.getEntity().getContent()).readArray();
+                    assertNotNull(products);
+                    assertTrue(products.size() >= 1);
+                    JsonObject product = products.getJsonObject(0);
+                    assertEquals(productId, product.getString(Introspection.JSONKeys.UUID));
+                    assertEquals(60, product.getInt(Introspection.JSONKeys.GROUP_CAPACITY));
+                    assertEquals(enrollmentDeadlineDatetime.getTimeInMillis(),
+                        product.getJsonNumber(Introspection.JSONKeys.DEADLINE_DATETIME).longValue());
+                    assertEquals(departureDatetime.getTimeInMillis(),
+                        product.getJsonNumber(Introspection.JSONKeys.DEPARTURE_DATETIME).longValue());
+                    JsonArray productItems = product.getJsonArray(Introspection.JSONKeys.ITEMS);
+                    assertEquals(0, productItems.size());
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
         }
 
         /*
@@ -1453,14 +1543,78 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
          * 根据Product Owner获取Public状态的Product
          */
         {
-            ;
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(productServiceUrlStr + "products/my/"
+                + Introspection.JSONValues.PUBLIC_STATUS.enumValue()));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT);
+            try {
+                HttpResponse response = httpClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonArray products = Json.createReader(response.getEntity().getContent()).readArray();
+                    assertNotNull(products);
+                    assertTrue(products.size() >= 1);
+                    JsonObject product = products.getJsonObject(0);
+                    assertEquals(productId, product.getString(Introspection.JSONKeys.UUID));
+                    assertEquals(60, product.getInt(Introspection.JSONKeys.GROUP_CAPACITY));
+                    assertEquals(enrollmentDeadlineDatetime.getTimeInMillis(),
+                        product.getJsonNumber(Introspection.JSONKeys.DEADLINE_DATETIME).longValue());
+                    assertEquals(departureDatetime.getTimeInMillis(),
+                        product.getJsonNumber(Introspection.JSONKeys.DEPARTURE_DATETIME).longValue());
+                    JsonArray productItems = product.getJsonArray(Introspection.JSONKeys.ITEMS);
+                    assertEquals(4, productItems.size());
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
         }
 
         /*
          * 根据Proposal Owner获取Public状态的Product
          */
         {
-            ;
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(productServiceUrlStr + "products/my/"
+                + Introspection.JSONValues.PUBLIC_STATUS.enumValue()));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.DEFAULT_ACCOUNT);
+            try {
+                HttpResponse response = httpClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    JsonArray products = Json.createReader(response.getEntity().getContent()).readArray();
+                    assertNotNull(products);
+                    assertTrue(products.size() >= 1);
+                    JsonObject product = products.getJsonObject(0);
+                    assertEquals(productId, product.getString(Introspection.JSONKeys.UUID));
+                    assertEquals(60, product.getInt(Introspection.JSONKeys.GROUP_CAPACITY));
+                    assertEquals(enrollmentDeadlineDatetime.getTimeInMillis(),
+                        product.getJsonNumber(Introspection.JSONKeys.DEADLINE_DATETIME).longValue());
+                    assertEquals(departureDatetime.getTimeInMillis(),
+                        product.getJsonNumber(Introspection.JSONKeys.DEPARTURE_DATETIME).longValue());
+                    JsonArray productItems = product.getJsonArray(Introspection.JSONKeys.ITEMS);
+                    assertEquals(4, productItems.size());
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
         }
 
         /*

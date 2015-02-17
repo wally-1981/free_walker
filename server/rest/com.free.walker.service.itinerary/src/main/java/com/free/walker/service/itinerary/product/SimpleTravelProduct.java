@@ -213,9 +213,16 @@ public class SimpleTravelProduct implements TravelProduct, Renewable {
     }
 
     public Object adapt(String attributeName, Class<?> attributeType) {
+        if (attributeName == null || attributeName.trim().isEmpty() || attributeType == null) {
+            return null;
+        }
+
         if (Introspection.JSONKeys.DEPARTURE.equals(attributeName)
-            && departureLocation.getClass().equals(attributeType)) {
+            && attributeType.isAssignableFrom(departureLocation.getClass())) {
             return departureLocation;
+        } else if (Introspection.JSONKeys.DEADLINE_DATETIME.equals(attributeName)
+            && attributeType.isAssignableFrom(deadline.getClass())) {
+            return deadline;
         } else {
             return null;
         }
