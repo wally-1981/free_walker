@@ -25,8 +25,8 @@ public class AccountRecognitionInterceptor extends AbstractPhaseInterceptor<Mess
         if (request != null) {
            accountId = request.getHeader(HttpHeaders.AUTHORIZATION);
            if (accountId != null) {
-               if (Constants.DEFAULT_ACCOUNT.getUuid().equals(accountId)) {
-                   message.setContextualProperty(Account.class.getName(), Constants.DEFAULT_ACCOUNT);
+               if (Constants.DEFAULT_USER_ACCOUNT.getUuid().equals(accountId)) {
+                   message.setContextualProperty(Account.class.getName(), Constants.DEFAULT_USER_ACCOUNT);
                    return;
                } else if (Constants.DEFAULT_AGENCY_ACCOUNT.getUuid().equals(accountId)) {
                    message.setContextualProperty(Account.class.getName(), Constants.DEFAULT_AGENCY_ACCOUNT);

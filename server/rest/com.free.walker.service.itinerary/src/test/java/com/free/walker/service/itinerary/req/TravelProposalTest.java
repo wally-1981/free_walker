@@ -85,7 +85,7 @@ public class TravelProposalTest {
         UUID uuid = UUID.randomUUID();
         proposal.add(Introspection.JSONKeys.UUID, uuid.toString());
         proposal.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL);
-        proposal.add(Introspection.JSONKeys.AUTHOR, Constants.DEFAULT_ACCOUNT.getUuid());
+        proposal.add(Introspection.JSONKeys.AUTHOR, Constants.DEFAULT_USER_ACCOUNT.getUuid());
         proposal.add(Introspection.JSONKeys.TITLE, "测试提议");
         JsonArray requirements = Json.createArrayBuilder().build();
         proposal.add(Introspection.JSONKeys.REQUIREMENTS, requirements);
@@ -103,7 +103,7 @@ public class TravelProposalTest {
         UUID uuid = UUID.randomUUID();
         proposal.add(Introspection.JSONKeys.UUID, uuid.toString());
         proposal.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL);
-        proposal.add(Introspection.JSONKeys.AUTHOR, Constants.DEFAULT_ACCOUNT.getUuid());
+        proposal.add(Introspection.JSONKeys.AUTHOR, Constants.DEFAULT_USER_ACCOUNT.getUuid());
         JsonArray requirements = Json.createArrayBuilder().build();
         proposal.add(Introspection.JSONKeys.TITLE, "测试提议");
         proposal.add(Introspection.JSONKeys.REQUIREMENTS, requirements);

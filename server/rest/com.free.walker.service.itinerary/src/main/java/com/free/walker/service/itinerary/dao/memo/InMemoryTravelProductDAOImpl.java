@@ -458,8 +458,8 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
             while (productIter.hasNext()) {
                 TravelProduct product = (TravelProduct) productIter.next();
                 if (productId.equals(product.getProductUUID())) {
-                    if (Constants.DEFAULT_ACCOUNT.getUuid().equals(accountId)) {
-                        return Constants.DEFAULT_ACCOUNT;
+                    if (Constants.DEFAULT_USER_ACCOUNT.getUuid().equals(accountId)) {
+                        return Constants.DEFAULT_USER_ACCOUNT;
                     } else if (Constants.DEFAULT_AGENCY_ACCOUNT.getUuid().equals(accountId)) {
                         return Constants.DEFAULT_AGENCY_ACCOUNT;
                     } else if (Constants.ADMIN_ACCOUNT.getUuid().equals(accountId)) {

@@ -1052,8 +1052,8 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             JsonObject product = Json.createReader(new StringReader(productBs.toString())).readObject();
             String productOwnerId = product.getString(Introspection.JSONKeys.OWNER, null);
             // TODO: query the user registry by identifier for the account. 
-            if (Constants.DEFAULT_ACCOUNT.getUuid().equals(productOwnerId)) {
-                return Constants.DEFAULT_ACCOUNT;
+            if (Constants.DEFAULT_USER_ACCOUNT.getUuid().equals(productOwnerId)) {
+                return Constants.DEFAULT_USER_ACCOUNT;
             } else if (Constants.DEFAULT_AGENCY_ACCOUNT.getUuid().equals(productOwnerId)) {
                 return Constants.DEFAULT_AGENCY_ACCOUNT;
             } else if (Constants.ADMIN_ACCOUNT.getUuid().equals(productOwnerId)) {

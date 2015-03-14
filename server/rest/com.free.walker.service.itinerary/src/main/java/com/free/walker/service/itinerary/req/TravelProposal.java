@@ -36,7 +36,7 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
         this.proposalTags = new HashSet<String>();
         this.proposalTitle = Constants.NEW_PROPOSAL;
         this.budget = 1.8;
-        this.authorAccountId = Constants.DEFAULT_ACCOUNT.getUuid();
+        this.authorAccountId = Constants.DEFAULT_USER_ACCOUNT.getUuid();
     }
 
     public TravelProposal(String proposalTitle, ItineraryRequirement itineraryRequirement) {
@@ -55,7 +55,7 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
         this.proposalTags = new HashSet<String>();
         this.proposalTitle = proposalTitle;
         this.budget = 1.8;
-        this.authorAccountId = Constants.DEFAULT_ACCOUNT.getUuid();
+        this.authorAccountId = Constants.DEFAULT_USER_ACCOUNT.getUuid();
     }
 
     public TravelProposal(String proposalTitle, ItineraryRequirement itineraryRequirement, List<String> proposalTags) {

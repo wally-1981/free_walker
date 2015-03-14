@@ -1195,8 +1195,8 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         }
 
         String proposalOwnerId = (String) proposal.get(Introspection.JSONKeys.OWNER);
-        if (Constants.DEFAULT_ACCOUNT.getUuid().equals(proposalOwnerId)) {
-            return Constants.DEFAULT_ACCOUNT;
+        if (Constants.DEFAULT_USER_ACCOUNT.getUuid().equals(proposalOwnerId)) {
+            return Constants.DEFAULT_USER_ACCOUNT;
         } else if (Constants.DEFAULT_AGENCY_ACCOUNT.getUuid().equals(proposalOwnerId)) {
             return Constants.DEFAULT_AGENCY_ACCOUNT;
         } else if (Constants.ADMIN_ACCOUNT.getUuid().equals(proposalOwnerId)) {

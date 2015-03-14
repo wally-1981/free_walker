@@ -72,7 +72,7 @@ public abstract class AbstractTravelProductDAOImplTest {
             itineraryRequirement = new ItineraryRequirement(destination, departure);
             travelProposal = new TravelProposal(itineraryRequirement);
             try {
-                travelRequirementDAO.createProposal(Constants.DEFAULT_ACCOUNT, travelProposal);
+                travelRequirementDAO.createProposal(Constants.DEFAULT_USER_ACCOUNT, travelProposal);
             } catch (InvalidTravelReqirementException | DatabaseAccessException e) {
                 throw e;
             }
@@ -675,8 +675,8 @@ public abstract class AbstractTravelProductDAOImplTest {
         UUID productId = travelProductDAO.createProduct(Constants.DEFAULT_AGENCY_ACCOUNT, travelProduct);
         thrown.expect(InvalidTravelProductException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_submit_product_operation, productId,
-            Constants.DEFAULT_ACCOUNT.getUuid()));
-        travelProductDAO.updateProductStatus(Constants.DEFAULT_ACCOUNT, travelProduct.getProductUUID(),
+            Constants.DEFAULT_USER_ACCOUNT.getUuid()));
+        travelProductDAO.updateProductStatus(Constants.DEFAULT_USER_ACCOUNT, travelProduct.getProductUUID(),
             ProductStatus.DRAFT_PRODUCT, ProductStatus.PRIVATE_PRODUCT);
     }
 
@@ -780,7 +780,7 @@ public abstract class AbstractTravelProductDAOImplTest {
 
         Thread.sleep(3000);
 
-        List<TravelProduct> userAccountProducts = travelProductDAO.getProducts(Constants.DEFAULT_ACCOUNT,
+        List<TravelProduct> userAccountProducts = travelProductDAO.getProducts(Constants.DEFAULT_USER_ACCOUNT,
             ProductStatus.PUBLIC_PRODUCT);
         assertNotNull(userAccountProducts);
         assertTrue(userAccountProducts.size() >= 1);

@@ -19,7 +19,7 @@ public class Constants {
 
     public static final String NEW_PROPOSAL;
 
-    public static final Account DEFAULT_ACCOUNT;
+    public static final Account DEFAULT_USER_ACCOUNT;
     public static final Account DEFAULT_AGENCY_ACCOUNT;
     public static final Account ADMIN_ACCOUNT;
 
@@ -41,11 +41,11 @@ public class Constants {
             .add(Introspection.JSONKeys.REF_LINK, "")
             .build());
 
-        DEFAULT_ACCOUNT = new Account().fromJSON(
+        DEFAULT_USER_ACCOUNT = new Account().fromJSON(
             Json.createObjectBuilder()
             .add(Introspection.JSONKeys.UUID, "3b3e4dcf-e353-4418-adfb-3c9af7a54992")
             .add(Introspection.JSONKeys.TYPE, AccountType.MASTER.ordinal())
-            .add(Introspection.JSONKeys.LOGIN, "default")
+            .add(Introspection.JSONKeys.LOGIN, "default_user")
             .add(Introspection.JSONKeys.MOBILE, "")
             .add(Introspection.JSONKeys.EMAIL, "")
             .add(Introspection.JSONKeys.NAME, "default_user")
@@ -56,10 +56,10 @@ public class Constants {
             Json.createObjectBuilder()
             .add(Introspection.JSONKeys.UUID, "7d128f8f-5143-4971-96de-7d33ae7e9ba5")
             .add(Introspection.JSONKeys.TYPE, AccountType.AGENCY.ordinal())
-            .add(Introspection.JSONKeys.LOGIN, "agency")
+            .add(Introspection.JSONKeys.LOGIN, "default_agency")
             .add(Introspection.JSONKeys.MOBILE, "")
             .add(Introspection.JSONKeys.EMAIL, "")
-            .add(Introspection.JSONKeys.NAME, "agency_user")
+            .add(Introspection.JSONKeys.NAME, "default_agency")
             .add(Introspection.JSONKeys.REF_LINK, "")
             .build());
 
