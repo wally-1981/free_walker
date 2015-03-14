@@ -51,6 +51,7 @@ public class LocalMessages {
     }
 
     public static final String server_started = "server_started";
+    public static final String secure_server_started = "secure_server_started";
     public static final String localhost_ip_founed = "localhost_ip_founed";
     public static final String fallback_config_path = "fallback_config_path";
     public static final String log_file_path_determined = "log_file_path_determined";
