@@ -36,7 +36,7 @@ public class Server {
 
     static {
         SpringBusFactory factory = new SpringBusFactory();
-        Bus bus = factory.createBus("config/ServiceConfig.xml");
+        Bus bus = factory.createBus(SystemConfigUtil.getApplicationSpringConfig());
         BusFactory.setDefaultBus(bus);
     }
 

@@ -24,9 +24,12 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.SSLContexts;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Rule;
@@ -40,6 +43,7 @@ import com.ibm.icu.util.Calendar;
 
 public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractProductServiceTest.class);
+
     private HttpClient httpClient;
 
     private JsonObject proposal;
@@ -71,7 +75,15 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
 
     @Before
     public void before() {
-        httpClient = HttpClientBuilder.create().build();
+        try {
+            SSLContextBuilder sslCntxBuilder = SSLContexts.custom()
+                .loadKeyMaterial(getSSLKeyStoreURL(), getSSLStorePassword(), getSSLKeyPassword())
+                .loadTrustMaterial(getSSLTrustStoreURL(), getSSLStorePassword());
+            httpClient = HttpClientBuilder.create().setSslcontext(sslCntxBuilder.build())
+                .setSSLHostnameVerifier(new DefaultHostnameVerifier()).build();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
 
         {
             JsonObjectBuilder requirementBuilder = Json.createObjectBuilder();

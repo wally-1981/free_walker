@@ -99,7 +99,7 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.3.6</version>
+			<version>4.4</version>
 		</dependency>
 	</dependencies>
 
@@ -134,7 +134,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>com.free.walker.service.itinerary.rest.Server</mainClass>
+							<mainClass>com.free.walker.service.itinerary.Server</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

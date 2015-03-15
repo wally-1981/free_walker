@@ -21,9 +21,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.SSLContexts;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,9 +39,8 @@ import com.free.walker.service.itinerary.primitive.Introspection;
 
 public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPlatformServiceTest.class);
-    private HttpClient httpClient;
 
-    protected String platformServiceUrlStr;
+    private HttpClient httpClient;
 
     private JsonObject agency;
 
@@ -46,12 +48,22 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
     private String sendLocationId = "2";
     private String recvLocationId = "03161e050c2448378eb863bfcbe744f3";
 
+    protected String platformServiceUrlStr;
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void before() {
-        httpClient = HttpClientBuilder.create().build();
+        try {
+            SSLContextBuilder sslCntxBuilder = SSLContexts.custom()
+                .loadKeyMaterial(getSSLKeyStoreURL(), getSSLStorePassword(), getSSLKeyPassword())
+                .loadTrustMaterial(getSSLTrustStoreURL(), getSSLStorePassword());
+            httpClient = HttpClientBuilder.create().setSslcontext(sslCntxBuilder.build())
+                .setSSLHostnameVerifier(new DefaultHostnameVerifier()).build();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
 
         {
             JsonObjectBuilder agencyBuilder = Json.createObjectBuilder();

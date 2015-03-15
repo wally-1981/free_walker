@@ -14,10 +14,10 @@
         <httpj:engine port="9001">
             <httpj:tlsServerParameters>
                 <sec:keyManagers keyPassword="skpass">
-                <sec:keyStore type="JKS" password="sspass" file="src/main/resources/config/ServiceKeystore.jks"/>
+                <sec:keyStore type="JKS" password="sspass" file="keystore/ServiceKeystore.jks"/>
             </sec:keyManagers>
             <sec:trustManagers>
-                <sec:keyStore type="JKS" password="sspass" file="src/main/resources/config/ServiceKeystore.jks"/>
+                <sec:keyStore type="JKS" password="sspass" file="keystore/ServiceKeystore.jks"/>
             </sec:trustManagers>
             <sec:cipherSuitesFilter>
                 <sec:include>.*_EXPORT_.*</sec:include>
@@ -36,10 +36,10 @@
         <httpj:engine port="9011">
             <httpj:tlsServerParameters>
                 <sec:keyManagers keyPassword="skpass">
-                <sec:keyStore type="JKS" password="sspass" file="src/main/resources/config/ServiceKeystore.jks"/>
+                <sec:keyStore type="JKS" password="sspass" file="keystore/ServiceKeystore.jks"/>
             </sec:keyManagers>
             <sec:trustManagers>
-                <sec:keyStore type="JKS" password="sspass" file="src/main/resources/config/ServiceKeystore.jks"/>
+                <sec:keyStore type="JKS" password="sspass" file="keystore/ServiceKeystore.jks"/>
             </sec:trustManagers>
             <sec:cipherSuitesFilter>
                 <sec:include>.*_EXPORT_.*</sec:include>

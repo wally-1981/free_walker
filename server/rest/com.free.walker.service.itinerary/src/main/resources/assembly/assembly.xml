@@ -54,5 +54,12 @@
 				<include>config.properties</include>
 			</includes>
 		</fileSet>
+        <fileSet>
+            <directory>${project.basedir}\src\main\resources\config</directory>
+            <outputDirectory>\conf</outputDirectory>
+            <includes>
+                <include>ServiceConfig.xml</include>
+            </includes>
+        </fileSet>
 	</fileSets>
 </assembly>

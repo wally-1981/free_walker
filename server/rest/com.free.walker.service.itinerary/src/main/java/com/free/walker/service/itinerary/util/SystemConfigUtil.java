@@ -15,8 +15,10 @@ public class SystemConfigUtil {
     private static final Logger LOG = LoggerFactory.getLogger(SystemConfigUtil.class);
 
     private static final String DEFAULT_CONFIG = "com/free/walker/service/itinerary/dao/config.properties";
+    private static final String DEFAULT_CONFIG_SPRING = "config/ServiceConfig.xml";
     private static final String CONFIG_DIR = new File(System.getProperty("user.dir"), "conf").toString();
     private static final String CONFIG_FILE = "config.properties";
+    private static final String SPRING_CONFIG_FILE = "ServiceConfig.xml";
 
     private static final String DEFAULT_LOG_CONFIG = "log4j.properties";
 
@@ -26,10 +28,20 @@ public class SystemConfigUtil {
         if (configFile.exists() && configFile.isFile() && configFile.canRead()) {
             config.load(new FileInputStream(configFile));
         } else {
-            config.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(DEFAULT_CONFIG));
             LOG.info(LocalMessages.getMessage(LocalMessages.fallback_config_path, configFile.toString()));
+            config.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(DEFAULT_CONFIG));
         }
         return config;
+    }
+
+    public static String getApplicationSpringConfig() {
+        File configFile = new File(CONFIG_DIR, SPRING_CONFIG_FILE);
+        if (configFile.exists() && configFile.isFile() && configFile.canRead()) {
+            return configFile.getPath();
+        } else {
+            LOG.info(LocalMessages.getMessage(LocalMessages.fallback_config_path, configFile.toString()));
+            return DEFAULT_CONFIG_SPRING;
+        }
     }
 
     public static Properties getLogConfig() throws IOException {
