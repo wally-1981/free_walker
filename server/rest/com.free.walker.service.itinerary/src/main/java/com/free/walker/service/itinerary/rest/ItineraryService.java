@@ -425,8 +425,7 @@ public class ItineraryService {
             requirement = travelRequirementDAO.getRequirement(reqId,
                 Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT);
             if (requirement == null) {
-                JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, requirementId).build();
-                return Response.status(Status.NOT_FOUND).entity(res).build();
+                return Response.status(Status.NOT_FOUND).build();
             }
 
             if (!requirement.isProposal() && !requirement.isItinerary()) {

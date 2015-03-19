@@ -196,6 +196,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.OK_200, statusCode);
+                assertTrue(IOUtils.toString(response.getEntity().getContent()).isEmpty());
             } catch (IOException e) {
                 throw new ProcessingException(e);
             } finally {
@@ -215,6 +216,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.OK_200, statusCode);
+                assertTrue(IOUtils.toString(response.getEntity().getContent()).isEmpty());
             } catch (IOException e) {
                 throw new ProcessingException(e);
             } finally {
@@ -330,6 +332,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
                 HttpResponse response = httpClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.OK_200, statusCode);
+                assertTrue(IOUtils.toString(response.getEntity().getContent()).isEmpty());
             } catch (IOException e) {
                 throw new ProcessingException(e);
             } finally {
@@ -380,9 +383,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
                 HttpResponse response = httpClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
-                    JsonObject agency = Json.createReader(response.getEntity().getContent()).readObject();
-                    assertNotNull(agency);
-                    assertEquals(agencyId, agency.getString(Introspection.JSONKeys.UUID));
+                    assertTrue(IOUtils.toString(response.getEntity().getContent()).isEmpty());
                 } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
                     LOG.error(IOUtils.toString(response.getEntity().getContent()));
                     assertTrue(false);
@@ -409,6 +410,7 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.NOT_FOUND_404, statusCode);
+                assertTrue(IOUtils.toString(response.getEntity().getContent()).isEmpty());
             } catch (IOException e) {
                 throw new ProcessingException(e);
             } finally {

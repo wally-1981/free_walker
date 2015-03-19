@@ -1318,6 +1318,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.CONFLICT_409, statusCode);
+                assertFalse(IOUtils.toString(response.getEntity().getContent()).isEmpty());
             } catch (IOException e) {
                 throw new ProcessingException(e);
             } finally {
@@ -1338,6 +1339,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.CONFLICT_409, statusCode);
+                assertFalse(IOUtils.toString(response.getEntity().getContent()).isEmpty());
             } catch (IOException e) {
                 throw new ProcessingException(e);
             } finally {
@@ -1428,6 +1430,7 @@ public abstract class AbstractProductServiceTest extends BaseServiceUrlProvider 
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.CONFLICT_409, statusCode);
+                assertFalse(IOUtils.toString(response.getEntity().getContent()).isEmpty());
             } catch (IOException e) {
                 throw new ProcessingException(e);
             } finally {

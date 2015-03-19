@@ -1,6 +1,7 @@
 package com.free.walker.service.itinerary.rest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -717,6 +718,7 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
                 HttpResponse response = httpClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.NOT_FOUND_404, statusCode);
+                assertTrue(IOUtils.toString(response.getEntity().getContent()).isEmpty());
             } catch (IOException e) {
                 throw new ProcessingException(e);
             } finally {
@@ -817,6 +819,7 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.ACCEPTED_202, statusCode);
+                assertTrue(IOUtils.toString(response.getEntity().getContent()).isEmpty());
             } catch (IOException e) {
                 throw new ProcessingException(e);
             } finally {
@@ -903,6 +906,7 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
                 HttpResponse response = httpClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.OK_200, statusCode);
+                assertTrue(IOUtils.toString(response.getEntity().getContent()).isEmpty());
             } catch (IOException e) {
                 throw new ProcessingException(e);
             } finally {
@@ -991,6 +995,7 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.BAD_REQUEST_400, statusCode);
+                assertFalse(IOUtils.toString(response.getEntity().getContent()).isEmpty());
             } catch (IOException e) {
                 throw new ProcessingException(e);
             } finally {
@@ -1010,6 +1015,7 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
                 HttpResponse response = httpClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.BAD_REQUEST_400, statusCode);
+                assertFalse(IOUtils.toString(response.getEntity().getContent()).isEmpty());
             } catch (IOException e) {
                 throw new ProcessingException(e);
             } finally {
@@ -1030,10 +1036,7 @@ public abstract class AbstractItineraryServiceTest extends BaseServiceUrlProvide
                 HttpResponse response = httpClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
-                    String agencyId = Json.createReader(response.getEntity().getContent()).readObject()
-                        .getString(Introspection.JSONKeys.UUID);
-                    assertNotNull(agencyId);
-                    assertEquals(agencyIds.getString(i), agencyId);
+                    assertTrue(IOUtils.toString(response.getEntity().getContent()).isEmpty());
                 } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
                     LOG.error(IOUtils.toString(response.getEntity().getContent()));
                     assertTrue(false);

@@ -485,8 +485,7 @@ public class PlatformService {
         try {
             Agency agency = travelBasicDAO.getAgency(agencyId);
             if (agency == null) {
-                JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, agencyId).build();
-                return Response.status(Status.NOT_FOUND).entity(res).build();
+                return Response.status(Status.NOT_FOUND).build();
             }
             return Response.ok(agency.toJSON()).build();
         } catch (DatabaseAccessException e) {
@@ -628,8 +627,7 @@ public class PlatformService {
     public Response removeAgency(@PathParam("agencyId") String agencyId) {
         try {
             travelBasicDAO.removeAgency(agencyId);
-            JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, agencyId).build();
-            return Response.ok(res).build();
+            return Response.ok().build();
         } catch (DatabaseAccessException e) {
             return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
         }
