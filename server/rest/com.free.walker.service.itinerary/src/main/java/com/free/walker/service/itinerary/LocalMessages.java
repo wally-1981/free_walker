@@ -160,7 +160,10 @@ public class LocalMessages {
     public static final String invalid_template_invalid = "invalid_template_invalid";
     public static final String invalid_sort_type_invalid = "invalid_sort_type_invalid";
 
-    public static final String unauthorized_account = "unauthorized_account";
+    public static final String bad_subject_and_credential = "bad_subject_and_credential";
+    public static final String account_unknown = "account_unknown";
+    public static final String account_authenticated_just_now = "account_authenticated_just_now";
+    public static final String account_authenticated_previously = "account_authenticated_previously";
 
     public static final String test_message = "test_message";
     public static final String test_message_with_1_arg = "test_message_with_1_arg";

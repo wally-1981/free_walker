@@ -13,6 +13,10 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
 import org.apache.cxf.jaxrs.provider.jsrjsonp.JsrJsonpProvider;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.config.IniSecurityManagerFactory;
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.util.Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +24,7 @@ import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImpl;
+import com.free.walker.service.itinerary.handler.AccountAuthenticationInterceptor;
 import com.free.walker.service.itinerary.handler.AccountRecognitionInterceptor;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
 import com.free.walker.service.itinerary.rest.ItineraryService;
@@ -34,6 +39,9 @@ public class Server {
     private static final String MODE_SINGLE_DEVO = "Devo";
     private static final String MODE_SINGLE_PROD = "Prod";
 
+    private static final String SHIRO_PROD_CONFIG = "classpath:shiro-prod.ini";
+    private static final String SHIRO_DEVO_CONFIG = "classpath:shiro-devo.ini";
+
     static {
         SpringBusFactory factory = new SpringBusFactory();
         Bus bus = factory.createBus(SystemConfigUtil.getApplicationSpringConfig());
@@ -41,6 +49,18 @@ public class Server {
     }
 
     protected Server(String mode, boolean isSecure) throws Exception {
+        if (mode.equals(MODE_SINGLE_DEVO)) {
+            Factory<SecurityManager> factory = new IniSecurityManagerFactory(SHIRO_DEVO_CONFIG);
+            SecurityManager securityManager = factory.getInstance();
+            SecurityUtils.setSecurityManager(securityManager);
+        } else if (mode.equals(MODE_SINGLE_PROD)) {
+            Factory<SecurityManager> factory = new IniSecurityManagerFactory(SHIRO_PROD_CONFIG);
+            SecurityManager securityManager = factory.getInstance();
+            SecurityUtils.setSecurityManager(securityManager);
+        } else {
+            throw new IllegalArgumentException();
+        }
+
         JAXRSServerFactoryBean sf = new JAXRSServerFactoryBean();
 
         ItineraryService itinerarySvr = null;
@@ -79,6 +99,7 @@ public class Server {
             throw new IllegalArgumentException();
         }
 
+        sf.getInInterceptors().add(new AccountAuthenticationInterceptor());
         sf.getInInterceptors().add(new AccountRecognitionInterceptor());
 
         sf.create();

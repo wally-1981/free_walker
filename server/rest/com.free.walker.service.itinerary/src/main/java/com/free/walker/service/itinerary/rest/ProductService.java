@@ -131,7 +131,7 @@ public class ProductService {
     @Path("/products/public/{productId}")
     public Response publishProduct(@PathParam("productId") String productId, @Context MessageContext msgCntx) {
         try {
-            Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
+            Account acnt = (Account) msgCntx.getContent(Account.class);
 
             UUID productUuid = UuidUtil.fromUuidStr(productId);
             TravelProduct product = travelProductDAO.getProduct(productUuid);
@@ -228,7 +228,7 @@ public class ProductService {
     @Path("/products/{productId}/")
     public Response submitProduct(@PathParam("productId") String productId, @Context MessageContext msgCntx) {
         try {
-            Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
+            Account acnt = (Account) msgCntx.getContent(Account.class);
             TravelProduct submittedProduct = travelProductDAO.updateProductStatus(acnt, UuidUtil.fromUuidStr(productId),
                 ProductStatus.DRAFT_PRODUCT, ProductStatus.PRIVATE_PRODUCT);
             JsonObject res = Json.createObjectBuilder()
@@ -285,7 +285,7 @@ public class ProductService {
     @Context
     @Path("/products/my/{statusId}/")
     public Response getProducts(@Context MessageContext msgCntx, @PathParam("statusId") int statusId) {
-        Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
+        Account acnt = (Account) msgCntx.getContent(Account.class);
 
         ProductStatus status = ProductStatus.valueOf(statusId);
         if (status == null) {
@@ -443,7 +443,7 @@ public class ProductService {
     @Path("/products/")
     public Response addProduct(JsonObject travelProduct, @Context MessageContext msgCntx) {
         try {
-            Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
+            Account acnt = (Account) msgCntx.getContent(Account.class);
             TravelProduct product = JsonObjectHelper.toProduct(travelProduct);
             String productId = travelProductDAO.createProduct(acnt, product).toString();
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, productId).build();

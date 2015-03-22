@@ -100,6 +100,10 @@ public class Account implements Serializable {
         return accountId.toString();
     }
 
+    public String getLogin() {
+        return login;
+    }
+
     public AccountType getAccountType() {
         return accountType;
     }

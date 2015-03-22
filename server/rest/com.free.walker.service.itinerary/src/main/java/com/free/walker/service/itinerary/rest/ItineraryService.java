@@ -101,7 +101,7 @@ public class ItineraryService {
     @Context
     @Path("/proposals/my/")
     public Response getProposals(@Context MessageContext msgCntx, @QueryParam("pastDays") int n) {
-        Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
+        Account acnt = (Account) msgCntx.getContent(Account.class);
         UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
 
         Calendar daysAgo = Calendar.getInstance();
@@ -183,7 +183,7 @@ public class ItineraryService {
     public Response submitProposal(@PathParam("proposalId") String proposalId, @Context MessageContext msgCntx,
         @QueryParam("delayMins") int delayMins) {
         try {
-            Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
+            Account acnt = (Account) msgCntx.getContent(Account.class);
             travelRequirementDAO.startProposalBid(UuidUtil.fromUuidStr(proposalId), acnt);
             List<TravelRequirement> itineraries = travelRequirementDAO.getItineraryRequirements(UuidUtil
                 .fromUuidStr(proposalId));
@@ -570,7 +570,7 @@ public class ItineraryService {
     @Path("/proposals/")
     public Response addProposal(JsonObject travelProposal, @Context MessageContext msgCntx) {
         try {
-            Account acnt = (Account) msgCntx.getContextualProperty(Account.class.getName());
+            Account acnt = (Account) msgCntx.getContent(Account.class);
             TravelRequirement proposal = JsonObjectHelper.toRequirement(travelProposal);
             String proposalId = travelRequirementDAO.createProposal(acnt, (TravelProposal) proposal).toString();
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, proposalId).build();
