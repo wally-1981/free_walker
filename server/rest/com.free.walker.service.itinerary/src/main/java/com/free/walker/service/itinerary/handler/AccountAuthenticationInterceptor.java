@@ -1,8 +1,7 @@
 package com.free.walker.service.itinerary.handler;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response.Status;
 
@@ -34,9 +33,12 @@ public class AccountAuthenticationInterceptor extends AbstractPhaseInterceptor<M
     }
 
     public void handleMessage(Message message) throws Fault {
+        HttpServletRequest request = (HttpServletRequest) message.get(AbstractHTTPDestination.HTTP_REQUEST);
+        HttpServletResponse response = (HttpServletResponse) message.get(AbstractHTTPDestination.HTTP_RESPONSE);
+
         WebSubjectContext subjectCntx = new DefaultWebSubjectContext();
-        subjectCntx.setServletRequest((ServletRequest) message.get(AbstractHTTPDestination.HTTP_REQUEST));
-        subjectCntx.setServletResponse((ServletResponse) message.get(AbstractHTTPDestination.HTTP_RESPONSE));
+        subjectCntx.setServletRequest(request);
+        subjectCntx.setServletResponse(response);
         Subject currentUser = SecurityUtils.getSecurityManager().createSubject(subjectCntx);
 
         if (currentUser.isAuthenticated()) {
@@ -44,12 +46,10 @@ public class AccountAuthenticationInterceptor extends AbstractPhaseInterceptor<M
             LOG.debug(LocalMessages.getMessage(LocalMessages.account_authenticated_previously,
                 currentUser.getPrincipal(), currentUser.getSession().getId()));
         } else {
-            HttpServletRequest request = (HttpServletRequest) message.get(AbstractHTTPDestination.HTTP_REQUEST);
             String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
             if (authorization == null) {
-                Fault fault = new Fault(new IllegalAccessException(
-                    LocalMessages.getMessage(LocalMessages.bad_subject_and_credential)));
-                fault.setStatusCode(Status.UNAUTHORIZED.getStatusCode());
+                Fault fault = challenge(request, response,
+                    new IllegalAccessException(LocalMessages.getMessage(LocalMessages.bad_subject_and_credential)));
                 message.getInterceptorChain().abort();
                 throw fault;
             }
@@ -57,17 +57,15 @@ public class AccountAuthenticationInterceptor extends AbstractPhaseInterceptor<M
             String[] decodedAuthorization = authorization.split(" ");
             String[] subjectAndCredential = null;
             if (decodedAuthorization.length != 2 || !"basic".equalsIgnoreCase(decodedAuthorization[0])) {
-                Fault fault = new Fault(new IllegalAccessException(
-                    LocalMessages.getMessage(LocalMessages.bad_subject_and_credential)));
-                fault.setStatusCode(Status.UNAUTHORIZED.getStatusCode());
+                Fault fault = challenge(request, response,
+                    new IllegalAccessException(LocalMessages.getMessage(LocalMessages.bad_subject_and_credential)));
                 message.getInterceptorChain().abort();
                 throw fault;
             } else {
                 subjectAndCredential = Base64.decodeToString(decodedAuthorization[1]).split(":");
                 if (subjectAndCredential == null || subjectAndCredential.length != 2) {
-                    Fault fault = new Fault(new IllegalAccessException(
-                        LocalMessages.getMessage(LocalMessages.bad_subject_and_credential)));
-                    fault.setStatusCode(Status.UNAUTHORIZED.getStatusCode());
+                    Fault fault = challenge(request, response,
+                        new IllegalAccessException(LocalMessages.getMessage(LocalMessages.bad_subject_and_credential)));
                     message.getInterceptorChain().abort();
                     throw fault;
                 }
@@ -82,8 +80,7 @@ public class AccountAuthenticationInterceptor extends AbstractPhaseInterceptor<M
                 LOG.debug(LocalMessages.getMessage(LocalMessages.account_authenticated_just_now,
                     currentUser.getPrincipal(), currentUser.getSession().getId()));
             } catch (UnknownAccountException | IncorrectCredentialsException | LockedAccountException e) {
-                Fault fault = new Fault(e);
-                fault.setStatusCode(Status.UNAUTHORIZED.getStatusCode());
+                Fault fault = challenge(request, response, e);
                 message.getInterceptorChain().abort();
                 throw fault;
             } catch (AuthenticationException ae) {
@@ -93,5 +90,14 @@ public class AccountAuthenticationInterceptor extends AbstractPhaseInterceptor<M
                 throw fault;
             }
         }
+    }
+
+    private Fault challenge(HttpServletRequest request, HttpServletResponse response, Exception e) {
+        Fault fault = new Fault(e);
+        String basicAuthChanllengeHeader = new StringBuilder(HttpServletRequest.BASIC_AUTH).append(" realm=\"")
+            .append(request.getPathInfo()).append("\"").toString();
+        response.setHeader("WWW-Authenticate", basicAuthChanllengeHeader);
+        fault.setStatusCode(Status.UNAUTHORIZED.getStatusCode());
+        return fault;
     }
 }
