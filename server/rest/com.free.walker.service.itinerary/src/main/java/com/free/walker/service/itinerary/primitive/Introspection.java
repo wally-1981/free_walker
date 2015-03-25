@@ -20,6 +20,7 @@ public class Introspection {
          */
         public static final String TYPE = "type";
         public static final String SUB_TYPE = "sub_type";
+        public static final String ATTRIBUTES = "attributes";
 
         public static final String REQUIREMENTS = "requirements";
         public static final String ITEMS = "items";
@@ -58,6 +59,7 @@ public class Introspection {
          * Primitive Keys
          */
         public static final String UUID = "uuid";
+        public static final String VIA = "via";
         public static final String OWNER = "owner";
         public static final String REF_UUID = "ref_uuid";
         public static final String REF_LINK = "ref_link";
@@ -106,6 +108,11 @@ public class Introspection {
 
         public static final String SEND = "send";
         public static final String RECV = "recv";
+
+        public static final String TIMEOUT = "timeout";
+        public static final String SESSION_START = "session_start";
+        public static final String SESSION_STOP = "session_stop";
+        public static final String ACCESS = "access";
     }
 
     public static class JSONValues {

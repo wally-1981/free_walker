@@ -5,6 +5,7 @@ import org.junit.runners.Suite;
 
 import com.free.walker.service.itinerary.basic.CityTest;
 import com.free.walker.service.itinerary.basic.ContinentTest;
+import com.free.walker.service.itinerary.basic.ConversationTest;
 import com.free.walker.service.itinerary.basic.CountryTest;
 import com.free.walker.service.itinerary.basic.ProvinceTest;
 import com.free.walker.service.itinerary.basic.ResortTest;
@@ -12,8 +13,10 @@ import com.free.walker.service.itinerary.basic.SearchCriteriaTest;
 import com.free.walker.service.itinerary.basic.TravelLocationTest;
 import com.free.walker.service.itinerary.dao.DAOFactoryTest;
 import com.free.walker.service.itinerary.dao.TravelBasicDAOImplTest;
+import com.free.walker.service.itinerary.dao.db.MyMongoSQLSessionDAOImplTest;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelProductDAOImplTest;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOImplTest;
+import com.free.walker.service.itinerary.dao.memo.InMemorySessionDAOImplTest;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelProductDAOImplTest;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOImplTest;
 import com.free.walker.service.itinerary.primitive.AccountTypeTest;
@@ -53,9 +56,12 @@ import com.free.walker.service.itinerary.util.UuidUtilTest;
     BiddingTest.class,
     TravelLocationTest.class,
     SearchCriteriaTest.class,
+    ConversationTest.class,
 
     DAOFactoryTest.class,
     TravelBasicDAOImplTest.class,
+    InMemorySessionDAOImplTest.class,
+    MyMongoSQLSessionDAOImplTest.class,
     InMemoryTravelRequirementDAOImplTest.class,
     MyMongoSQLTravelRequirementDAOImplTest.class,
     InMemoryTravelProductDAOImplTest.class,

@@ -1,6 +1,7 @@
 package com.free.walker.service.itinerary.rest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -17,16 +18,11 @@ import javax.ws.rs.ProcessingException;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.ssl.SSLContexts;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Rule;
@@ -37,10 +33,8 @@ import org.slf4j.LoggerFactory;
 
 import com.free.walker.service.itinerary.primitive.Introspection;
 
-public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider {
+public abstract class AbstractPlatformServiceTest extends BaseConfigurationProvider {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPlatformServiceTest.class);
-
-    private HttpClient httpClient;
 
     private JsonObject agency;
 
@@ -55,16 +49,6 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
 
     @Before
     public void before() {
-        try {
-            SSLContextBuilder sslCntxBuilder = SSLContexts.custom()
-                .loadKeyMaterial(getSSLKeyStoreURL(), getSSLStorePassword(), getSSLKeyPassword())
-                .loadTrustMaterial(getSSLTrustStoreURL(), getSSLStorePassword());
-            httpClient = HttpClientBuilder.create().setSslcontext(sslCntxBuilder.build())
-                .setSSLHostnameVerifier(new DefaultHostnameVerifier()).build();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-
         {
             JsonObjectBuilder agencyBuilder = Json.createObjectBuilder();
             agencyBuilder.add(Introspection.JSONKeys.NAME, "旅行社名称（正式）");
@@ -86,9 +70,10 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             get.setURI(new URI(platformServiceUrlStr + "introspection/"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             try {
-                HttpResponse response = httpClient.execute(get);
+                HttpResponse response = userClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.UNAUTHORIZED_401, statusCode);
+                assertFalse(IOUtils.toString(response.getEntity().getContent()).isEmpty());
             } catch (IOException e) {
                 throw new ProcessingException(e);
             } finally {
@@ -103,9 +88,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "introspection/"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
+            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
             try {
-                HttpResponse response = httpClient.execute(get);
+                HttpResponse response = adminClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
                     JsonObject introspection = Json.createReader(response.getEntity().getContent()).readObject();
@@ -131,9 +116,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "tags/top/2"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
+            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
             try {
-                HttpResponse response = httpClient.execute(get);
+                HttpResponse response = adminClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
                     JsonArray tags = Json.createReader(response.getEntity().getContent()).readArray();
@@ -161,9 +146,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             post.setEntity(new StringEntity(agency.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(platformServiceUrlStr + "agencies/"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
+            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
             try {
-                HttpResponse response = httpClient.execute(post);
+                HttpResponse response = adminClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
                     JsonObject agency = Json.createReader(response.getEntity().getContent()).readObject();
@@ -191,9 +176,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpPost post = new HttpPost();
             post.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId + "/locations/send/" + sendLocationId));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
+            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
             try {
-                HttpResponse response = httpClient.execute(post);
+                HttpResponse response = adminClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.OK_200, statusCode);
                 assertTrue(IOUtils.toString(response.getEntity().getContent()).isEmpty());
@@ -211,9 +196,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpPost post = new HttpPost();
             post.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId + "/locations/recv/" + recvLocationId));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
+            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
             try {
-                HttpResponse response = httpClient.execute(post);
+                HttpResponse response = adminClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.OK_200, statusCode);
                 assertTrue(IOUtils.toString(response.getEntity().getContent()).isEmpty());
@@ -231,9 +216,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
+            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
             try {
-                HttpResponse response = httpClient.execute(get);
+                HttpResponse response = adminClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
                     JsonObject agency = Json.createReader(response.getEntity().getContent()).readObject();
@@ -265,9 +250,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId + "/locations?sendRecv=0"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
+            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
             try {
-                HttpResponse response = httpClient.execute(get);
+                HttpResponse response = adminClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
                     JsonObject locationJs = Json.createReader(response.getEntity().getContent()).readObject();
@@ -296,9 +281,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId + "/locations?sendRecv=1"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
+            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
             try {
-                HttpResponse response = httpClient.execute(get);
+                HttpResponse response = adminClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
                     JsonObject locationJs = Json.createReader(response.getEntity().getContent()).readObject();
@@ -327,9 +312,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId + "/locations/recv/" + recvLocationId));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            delete.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
+            delete.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
             try {
-                HttpResponse response = httpClient.execute(delete);
+                HttpResponse response = adminClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.OK_200, statusCode);
                 assertTrue(IOUtils.toString(response.getEntity().getContent()).isEmpty());
@@ -347,9 +332,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId + "/locations?sendRecv=1"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
+            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
             try {
-                HttpResponse response = httpClient.execute(get);
+                HttpResponse response = adminClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
                     JsonObject locationJs = Json.createReader(response.getEntity().getContent()).readObject();
@@ -378,9 +363,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            delete.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
+            delete.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
             try {
-                HttpResponse response = httpClient.execute(delete);
+                HttpResponse response = adminClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
                     assertTrue(IOUtils.toString(response.getEntity().getContent()).isEmpty());
@@ -405,9 +390,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
+            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
             try {
-                HttpResponse response = httpClient.execute(get);
+                HttpResponse response = adminClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.NOT_FOUND_404, statusCode);
                 assertTrue(IOUtils.toString(response.getEntity().getContent()).isEmpty());
@@ -425,9 +410,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId + "/locations?sendRecv=0"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
+            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
             try {
-                HttpResponse response = httpClient.execute(get);
+                HttpResponse response = adminClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
                     JsonObject locationJs = Json.createReader(response.getEntity().getContent()).readObject();
@@ -452,9 +437,9 @@ public abstract class AbstractPlatformServiceTest extends BaseServiceUrlProvider
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyId + "/locations?sendRecv=1"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, Introspection.TestValues.ADMIN_ACCOUNT);
+            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
             try {
-                HttpResponse response = httpClient.execute(get);
+                HttpResponse response = adminClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
                     JsonObject locationJs = Json.createReader(response.getEntity().getContent()).readObject();
