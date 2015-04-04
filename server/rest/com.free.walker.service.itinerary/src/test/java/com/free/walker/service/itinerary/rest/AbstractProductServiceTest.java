@@ -1989,9 +1989,9 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(productServiceUrlStr + "products/public/" + productId));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            delete.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
+            delete.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
             try {
-                HttpResponse response = agencyClient.execute(delete);
+                HttpResponse response = adminClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
                     JsonObject product = Json.createReader(response.getEntity().getContent()).readObject();

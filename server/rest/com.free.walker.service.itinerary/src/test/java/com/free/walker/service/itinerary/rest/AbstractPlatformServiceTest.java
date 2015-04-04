@@ -63,11 +63,30 @@ public abstract class AbstractPlatformServiceTest extends BaseConfigurationProvi
     @Test
     public void testAll() throws URISyntaxException {
         /*
-         * 未认证用户
+         * 未认证用户访问公开服务
          */
         {
             HttpGet get = new HttpGet();
             get.setURI(new URI(platformServiceUrlStr + "introspection/"));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            try {
+                HttpResponse response = userClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                assertEquals(HttpStatus.OK_200, statusCode);
+                assertFalse(IOUtils.toString(response.getEntity().getContent()).isEmpty());
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
+        }
+
+        /*
+         * 未认证用户访问非公开服务
+         */
+        {
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(platformServiceUrlStr + "tags/top/2"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             try {
                 HttpResponse response = userClient.execute(get);

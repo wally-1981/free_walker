@@ -24,6 +24,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cxf.jaxrs.ext.MessageContext;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.MRRoutine;
@@ -83,6 +85,8 @@ public class ItineraryService {
      */
     @GET
     @Path("/proposals/")
+    @RequiresRoles("admin")
+    @RequiresPermissions("SearchProposal")
     public Response searchProposals(@QueryParam("pageNum") String pageNum, @QueryParam("pageSize") String pageSize,
         @QueryParam("searchTerm") String searchTerm) {
         return Response.status(Status.NOT_IMPLEMENTED).build();
@@ -100,6 +104,8 @@ public class ItineraryService {
     @GET
     @Context
     @Path("/proposals/my/")
+    @RequiresRoles("customer")
+    @RequiresPermissions("RetrieveProposal")
     public Response getProposals(@Context MessageContext msgCntx, @QueryParam("pastDays") int n) {
         Account acnt = (Account) msgCntx.getContent(Account.class);
         UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
@@ -138,6 +144,8 @@ public class ItineraryService {
      */
     @GET
     @Path("/proposals/agencies/{agencyId}/")
+    @RequiresRoles("agency")
+    @RequiresPermissions("RetrieveProposal")
     public Response getProposals(@PathParam("agencyId") String agencyId) {
         Calendar weekAgo = Calendar.getInstance();
         weekAgo.add(Calendar.DATE, -7);
@@ -180,6 +188,8 @@ public class ItineraryService {
     @POST
     @Context
     @Path("/proposals/agencies/{proposalId}/")
+    @RequiresRoles("customer")
+    @RequiresPermissions("SubmitProposal")
     public Response submitProposal(@PathParam("proposalId") String proposalId, @Context MessageContext msgCntx,
         @QueryParam("delayMins") int delayMins) {
         try {
@@ -230,6 +240,8 @@ public class ItineraryService {
      */
     @POST
     @Path("/proposals/agencies/{proposalId}/next/")
+    @RequiresRoles("customer")
+    @RequiresPermissions("SubmitProposal")
     public Response resubmitProposal(@PathParam("proposalId") String proposalId) {
         try {
             List<TravelRequirement> itineraries = travelRequirementDAO.getItineraryRequirements(UuidUtil
@@ -275,6 +287,8 @@ public class ItineraryService {
      */
     @GET
     @Path("/proposals/agencies/selected/{agencyId}/")
+    @RequiresRoles("agency")
+    @RequiresPermissions("RetrieveProposal")
     public Response getSelectedProposals(@PathParam("agencyId") String agencyId) {
         try {
             Map<String, String> proposalsSummary = travelBasicDAO.getProposals4AgencyCandidate(agencyId,
@@ -314,6 +328,8 @@ public class ItineraryService {
      */
     @PUT
     @Path("/proposals/agencies/{proposalId}/{agencyId}/")
+    @RequiresRoles("agency")
+    @RequiresPermissions("GrabProposal")
     public Response grabProposal(@PathParam("proposalId") String proposalId, @PathParam("agencyId") String agencyId) {
         try {
             travelBasicDAO.markAgencyCandidateAsResponded(proposalId, agencyId);
@@ -330,6 +346,7 @@ public class ItineraryService {
      */
     @GET
     @Path("/proposals/{proposalId}/")
+    @RequiresPermissions("RetrieveProposal")
     public Response getProposal(@PathParam("proposalId") String proposalId) {
         TravelRequirement proposal;
         try {
@@ -363,6 +380,7 @@ public class ItineraryService {
      */
     @GET
     @Path("/itineraries/{requirementId}/")
+    @RequiresPermissions("RetrieveProposal")
     public Response getItinerary(@PathParam("requirementId") String requirementId,
         @QueryParam("requirementType") String requirementType) {
         if (Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL.equals(requirementType)) {
@@ -418,6 +436,7 @@ public class ItineraryService {
      */
     @GET
     @Path("/requirements/{requirementId}/")
+    @RequiresPermissions("RetrieveProposal")
     public Response getRequirement(@PathParam("requirementId") String requirementId) {
         TravelRequirement requirement;
         try {
@@ -449,6 +468,7 @@ public class ItineraryService {
      */
     @GET
     @Path("/requirements/{proposalId}/{itineraryId}/")
+    @RequiresPermissions("RetrieveProposal")
     public Response getRequirements(@PathParam("proposalId") String proposalId,
         @PathParam("itineraryId") String itineraryId) {
         try {
@@ -479,6 +499,7 @@ public class ItineraryService {
      */
     @DELETE
     @Path("/requirements/{proposalId}/{requirementId}/")
+    @RequiresPermissions("ModifyProposal")
     public Response deleteRequirement(@PathParam("proposalId") String proposalId,
         @PathParam("requirementId") String requirementId) {
         try {
@@ -507,6 +528,7 @@ public class ItineraryService {
      */
     @DELETE
     @Path("/itineraries/{proposalId}/{itineraryId}/")
+    @RequiresPermissions("ModifyProposal")
     public Response deleteItinerary(@PathParam("proposalId") String proposalId,
         @PathParam("itineraryId") String itineraryId) {
         try {
@@ -540,6 +562,7 @@ public class ItineraryService {
      */
     @PUT
     @Path("/requirements/")
+    @RequiresPermissions("ModifyProposal")
     public Response updateRequirement(JsonObject travelRequirement) {
         try {
             TravelRequirement requirement = JsonObjectHelper.toRequirement(travelRequirement, true);
@@ -568,6 +591,7 @@ public class ItineraryService {
     @POST
     @Context
     @Path("/proposals/")
+    @RequiresPermissions("CreateProposal")
     public Response addProposal(JsonObject travelProposal, @Context MessageContext msgCntx) {
         try {
             Account acnt = (Account) msgCntx.getContent(Account.class);
@@ -596,6 +620,7 @@ public class ItineraryService {
      */
     @POST
     @Path("/itineraries/{proposalId}/")
+    @RequiresPermissions("ModifyProposal")
     public Response addItinerary(@PathParam("proposalId") String proposalId, JsonObject itineraryRequirement) {
         try {
             TravelRequirement itinerary = JsonObjectHelper.toRequirement(itineraryRequirement);
@@ -624,6 +649,7 @@ public class ItineraryService {
      */
     @POST
     @Path("/itineraries/{proposalId}/{itineraryId}/")
+    @RequiresPermissions("ModifyProposal")
     public Response insertItinerary(@PathParam("proposalId") String proposalId,
         @PathParam("itineraryId") String itineraryId, JsonObject itineraryRequirement) {
         try {
@@ -653,6 +679,7 @@ public class ItineraryService {
      */
     @POST
     @Path("/requirements/{proposalId}/")
+    @RequiresPermissions("ModifyProposal")
     public Response addRequirement(@PathParam("proposalId") String proposalId, JsonObject travelRequirement) {
         try {
             TravelRequirement requirement = JsonObjectHelper.toRequirement(travelRequirement);
@@ -681,6 +708,7 @@ public class ItineraryService {
      */
     @POST
     @Path("/requirements/{proposalId}/{itineraryId}/")
+    @RequiresPermissions("ModifyProposal")
     public Response insertRequirement(@PathParam("proposalId") String proposalId,
         @PathParam("itineraryId") String itineraryId, JsonObject travelRequirement) {
         try {

@@ -164,6 +164,11 @@ public class LocalMessages {
     public static final String account_unknown = "account_unknown";
     public static final String account_authenticated_just_now = "account_authenticated_just_now";
     public static final String account_authenticated_previously = "account_authenticated_previously";
+    public static final String account_not_authorized = "account_not_authorized";
+    public static final String account_authorization_permissions_check = "account_authorization_permissions_check";
+    public static final String account_authorization_permissions_check_bypass = "account_authorization_permissions_check_bypass";
+    public static final String account_authorization_roles_check = "account_authorization_roles_check";
+    public static final String account_authorization_roles_check_bypass = "account_authorization_roles_check_bypass";
 
     public static final String test_message = "test_message";
     public static final String test_message_with_1_arg = "test_message_with_1_arg";

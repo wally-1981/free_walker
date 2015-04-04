@@ -24,4 +24,4 @@ keytool -export -rfc -keystore ClientKeystore.jks -alias myclientkey -file MyCli
 keytool -import -noprompt -trustcacerts -file MyClient.cer -alias myclientkey -keystore ServiceKeystore.jks -storepass sspass
 
 :: Launch the server
-java -jar ./com.free.walker.service.itinerary-0.0.11.jar -Prod
+java -jar ./com.free.walker.service.itinerary-0.0.12.jar -Prod

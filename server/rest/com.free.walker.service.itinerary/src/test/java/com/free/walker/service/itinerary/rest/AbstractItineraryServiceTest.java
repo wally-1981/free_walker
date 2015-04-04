@@ -993,9 +993,9 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             HttpPost post = new HttpPost();
             post.setURI(new URI(itineraryServiceUrlStr + "proposals/agencies/" + proposalId + "?delayMins=1"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
+            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_WECHAT_ACCOUNT));
             try {
-                HttpResponse response = adminClient.execute(post);
+                HttpResponse response = userWeChatClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.BAD_REQUEST_400, statusCode);
                 assertFalse(IOUtils.toString(response.getEntity().getContent()).isEmpty());

@@ -1,5 +1,7 @@
 package com.free.walker.service.itinerary.handler;
 
+import java.lang.reflect.Method;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
@@ -16,6 +18,8 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.subject.WebSubjectContext;
@@ -23,6 +27,7 @@ import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
 
 public class AccountAuthenticationInterceptor extends AbstractPhaseInterceptor<Message> {
@@ -46,6 +51,11 @@ public class AccountAuthenticationInterceptor extends AbstractPhaseInterceptor<M
             LOG.debug(LocalMessages.getMessage(LocalMessages.account_authenticated_previously,
                 currentUser.getPrincipal(), currentUser.getSession().getId()));
         } else {
+            if (isPublicService(message)) {
+                message.setContent(Subject.class, currentUser);
+                return;
+            }
+
             String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
             if (authorization == null) {
                 Fault fault = challenge(request, response,
@@ -99,5 +109,17 @@ public class AccountAuthenticationInterceptor extends AbstractPhaseInterceptor<M
         response.setHeader("WWW-Authenticate", basicAuthChanllengeHeader);
         fault.setStatusCode(Status.UNAUTHORIZED.getStatusCode());
         return fault;
+    }
+
+    private boolean isPublicService(Message message) {
+        Method serviceMethod = (Method) message.get(Constants.SERVICE_METHOD_KEY);
+        RequiresPermissions permissions = serviceMethod.getAnnotation(RequiresPermissions.class);
+        RequiresRoles roles = serviceMethod.getAnnotation(RequiresRoles.class);
+        if (permissions == null || permissions.value().length == 0) {
+            if (roles == null || roles.value().length == 0) {
+                return true;
+            }
+        }
+        return false;
     }
 }

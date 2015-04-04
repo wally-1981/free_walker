@@ -1,6 +1,7 @@
 package com.free.walker.service.itinerary.rest;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import javax.json.Json;
@@ -29,6 +31,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -310,77 +315,125 @@ public class PlatformService {
             }
         }
 
+        if (section == null || "permissions_and_roles".equals(section)) {
+            Map<String, Method> permissionMethods = new HashMap<String, Method>();
+            Map<String, Method> roleMethods = new HashMap<String, Method>();
+
+            Method[] methods = null;
+            methods = ArrayUtils.addAll(methods, PlatformService.class.getMethods());
+            methods = ArrayUtils.addAll(methods, ItineraryService.class.getMethods());
+            methods = ArrayUtils.addAll(methods, ProductService.class.getMethods());
+
+            for (int i = 0; i < methods.length; i++) {
+                RequiresPermissions permissions = methods[i].getAnnotation(RequiresPermissions.class);
+                RequiresRoles roles = methods[i].getAnnotation(RequiresRoles.class);
+                for (int m = 0; permissions != null && m < permissions.value().length; m++) {
+                    permissionMethods.put(permissions.value()[m], methods[i]);
+                }
+                for (int n = 0; roles != null && n < roles.value().length; n++) {
+                    roleMethods.put(roles.value()[n], methods[i]);
+                }
+            }
+
+            JsonArrayBuilder permissionBuilder = Json.createArrayBuilder();
+            Iterator<String> permissionIter = new TreeSet<String>(permissionMethods.keySet()).iterator();
+            while (permissionIter.hasNext()) {
+                permissionBuilder.add(permissionIter.next());
+            }
+
+            JsonArrayBuilder roleBuilder = Json.createArrayBuilder();
+            Iterator<String> roleIter = new TreeSet<String>(roleMethods.keySet()).iterator();
+            while (roleIter.hasNext()) {
+                roleBuilder.add(roleIter.next());
+            }
+
+            resBuilder.add("permissions", permissionBuilder);
+            resBuilder.add("roles", roleBuilder);
+        }
+
         return Response.ok(resBuilder.build()).build();
     }
 
     @GET
     @Path("/regions/{regionId}/")
+    @RequiresPermissions("ManagePlatform")
     public Response getRegion() {
         return Response.ok().build();
     }
 
     @POST
     @Path("/regions/")
+    @RequiresPermissions("ManagePlatform")
     public Response addRegion(JsonObject region) {
         return Response.ok().build();
     }
 
     @GET
     @Path("/countries/{countryId}/")
+    @RequiresPermissions("ManagePlatform")
     public Response getCountry() {
         return Response.ok().build();
     }
 
     @POST
     @Path("/countries/")
+    @RequiresPermissions("ManagePlatform")
     public Response addCountry(JsonObject country) {
         return Response.ok().build();
     }
 
     @GET
     @Path("/cities/{cityId}/")
+    @RequiresPermissions("ManagePlatform")
     public Response getCity() {
         return Response.ok().build();
     }
 
     @POST
     @Path("/cities/")
+    @RequiresPermissions("ManagePlatform")
     public Response addCity(JsonObject city) {
         return Response.ok().build();
     }
 
     @GET
     @Path("/resorts/{resortId}/")
+    @RequiresPermissions("ManagePlatform")
     public Response getResort() {
         return Response.ok().build();
     }
 
     @POST
     @Path("/resorts/")
+    @RequiresPermissions("ManagePlatform")
     public Response addResort(JsonObject resort) {
         return Response.ok().build();
     }
 
     @GET
     @Path("/hotels/{hotelId}/")
+    @RequiresPermissions("ManagePlatform")
     public Response getHotel() {
         return Response.ok().build();
     }
 
     @POST
     @Path("/hotels/")
+    @RequiresPermissions("ManagePlatform")
     public Response addHotel(JsonObject hotel) {
         return Response.ok().build();
     }
 
     @GET
     @Path("/flights/{flightId}/")
+    @RequiresPermissions("ManagePlatform")
     public Response getFlight() {
         return Response.ok().build();
     }
 
     @GET
     @Path("/trains/{trainId}/")
+    @RequiresPermissions("ManagePlatform")
     public Response getTrain() {
         return Response.ok().build();
     }
@@ -395,6 +448,7 @@ public class PlatformService {
      */
     @GET
     @Path("/tags/top/{n}/")
+    @RequiresPermissions("RetrieveTag")
     public Response getTags(@PathParam("n") int n) {
         try {
             List<Tag> tags = travelBasicDAO.getHottestTags(n);
@@ -422,6 +476,7 @@ public class PlatformService {
      */
     @POST
     @Path("/agencies/")
+    @RequiresPermissions("ManagePlatform")
     public Response addAgency(JsonObject agencyJs, @QueryParam("batch") boolean batch) {
         try {
             if (batch) {
@@ -481,6 +536,7 @@ public class PlatformService {
      */
     @GET
     @Path("/agencies/{agencyId}/")
+    @RequiresPermissions("ManagePlatform")
     public Response getAgency(@PathParam("agencyId") String agencyId) {
         try {
             Agency agency = travelBasicDAO.getAgency(agencyId);
@@ -509,6 +565,7 @@ public class PlatformService {
      */
     @POST
     @Path("/agencies/{agencyId}/locations/send/{locationId}/")
+    @RequiresPermissions("ManagePlatform")
     public Response addAgencySendLocation(@PathParam("agencyId") String agencyId,
         @PathParam("locationId") String locationId) {
         try {
@@ -530,6 +587,7 @@ public class PlatformService {
      */
     @DELETE
     @Path("/agencies/{agencyId}/locations/send/{locationId}/")
+    @RequiresPermissions("ManagePlatform")
     public Response removeAgencySendLocation(@PathParam("agencyId") String agencyId,
         @PathParam("locationId") String locationId) {
         try {
@@ -558,6 +616,7 @@ public class PlatformService {
      */
     @POST
     @Path("/agencies/{agencyId}/locations/recv/{locationId}/")
+    @RequiresPermissions("ManagePlatform")
     public Response addAgencyRecvLocation(@PathParam("agencyId") String agencyId,
         @PathParam("locationId") String locationId) {
         try {
@@ -579,6 +638,7 @@ public class PlatformService {
      */
     @DELETE
     @Path("/agencies/{agencyId}/locations/recv/{locationId}/")
+    @RequiresPermissions("ManagePlatform")
     public Response removeAgencyRecvLocation(@PathParam("agencyId") String agencyId,
         @PathParam("locationId") String locationId) {
         try {
@@ -600,6 +660,7 @@ public class PlatformService {
      */
     @GET
     @Path("/agencies/{agencyId}/locations/")
+    @RequiresPermissions("ManagePlatform")
     public Response getAgencyLocations(@PathParam("agencyId") String agencyId, @QueryParam("sendRecv") int sendRecv) {
         try {
             List<String> agenciesLocation = travelBasicDAO.getAgencyLocations(agencyId, sendRecv);
@@ -624,6 +685,7 @@ public class PlatformService {
      */
     @DELETE
     @Path("/agencies/{agencyId}/")
+    @RequiresPermissions("ManagePlatform")
     public Response removeAgency(@PathParam("agencyId") String agencyId) {
         try {
             travelBasicDAO.removeAgency(agencyId);

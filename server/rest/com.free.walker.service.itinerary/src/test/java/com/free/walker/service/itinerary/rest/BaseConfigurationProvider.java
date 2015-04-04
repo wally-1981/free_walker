@@ -15,6 +15,7 @@ import com.free.walker.service.itinerary.primitive.Introspection;
 public abstract class BaseConfigurationProvider implements ServiceConfigurationProvider {
     protected HttpClient adminClient = null;
     protected HttpClient userClient = null;
+    protected HttpClient userWeChatClient = null;
     protected HttpClient agencyClient = null;
 
     public BaseConfigurationProvider() {
@@ -123,6 +124,18 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
             SSLContextBuilder sslCntxBuilder = SSLContexts.custom()
                 .loadKeyMaterial(getSSLKeyStoreURL(), getSSLStorePassword(), getSSLKeyPassword())
                 .loadTrustMaterial(getSSLTrustStoreURL(), getSSLStorePassword());
+            userWeChatClient = HttpClientBuilder.create()
+                .setSslcontext(sslCntxBuilder.build())
+                .setSSLHostnameVerifier(new DefaultHostnameVerifier())
+                .build();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+
+        try {
+            SSLContextBuilder sslCntxBuilder = SSLContexts.custom()
+                .loadKeyMaterial(getSSLKeyStoreURL(), getSSLStorePassword(), getSSLKeyPassword())
+                .loadTrustMaterial(getSSLTrustStoreURL(), getSSLStorePassword());
             agencyClient = HttpClientBuilder.create()
                 .setSslcontext(sslCntxBuilder.build())
                 .setSSLHostnameVerifier(new DefaultHostnameVerifier())
@@ -137,7 +150,9 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
             return "passw0rd"; // Please refer to shiro.ini
         } else if (Introspection.TestValues.DEFAULT_ACCOUNT.equals(subject)) {
             return "passw0rd"; // Please refer to shiro.ini
-        } else if (Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT.equals(subject)) {
+        } else if (Introspection.TestValues.DEFAULT_WECHAT_ACCOUNT.equals(subject)) {
+            return "passw0rd"; // Please refer to shiro.ini
+        }  else if (Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT.equals(subject)) {
             return "passw0rd"; // Please refer to shiro.ini
         } else {
             return "";

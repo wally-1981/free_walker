@@ -20,6 +20,7 @@ public class Constants {
     public static final String NEW_PROPOSAL;
 
     public static final Account DEFAULT_USER_ACCOUNT;
+    public static final Account DEFAULT_WECHAT_USER_ACCOUNT;
     public static final Account DEFAULT_AGENCY_ACCOUNT;
     public static final Account ADMIN_ACCOUNT;
 
@@ -28,6 +29,8 @@ public class Constants {
     public static final String agency_election_by_experience_size = "agency_election_by_experience_size";
     public static final String agency_election_by_randomization_size = "agency_election_by_randomization_size";
     public static final String agency_election_max_size = "agency_election_max_size";
+
+    public static final String SERVICE_METHOD_KEY = "org.apache.cxf.resource.method";
 
     static {
         ADMIN_ACCOUNT = new Account().fromJSON(
@@ -49,6 +52,17 @@ public class Constants {
             .add(Introspection.JSONKeys.MOBILE, "")
             .add(Introspection.JSONKeys.EMAIL, "")
             .add(Introspection.JSONKeys.NAME, "default_user")
+            .add(Introspection.JSONKeys.REF_LINK, "")
+            .build());
+
+        DEFAULT_WECHAT_USER_ACCOUNT = new Account().fromJSON(
+            Json.createObjectBuilder()
+            .add(Introspection.JSONKeys.UUID, "18fd9d88-8e82-4903-9b2c-d94d02a8edb2")
+            .add(Introspection.JSONKeys.TYPE, AccountType.WeChat.ordinal())
+            .add(Introspection.JSONKeys.LOGIN, "default_wechat_user")
+            .add(Introspection.JSONKeys.MOBILE, "")
+            .add(Introspection.JSONKeys.EMAIL, "")
+            .add(Introspection.JSONKeys.NAME, "default_wechat_user")
             .add(Introspection.JSONKeys.REF_LINK, "")
             .build());
 

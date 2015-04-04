@@ -23,6 +23,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cxf.jaxrs.ext.MessageContext;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 
 import com.free.walker.service.itinerary.basic.Account;
 import com.free.walker.service.itinerary.basic.SearchCriteria;
@@ -129,6 +132,8 @@ public class ProductService {
     @POST
     @Context
     @Path("/products/public/{productId}")
+    @RequiresRoles(value = {"customer", "agency"}, logical = Logical.OR)
+    @RequiresPermissions("PublishProduct")
     public Response publishProduct(@PathParam("productId") String productId, @Context MessageContext msgCntx) {
         try {
             Account acnt = (Account) msgCntx.getContent(Account.class);
@@ -193,6 +198,8 @@ public class ProductService {
      */
     @DELETE
     @Path("/products/public/{productId}")
+    @RequiresRoles("admin")
+    @RequiresPermissions("UnpublishProduct")
     public Response unpublishProduct(@PathParam("productId") String productId) {
         try {
             UUID productUuid = travelProductDAO.unpublishProduct(UuidUtil.fromUuidStr(productId));
@@ -226,6 +233,8 @@ public class ProductService {
     @PUT
     @Context
     @Path("/products/{productId}/")
+    @RequiresRoles("agency")
+    @RequiresPermissions("SubmitProduct")
     public Response submitProduct(@PathParam("productId") String productId, @Context MessageContext msgCntx) {
         try {
             Account acnt = (Account) msgCntx.getContent(Account.class);
@@ -253,6 +262,7 @@ public class ProductService {
      */
     @GET
     @Path("/products/{id}/")
+    @RequiresPermissions("RetrieveProduct")
     public Response getProduct(@PathParam("id") String id, @QueryParam("idType") String idType) {
         try {
             if (Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL.equals(idType)) {
@@ -284,6 +294,8 @@ public class ProductService {
     @GET
     @Context
     @Path("/products/my/{statusId}/")
+    @RequiresRoles(value = {"customer", "agency"}, logical = Logical.OR)
+    @RequiresPermissions("RetrieveProduct")
     public Response getProducts(@Context MessageContext msgCntx, @PathParam("statusId") int statusId) {
         Account acnt = (Account) msgCntx.getContent(Account.class);
 
@@ -316,10 +328,25 @@ public class ProductService {
     /**
      * <b>GET</b><br>
      * <br>
+     * Retrieve the travel products of the given agency by the agency identifier.<br>
+     * <br>
+     */
+    @GET
+    @Path("/products/agencies/{agencyId}/{statusId}/")
+    @RequiresRoles("agency")
+    @RequiresPermissions("RetrieveProduct")
+    public Response getProducts(@PathParam("agencyId") int agencyId, @PathParam("statusId") int statusId) {
+        return Response.ok().build();
+    }
+
+    /**
+     * <b>GET</b><br>
+     * <br>
      * Retrieve all hotel items by the given product identifier.<br>
      */
     @GET
     @Path("/products/{productId}/hotels/")
+    @RequiresPermissions("RetrieveProduct")
     public Response getHotels(@PathParam("productId") String productId) {
         try {
             List<TravelProductItem> hotelItems = travelProductDAO.getItems(UuidUtil.fromUuidStr(productId),
@@ -343,6 +370,7 @@ public class ProductService {
      */
     @GET
     @Path("/products/{productId}/traffics/")
+    @RequiresPermissions("RetrieveProduct")
     public Response getTraffics(@PathParam("productId") String productId) {
         try {
             List<TravelProductItem> trafficItems = travelProductDAO.getItems(UuidUtil.fromUuidStr(productId),
@@ -366,6 +394,7 @@ public class ProductService {
      */
     @GET
     @Path("/products/{productId}/resorts/")
+    @RequiresPermissions("RetrieveProduct")
     public Response getResorts(@PathParam("productId") String productId) {
         try {
             List<TravelProductItem> resortItems = travelProductDAO.getItems(UuidUtil.fromUuidStr(productId),
@@ -389,6 +418,7 @@ public class ProductService {
      */
     @GET
     @Path("/products/{productId}/items/")
+    @RequiresPermissions("RetrieveProduct")
     public Response getItems(@PathParam("productId") String productId) {
         try {
             List<TravelProductItem> trivItems = travelProductDAO.getItems(UuidUtil.fromUuidStr(productId),
@@ -412,6 +442,7 @@ public class ProductService {
      */    
     @GET
     @Path("/products/{productId}/bidding/")
+    @RequiresPermissions("RetrieveProduct")
     public Response getBidding(@PathParam("productId") String productId) {
         try {
             Bidding bidding = travelProductDAO.getBidding(UuidUtil.fromUuidStr(productId));
@@ -441,6 +472,7 @@ public class ProductService {
     @POST
     @Context
     @Path("/products/")
+    @RequiresPermissions("CreateProduct")
     public Response addProduct(JsonObject travelProduct, @Context MessageContext msgCntx) {
         try {
             Account acnt = (Account) msgCntx.getContent(Account.class);
@@ -462,6 +494,7 @@ public class ProductService {
      */
     @DELETE
     @Path("/products/{productId}/hotels/{hotelItemId}")
+    @RequiresPermissions("ModifyProduct")
     public Response deleteHotelItem(@PathParam("productId") String productId,
         @PathParam("hotelItemId") String hotelItemId) {
         try {
@@ -489,6 +522,7 @@ public class ProductService {
      */
     @DELETE
     @Path("/products/{productId}/traffics/{trafficItemId}")
+    @RequiresPermissions("ModifyProduct")
     public Response deleteTrafficItem(@PathParam("productId") String productId,
         @PathParam("trafficItemId") String trafficItemId) {
         try {
@@ -516,6 +550,7 @@ public class ProductService {
      */
     @DELETE
     @Path("/products/{productId}/resorts/{resortItemId}")
+    @RequiresPermissions("ModifyProduct")
     public Response deleteResortItem(@PathParam("productId") String productId,
         @PathParam("resortItemId") String resortItemId) {
         try {
@@ -543,6 +578,7 @@ public class ProductService {
      */
     @DELETE
     @Path("/products/{productId}/items/{itemId}")
+    @RequiresPermissions("ModifyProduct")
     public Response deleteTrivItem(@PathParam("productId") String productId, @PathParam("itemId") String itemId) {
         try {
             UUID deletedTrivItemId = travelProductDAO.removeTrivItem(UuidUtil.fromUuidStr(productId),
@@ -569,6 +605,7 @@ public class ProductService {
      */
     @DELETE
     @Path("/products/{productId}/bidding")
+    @RequiresPermissions("ModifyProduct")
     public Response deleteBidding(@PathParam("productId") String productId) {
         try {
             Bidding bidding = travelProductDAO.unsetBidding(UuidUtil.fromUuidStr(productId));
@@ -599,6 +636,7 @@ public class ProductService {
      */
     @POST
     @Path("/products/{productId}/hotels/")
+    @RequiresPermissions("ModifyProduct")
     public Response addHotel(@PathParam("productId") String productId, JsonObject hotelItem) {
         try {
             TravelProductItem productItem = JsonObjectHelper.toProductItem(hotelItem);
@@ -625,6 +663,7 @@ public class ProductService {
      */
     @POST
     @Path("/products/{productId}/traffics/")
+    @RequiresPermissions("ModifyProduct")
     public Response addTraffic(@PathParam("productId") String productId, JsonObject trafficItem) {
         try {
             TravelProductItem productItem = JsonObjectHelper.toProductItem(trafficItem);
@@ -651,6 +690,7 @@ public class ProductService {
      */
     @POST
     @Path("/products/{productId}/resorts/")
+    @RequiresPermissions("ModifyProduct")
     public Response addResort(@PathParam("productId") String productId, JsonObject resortItem) {
         try {
             TravelProductItem productItem = JsonObjectHelper.toProductItem(resortItem);
@@ -677,6 +717,7 @@ public class ProductService {
      */
     @POST
     @Path("/products/{productId}/items/")
+    @RequiresPermissions("ModifyProduct")
     public Response addItem(@PathParam("productId") String productId, JsonObject item) {
         try {
             TravelProductItem productItem = JsonObjectHelper.toProductItem(item);
@@ -703,6 +744,7 @@ public class ProductService {
      */
     @POST
     @Path("/products/{productId}/bidding/")
+    @RequiresPermissions("ModifyProduct")
     public Response setBidding(@PathParam("productId") String productId, JsonObject bidding) {
         try {
             Bidding biddingItem = new Bidding().newFromJSON(bidding);
