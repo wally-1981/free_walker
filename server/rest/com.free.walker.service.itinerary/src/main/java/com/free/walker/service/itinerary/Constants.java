@@ -2,11 +2,13 @@ package com.free.walker.service.itinerary;
 
 import javax.json.Json;
 
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.free.walker.service.itinerary.basic.Account;
 import com.free.walker.service.itinerary.basic.City;
+import com.free.walker.service.itinerary.primitive.AccountStatus;
 import com.free.walker.service.itinerary.primitive.AccountType;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.UuidUtil;
@@ -33,11 +35,15 @@ public class Constants {
     public static final String SERVICE_METHOD_KEY = "org.apache.cxf.resource.method";
 
     static {
+        Sha256Hash hashedPwdBase64 = new Sha256Hash("passw0rd", null, 1024);
+
         ADMIN_ACCOUNT = new Account().fromJSON(
             Json.createObjectBuilder()
             .add(Introspection.JSONKeys.UUID, "8eeeeca9-a27c-46c1-a38f-30372d44fa70")
             .add(Introspection.JSONKeys.TYPE, AccountType.ADMIN.ordinal())
+            .add(Introspection.JSONKeys.STATUS, AccountStatus.ACTIVE.ordinal())
             .add(Introspection.JSONKeys.LOGIN, "admin")
+            .add(Introspection.JSONKeys.PASSWORD, hashedPwdBase64.toBase64())
             .add(Introspection.JSONKeys.MOBILE, "")
             .add(Introspection.JSONKeys.EMAIL, "")
             .add(Introspection.JSONKeys.NAME, "admin_user")
@@ -48,7 +54,9 @@ public class Constants {
             Json.createObjectBuilder()
             .add(Introspection.JSONKeys.UUID, "3b3e4dcf-e353-4418-adfb-3c9af7a54992")
             .add(Introspection.JSONKeys.TYPE, AccountType.MASTER.ordinal())
+            .add(Introspection.JSONKeys.STATUS, AccountStatus.ACTIVE.ordinal())
             .add(Introspection.JSONKeys.LOGIN, "default_user")
+            .add(Introspection.JSONKeys.PASSWORD, hashedPwdBase64.toBase64())
             .add(Introspection.JSONKeys.MOBILE, "")
             .add(Introspection.JSONKeys.EMAIL, "")
             .add(Introspection.JSONKeys.NAME, "default_user")
@@ -59,7 +67,9 @@ public class Constants {
             Json.createObjectBuilder()
             .add(Introspection.JSONKeys.UUID, "18fd9d88-8e82-4903-9b2c-d94d02a8edb2")
             .add(Introspection.JSONKeys.TYPE, AccountType.WeChat.ordinal())
+            .add(Introspection.JSONKeys.STATUS, AccountStatus.ACTIVE.ordinal())
             .add(Introspection.JSONKeys.LOGIN, "default_wechat_user")
+            .add(Introspection.JSONKeys.PASSWORD, hashedPwdBase64.toBase64())
             .add(Introspection.JSONKeys.MOBILE, "")
             .add(Introspection.JSONKeys.EMAIL, "")
             .add(Introspection.JSONKeys.NAME, "default_wechat_user")
@@ -70,7 +80,9 @@ public class Constants {
             Json.createObjectBuilder()
             .add(Introspection.JSONKeys.UUID, "7d128f8f-5143-4971-96de-7d33ae7e9ba5")
             .add(Introspection.JSONKeys.TYPE, AccountType.AGENCY.ordinal())
+            .add(Introspection.JSONKeys.STATUS, AccountStatus.ACTIVE.ordinal())
             .add(Introspection.JSONKeys.LOGIN, "default_agency")
+            .add(Introspection.JSONKeys.PASSWORD, hashedPwdBase64.toBase64())
             .add(Introspection.JSONKeys.MOBILE, "")
             .add(Introspection.JSONKeys.EMAIL, "")
             .add(Introspection.JSONKeys.NAME, "default_agency")

@@ -65,6 +65,7 @@ public class Introspection {
         public static final String REF_LINK = "ref_link";
         public static final String REF_ENTITY = "ref_entity";
         public static final String LOGIN = "login";
+        public static final String PASSWORD = "password";
         public static final String MOBILE = "mobile";
         public static final String EMAIL = "email";
         public static final String AUTHOR = "author";
@@ -174,6 +175,11 @@ public class Introspection {
         public static final int ACCOUNT_TYPE_QQ = AccountType.QQ.ordinal();
         public static final int ACCOUNT_TYPE_ALIPAY = AccountType.AliPay.ordinal();
         public static final int ACCOUNT_TYPE_WEIBO = AccountType.WeiBo.ordinal();
+
+        public static final int ACCOUNT_STATUS_ACTIVE = AccountStatus.ACTIVE.ordinal();
+        public static final int ACCOUNT_STATUS_IN_ACTIVE = AccountStatus.IN_ACTIVE.ordinal();
+        public static final int ACCOUNT_STATUS_LOCKED = AccountStatus.LOCKED.ordinal();
+        public static final int ACCOUNT_STATUS_REVOKED = AccountStatus.REVOKED.ordinal();
 
         public static final int TEST_TEMPLACE_AS_INT = QueryTemplate.TEST_TEMPLACE.enumValue();
         public static final int PRODUCT_DEPARTURE_TEMPLATE_AS_INT = QueryTemplate.PRODUCT_DEPARTURE.enumValue();

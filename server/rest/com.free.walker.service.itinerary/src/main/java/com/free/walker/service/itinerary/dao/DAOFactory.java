@@ -1,5 +1,6 @@
 package com.free.walker.service.itinerary.dao;
 
+import com.free.walker.service.itinerary.dao.db.MyMongoSQLAccountDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MySQLTravelBasicDAOImpl;
@@ -26,6 +27,14 @@ public class DAOFactory {
             return InMemoryTravelProductDAOImpl.getInstance();
         } else if (MyMongoSQLTravelProductDAOImpl.class.getName().equals(className)) {
             return MyMongoSQLTravelProductDAOImpl.getInstance();
+        } else {
+            return null;
+        }
+    }
+
+    public static AccountDAO getAccountDAO(String className) {
+        if (MyMongoSQLAccountDAOImpl.class.getName().equals(className)) {
+            return MyMongoSQLAccountDAOImpl.getInstance();
         } else {
             return null;
         }

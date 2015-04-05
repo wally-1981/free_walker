@@ -108,6 +108,17 @@ public class LocalMessages {
 
     public static final String invalid_parameter_with_value = "invalid_parameter_with_value";
 
+    public static final String missing_account_priciple = "missing_account_priciple";
+    public static final String missing_account_credential = "missing_account_credential";
+    public static final String existed_account_login = "existed_account_login";
+    public static final String existed_account_email = "existed_account_email";
+    public static final String existed_account_mobile = "existed_account_mobile";
+    public static final String not_existed_account = "not_existed_account";
+    public static final String account_uuid_immutable = "account_uuid_immutable";
+    public static final String account_type_immutable = "account_type_immutable";
+    public static final String account_status_immutable = "account_status_immutable";
+    public static final String missmatched_account_status = "missmatched_account_status";
+
     public static final String load_region_failed = "load_region_failed";
     public static final String load_country_failed = "load_country_failed";
     public static final String load_province_failed = "load_province_failed";

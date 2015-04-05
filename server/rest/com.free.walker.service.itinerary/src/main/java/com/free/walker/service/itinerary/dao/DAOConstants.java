@@ -5,6 +5,7 @@ public class DAOConstants {
     public static final String ITINERARY_COLL_NAME = "itinerary";
     public static final String REQUIREMENT_COLL_NAME = "requirement";
     public static final String PRODUCT_COLL_NAME = "product";
+    public static final String ACCOUNT_COLL_NAME = "account";
     public static final String PRODUCT_HOTEL_COLL_NAME = "product_hotel";
     public static final String PRODUCT_TRAFFIC_COLL_NAME = "product_traffic";
     public static final String PRODUCT_RESORT_COLL_NAME = "product_resort";
@@ -22,6 +23,7 @@ public class DAOConstants {
     public static final String itinerary_mongo_database = "itinerary";
     public static final String product_mongo_database = "product";
     public static final String session_mongo_database = "session";
+    public static final String account_mongo_database = "account";
     public static final String mongo_database_pk = "_id";
     public static final String mongo_database_op_in = "$in";
 
