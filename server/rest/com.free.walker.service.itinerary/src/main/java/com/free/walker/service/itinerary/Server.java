@@ -84,7 +84,7 @@ public class Server {
         classes.add(ItineraryService.class);
         classes.add(ProductService.class);
         classes.add(PlatformService.class);
-        classes.add(AccountService.class);
+        if (accountSvr != null) classes.add(AccountService.class);
         List<ResourceProvider> providers = new ArrayList<ResourceProvider>();
         if (accountSvr != null) providers.add(new SingletonResourceProvider(accountSvr));
         providers.add(new SingletonResourceProvider(itinerarySvr));
