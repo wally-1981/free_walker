@@ -114,6 +114,8 @@ public class Introspection {
         public static final String SESSION_START = "session_start";
         public static final String SESSION_STOP = "session_stop";
         public static final String ACCESS = "access";
+
+        public static final String ORIGINAL = "original";
     }
 
     public static class JSONValues {

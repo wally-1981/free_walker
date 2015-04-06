@@ -31,6 +31,8 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
             return ServiceConfigurationProvider.ITINERARY_PROD_LOCAL_URL;
         } else if (PlatformService.class.equals(aClass)) {
             return ServiceConfigurationProvider.PLATFORM_PROD_LOCAL_URL;
+        } else if (AccountService.class.equals(aClass)) {
+            return ServiceConfigurationProvider.ACCOUNT_PROD_LOCAL_URL;
         } else {
             throw new IllegalArgumentException();
         }
@@ -55,6 +57,8 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
             return ServiceConfigurationProvider.ITINERARY_PROD_LOCAL_SEC_URL;
         } else if (PlatformService.class.equals(aClass)) {
             return ServiceConfigurationProvider.PLATFORM_PROD_LOCAL_SEC_URL;
+        } else if (AccountService.class.equals(aClass)) {
+            return ServiceConfigurationProvider.ACCOUNT_PROD_LOCAL_SEC_URL;
         } else {
             throw new IllegalArgumentException();
         }

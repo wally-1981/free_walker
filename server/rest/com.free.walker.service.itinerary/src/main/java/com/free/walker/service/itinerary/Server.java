@@ -20,6 +20,7 @@ import org.apache.shiro.util.Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.free.walker.service.itinerary.dao.db.MyMongoSQLAccountDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.dao.memo.InMemoryTravelProductDAOImpl;
@@ -28,6 +29,7 @@ import com.free.walker.service.itinerary.handler.AccountAuthenticationIntercepto
 import com.free.walker.service.itinerary.handler.AccountAuthorizationInterceptor;
 import com.free.walker.service.itinerary.handler.AccountRecognitionInterceptor;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
+import com.free.walker.service.itinerary.rest.AccountService;
 import com.free.walker.service.itinerary.rest.ItineraryService;
 import com.free.walker.service.itinerary.rest.PlatformService;
 import com.free.walker.service.itinerary.rest.ProductService;
@@ -64,12 +66,14 @@ public class Server {
 
         JAXRSServerFactoryBean sf = new JAXRSServerFactoryBean();
 
+        AccountService accountSvr = null;
         ItineraryService itinerarySvr = null;
         ProductService productSvr = null;
         if (mode.equals(MODE_SINGLE_DEVO)) {
             itinerarySvr = new ItineraryService(InMemoryTravelRequirementDAOImpl.class);
             productSvr = new ProductService(InMemoryTravelProductDAOImpl.class, InMemoryTravelRequirementDAOImpl.class);
         } else if (mode.equals(MODE_SINGLE_PROD)) {
+            accountSvr = new AccountService(MyMongoSQLAccountDAOImpl.class);
             itinerarySvr = new ItineraryService(MyMongoSQLTravelRequirementDAOImpl.class);
             productSvr = new ProductService(MyMongoSQLTravelProductDAOImpl.class, MyMongoSQLTravelRequirementDAOImpl.class);
         } else {
@@ -80,7 +84,9 @@ public class Server {
         classes.add(ItineraryService.class);
         classes.add(ProductService.class);
         classes.add(PlatformService.class);
+        classes.add(AccountService.class);
         List<ResourceProvider> providers = new ArrayList<ResourceProvider>();
+        if (accountSvr != null) providers.add(new SingletonResourceProvider(accountSvr));
         providers.add(new SingletonResourceProvider(itinerarySvr));
         providers.add(new SingletonResourceProvider(productSvr));
         providers.add(new SingletonResourceProvider(new PlatformService()));

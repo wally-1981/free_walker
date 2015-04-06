@@ -58,7 +58,7 @@ import com.free.walker.service.itinerary.util.UuidUtil;
  * contain a bidding, and product items in a product with valid bidding can not
  * be modified.<br>
  * <br>
- * Meanwhile, this service also provides product public and depublish as well as
+ * Meanwhile, this service also provides product public and unpublish as well as
  * product search API.<br>
  * <br>
  * This service supports consuming and producing data in below listed MIME

@@ -39,6 +39,11 @@ public interface ServiceConfigurationProvider {
     public static final String PRODUCT_DEVO_LOCAL_SEC_URL = MessageFormat.format("https://{0}:{1}/service/product/",
         LocalNetworkInterfaceUtil.getLocalIPAddress(), DEVO_SEC_PORT);
 
+    public static final String ACCOUNT_PROD_LOCAL_URL = MessageFormat.format("http://{0}:{1}/service/account/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), PROD_PORT);
+    public static final String ACCOUNT_PROD_LOCAL_SEC_URL = MessageFormat.format("https://{0}:{1}/service/account/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), PROD_SEC_PORT);
+
     public abstract String getProdServiceUrl(Class<?> aClass);
 
     public abstract String getDevoServiceUrl(Class<?> aClass);
