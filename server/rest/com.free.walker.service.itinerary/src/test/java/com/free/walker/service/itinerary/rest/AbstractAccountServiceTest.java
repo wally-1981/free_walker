@@ -127,7 +127,6 @@ public abstract class AbstractAccountServiceTest extends BaseConfigurationProvid
             put.setEntity(new StringEntity(updatedAccountJs.toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(accountServiceUrlStr + "accounts/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            put.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -177,7 +176,6 @@ public abstract class AbstractAccountServiceTest extends BaseConfigurationProvid
             put.setEntity(new StringEntity(credentialChange.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(accountServiceUrlStr + "accounts/" + accountJs.getString(Introspection.JSONKeys.LOGIN)));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            put.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -198,7 +196,6 @@ public abstract class AbstractAccountServiceTest extends BaseConfigurationProvid
             put.setURI(new URI(accountServiceUrlStr + "accounts/" + accountJs.getString(Introspection.JSONKeys.LOGIN)
                 + "/" + Introspection.JSONValues.ACCOUNT_STATUS_ACTIVE));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            put.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -243,7 +240,6 @@ public abstract class AbstractAccountServiceTest extends BaseConfigurationProvid
             HttpGet get = new HttpGet();
             get.setURI(new URI(accountServiceUrlStr + "accounts/" + accountJs.getString(Introspection.JSONKeys.LOGIN)));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();

@@ -2,41 +2,66 @@ package com.free.walker.service.itinerary.rest;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolException;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
+import org.eclipse.jetty.http.HttpSchemes;
+import org.eclipse.jetty.http.HttpStatus;
 
 import com.free.walker.service.itinerary.primitive.Introspection;
 
 public abstract class BaseConfigurationProvider implements ServiceConfigurationProvider {
-    protected HttpClient adminClient = null;
-    protected HttpClient userClient = null;
-    protected HttpClient userWeChatClient = null;
-    protected HttpClient agencyClient = null;
+    private static final Map<String, String> CREDENTIALS = new HashMap<String, String>();
 
-    private static class RelaxRedirectStrategy extends DefaultRedirectStrategy {
+    static {
+        CREDENTIALS.put(Introspection.TestValues.ADMIN_ACCOUNT, "passw0rd"); // Please refer to shiro.ini
+        CREDENTIALS.put(Introspection.TestValues.DEFAULT_ACCOUNT, "passw0rd"); // Please refer to shiro.ini
+        CREDENTIALS.put(Introspection.TestValues.DEFAULT_WECHAT_ACCOUNT, "passw0rd"); // Please refer to shiro.ini
+        CREDENTIALS.put(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT, "passw0rd"); // Please refer to shiro.ini
+    }
+
+    private static class MyRedirectStrategy extends DefaultRedirectStrategy {
+        private String principle;
+
         private static final String[] REDIRECT_METHODS = new String[] {
             HttpGet.METHOD_NAME,
             HttpPost.METHOD_NAME,
             HttpPut.METHOD_NAME,
             HttpDelete.METHOD_NAME
         };
+
+        public MyRedirectStrategy(String principle) {
+            super();
+
+            if (principle == null || principle.trim().isEmpty()) {
+                throw new IllegalArgumentException();
+            }
+
+            this.principle = principle;
+        }
 
         protected boolean isRedirectable(final String method) {
             for (final String m: REDIRECT_METHODS) {
@@ -47,10 +72,8 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
             return false;
         }
 
-        public HttpUriRequest getRedirect(
-                final HttpRequest request,
-                final HttpResponse response,
-                final HttpContext context) throws ProtocolException {
+        public HttpUriRequest getRedirect(final HttpRequest request, final HttpResponse response,
+            final HttpContext context) throws ProtocolException {
             String method = request.getRequestLine().getMethod();
             if (HttpPost.METHOD_NAME.equalsIgnoreCase(method) || HttpPut.METHOD_NAME.equalsIgnoreCase(method)) {
                 /*
@@ -67,12 +90,36 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
                  */
                 request.addHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
             }
-            return super.getRedirect(request, response, context);
+
+            HttpUriRequest redirectedRequest = super.getRedirect(request, response, context);
+
+            /*
+             * Positively detect the authentication challenge to avoid
+             * additional UNAUTHORIZED_401 round trip for the authentication.
+             */
+            HttpClientContext clientContext = HttpClientContext.adapt(context);
+            if (response.getStatusLine().getStatusCode() == HttpStatus.TEMPORARY_REDIRECT_307
+                || HttpSchemes.HTTPS.equalsIgnoreCase(redirectedRequest.getURI().getScheme())
+                || HttpSchemes.HTTP.equalsIgnoreCase(clientContext.getTargetHost().getSchemeName())) {
+                StringBuffer subjectCredentialBuilder = new StringBuffer(principle).append(":").append(
+                    CREDENTIALS.get(principle));
+                subjectCredentialBuilder = new StringBuffer("Basic ").append(Base64
+                    .encodeBase64String(subjectCredentialBuilder.toString().getBytes()));
+                redirectedRequest.addHeader(HttpHeaders.AUTHORIZATION, subjectCredentialBuilder.toString());
+            }
+
+            return redirectedRequest;
         }
     }
 
+    protected HttpClient adminClient = null;
+    protected HttpClient userClient = null;
+    protected HttpClient userWeChatClient = null;
+    protected HttpClient agencyClient = null;
+    protected HttpClient anonymousClient = null;
+
     public BaseConfigurationProvider() {
-        if (userClient == null && agencyClient == null && adminClient == null) {
+        if (userClient == null && agencyClient == null && adminClient == null && anonymousClient == null) {
             initHttpClients();
         }
     }
@@ -145,48 +192,80 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
         return "ckpass".toCharArray(); // Please refer to ServiceConfig.xml
     }
 
-    public String genBasicAuthString(String subject) {
-        String credential = getCredential(subject);
-        byte[] subjectCredential = new StringBuffer(subject).append(":").append(credential).toString().getBytes();
-        String basicAuthorization = Base64.encodeBase64String(subjectCredential);
-        return new StringBuffer("Basic ").append(basicAuthorization).toString();
-    }
-
     protected void initHttpClients() {
         try {
+            CredentialsProvider provider = new BasicCredentialsProvider();
+            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
+                Introspection.TestValues.ADMIN_ACCOUNT, CREDENTIALS.get(Introspection.TestValues.ADMIN_ACCOUNT));
+            provider.setCredentials(AuthScope.ANY, credentials);
+
             SSLContextBuilder sslCntxBuilder = SSLContexts.custom()
                 .loadKeyMaterial(getSSLKeyStoreURL(), getSSLStorePassword(), getSSLKeyPassword())
                 .loadTrustMaterial(getSSLTrustStoreURL(), getSSLStorePassword());
             adminClient = HttpClientBuilder.create()
                 .setSslcontext(sslCntxBuilder.build())
                 .setSSLHostnameVerifier(new DefaultHostnameVerifier())
-                .setRedirectStrategy(new RelaxRedirectStrategy())
+                .setRedirectStrategy(new MyRedirectStrategy(Introspection.TestValues.ADMIN_ACCOUNT))
+                .setDefaultCredentialsProvider(provider)
                 .build();
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
 
         try {
+            CredentialsProvider provider = new BasicCredentialsProvider();
+            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
+                Introspection.TestValues.DEFAULT_ACCOUNT, CREDENTIALS.get(Introspection.TestValues.DEFAULT_ACCOUNT));
+            provider.setCredentials(AuthScope.ANY, credentials);
+
             SSLContextBuilder sslCntxBuilder = SSLContexts.custom()
                 .loadKeyMaterial(getSSLKeyStoreURL(), getSSLStorePassword(), getSSLKeyPassword())
                 .loadTrustMaterial(getSSLTrustStoreURL(), getSSLStorePassword());
             userClient = HttpClientBuilder.create()
                 .setSslcontext(sslCntxBuilder.build())
                 .setSSLHostnameVerifier(new DefaultHostnameVerifier())
-                .setRedirectStrategy(new RelaxRedirectStrategy())
+                .setRedirectStrategy(new MyRedirectStrategy(Introspection.TestValues.DEFAULT_ACCOUNT))
+                .setDefaultCredentialsProvider(provider)
                 .build();
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
 
         try {
+            CredentialsProvider provider = new BasicCredentialsProvider();
+            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
+                Introspection.TestValues.DEFAULT_WECHAT_ACCOUNT,
+                CREDENTIALS.get(Introspection.TestValues.DEFAULT_WECHAT_ACCOUNT));
+            provider.setCredentials(AuthScope.ANY, credentials);
+
             SSLContextBuilder sslCntxBuilder = SSLContexts.custom()
                 .loadKeyMaterial(getSSLKeyStoreURL(), getSSLStorePassword(), getSSLKeyPassword())
                 .loadTrustMaterial(getSSLTrustStoreURL(), getSSLStorePassword());
             userWeChatClient = HttpClientBuilder.create()
                 .setSslcontext(sslCntxBuilder.build())
                 .setSSLHostnameVerifier(new DefaultHostnameVerifier())
-                .setRedirectStrategy(new RelaxRedirectStrategy())
+                .setRedirectStrategy(new MyRedirectStrategy(Introspection.TestValues.DEFAULT_WECHAT_ACCOUNT))
+                .setDefaultCredentialsProvider(provider)
+                .build();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+
+        try {
+            CredentialsProvider provider = new BasicCredentialsProvider();
+            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
+                Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT,
+                CREDENTIALS.get(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
+            provider.setCredentials(AuthScope.ANY, credentials);
+
+            SSLContextBuilder sslCntxBuilder = SSLContexts.custom()
+                .loadKeyMaterial(getSSLKeyStoreURL(), getSSLStorePassword(), getSSLKeyPassword())
+                .loadTrustMaterial(getSSLTrustStoreURL(), getSSLStorePassword());
+            agencyClient = HttpClientBuilder.create()
+                .setSslcontext(sslCntxBuilder.build())
+                .setSSLHostnameVerifier(new DefaultHostnameVerifier())
+                .setRedirectStrategy(new MyRedirectStrategy(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT))
+                .setDefaultCredentialsProvider(provider)
                 .build();
         } catch (Exception e) {
             throw new IllegalStateException(e);
@@ -196,27 +275,12 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
             SSLContextBuilder sslCntxBuilder = SSLContexts.custom()
                 .loadKeyMaterial(getSSLKeyStoreURL(), getSSLStorePassword(), getSSLKeyPassword())
                 .loadTrustMaterial(getSSLTrustStoreURL(), getSSLStorePassword());
-            agencyClient = HttpClientBuilder.create()
+            anonymousClient = HttpClientBuilder.create()
                 .setSslcontext(sslCntxBuilder.build())
                 .setSSLHostnameVerifier(new DefaultHostnameVerifier())
-                .setRedirectStrategy(new RelaxRedirectStrategy())
                 .build();
         } catch (Exception e) {
             throw new IllegalStateException(e);
-        }
-    }
-
-    private String getCredential(String subject) {
-        if (Introspection.TestValues.ADMIN_ACCOUNT.equals(subject)) {
-            return "passw0rd"; // Please refer to shiro.ini
-        } else if (Introspection.TestValues.DEFAULT_ACCOUNT.equals(subject)) {
-            return "passw0rd"; // Please refer to shiro.ini
-        } else if (Introspection.TestValues.DEFAULT_WECHAT_ACCOUNT.equals(subject)) {
-            return "passw0rd"; // Please refer to shiro.ini
-        }  else if (Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT.equals(subject)) {
-            return "passw0rd"; // Please refer to shiro.ini
-        } else {
-            return "";
         }
     }
 }

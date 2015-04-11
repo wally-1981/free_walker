@@ -98,7 +98,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
                 post.setEntity(new StringEntity(proposal.toString(), ContentType.APPLICATION_JSON));
                 post.setURI(new URI(itineraryServiceUrlStr + "proposals/"));
                 post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-                post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
                 HttpResponse response = userClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
@@ -273,7 +272,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             post.setEntity(new StringEntity(product.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(productServiceUrlStr + "products/"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -303,7 +301,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -340,7 +337,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + proposalId + "?idType=proposal"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -384,7 +380,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/hotels"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -427,7 +422,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/traffics"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -468,7 +462,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/resorts"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -509,7 +502,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/items"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -547,7 +539,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/bidding"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -569,7 +560,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             post.setEntity(new StringEntity(newHotel.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(productServiceUrlStr + "products/" + productId + "/hotels"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -600,7 +590,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             post.setEntity(new StringEntity(newTraffic.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(productServiceUrlStr + "products/" + productId + "/traffics"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -631,7 +620,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             post.setEntity(new StringEntity(newResort.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(productServiceUrlStr + "products/" + productId + "/resorts"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -662,7 +650,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             post.setEntity(new StringEntity(newTriv.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(productServiceUrlStr + "products/" + productId + "/items"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -692,7 +679,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/hotels"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -749,7 +735,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/traffics"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -802,7 +787,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/resorts"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -855,7 +839,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/items"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -903,7 +886,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             post.setEntity(new StringEntity(bidding.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(productServiceUrlStr + "products/" + productId + "/bidding"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -931,7 +913,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(productServiceUrlStr + "products/" + productId + "/hotels/" + hotelItemId));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            delete.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -952,7 +933,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/bidding"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -978,7 +958,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(productServiceUrlStr + "products/" + productId + "/bidding"));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            delete.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1007,7 +986,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(productServiceUrlStr + "products/" + productId + "/hotels/" + hotelItemId));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            delete.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1036,7 +1014,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(productServiceUrlStr + "products/" + productId + "/traffics/" + trafficItemId));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            delete.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1065,7 +1042,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(productServiceUrlStr + "products/" + productId + "/resorts/" + resortItemId));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            delete.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1094,7 +1070,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(productServiceUrlStr + "products/" + productId + "/items/" + trivItemId));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            delete.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1123,7 +1098,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/hotels"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1167,7 +1141,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/traffics"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1209,7 +1182,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/resorts"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1251,7 +1223,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpGet get = new HttpGet();
             get.setURI(new URI(productServiceUrlStr + "products/" + productId + "/items"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1296,7 +1267,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpPost post = new HttpPost();
             post.setURI(new URI(productServiceUrlStr + "products/public/" + productId));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1317,7 +1287,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             get.setURI(new URI(productServiceUrlStr + "products/my/"
                 + Introspection.JSONValues.DRAFT_PRODUCT.enumValue()));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1338,7 +1307,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             get.setURI(new URI(productServiceUrlStr + "products/my/"
                 + Introspection.JSONValues.DRAFT_PRODUCT.enumValue()));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1376,7 +1344,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpPut put = new HttpPut();
             put.setURI(new URI(productServiceUrlStr + "products/" + productId));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            put.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1408,7 +1375,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             get.setURI(new URI(productServiceUrlStr + "products/my/"
                 + Introspection.JSONValues.PRIVATE_PRODUCT.enumValue()));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1429,7 +1395,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             get.setURI(new URI(productServiceUrlStr + "products/my/"
                 + Introspection.JSONValues.PRIVATE_PRODUCT.enumValue()));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1467,7 +1432,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpPost post = new HttpPost();
             post.setURI(new URI(productServiceUrlStr + "products/public/" + productId));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1511,7 +1475,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            put.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1545,7 +1508,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             get.setURI(new URI(productServiceUrlStr + "products/my/"
                 + Introspection.JSONValues.PUBLIC_PRODUCT.enumValue()));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1584,7 +1546,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             get.setURI(new URI(productServiceUrlStr + "products/my/"
                 + Introspection.JSONValues.PUBLIC_PRODUCT.enumValue()));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1630,7 +1591,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            put.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1669,7 +1629,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            put.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1713,7 +1672,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            put.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1754,7 +1712,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            put.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1793,7 +1750,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            put.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1837,7 +1793,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            put.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1876,7 +1831,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            put.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1914,7 +1868,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            put.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1940,7 +1893,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            put.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1968,7 +1920,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             put.setEntity(new StringEntity(searchCriteria.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(productServiceUrlStr + "products/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            put.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1989,7 +1940,6 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(productServiceUrlStr + "products/public/" + productId));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            delete.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
             try {
                 HttpResponse response = adminClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();

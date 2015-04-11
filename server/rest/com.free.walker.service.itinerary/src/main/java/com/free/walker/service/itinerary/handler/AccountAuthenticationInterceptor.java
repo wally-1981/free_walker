@@ -146,7 +146,7 @@ public class AccountAuthenticationInterceptor extends AbstractPhaseInterceptor<M
         Fault fault = new Fault(e);
         String basicAuthChanllengeHeader = new StringBuilder(HttpServletRequest.BASIC_AUTH).append(" realm=\"")
             .append(request.getPathInfo()).append("\"").toString();
-        response.setHeader("WWW-Authenticate", basicAuthChanllengeHeader);
+        response.setHeader(HttpHeaders.WWW_AUTHENTICATE, basicAuthChanllengeHeader);
         fault.setStatusCode(Status.UNAUTHORIZED.getStatusCode());
         return fault;
     }

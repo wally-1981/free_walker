@@ -155,7 +155,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
                 post.setEntity(new StringEntity(Json.createReader(is).readObject().toString(), ContentType.APPLICATION_JSON));
                 post.setURI(new URI(platformServiceUrlStr + "agencies?batch=true"));
                 post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-                post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
                 HttpResponse response = adminClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
@@ -188,7 +187,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             post.setEntity(new StringEntity(proposal.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(itineraryServiceUrlStr + "proposals/"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -218,7 +216,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "proposals/" + proposalId));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -252,7 +249,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "itineraries/" + proposalId + "?requirementType=proposal"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -302,7 +298,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             post.setEntity(new StringEntity(itinerary.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(itineraryServiceUrlStr + "itineraries/" + proposalId));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -332,7 +327,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "itineraries/" + itineraryId2nd + "?requirementType=itinerary"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -380,7 +374,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             post.setEntity(new StringEntity(hotelReq.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(itineraryServiceUrlStr + "requirements/" + proposalId));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -410,7 +403,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "requirements/" + requirementId1st));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -444,7 +436,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "itineraries/" + proposalId + "?requirementType=proposal"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -520,7 +511,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             post.setEntity(new StringEntity(trafficReq.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(itineraryServiceUrlStr + "requirements/" + proposalId + "/" + itineraryId1st));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -550,7 +540,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "requirements/" + requirementId2nd));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -600,7 +589,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             put.setEntity(new StringEntity(updatedRequirementBuilder.build().toString(), ContentType.APPLICATION_JSON));
             put.setURI(new URI(itineraryServiceUrlStr + "requirements/"));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            put.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -630,7 +618,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "requirements/" + proposalId + "/" + itineraryId2nd));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -667,7 +654,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(itineraryServiceUrlStr + "requirements/" + proposalId + "/" + requirementId1st));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            delete.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -696,7 +682,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "requirements/" + requirementId1st));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -716,7 +701,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             HttpDelete delete = new HttpDelete();
             delete.setURI(new URI(itineraryServiceUrlStr + "itineraries/" + proposalId + "/" + itineraryId1st));
             delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            delete.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -745,7 +729,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "itineraries/" + proposalId + "?requirementType=proposal"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -797,7 +780,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             HttpPost post = new HttpPost();
             post.setURI(new URI(itineraryServiceUrlStr + "proposals/agencies/" + proposalId + "?delayMins=1"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -817,7 +799,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             HttpGet get = new HttpGet();
             get.setURI(new URI(itineraryServiceUrlStr + "proposals/my"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -847,7 +828,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             get.setURI(new URI(itineraryServiceUrlStr + "proposals/agencies/selected/"
                 + agencyIds.getString(agencyIds.size() - 2)));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -884,7 +864,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             put.setURI(new URI(itineraryServiceUrlStr + "proposals/agencies/" + proposalId + "/"
                 + agencyIds.getString(agencyIds.size() - 2)));
             put.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            put.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(put);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -905,7 +884,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             get.setURI(new URI(itineraryServiceUrlStr + "proposals/agencies/selected/"
                 + agencyIds.getString(agencyIds.size() - 2)));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -944,7 +922,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             get.setURI(new URI(itineraryServiceUrlStr + "proposals/agencies/"
                 + agencyIds.getString(agencyIds.size() - 2)));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            get.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
             try {
                 HttpResponse response = agencyClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -973,7 +950,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             HttpPost post = new HttpPost();
             post.setURI(new URI(itineraryServiceUrlStr + "proposals/agencies/" + proposalId + "?delayMins=1"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_ACCOUNT));
             try {
                 HttpResponse response = userClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -993,7 +969,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             HttpPost post = new HttpPost();
             post.setURI(new URI(itineraryServiceUrlStr + "proposals/agencies/" + proposalId + "?delayMins=1"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            post.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.DEFAULT_WECHAT_ACCOUNT));
             try {
                 HttpResponse response = userWeChatClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1015,7 +990,6 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             try {
                 delete.setURI(new URI(platformServiceUrlStr + "agencies/" + agencyIds.getString(i)));
                 delete.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-                delete.setHeader(HttpHeaders.AUTHORIZATION, genBasicAuthString(Introspection.TestValues.ADMIN_ACCOUNT));
                 HttpResponse response = adminClient.execute(delete);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
