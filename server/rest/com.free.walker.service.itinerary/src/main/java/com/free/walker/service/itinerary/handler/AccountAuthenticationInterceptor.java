@@ -1,6 +1,8 @@
 package com.free.walker.service.itinerary.handler;
 
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +14,7 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -24,11 +27,13 @@ import org.apache.shiro.codec.Base64;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.subject.WebSubjectContext;
 import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
+import org.eclipse.jetty.http.HttpSchemes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
+import com.free.walker.service.itinerary.util.UriUtil;
 
 public class AccountAuthenticationInterceptor extends AbstractPhaseInterceptor<Message> {
     private static final Logger LOG = LoggerFactory.getLogger(AccountAuthenticationInterceptor.class);
@@ -54,6 +59,41 @@ public class AccountAuthenticationInterceptor extends AbstractPhaseInterceptor<M
             if (isPublicService(message)) {
                 message.setContent(Subject.class, currentUser);
                 return;
+            }
+
+            URI serviceUri;
+            try {
+                serviceUri = new URIBuilder((String) message.get(Message.REQUEST_URL)).setCustomQuery(
+                    request.getQueryString()).build();
+            } catch (URISyntaxException e) {
+                Fault fault = new Fault(e);
+                fault.setStatusCode(Status.BAD_REQUEST.getStatusCode());
+                message.getInterceptorChain().abort();
+                throw fault;
+            }
+
+            if (HttpSchemes.HTTP.equalsIgnoreCase(serviceUri.getScheme())) {
+                String secureServiceUri;
+                try {
+                    secureServiceUri = UriUtil.ensureSecureUri(serviceUri).toString();
+                } catch (URISyntaxException e) {
+                    Fault fault = new Fault(e);
+                    fault.setStatusCode(Status.BAD_REQUEST.getStatusCode());
+                    message.getInterceptorChain().abort();
+                    throw fault;
+                }
+
+                response.setHeader(HttpHeaders.LOCATION, secureServiceUri);
+
+                Fault fault = new Fault(new IllegalAccessException(LocalMessages.getMessage(
+                    LocalMessages.authentication_request_redirected, serviceUri, secureServiceUri)));
+                fault.setStatusCode(Status.TEMPORARY_REDIRECT.getStatusCode());
+
+                message.getInterceptorChain().abort();
+                LOG.debug(LocalMessages.getMessage(LocalMessages.authentication_request_redirected, serviceUri,
+                    secureServiceUri));
+
+                throw fault;
             }
 
             String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);

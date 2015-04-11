@@ -17,6 +17,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.util.Factory;
+import org.eclipse.jetty.http.HttpSchemes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,11 +29,13 @@ import com.free.walker.service.itinerary.dao.memo.InMemoryTravelRequirementDAOIm
 import com.free.walker.service.itinerary.handler.AccountAuthenticationInterceptor;
 import com.free.walker.service.itinerary.handler.AccountAuthorizationInterceptor;
 import com.free.walker.service.itinerary.handler.AccountRecognitionInterceptor;
+import com.free.walker.service.itinerary.handler.SecurityPolicyInterceptor;
 import com.free.walker.service.itinerary.infra.PlatformInitializer;
 import com.free.walker.service.itinerary.rest.AccountService;
 import com.free.walker.service.itinerary.rest.ItineraryService;
 import com.free.walker.service.itinerary.rest.PlatformService;
 import com.free.walker.service.itinerary.rest.ProductService;
+import com.free.walker.service.itinerary.rest.ServiceConfigurationProvider;
 import com.free.walker.service.itinerary.util.SystemConfigUtil;
 import com.ibm.icu.text.MessageFormat;
 
@@ -96,16 +99,19 @@ public class Server {
         sf.setProvider(new JsrJsonpProvider());
 
         String localIp = InetAddress.getLocalHost().getHostAddress();
-        String protocol = isSecure ? "https" : "http";
+        String protocol = isSecure ? HttpSchemes.HTTPS : HttpSchemes.HTTP;
         LOG.info(LocalMessages.getMessage(LocalMessages.localhost_ip_founed, localIp));
         if (mode.equals(MODE_SINGLE_DEVO)) {
-            sf.setAddress(MessageFormat.format("{0}://{1}:{2}", protocol, localIp, isSecure ? "9011" : "9010"));
-        } else if (mode.equals(MODE_SINGLE_PROD)) {
-            sf.setAddress(MessageFormat.format("{0}://{1}:{2}", protocol, localIp, isSecure ? "9001" : "9000"));
+            sf.setAddress(MessageFormat.format("{0}://{1}:{2}", protocol, localIp,
+                isSecure ? ServiceConfigurationProvider.DEVO_SEC_PORT : ServiceConfigurationProvider.DEVO_PORT));
+       } else if (mode.equals(MODE_SINGLE_PROD)) {
+            sf.setAddress(MessageFormat.format("{0}://{1}:{2}", protocol, localIp,
+                isSecure ? ServiceConfigurationProvider.PROD_SEC_PORT : ServiceConfigurationProvider.PROD_PORT));
         } else {
             throw new IllegalArgumentException();
         }
 
+        sf.getInInterceptors().add(new SecurityPolicyInterceptor());
         sf.getInInterceptors().add(new AccountAuthenticationInterceptor());
         sf.getInInterceptors().add(new AccountAuthorizationInterceptor());
         sf.getInInterceptors().add(new AccountRecognitionInterceptor());

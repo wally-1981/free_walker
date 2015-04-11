@@ -4,9 +4,21 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
+import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 
@@ -17,6 +29,47 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
     protected HttpClient userClient = null;
     protected HttpClient userWeChatClient = null;
     protected HttpClient agencyClient = null;
+
+    private static class RelaxRedirectStrategy extends DefaultRedirectStrategy {
+        private static final String[] REDIRECT_METHODS = new String[] {
+            HttpGet.METHOD_NAME,
+            HttpPost.METHOD_NAME,
+            HttpPut.METHOD_NAME,
+            HttpDelete.METHOD_NAME
+        };
+
+        protected boolean isRedirectable(final String method) {
+            for (final String m: REDIRECT_METHODS) {
+                if (m.equalsIgnoreCase(method)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public HttpUriRequest getRedirect(
+                final HttpRequest request,
+                final HttpResponse response,
+                final HttpContext context) throws ProtocolException {
+            String method = request.getRequestLine().getMethod();
+            if (HttpPost.METHOD_NAME.equalsIgnoreCase(method) || HttpPut.METHOD_NAME.equalsIgnoreCase(method)) {
+                /*
+                 * The content length will be auto calculated in the original
+                 * request, convey it into the redirect request will break the
+                 * redirect process of HttpClient.
+                 */
+                request.removeHeaders(HttpHeaders.CONTENT_LENGTH);
+
+                /*
+                 * The content type may missing from some empty payload request,
+                 * while the redirect process will add the HttpClient default
+                 * content type, which mismatches with server side support.
+                 */
+                request.addHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
+            }
+            return super.getRedirect(request, response, context);
+        }
+    }
 
     public BaseConfigurationProvider() {
         if (userClient == null && agencyClient == null && adminClient == null) {
@@ -107,6 +160,7 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
             adminClient = HttpClientBuilder.create()
                 .setSslcontext(sslCntxBuilder.build())
                 .setSSLHostnameVerifier(new DefaultHostnameVerifier())
+                .setRedirectStrategy(new RelaxRedirectStrategy())
                 .build();
         } catch (Exception e) {
             throw new IllegalStateException(e);
@@ -119,6 +173,7 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
             userClient = HttpClientBuilder.create()
                 .setSslcontext(sslCntxBuilder.build())
                 .setSSLHostnameVerifier(new DefaultHostnameVerifier())
+                .setRedirectStrategy(new RelaxRedirectStrategy())
                 .build();
         } catch (Exception e) {
             throw new IllegalStateException(e);
@@ -131,6 +186,7 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
             userWeChatClient = HttpClientBuilder.create()
                 .setSslcontext(sslCntxBuilder.build())
                 .setSSLHostnameVerifier(new DefaultHostnameVerifier())
+                .setRedirectStrategy(new RelaxRedirectStrategy())
                 .build();
         } catch (Exception e) {
             throw new IllegalStateException(e);
@@ -143,6 +199,7 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
             agencyClient = HttpClientBuilder.create()
                 .setSslcontext(sslCntxBuilder.build())
                 .setSSLHostnameVerifier(new DefaultHostnameVerifier())
+                .setRedirectStrategy(new RelaxRedirectStrategy())
                 .build();
         } catch (Exception e) {
             throw new IllegalStateException(e);

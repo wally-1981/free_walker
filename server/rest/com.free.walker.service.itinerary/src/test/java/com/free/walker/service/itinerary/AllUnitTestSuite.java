@@ -36,6 +36,7 @@ import com.free.walker.service.itinerary.req.TravelProposalTest;
 import com.free.walker.service.itinerary.req.TravelRequirementTest;
 import com.free.walker.service.itinerary.util.JsonObjectHelperTest;
 import com.free.walker.service.itinerary.util.JsonObjectUtilTest;
+import com.free.walker.service.itinerary.util.UriUtilTest;
 import com.free.walker.service.itinerary.util.UuidUtilTest;
 
 @RunWith(Suite.class)
@@ -48,6 +49,7 @@ import com.free.walker.service.itinerary.util.UuidUtilTest;
 
     JsonObjectHelperTest.class,
     UuidUtilTest.class,
+    UriUtilTest.class,
     JsonObjectUtilTest.class,
 
     AccountTest.class,

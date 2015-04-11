@@ -18,6 +18,8 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 
 import com.free.walker.service.itinerary.basic.Account;
+import com.free.walker.service.itinerary.basic.SecurityPolicy;
+import com.free.walker.service.itinerary.basic.SecurityPolicy.SecurityLevel;
 import com.free.walker.service.itinerary.dao.AccountDAO;
 import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
@@ -46,6 +48,7 @@ public class AccountService {
 
     @POST
     @Path("/accounts/")
+    @SecurityPolicy(level = SecurityLevel.HIGH)
     public Response addAccount(JsonObject account) {
         try {
             Account createdAccount = accountDAO.registerAccount(new Account().newFromJSON(account));
@@ -60,6 +63,7 @@ public class AccountService {
     @PUT
     @Path("/accounts/")
     @RequiresPermissions("ModifyAccount")
+    @SecurityPolicy(level = SecurityLevel.HIGH)
     public Response updateAccount(JsonObject account) {
         try {
             Account updatedAccount = accountDAO.modifyAccount(new Account().fromJSON(account));
@@ -75,6 +79,7 @@ public class AccountService {
     @Path("/accounts/{principle}")
     @RequiresRoles(value = {"customer", "agency"}, logical = Logical.OR)
     @RequiresPermissions("ChangePassword")
+    @SecurityPolicy(level = SecurityLevel.HIGH)
     public Response changeAccountPassword(@PathParam("principle") String principle, JsonObject account) {
         try {
             String currentPassword = account.getString(Introspection.JSONKeys.ORIGINAL);
@@ -91,6 +96,7 @@ public class AccountService {
     @PUT
     @Path("/accounts/{principle}/{statusId}")
     @RequiresPermissions("ModifyAccount")
+    @SecurityPolicy(level = SecurityLevel.HIGH)
     public Response updateAccountStatus(@PathParam("principle") String principle, @PathParam("statusId") int statusId) {
         try {
             AccountStatus status = AccountStatus.valueOf(statusId);
@@ -118,6 +124,7 @@ public class AccountService {
     @GET
     @Path("/accounts/{principle}")
     @RequiresPermissions("RetrieveAccount")
+    @SecurityPolicy(level = SecurityLevel.HIGH)
     public Response retrieveAccount(@PathParam("principle") String principle) {
         try {
             return Response.ok(accountDAO.retrieveAccount(principle).toJSON(true)).build();

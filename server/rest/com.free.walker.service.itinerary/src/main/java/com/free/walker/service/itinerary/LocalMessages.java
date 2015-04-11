@@ -181,6 +181,9 @@ public class LocalMessages {
     public static final String account_authorization_roles_check = "account_authorization_roles_check";
     public static final String account_authorization_roles_check_bypass = "account_authorization_roles_check_bypass";
 
+    public static final String non_secure_request_redirected = "non_secure_request_redirected";
+    public static final String authentication_request_redirected = "authentication_request_redirected";
+
     public static final String test_message = "test_message";
     public static final String test_message_with_1_arg = "test_message_with_1_arg";
     public static final String test_message_with_2_args = "test_message_with_2_args";
