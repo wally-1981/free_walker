@@ -48,6 +48,8 @@ public class Constants {
             .add(Introspection.JSONKeys.EMAIL, "")
             .add(Introspection.JSONKeys.NAME, "admin_user")
             .add(Introspection.JSONKeys.REF_LINK, "")
+            .add(Introspection.JSONKeys.ROLE,
+                Json.createArrayBuilder().add(AccountType.getDefaultRole(AccountType.ADMIN).ordinal()))
             .build());
 
         DEFAULT_USER_ACCOUNT = new Account().fromJSON(
@@ -61,6 +63,8 @@ public class Constants {
             .add(Introspection.JSONKeys.EMAIL, "")
             .add(Introspection.JSONKeys.NAME, "default_user")
             .add(Introspection.JSONKeys.REF_LINK, "")
+            .add(Introspection.JSONKeys.ROLE,
+                Json.createArrayBuilder().add(AccountType.getDefaultRole(AccountType.MASTER).ordinal()))
             .build());
 
         DEFAULT_WECHAT_USER_ACCOUNT = new Account().fromJSON(
@@ -74,6 +78,8 @@ public class Constants {
             .add(Introspection.JSONKeys.EMAIL, "")
             .add(Introspection.JSONKeys.NAME, "default_wechat_user")
             .add(Introspection.JSONKeys.REF_LINK, "")
+            .add(Introspection.JSONKeys.ROLE,
+                Json.createArrayBuilder().add(AccountType.getDefaultRole(AccountType.WeChat).ordinal()))
             .build());
 
         DEFAULT_AGENCY_ACCOUNT = new Account().fromJSON(
@@ -87,6 +93,8 @@ public class Constants {
             .add(Introspection.JSONKeys.EMAIL, "")
             .add(Introspection.JSONKeys.NAME, "default_agency")
             .add(Introspection.JSONKeys.REF_LINK, "")
+            .add(Introspection.JSONKeys.ROLE,
+                Json.createArrayBuilder().add(AccountType.getDefaultRole(AccountType.AGENCY).ordinal()))
             .build());
 
         NEW_PROPOSAL = "New Proposal";

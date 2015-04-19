@@ -42,7 +42,8 @@ public class TravelProposalTest {
         TravelProposal travelProposal = new TravelProposal(itineraryRequirement);
         JsonObject jo = travelProposal.toJSON();
         assertEquals(Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL, jo.getString(Introspection.JSONKeys.TYPE));
-        assertEquals(Introspection.TestValues.DEFAULT_ACCOUNT_UUID, jo.getString(Introspection.JSONKeys.AUTHOR));
+        assertEquals(Introspection.DefaultAccounts.DEFAULT_MASTER_ACCOUNT_UUID,
+            jo.getString(Introspection.JSONKeys.AUTHOR));
         assertTrue(jo.get(Introspection.JSONKeys.REQUIREMENTS) instanceof JsonArray);
 
         JsonArray requirements = (JsonArray) jo.get(Introspection.JSONKeys.REQUIREMENTS);
@@ -62,7 +63,8 @@ public class TravelProposalTest {
         TravelProposal travelProposal = new TravelProposal("测试提议", itineraryRequirement, travelTags);
         JsonObject jo = travelProposal.toJSON();
         assertEquals(Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL, jo.getString(Introspection.JSONKeys.TYPE));
-        assertEquals(Introspection.TestValues.DEFAULT_ACCOUNT_UUID, jo.getString(Introspection.JSONKeys.AUTHOR));
+        assertEquals(Introspection.DefaultAccounts.DEFAULT_MASTER_ACCOUNT_UUID,
+            jo.getString(Introspection.JSONKeys.AUTHOR));
         assertEquals("测试提议", jo.getString(Introspection.JSONKeys.TITLE));
 
         assertTrue(jo.get(Introspection.JSONKeys.REQUIREMENTS) instanceof JsonArray);

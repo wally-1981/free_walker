@@ -70,7 +70,7 @@ public abstract class AbstractPlatformServiceTest extends BaseConfigurationProvi
             get.setURI(new URI(platformServiceUrlStr + "introspection/"));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             try {
-                HttpResponse response = userClient.execute(get);
+                HttpResponse response = anonymousClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 assertEquals(HttpStatus.OK_200, statusCode);
                 assertFalse(IOUtils.toString(response.getEntity().getContent()).isEmpty());

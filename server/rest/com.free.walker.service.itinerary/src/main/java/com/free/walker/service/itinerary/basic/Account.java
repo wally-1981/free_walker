@@ -3,6 +3,8 @@ package com.free.walker.service.itinerary.basic;
 import java.util.UUID;
 
 import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -12,6 +14,7 @@ import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.Serializable;
 import com.free.walker.service.itinerary.primitive.AccountStatus;
 import com.free.walker.service.itinerary.primitive.AccountType;
+import com.free.walker.service.itinerary.primitive.AccountType.Role;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.UuidUtil;
 
@@ -25,6 +28,7 @@ public class Account implements Serializable {
     private String name;
     private String imageUri;
     private String password;
+    private AccountType.Role[] roles;
 
     public Account() {
         accountId = UUID.randomUUID();
@@ -35,9 +39,15 @@ public class Account implements Serializable {
     }
 
     public JsonObject toJSON(boolean maskPwd) {
+        JsonArrayBuilder rolesBuilder = Json.createArrayBuilder();
+        for (int i = 0; roles != null && i < roles.length; i++) {
+            rolesBuilder.add(roles[i].ordinal());
+        }
+
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, accountId.toString());
         resBuilder.add(Introspection.JSONKeys.TYPE, accountType.ordinal());
+        resBuilder.add(Introspection.JSONKeys.ROLE, rolesBuilder);
         resBuilder.add(Introspection.JSONKeys.STATUS, accountStatus.ordinal());
         resBuilder.add(Introspection.JSONKeys.LOGIN, login);
         resBuilder.add(Introspection.JSONKeys.PASSWORD, maskPwd ? "******" : password);
@@ -67,6 +77,16 @@ public class Account implements Serializable {
                 Introspection.JSONKeys.TYPE, type));
         } else {
             accountType = AccountType.valueOf(type);
+        }
+
+        JsonArray roleArray = jsObject.getJsonArray(Introspection.JSONKeys.ROLE);
+        if (roleArray != null) {
+            roles = new Role[roleArray.size()];
+            for (int i = 0; i < roleArray.size(); i++) {
+                roles[i] = AccountType.Role.valueOf(roleArray.getInt(i));
+            }
+        } else {
+            roles = new Role[0];
         }
 
         int status = jsObject.getInt(Introspection.JSONKeys.STATUS, -1);
@@ -153,6 +173,10 @@ public class Account implements Serializable {
 
     public String getImageUri() {
         return imageUri;
+    }
+
+    public Role[] getRoles() {
+        return roles;
     }
 
     public ValueType getValueType() {

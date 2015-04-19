@@ -31,6 +31,7 @@ import org.junit.rules.ExpectedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.free.walker.service.itinerary.primitive.AccountType;
 import com.free.walker.service.itinerary.primitive.Introspection;
 
 public abstract class AbstractAccountServiceTest extends BaseConfigurationProvider {
@@ -56,6 +57,8 @@ public abstract class AbstractAccountServiceTest extends BaseConfigurationProvid
         accountJsBuilder.add(Introspection.JSONKeys.EMAIL, "");
         accountJsBuilder.add(Introspection.JSONKeys.NAME, "nick_name");
         accountJsBuilder.add(Introspection.JSONKeys.REF_LINK, "http://www.china.gov");
+        accountJsBuilder.add(Introspection.JSONKeys.ROLE,
+            Json.createArrayBuilder().add(AccountType.getDefaultRole(AccountType.MASTER).ordinal()));
         accountJs = accountJsBuilder.build();
 
         updatedAccountJsBuilder = Json.createObjectBuilder();
@@ -67,7 +70,8 @@ public abstract class AbstractAccountServiceTest extends BaseConfigurationProvid
         updatedAccountJsBuilder.add(Introspection.JSONKeys.EMAIL, UUID.randomUUID().toString() + "@china.gov");
         updatedAccountJsBuilder.add(Introspection.JSONKeys.NAME, "2016_success");
         updatedAccountJsBuilder.add(Introspection.JSONKeys.REF_LINK, "http://www.china.gov.cn");
-
+        updatedAccountJsBuilder.add(Introspection.JSONKeys.ROLE,
+            Json.createArrayBuilder().add(AccountType.getDefaultRole(AccountType.MASTER).ordinal()));
     }
 
     @Test

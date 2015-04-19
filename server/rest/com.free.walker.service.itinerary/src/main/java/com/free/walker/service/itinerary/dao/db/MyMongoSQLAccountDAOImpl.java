@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.UnknownHostException;
 import java.util.Properties;
+import java.util.UUID;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -216,6 +217,23 @@ public class MyMongoSQLAccountDAOImpl implements AccountDAO {
         DBCollection accountColls = accountDb.getCollection(DAOConstants.ACCOUNT_COLL_NAME);
         BasicDBObject byLogin = new BasicDBObject(Introspection.JSONKeys.LOGIN, login);
         DBObject accountBs = accountColls.findOne(byLogin);
+
+        if (accountBs == null) {
+            return null;
+        } else {
+            JsonObject account = Json.createReader(new StringReader(accountBs.toString())).readObject();
+            return new Account().fromJSON(account);
+        }
+    }
+
+    public Account retrieveAccount(UUID uuid) throws InvalidAccountException, DatabaseAccessException {
+        if (uuid == null) {
+            throw new NullPointerException();
+        }
+
+        DBCollection accountColls = accountDb.getCollection(DAOConstants.ACCOUNT_COLL_NAME);
+        BasicDBObject byUuid = new BasicDBObject(Introspection.JSONKeys.UUID, uuid.toString());
+        DBObject accountBs = accountColls.findOne(byUuid);
 
         if (accountBs == null) {
             return null;

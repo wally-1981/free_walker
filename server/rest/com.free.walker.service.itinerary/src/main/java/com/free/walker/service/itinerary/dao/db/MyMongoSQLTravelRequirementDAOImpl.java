@@ -24,9 +24,12 @@ import org.slf4j.LoggerFactory;
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.Account;
+import com.free.walker.service.itinerary.dao.AccountDAO;
 import com.free.walker.service.itinerary.dao.DAOConstants;
+import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.TravelRequirementDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
+import com.free.walker.service.itinerary.exp.InvalidAccountException;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
@@ -35,6 +38,7 @@ import com.free.walker.service.itinerary.req.TravelRequirement;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.MongoDbClientBuilder;
 import com.free.walker.service.itinerary.util.SystemConfigUtil;
+import com.free.walker.service.itinerary.util.UuidUtil;
 import com.ibm.icu.util.Calendar;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
@@ -60,6 +64,8 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
     private MongoClient mdbClient;
     private String itineraryMongoDbUrl;
     private DB itineraryDb;
+
+    private AccountDAO accountDao;
 
     private static class SingletonHolder {
         private static final TravelRequirementDAO INSTANCE = new MyMongoSQLTravelRequirementDAOImpl();
@@ -88,6 +94,8 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
                 throw new IllegalStateException();
             }
         }
+
+        accountDao = DAOFactory.getAccountDAO(MyMongoSQLAccountDAOImpl.class.getName());
     }
 
     public boolean pingPersistence() {
@@ -1202,7 +1210,12 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         } else if (Constants.ADMIN_ACCOUNT.getUuid().equals(proposalOwnerId)) {
             return Constants.ADMIN_ACCOUNT;
         } else {
-            return null;
+            try {
+                return accountDao.retrieveAccount(UuidUtil.fromUuidStr(proposalOwnerId));
+            } catch (InvalidAccountException e) {
+                LOG.error(e.getMessage(), e);
+                return null;
+            }
         }
     }
 

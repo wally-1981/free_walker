@@ -320,6 +320,7 @@ public class PlatformService {
             Map<String, Method> roleMethods = new HashMap<String, Method>();
 
             Method[] methods = null;
+            methods = ArrayUtils.addAll(methods, AccountService.class.getMethods());
             methods = ArrayUtils.addAll(methods, PlatformService.class.getMethods());
             methods = ArrayUtils.addAll(methods, ItineraryService.class.getMethods());
             methods = ArrayUtils.addAll(methods, ProductService.class.getMethods());

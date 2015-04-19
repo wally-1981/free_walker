@@ -1,5 +1,7 @@
 package com.free.walker.service.itinerary.dao;
 
+import java.util.UUID;
+
 import com.free.walker.service.itinerary.basic.Account;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidAccountException;
@@ -10,6 +12,8 @@ public interface AccountDAO extends HealthyDAO {
     public Account modifyAccount(Account account) throws InvalidAccountException, DatabaseAccessException;
 
     public Account retrieveAccount(String login) throws InvalidAccountException, DatabaseAccessException;
+
+    public Account retrieveAccount(UUID uuid) throws InvalidAccountException, DatabaseAccessException;
 
     public Account lockAccount(String login) throws InvalidAccountException, DatabaseAccessException;
 
