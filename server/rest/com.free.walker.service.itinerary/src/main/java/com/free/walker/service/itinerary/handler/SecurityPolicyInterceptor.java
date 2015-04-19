@@ -60,7 +60,7 @@ public class SecurityPolicyInterceptor extends AbstractPhaseInterceptor<Message>
                 }
 
                 response.setHeader(HttpHeaders.LOCATION, secureServiceUri);
-                
+
                 Fault fault = new Fault(new IllegalAccessException(LocalMessages.getMessage(
                     LocalMessages.non_secure_request_redirected, serviceUri, secureServiceUri)));
                 fault.setStatusCode(Status.MOVED_PERMANENTLY.getStatusCode());

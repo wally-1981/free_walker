@@ -23,24 +23,28 @@ public class AccountRecognitionInterceptor extends AbstractPhaseInterceptor<Mess
         Object subjectPrincipal = null;
         if (currentUser != null && currentUser.isAuthenticated()) {
             subjectPrincipal = currentUser.getPrincipal();
-            if (Introspection.TestValues.ADMIN_ACCOUNT.equals(subjectPrincipal)) {
+            if (Introspection.DefaultAccounts.ADMIN_ACCOUNT.equals(subjectPrincipal)) {
                 message.setContent(Account.class, Constants.ADMIN_ACCOUNT);
                 return;
-            } else if (Introspection.TestValues.DEFAULT_ACCOUNT.equals(subjectPrincipal)) {
+            } else if (Introspection.DefaultAccounts.DEFAULT_MASTER_ACCOUNT.equals(subjectPrincipal)) {
                 message.setContent(Account.class, Constants.DEFAULT_USER_ACCOUNT);
                 return;
-            } else if (Introspection.TestValues.DEFAULT_WECHAT_ACCOUNT.equals(subjectPrincipal)) {
+            } else if (Introspection.DefaultAccounts.DEFAULT_WECHAT_ACCOUNT.equals(subjectPrincipal)) {
                 message.setContent(Account.class, Constants.DEFAULT_WECHAT_USER_ACCOUNT);
                 return;
-            } else if (Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT.equals(subjectPrincipal)) {
+            } else if (Introspection.DefaultAccounts.DEFAULT_AGENCY_ACCOUNT.equals(subjectPrincipal)) {
                 message.setContent(Account.class, Constants.DEFAULT_AGENCY_ACCOUNT);
                 return;
             } else {
-                ;
+                Object account = currentUser.getPrincipal();
+                if (account instanceof Account) {
+                    message.setContent(Account.class, account);
+                    return;
+                }
             }
 
-            Fault fault = new Fault(new IllegalAccessException(LocalMessages.getMessage(LocalMessages.account_unknown,
-                subjectPrincipal)));
+            Fault fault = new Fault(new IllegalAccessException(LocalMessages.getMessage(
+                LocalMessages.account_unknown, subjectPrincipal)));
             fault.setStatusCode(Status.UNAUTHORIZED.getStatusCode());
             message.getInterceptorChain().abort();
             throw fault;

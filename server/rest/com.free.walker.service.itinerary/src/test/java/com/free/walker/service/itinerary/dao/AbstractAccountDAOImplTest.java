@@ -44,8 +44,7 @@ public abstract class AbstractAccountDAOImplTest {
 
     @Test
     public void testRegisterAccount() throws InvalidAccountException, DatabaseAccessException {
-        String uuid = UUID.randomUUID().toString();
-        accountBuilder.add(Introspection.JSONKeys.UUID, uuid);
+        accountBuilder.add(Introspection.JSONKeys.UUID, UUID.randomUUID().toString());
         accountBuilder.add(Introspection.JSONKeys.LOGIN, UUID.randomUUID().toString());
         Account account = new Account().fromJSON(accountBuilder.build());
 
@@ -56,8 +55,7 @@ public abstract class AbstractAccountDAOImplTest {
 
     @Test
     public void testModifyAccount() throws InvalidAccountException, DatabaseAccessException {
-        String uuid = UUID.randomUUID().toString();
-        accountBuilder.add(Introspection.JSONKeys.UUID, uuid);
+        accountBuilder.add(Introspection.JSONKeys.UUID, UUID.randomUUID().toString());
         accountBuilder.add(Introspection.JSONKeys.LOGIN, UUID.randomUUID().toString());
         Account createdAccount = accountDAO.registerAccount(new Account().fromJSON(accountBuilder.build()));
 
@@ -83,9 +81,8 @@ public abstract class AbstractAccountDAOImplTest {
     }
 
     @Test
-    public void testRetrieveAccount() throws InvalidAccountException, DatabaseAccessException {
-        String uuid = UUID.randomUUID().toString();
-        accountBuilder.add(Introspection.JSONKeys.UUID, uuid);
+    public void testRetrieveAccountByLogin() throws InvalidAccountException, DatabaseAccessException {
+        accountBuilder.add(Introspection.JSONKeys.UUID, UUID.randomUUID().toString());
         accountBuilder.add(Introspection.JSONKeys.LOGIN, UUID.randomUUID().toString());
         Account createdAccount = accountDAO.registerAccount(new Account().fromJSON(accountBuilder.build()));
 
@@ -101,9 +98,25 @@ public abstract class AbstractAccountDAOImplTest {
     }
 
     @Test
+    public void testRetrieveAccountByUuid() throws InvalidAccountException, DatabaseAccessException {
+        accountBuilder.add(Introspection.JSONKeys.UUID, UUID.randomUUID().toString());
+        accountBuilder.add(Introspection.JSONKeys.LOGIN, UUID.randomUUID().toString());
+        Account createdAccount = accountDAO.registerAccount(new Account().fromJSON(accountBuilder.build()));
+
+        Account retrievedAccount = accountDAO.retrieveAccount(UUID.fromString(createdAccount.getUuid()));
+        assertNotNull(retrievedAccount);
+        assertEquals(createdAccount.getUuid(), retrievedAccount.getUuid());
+        assertEquals(createdAccount.getAccountStatus(), retrievedAccount.getAccountStatus());
+        assertEquals(createdAccount.getAccountType(), retrievedAccount.getAccountType());
+        assertEquals(createdAccount.getEmail(), retrievedAccount.getEmail());
+        assertEquals(createdAccount.getMobile(), retrievedAccount.getMobile());
+        assertEquals(createdAccount.getName(), retrievedAccount.getName());
+        assertEquals(createdAccount.getPassword(), retrievedAccount.getPassword());
+    }
+
+    @Test
     public void testLockAccount() throws InvalidAccountException, JsonException, DatabaseAccessException {
-        String uuid = UUID.randomUUID().toString();
-        accountBuilder.add(Introspection.JSONKeys.UUID, uuid);
+        accountBuilder.add(Introspection.JSONKeys.UUID, UUID.randomUUID().toString());
         accountBuilder.add(Introspection.JSONKeys.LOGIN, UUID.randomUUID().toString());
         Account createdAccount = accountDAO.registerAccount(new Account().fromJSON(accountBuilder.build()));
 
@@ -120,8 +133,7 @@ public abstract class AbstractAccountDAOImplTest {
 
     @Test
     public void testActivateAccount() throws InvalidAccountException, JsonException, DatabaseAccessException {
-        String uuid = UUID.randomUUID().toString();
-        accountBuilder.add(Introspection.JSONKeys.UUID, uuid);
+        accountBuilder.add(Introspection.JSONKeys.UUID, UUID.randomUUID().toString());
         accountBuilder.add(Introspection.JSONKeys.LOGIN, UUID.randomUUID().toString());
         Account createdAccount = accountDAO.registerAccount(new Account().fromJSON(accountBuilder.build()));
 
@@ -138,8 +150,7 @@ public abstract class AbstractAccountDAOImplTest {
 
     @Test
     public void testDeactivateAccount() throws InvalidAccountException, JsonException, DatabaseAccessException {
-        String uuid = UUID.randomUUID().toString();
-        accountBuilder.add(Introspection.JSONKeys.UUID, uuid);
+        accountBuilder.add(Introspection.JSONKeys.UUID, UUID.randomUUID().toString());
         accountBuilder.add(Introspection.JSONKeys.LOGIN, UUID.randomUUID().toString());
         Account createdAccount = accountDAO.registerAccount(new Account().fromJSON(accountBuilder.build()));
 
@@ -156,8 +167,7 @@ public abstract class AbstractAccountDAOImplTest {
 
     @Test
     public void testRevokeAccount() throws InvalidAccountException, JsonException, DatabaseAccessException {
-        String uuid = UUID.randomUUID().toString();
-        accountBuilder.add(Introspection.JSONKeys.UUID, uuid);
+        accountBuilder.add(Introspection.JSONKeys.UUID, UUID.randomUUID().toString());
         accountBuilder.add(Introspection.JSONKeys.LOGIN, UUID.randomUUID().toString());
         Account createdAccount = accountDAO.registerAccount(new Account().fromJSON(accountBuilder.build()));
 
@@ -174,8 +184,7 @@ public abstract class AbstractAccountDAOImplTest {
 
     @Test
     public void testResetPassword() throws InvalidAccountException, JsonException, DatabaseAccessException {
-        String uuid = UUID.randomUUID().toString();
-        accountBuilder.add(Introspection.JSONKeys.UUID, uuid);
+        accountBuilder.add(Introspection.JSONKeys.UUID, UUID.randomUUID().toString());
         accountBuilder.add(Introspection.JSONKeys.LOGIN, UUID.randomUUID().toString());
         Account createdAccount = accountDAO.registerAccount(new Account().fromJSON(accountBuilder.build()));
 

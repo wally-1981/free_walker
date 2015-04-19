@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
+import com.free.walker.service.itinerary.basic.Account;
+import com.free.walker.service.itinerary.primitive.AccountType.Permission;
 
 public class AccountAuthorizationInterceptor extends AbstractPhaseInterceptor<Message> {
     private static final Logger LOG = LoggerFactory.getLogger(AccountAuthorizationInterceptor.class);
@@ -40,7 +42,14 @@ public class AccountAuthorizationInterceptor extends AbstractPhaseInterceptor<Me
         } else {
             LOG.debug(LocalMessages.getMessage(LocalMessages.account_authorization_permissions_check,
                 permissions.value(), permissions.logical(), currentUser.getPrincipal()));
-            boolean[] resultArray = currentUser.isPermitted(permissions.value());
+
+            boolean[] resultArray = null;
+            if (currentUser.getPrincipal() instanceof Account) {
+                resultArray = currentUser.isPermitted(Permission.valueOfPermissions(permissions.value()));
+            } else {
+                resultArray = currentUser.isPermitted(permissions.value());
+            }
+
             if (Logical.AND.ordinal() == permissions.logical().ordinal()) {
                 pAuthrozied = true;
                 for (boolean result : resultArray) {

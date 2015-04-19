@@ -49,6 +49,9 @@ public class Introspection {
         public static final String HITS = "hits";
         public static final String TOTAL_HITS_NUMBER = "total_hits_number";
 
+        public static final String ROLE = "role";
+        public static final String PERMISSION = "permission";
+
         /*
          * JSONArray Keys
          */
@@ -172,6 +175,7 @@ public class Introspection {
         public static final String SUB_TYPE_RESORT_ITEM = ResortItem.SUB_TYPE;
         public static final String SUB_TYPE_TRIV_ITEM = TrivItem.SUB_TYPE;
 
+        public static final int ACCOUNT_TYPE_AGENCY = AccountType.AGENCY.ordinal();
         public static final int ACCOUNT_TYPE_MASTER = AccountType.MASTER.ordinal();
         public static final int ACCOUNT_TYPE_WECHAT = AccountType.WeChat.ordinal();
         public static final int ACCOUNT_TYPE_QQ = AccountType.QQ.ordinal();
@@ -209,12 +213,15 @@ public class Introspection {
         public static final String SORT_DESC_ORDER_AS_STR = SortOrder.DESC.toString();
     }
 
-    public static class TestValues {
+    public static class DefaultAccounts {
         public static final String ADMIN_ACCOUNT = Constants.ADMIN_ACCOUNT.getLogin();
-        public static final String DEFAULT_ACCOUNT = Constants.DEFAULT_USER_ACCOUNT.getLogin();
+        public static final String DEFAULT_MASTER_ACCOUNT = Constants.DEFAULT_USER_ACCOUNT.getLogin();
         public static final String DEFAULT_WECHAT_ACCOUNT = Constants.DEFAULT_WECHAT_USER_ACCOUNT.getLogin();
         public static final String DEFAULT_AGENCY_ACCOUNT = Constants.DEFAULT_AGENCY_ACCOUNT.getLogin();
-        public static final String DEFAULT_ACCOUNT_UUID = Constants.DEFAULT_USER_ACCOUNT.getUuid();
+        public static final String DEFAULT_MASTER_ACCOUNT_UUID = Constants.DEFAULT_USER_ACCOUNT.getUuid();
+    }
+
+    public static class TestValues {
         public static final String DEFAULT_PROPOSAL_TITLE = Constants.NEW_PROPOSAL;
     }
 

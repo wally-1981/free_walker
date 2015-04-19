@@ -42,12 +42,14 @@ import com.free.walker.service.itinerary.basic.Account;
 import com.free.walker.service.itinerary.basic.Continent;
 import com.free.walker.service.itinerary.basic.StringTriple;
 import com.free.walker.service.itinerary.basic.TravelLocation;
+import com.free.walker.service.itinerary.dao.AccountDAO;
 import com.free.walker.service.itinerary.dao.DAOConstants;
 import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
 import com.free.walker.service.itinerary.dao.TravelProductDAO;
 import com.free.walker.service.itinerary.dao.TravelRequirementDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
+import com.free.walker.service.itinerary.exp.InvalidAccountException;
 import com.free.walker.service.itinerary.exp.InvalidTravelProductException;
 import com.free.walker.service.itinerary.primitive.AccountType;
 import com.free.walker.service.itinerary.primitive.Introspection;
@@ -98,6 +100,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
 
     private DB productDb;
 
+    private AccountDAO accountDao;
     private TravelBasicDAO travelBasicDao;
     private TravelRequirementDAO travelRequirementDao;
 
@@ -139,6 +142,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             }
         }
 
+        accountDao = DAOFactory.getAccountDAO(MyMongoSQLAccountDAOImpl.class.getName());
         travelBasicDao = DAOFactory.getTravelBasicDAO();
         travelRequirementDao = DAOFactory.getTravelRequirementDAO(MyMongoSQLTravelRequirementDAOImpl.class.getName());
     }
@@ -428,7 +432,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
 
             SearchResponse response = null;
             QueryTemplate template = null;
-            if (AccountType.isTouristAccount(account.getAccountType().ordinal())) {
+            if (AccountType.isTouristAccount(account.getAccountType())) {
                 templageParams.put(DAOConstants.elasticsearch_size, String.valueOf(100));
                 templageParams.put(DAOConstants.elasticsearch_proposal_owner, account.getUuid());
                 template = QueryTemplate.getQueryTemplate(Introspection.JSONValues.PROPOSAL_OWNER_TEMPLATE_AS_INT);
@@ -1051,7 +1055,6 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         } else {
             JsonObject product = Json.createReader(new StringReader(productBs.toString())).readObject();
             String productOwnerId = product.getString(Introspection.JSONKeys.OWNER, null);
-            // TODO: query the user registry by identifier for the account. 
             if (Constants.DEFAULT_USER_ACCOUNT.getUuid().equals(productOwnerId)) {
                 return Constants.DEFAULT_USER_ACCOUNT;
             } else if (Constants.DEFAULT_AGENCY_ACCOUNT.getUuid().equals(productOwnerId)) {
@@ -1059,7 +1062,12 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             } else if (Constants.ADMIN_ACCOUNT.getUuid().equals(productOwnerId)) {
                 return Constants.ADMIN_ACCOUNT;
             } else {
-                return null;
+                try {
+                    return accountDao.retrieveAccount(UuidUtil.fromUuidStr(productOwnerId));
+                } catch (InvalidAccountException e) {
+                    LOG.error(e.getMessage(), e);
+                    return null;
+                }
             }
         }
     }

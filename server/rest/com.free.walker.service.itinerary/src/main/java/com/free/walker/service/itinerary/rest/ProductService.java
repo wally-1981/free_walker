@@ -305,8 +305,8 @@ public class ProductService {
             return Response.status(Status.BAD_REQUEST).entity(res).build();
         }
 
-        if (AccountType.isTouristAccount(acnt.getAccountType().ordinal()) &&
-            (ProductStatus.DRAFT_PRODUCT.equals(status) || ProductStatus.PRIVATE_PRODUCT.equals(status))) {
+        if (AccountType.isTouristAccount(acnt.getAccountType())
+            && (ProductStatus.DRAFT_PRODUCT.equals(status) || ProductStatus.PRIVATE_PRODUCT.equals(status))) {
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.STATUS, statusId).build();
             return Response.status(Status.CONFLICT).entity(res).build();
         }

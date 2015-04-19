@@ -169,7 +169,7 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
 
         List<TravelProduct> result = new ArrayList<TravelProduct>();
 
-        if (AccountType.isTouristAccount(account.getAccountType().ordinal())) {
+        if (AccountType.isTouristAccount(account.getAccountType())) {
             Iterator<TravelProduct> products = travelProducts.values().iterator();
             while (products.hasNext()) {
                 TravelProduct product = (TravelProduct) products.next();

@@ -37,14 +37,14 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
     private static final Map<String, String> CREDENTIALS = new HashMap<String, String>();
 
     static {
-        CREDENTIALS.put(Introspection.TestValues.ADMIN_ACCOUNT, "passw0rd"); // Please refer to shiro.ini
-        CREDENTIALS.put(Introspection.TestValues.DEFAULT_ACCOUNT, "passw0rd"); // Please refer to shiro.ini
-        CREDENTIALS.put(Introspection.TestValues.DEFAULT_WECHAT_ACCOUNT, "passw0rd"); // Please refer to shiro.ini
-        CREDENTIALS.put(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT, "passw0rd"); // Please refer to shiro.ini
+        CREDENTIALS.put(Introspection.DefaultAccounts.ADMIN_ACCOUNT, "passw0rd");
+        CREDENTIALS.put(Introspection.DefaultAccounts.DEFAULT_MASTER_ACCOUNT, "passw0rd");
+        CREDENTIALS.put(Introspection.DefaultAccounts.DEFAULT_WECHAT_ACCOUNT, "passw0rd");
+        CREDENTIALS.put(Introspection.DefaultAccounts.DEFAULT_AGENCY_ACCOUNT, "passw0rd");
     }
 
     private static class MyRedirectStrategy extends DefaultRedirectStrategy {
-        private String principle;
+        private UsernamePasswordCredentials credentials;
 
         private static final String[] REDIRECT_METHODS = new String[] {
             HttpGet.METHOD_NAME,
@@ -53,14 +53,14 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
             HttpDelete.METHOD_NAME
         };
 
-        public MyRedirectStrategy(String principle) {
+        public MyRedirectStrategy(UsernamePasswordCredentials credentials) {
             super();
 
-            if (principle == null || principle.trim().isEmpty()) {
-                throw new IllegalArgumentException();
+            if (credentials == null) {
+                throw new NullPointerException();
             }
 
-            this.principle = principle;
+            this.credentials = credentials;
         }
 
         protected boolean isRedirectable(final String method) {
@@ -101,8 +101,8 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
             if (response.getStatusLine().getStatusCode() == HttpStatus.TEMPORARY_REDIRECT_307
                 || HttpSchemes.HTTPS.equalsIgnoreCase(redirectedRequest.getURI().getScheme())
                 || HttpSchemes.HTTP.equalsIgnoreCase(clientContext.getTargetHost().getSchemeName())) {
-                StringBuffer subjectCredentialBuilder = new StringBuffer(principle).append(":").append(
-                    CREDENTIALS.get(principle));
+                StringBuffer subjectCredentialBuilder = new StringBuffer(credentials.getUserName()).append(":").append(
+                    credentials.getPassword());
                 subjectCredentialBuilder = new StringBuffer("Basic ").append(Base64
                     .encodeBase64String(subjectCredentialBuilder.toString().getBytes()));
                 redirectedRequest.addHeader(HttpHeaders.AUTHORIZATION, subjectCredentialBuilder.toString());
@@ -193,82 +193,32 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
     }
 
     protected void initHttpClients() {
-        try {
-            CredentialsProvider provider = new BasicCredentialsProvider();
+        {
             UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-                Introspection.TestValues.ADMIN_ACCOUNT, CREDENTIALS.get(Introspection.TestValues.ADMIN_ACCOUNT));
-            provider.setCredentials(AuthScope.ANY, credentials);
-
-            SSLContextBuilder sslCntxBuilder = SSLContexts.custom()
-                .loadKeyMaterial(getSSLKeyStoreURL(), getSSLStorePassword(), getSSLKeyPassword())
-                .loadTrustMaterial(getSSLTrustStoreURL(), getSSLStorePassword());
-            adminClient = HttpClientBuilder.create()
-                .setSslcontext(sslCntxBuilder.build())
-                .setSSLHostnameVerifier(new DefaultHostnameVerifier())
-                .setRedirectStrategy(new MyRedirectStrategy(Introspection.TestValues.ADMIN_ACCOUNT))
-                .setDefaultCredentialsProvider(provider)
-                .build();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+                Introspection.DefaultAccounts.ADMIN_ACCOUNT,
+                CREDENTIALS.get(Introspection.DefaultAccounts.ADMIN_ACCOUNT));
+            adminClient = generateClient(credentials);
         }
 
-        try {
-            CredentialsProvider provider = new BasicCredentialsProvider();
+        {
             UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-                Introspection.TestValues.DEFAULT_ACCOUNT, CREDENTIALS.get(Introspection.TestValues.DEFAULT_ACCOUNT));
-            provider.setCredentials(AuthScope.ANY, credentials);
-
-            SSLContextBuilder sslCntxBuilder = SSLContexts.custom()
-                .loadKeyMaterial(getSSLKeyStoreURL(), getSSLStorePassword(), getSSLKeyPassword())
-                .loadTrustMaterial(getSSLTrustStoreURL(), getSSLStorePassword());
-            userClient = HttpClientBuilder.create()
-                .setSslcontext(sslCntxBuilder.build())
-                .setSSLHostnameVerifier(new DefaultHostnameVerifier())
-                .setRedirectStrategy(new MyRedirectStrategy(Introspection.TestValues.DEFAULT_ACCOUNT))
-                .setDefaultCredentialsProvider(provider)
-                .build();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+                Introspection.DefaultAccounts.DEFAULT_MASTER_ACCOUNT,
+                CREDENTIALS.get(Introspection.DefaultAccounts.DEFAULT_MASTER_ACCOUNT));
+            userClient = generateClient(credentials);
         }
 
-        try {
-            CredentialsProvider provider = new BasicCredentialsProvider();
+        {
             UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-                Introspection.TestValues.DEFAULT_WECHAT_ACCOUNT,
-                CREDENTIALS.get(Introspection.TestValues.DEFAULT_WECHAT_ACCOUNT));
-            provider.setCredentials(AuthScope.ANY, credentials);
-
-            SSLContextBuilder sslCntxBuilder = SSLContexts.custom()
-                .loadKeyMaterial(getSSLKeyStoreURL(), getSSLStorePassword(), getSSLKeyPassword())
-                .loadTrustMaterial(getSSLTrustStoreURL(), getSSLStorePassword());
-            userWeChatClient = HttpClientBuilder.create()
-                .setSslcontext(sslCntxBuilder.build())
-                .setSSLHostnameVerifier(new DefaultHostnameVerifier())
-                .setRedirectStrategy(new MyRedirectStrategy(Introspection.TestValues.DEFAULT_WECHAT_ACCOUNT))
-                .setDefaultCredentialsProvider(provider)
-                .build();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+                Introspection.DefaultAccounts.DEFAULT_WECHAT_ACCOUNT,
+                CREDENTIALS.get(Introspection.DefaultAccounts.DEFAULT_WECHAT_ACCOUNT));
+            userWeChatClient = generateClient(credentials);
         }
 
-        try {
-            CredentialsProvider provider = new BasicCredentialsProvider();
+        {
             UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-                Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT,
-                CREDENTIALS.get(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT));
-            provider.setCredentials(AuthScope.ANY, credentials);
-
-            SSLContextBuilder sslCntxBuilder = SSLContexts.custom()
-                .loadKeyMaterial(getSSLKeyStoreURL(), getSSLStorePassword(), getSSLKeyPassword())
-                .loadTrustMaterial(getSSLTrustStoreURL(), getSSLStorePassword());
-            agencyClient = HttpClientBuilder.create()
-                .setSslcontext(sslCntxBuilder.build())
-                .setSSLHostnameVerifier(new DefaultHostnameVerifier())
-                .setRedirectStrategy(new MyRedirectStrategy(Introspection.TestValues.DEFAULT_AGENCY_ACCOUNT))
-                .setDefaultCredentialsProvider(provider)
-                .build();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+                Introspection.DefaultAccounts.DEFAULT_AGENCY_ACCOUNT,
+                CREDENTIALS.get(Introspection.DefaultAccounts.DEFAULT_AGENCY_ACCOUNT));
+            agencyClient = generateClient(credentials);
         }
 
         try {
@@ -278,6 +228,25 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
             anonymousClient = HttpClientBuilder.create()
                 .setSslcontext(sslCntxBuilder.build())
                 .setSSLHostnameVerifier(new DefaultHostnameVerifier())
+                .build();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    protected HttpClient generateClient(UsernamePasswordCredentials credentials) {
+        try {
+            CredentialsProvider provider = new BasicCredentialsProvider();
+            provider.setCredentials(AuthScope.ANY, credentials);
+
+            SSLContextBuilder sslCntxBuilder = SSLContexts.custom()
+                .loadKeyMaterial(getSSLKeyStoreURL(), getSSLStorePassword(), getSSLKeyPassword())
+                .loadTrustMaterial(getSSLTrustStoreURL(), getSSLStorePassword());
+            return HttpClientBuilder.create()
+                .setSslcontext(sslCntxBuilder.build())
+                .setSSLHostnameVerifier(new DefaultHostnameVerifier())
+                .setRedirectStrategy(new MyRedirectStrategy(credentials))
+                .setDefaultCredentialsProvider(provider)
                 .build();
         } catch (Exception e) {
             throw new IllegalStateException(e);
