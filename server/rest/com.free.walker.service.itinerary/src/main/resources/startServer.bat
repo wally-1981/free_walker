@@ -1,4 +1,4 @@
-:: Please ensure install and start MongoDB and MySQL before launching this server in Prod mode.
+:: Please ensure install and start MongoDB, ElasticSearch and MySQL before launching this server in Prod mode.
 ::
 :: Start MySQL: (The path to mysqld may vary depending on the install location of MySQL on your system.)
 :: c:\MySQL\MySQL Server 5.6\bin\mysqld

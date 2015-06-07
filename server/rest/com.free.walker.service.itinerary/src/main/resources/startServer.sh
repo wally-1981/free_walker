@@ -1,4 +1,4 @@
-# Please ensure install and start MongoDB and MySQL before launching this server in Prod mode.
+# Please ensure install and start MongoDB, ElasticSearch and MySQL before launching this server in Prod mode.
 
 # Start MySQL:
 sudo /usr/local/mysql/support-files/mysql.server start
