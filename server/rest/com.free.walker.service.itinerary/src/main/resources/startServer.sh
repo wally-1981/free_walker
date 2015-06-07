@@ -3,11 +3,11 @@
 # Start MySQL:
 sudo /usr/local/mysql/support-files/mysql.server start
 
-# Start MongoDB:
-#service mongod start
+# Start MongoDB: (The path to mongod may vary depending on the install location of MongoDB on your system. You may need to create the data directory manually.)
+sudo /Applications/mongo_server/bin/mongod -dbpath /Applications/mongo_server/data
 
-# Start ElasticSearch:
-#service elasticsearch start
+# Start ElasticSearch: (The path to elasticsearch may vary depending on the install location of ElasticSearch on your system.)
+sudo /Applications/elastic_search_server/bin/elasticsearch
 
 # Create the combination keystore/truststore for the client and service.
 # Note you can create separate keystores/truststores for both if desired
