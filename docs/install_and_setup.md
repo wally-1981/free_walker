@@ -5,17 +5,31 @@ Please refer to [MySQL][1] official site for the general installation guide.
 
 Please refer to [config.properties][2] for the server port and account settings required by this application server.
 
+Ensure the server was started before proceeding:
+
+Windows: c:\MySQL\MySQL Server 5.6\bin\mysqld
+
+Mac OS: sudo /usr/local/mysql/support-files/mysql.server start
+
 **MongoDB**
 
 Please refer to [MongoDB][3] official site for the general installation guide.
 
 Please refer to [config.properties][4] for the server port settings required by this application server.
 
+Windows: c:\mongo_server\bin\mongod -dbpath c:\mongo_server\data
+
+Mac OS: sudo /Applications/mongo_server/bin/mongod -dbpath /Applications/mongo_server/data
+
 **ElasticSearch**
 
 Please refer to [ElasticSearch][5] official site for the general installation guide.
 
 Please refer to [config.properties][6] for the server port settings required by this application server.
+
+Windows: c:\elastic_search_server\bin\elasticsearch
+
+Mac OS: sudo /Applications/elastic_search_server/bin/elasticsearch
 
 **curl**
 
