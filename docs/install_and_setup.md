@@ -33,8 +33,12 @@ Please execute [this][8] or [this][9] script to register the query templates.
 
 #Startup
 
-TBD
+For **Windows**, please refer to [this script][10] to start this application server.
 
+For **Mac**, please refer to [this script][11] to start this application server.
+
+***Reminder***
+These two sripts can not be executed directly to start the server. Please read the scripts line by line and execute those commands one by one.
 
   [1]: http://www.mysql.com
   [2]: https://github.com/wally-1981/free_walker/blob/master/server/rest/com.free.walker.service.itinerary/src/main/resources/com/free/walker/service/itinerary/dao/config.properties
@@ -45,3 +49,5 @@ TBD
   [7]: https://github.com/wally-1981/free_walker/blob/master/server/rest/com.free.walker.service.itinerary/src/main/resources/db/schema/basic.sql
   [8]: https://github.com/wally-1981/free_walker/blob/master/server/rest/com.free.walker.service.itinerary/src/main/resources/db/setup.sh
   [9]: https://github.com/wally-1981/free_walker/blob/master/server/rest/com.free.walker.service.itinerary/src/main/resources/db/setup.bat
+  [10]: https://github.com/wally-1981/free_walker/blob/master/server/rest/com.free.walker.service.itinerary/src/main/resources/startServer.bat
+  [11]: https://github.com/wally-1981/free_walker/blob/master/server/rest/com.free.walker.service.itinerary/src/main/resources/startServer.sh
