@@ -1,4 +1,7 @@
 #Installation
+
+----------
+
 **MySQL**
 
 Please refer to [MySQL][1] official site for the general installation guide.
@@ -7,9 +10,11 @@ Please refer to [config.properties][2] for the server port and account settings 
 
 Ensure the server was started before proceeding:
 
-Windows: c:\MySQL\MySQL Server 5.6\bin\mysqld
+**Windows**: `c:\MySQL\MySQL Server 5.6\bin\mysqld`
 
-Mac OS: sudo /usr/local/mysql/support-files/mysql.server start
+**Mac OS**: `sudo /usr/local/mysql/support-files/mysql.server start`
+
+----------
 
 **MongoDB**
 
@@ -17,9 +22,11 @@ Please refer to [MongoDB][3] official site for the general installation guide.
 
 Please refer to [config.properties][4] for the server port settings required by this application server.
 
-Windows: c:\mongo_server\bin\mongod -dbpath c:\mongo_server\data
+**Windows**: `c:\mongo_server\bin\mongod -dbpath c:\mongo_server\data`
 
-Mac OS: sudo /Applications/mongo_server/bin/mongod -dbpath /Applications/mongo_server/data
+**Mac OS**: `sudo /Applications/mongo_server/bin/mongod -dbpath /Applications/mongo_server/data`
+
+----------
 
 **ElasticSearch**
 
@@ -27,13 +34,17 @@ Please refer to [ElasticSearch][5] official site for the general installation gu
 
 Please refer to [config.properties][6] for the server port settings required by this application server.
 
-Windows: c:\elastic_search_server\bin\elasticsearch
+**Windows**: `c:\elastic_search_server\bin\elasticsearch`
 
-Mac OS: sudo /Applications/elastic_search_server/bin/elasticsearch
+**Mac OS:** `sudo /Applications/elastic_search_server/bin/elasticsearch`
+
+----------
 
 **curl**
 
 The *curl* command is required for the later setup process, please ensure it was install in your operation system.
+
+----------
 
 #Setup
 
@@ -41,9 +52,13 @@ The *curl* command is required for the later setup process, please ensure it was
 
 Please execute [this sql][7] to setup DB schema and initialization data for MySQL.
 
+----------
+
 **ElasticSearch Initialization**
 
 Please execute [this][8] or [this][9] script to register the query templates.
+
+----------
 
 #Startup
 
@@ -51,7 +66,7 @@ For **Windows**, please refer to [this script][10] to start this application ser
 
 For **Mac**, please refer to [this script][11] to start this application server.
 
-***Reminder***
+**Reminder**
 These two sripts can not be executed directly to start the server. Please read the scripts line by line and execute those commands one by one.
 
   [1]: http://www.mysql.com
