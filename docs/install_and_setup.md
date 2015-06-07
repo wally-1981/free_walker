@@ -1,7 +1,5 @@
 #Installation
 
-----------
-
 **MySQL**
 
 Please refer to [MySQL][1] official site for the general installation guide.
