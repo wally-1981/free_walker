@@ -5,7 +5,7 @@
 
 # Create the combination keystore/truststore for the client and service.
 # Note you can create separate keystores/truststores for both if desired
-keytool -genkeypair -validity 365 -alias myservicekey -keystore ServiceKeystore.jks -dname "cn=<Server Hostname>" -keypass skpass -storepass sspass
+keytool -genkeypair -validity 365 -alias myservicekey -keystore ServiceKeystore.jks -dname "cn=127.0.0.1" -keypass skpass -storepass sspass
 keytool -genkeypair -validity 365 -alias myclientkey -keystore ClientKeystore.jks -keypass ckpass -storepass cspass
 
 # Place server public cert in client key/truststore
@@ -16,6 +16,13 @@ keytool -import -noprompt -trustcacerts -file MyService.cer -alias myservicekey 
 # Note this needs to be done only if you're requiring client authentication as configured in resources/ServerConfig.xml
 keytool -export -rfc -keystore ClientKeystore.jks -alias myclientkey -file MyClient.cer -storepass cspass
 keytool -import -noprompt -trustcacerts -file MyClient.cer -alias myclientkey -keystore ServiceKeystore.jks -storepass sspass
+
+# Place the keystore and cert files before starting the server.
+mkdir keystore
+mv ServiceKeystore.jks ./keystore
+mv ClientKeystore.jks ./keystore
+mv MyService.cer ./keystore
+mv MyClient.cer ./keystore
 
 # Launch the server
 java -jar ./com.free.walker.service.itinerary-0.0.13.jar -Devo
