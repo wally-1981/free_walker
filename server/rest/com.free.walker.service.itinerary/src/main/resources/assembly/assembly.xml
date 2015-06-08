@@ -10,53 +10,53 @@
 	</formats>
 	<fileSets>
 		<fileSet>
-			<directory>${project.basedir}\src\main\resources\db\schema</directory>
-			<outputDirectory>\setup</outputDirectory>
+			<directory>${project.basedir}/src/main/resources/db/schema</directory>
+			<outputDirectory>/setup</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}\src\main\resources\db\query_template</directory>
-			<outputDirectory>\setup\query_template</outputDirectory>
+			<directory>${project.basedir}/src/main/resources/db/query_template</directory>
+			<outputDirectory>/setup/query_template</outputDirectory>
 		</fileSet>
 		<fileSet>
-            <directory>${project.basedir}\src\main\resources\db</directory>
-            <outputDirectory>\setup</outputDirectory>
+            <directory>${project.basedir}/src/main/resources/db</directory>
+            <outputDirectory>/setup</outputDirectory>
             <includes>
                 <include>setup.*</include>
             </includes>
         </fileSet>
 		<fileSet>
-			<directory>${project.basedir}\target\lib</directory>
-			<outputDirectory>\lib</outputDirectory>
+			<directory>${project.basedir}/target/lib</directory>
+			<outputDirectory>/lib</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}\target</directory>
-			<outputDirectory>\</outputDirectory>
+			<directory>${project.basedir}/target</directory>
+			<outputDirectory>/</outputDirectory>
 			<includes>
 				<include>com.free.walker.service.itinerary-*.jar</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}\src\main\resources</directory>
-			<outputDirectory>\</outputDirectory>
+			<directory>${project.basedir}/src/main/resources</directory>
+			<outputDirectory>/</outputDirectory>
 			<includes>
 				<include>startServer.*</include>
 				<include>startServerDevo.*</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}\src\test\java\com\free\walker\service\itinerary\rest</directory>
-			<outputDirectory>\test</outputDirectory>
+			<directory>${project.basedir}/src/test/java/com/free/walker/service/itinerary/rest</directory>
+			<outputDirectory>/test</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}\src\main\resources\com\free\walker\service\itinerary\dao</directory>
-			<outputDirectory>\conf</outputDirectory>
+			<directory>${project.basedir}/src/main/resources/com/free/walker/service/itinerary/dao</directory>
+			<outputDirectory>/conf</outputDirectory>
 			<includes>
 				<include>config.properties</include>
 			</includes>
 		</fileSet>
         <fileSet>
-            <directory>${project.basedir}\src\main\resources\config</directory>
-            <outputDirectory>\conf</outputDirectory>
+            <directory>${project.basedir}/src/main/resources/config</directory>
+            <outputDirectory>/conf</outputDirectory>
             <includes>
                 <include>ServiceConfig.xml</include>
             </includes>
