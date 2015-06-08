@@ -2,12 +2,10 @@
 ::
 :: Start MySQL: (The path to mysqld may vary depending on the install location of MySQL on your system.)
 :: c:\MySQL\MySQL Server 5.6\bin\mysqld
-
 :: Start MongoDB: (The path to mongod may vary depending on the install location of MongoDB on your system. You may need to create the data directory manually.)
-c:\mongo_server\bin\mongod -dbpath c:\mongo_server\data
-
+:: c:\mongo_server\bin\mongod -dbpath c:\mongo_server\data
 :: Start ElasticSearch: (The path to elasticsearch may vary depending on the install location of ElasticSearch on your system.)
-c:\elastic_search_server\bin\elasticsearch
+:: c:\elastic_search_server\bin\elasticsearch
 
 :: Create the combination keystore/truststore for the client and service.
 :: Note you can create separate keystores/truststores for both if desired

@@ -1,7 +1,7 @@
 # Please ensure install and start MySQL before launching this server in Devo mode.
-
+#
 # Start MySQL:
-sudo /usr/local/mysql/support-files/mysql.server start
+# sudo /usr/local/mysql/support-files/mysql.server start
 
 # Create the combination keystore/truststore for the client and service.
 # Note you can create separate keystores/truststores for both if desired
