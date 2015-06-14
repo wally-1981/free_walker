@@ -54,18 +54,19 @@ Please execute [this sql][7] to setup DB schema and initialization data for MySQ
 
 **ElasticSearch Initialization**
 
-Please execute [this][8] or [this][9] script to register the query templates.
+For **Windows**, please execute [this][8] script to register the query templates.
+
+For **Mac**, please execute [this][9] script to register the query templates.
 
 ----------
 
 #Startup
 
-For **Windows**, please refer to [this script][10] to start this application server.
+For **Windows**, please execute [this script][10] to start this application server.
 
-For **Mac**, please refer to [this script][11] to start this application server.
+For **Mac**, please execute [this script][11] to start this application server.
 
-**Reminder**
-These two sripts can not be executed directly to start the server. Please read the scripts line by line and execute those commands one by one.
+----------
 
   [1]: http://www.mysql.com
   [2]: https://github.com/wally-1981/free_walker/blob/master/server/rest/com.free.walker.service.itinerary/src/main/resources/com/free/walker/service/itinerary/dao/config.properties
@@ -74,7 +75,7 @@ These two sripts can not be executed directly to start the server. Please read t
   [5]: https://www.elastic.co/products/elasticsearch
   [6]: https://github.com/wally-1981/free_walker/blob/master/server/rest/com.free.walker.service.itinerary/src/main/resources/com/free/walker/service/itinerary/dao/config.properties
   [7]: https://github.com/wally-1981/free_walker/blob/master/server/rest/com.free.walker.service.itinerary/src/main/resources/db/schema/basic.sql
-  [8]: https://github.com/wally-1981/free_walker/blob/master/server/rest/com.free.walker.service.itinerary/src/main/resources/db/setup.sh
-  [9]: https://github.com/wally-1981/free_walker/blob/master/server/rest/com.free.walker.service.itinerary/src/main/resources/db/setup.bat
+  [8]: https://github.com/wally-1981/free_walker/blob/master/server/rest/com.free.walker.service.itinerary/src/main/resources/db/setup.bat
+  [9]: https://github.com/wally-1981/free_walker/blob/master/server/rest/com.free.walker.service.itinerary/src/main/resources/db/setup.sh
   [10]: https://github.com/wally-1981/free_walker/blob/master/server/rest/com.free.walker.service.itinerary/src/main/resources/startServer.bat
   [11]: https://github.com/wally-1981/free_walker/blob/master/server/rest/com.free.walker.service.itinerary/src/main/resources/startServer.sh
