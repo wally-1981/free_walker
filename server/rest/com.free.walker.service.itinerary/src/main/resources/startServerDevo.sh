@@ -18,7 +18,10 @@ keytool -export -rfc -keystore ClientKeystore.jks -alias myclientkey -file MyCli
 keytool -import -noprompt -trustcacerts -file MyClient.cer -alias myclientkey -keystore ServiceKeystore.jks -storepass sspass
 
 # Place the keystore and cert files before starting the server.
-mkdir keystore
+if [ ! -d keystore ]; then
+    mkdir keystore
+fi
+
 mv ServiceKeystore.jks ./keystore
 mv ClientKeystore.jks ./keystore
 mv MyService.cer ./keystore

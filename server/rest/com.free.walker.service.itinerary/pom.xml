@@ -93,18 +93,17 @@
             <artifactId>shiro-web</artifactId>
             <version>1.2.3</version>
         </dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.4</version>
+		</dependency>
 
 		<!-- junit is needed if you're executing unit test -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
-		</dependency>
-		<!-- httpclient is needed if you're executing API level unit test -->
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.4</version>
 		</dependency>
 	</dependencies>
 
@@ -173,6 +172,7 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
+							<finalName>${project.artifactId}-${project.version}-${build.timestamp}</finalName>
 							<descriptors>
 								<descriptor>src/main/resources/assembly/assembly.xml</descriptor>
 							</descriptors>
@@ -182,4 +182,9 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<properties>
+		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+		<build.timestamp>${maven.build.timestamp}</build.timestamp>
+	</properties>
 </project>
