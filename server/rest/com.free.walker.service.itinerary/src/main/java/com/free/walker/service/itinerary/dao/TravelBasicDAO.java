@@ -1,5 +1,6 @@
 package com.free.walker.service.itinerary.dao;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -98,4 +99,8 @@ public interface TravelBasicDAO extends HealthyDAO {
     public List<Agency> getElectedAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException;
 
     public List<Agency> getNotElectedAgencyCandidates4Proposal(String proposalId) throws DatabaseAccessException;
+
+    public Date getLatestResourceSyncDate(String providerId) throws DatabaseAccessException;;
+
+    public void setLatestResourceSyncDate(String providerId, Date syncDate) throws DatabaseAccessException;
 }

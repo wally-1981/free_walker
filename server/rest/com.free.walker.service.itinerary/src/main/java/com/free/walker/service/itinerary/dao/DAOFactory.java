@@ -1,5 +1,6 @@
 package com.free.walker.service.itinerary.dao;
 
+import com.free.walker.service.itinerary.dao.db.ESTravelResourceDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLAccountDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOImpl;
@@ -38,5 +39,9 @@ public class DAOFactory {
         } else {
             return null;
         }
+    }
+
+    public static TravelResourceDAO getTravelResourceDAO() {
+        return ESTravelResourceDAOImpl.getInstance();
     }
 }

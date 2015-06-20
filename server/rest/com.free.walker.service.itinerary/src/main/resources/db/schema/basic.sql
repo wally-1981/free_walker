@@ -2,6 +2,18 @@ CREATE DATABASE IF NOT EXISTS `itinerary` DEFAULT CHARACTER SET utf8 DEFAULT COL
 USE `itinerary`;
 
 --
+-- Table structure for table `sync_dates`
+--
+
+DROP TABLE IF EXISTS `sync_dates`;
+CREATE TABLE `itinerary`.`sync_dates` (
+  `provider_id` VARCHAR(32) NOT NULL,
+  `previous_sync_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`provider_id`),
+  UNIQUE INDEX `provider_id_UNIQUE` (`provider_id` ASC)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
 -- Table structure for table `tag`
 --
 

@@ -120,7 +120,8 @@ public enum AccountType {
         SearchProposal,
         SubmitProduct,
         SubmitProposal,
-        UnpublishProduct;
+        UnpublishProduct,
+        RetrieveResource;
 
         public static Permission[] ADMIN_PERMISSIONS = new Permission[] {
             ManagePlatform,
@@ -130,7 +131,8 @@ public enum AccountType {
             RetrieveProposal,
             RetrieveTag,
             ModifyAccount,
-            RetrieveAccount
+            RetrieveAccount,
+            RetrieveResource
         };
 
         public static Permission[] AGENCY_PERMISSIONS = new Permission[] {
@@ -144,7 +146,8 @@ public enum AccountType {
             RetrieveTag,
             ModifyAccount,
             ChangePassword,
-            RetrieveAccount
+            RetrieveAccount,
+            RetrieveResource
         };
 
         public static Permission[] CUSTOMER_PERMISSIONS = new Permission[] {

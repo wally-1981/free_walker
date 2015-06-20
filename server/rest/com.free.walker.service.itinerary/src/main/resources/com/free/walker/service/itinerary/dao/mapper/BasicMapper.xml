@@ -535,5 +535,20 @@
 		where
 			agency_candidate.proposal_uuid = unhex(replace(#{proposalId}, '-', '')) and agency_candidate.election_status = 0
 	</select>
+
+	<select id="getLatestResourceSyncDate" resultType="Date">
+		select
+		      previous_sync_date
+		from sync_dates
+		where
+		sync_dates.provider_id = #{providerId}
+	</select>
+
+	<insert id="setLatestResourceSyncDate">
+		insert into sync_dates (provider_id, previous_sync_date)
+		values (#{providerId}, from_unixtime(#{latestSyncTimestamp}))
+		on duplicate key update
+		previous_sync_date = from_unixtime(#{latestSyncTimestamp})
+	</insert>
 </mapper>
  

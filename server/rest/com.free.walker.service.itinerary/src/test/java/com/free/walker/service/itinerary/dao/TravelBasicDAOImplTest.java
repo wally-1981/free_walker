@@ -3,9 +3,12 @@ package com.free.walker.service.itinerary.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -1019,6 +1022,38 @@ public class TravelBasicDAOImplTest {
         assertNotNull(agenciesAll);
         assertFalse(agenciesAll.isEmpty());
         assertEquals(candidates.size(), agenciesAll.size());
+    }
+
+    @Test
+    public void testGetLatestResourceSyncDate4WrongProvider() throws DatabaseAccessException {
+        String providerId = UUID.randomUUID().toString();
+        providerId = providerId.substring(providerId.lastIndexOf('-') + 1);
+        Date date = travelBasicDAO.getLatestResourceSyncDate(providerId);
+        assertNull(date);
+    }
+
+    @Test
+    public void testSetLatestResourceSyncDate() throws DatabaseAccessException {
+        String providerId = UUID.randomUUID().toString();
+        providerId = providerId.substring(providerId.lastIndexOf('-') + 1);
+        Date latestSyncDate = Calendar.getInstance().getTime();
+        travelBasicDAO.setLatestResourceSyncDate(providerId, latestSyncDate);
+        Date date = travelBasicDAO.getLatestResourceSyncDate(providerId);
+        assertNotNull(date);
+        assertEquals(latestSyncDate.getTime() / 1000, date.getTime() / 1000);
+    }
+
+    @Test
+    public void testUpdateLatestResourceSyncDate() throws DatabaseAccessException, InterruptedException {
+        String providerId = UUID.randomUUID().toString();
+        providerId = providerId.substring(providerId.lastIndexOf('-') + 1);
+        travelBasicDAO.setLatestResourceSyncDate(providerId, Calendar.getInstance().getTime());
+        Thread.sleep(3000);
+        Date latestSyncDate = Calendar.getInstance().getTime();
+        travelBasicDAO.setLatestResourceSyncDate(providerId, latestSyncDate);
+        Date date = travelBasicDAO.getLatestResourceSyncDate(providerId);
+        assertNotNull(date);
+        assertEquals(latestSyncDate.getTime() / 1000, date.getTime() / 1000);
     }
 
     @After

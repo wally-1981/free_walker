@@ -26,11 +26,20 @@ public class Constants {
     public static final Account DEFAULT_AGENCY_ACCOUNT;
     public static final Account ADMIN_ACCOUNT;
 
+    public static final String dot_sep = ",";
+
     public static final String agency_election_window_in_min = "agency_election_window_in_min";
     public static final String agency_election_by_feedback_size = "agency_election_by_feedback_size";
     public static final String agency_election_by_experience_size = "agency_election_by_experience_size";
     public static final String agency_election_by_randomization_size = "agency_election_by_randomization_size";
     public static final String agency_election_max_size = "agency_election_max_size";
+
+    public static final String provider_ids = "provider_ids";
+    public static final String providers_provider_name = "providers_provider_name";
+    public static final String providers_provider_class = "providers_provider_class";
+    public static final String providers_provider_url = "providers_provider_url";
+    public static final String providers_provider_user = "providers_provider_user";
+    public static final String providers_provider_sign = "providers_provider_sign";
 
     public static final String SERVICE_METHOD_KEY = "org.apache.cxf.resource.method";
 

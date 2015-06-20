@@ -103,6 +103,7 @@ public class LocalMessages {
 
     public static final String introspection_failure = "introspection_failure";
     public static final String dao_init_failure = "dao_init_failure";
+    public static final String resource_provider_init_failure = "resource_provider_init_failure";
     public static final String dao_operation_failure = "dao_operation_failure";
     public static final String invalid_db_host_address = "invalid_db_host_address";
 
@@ -183,6 +184,12 @@ public class LocalMessages {
 
     public static final String non_secure_request_redirected = "non_secure_request_redirected";
     public static final String authentication_request_redirected = "authentication_request_redirected";
+
+    public static final String missing_resource_provider = "missing_resource_provider";
+    public static final String not_found_resource_provider = "not_found_resource_provider";
+    public static final String not_found_resource_provider_impl = "not_found_resource_provider_impl";
+    public static final String ping_failed_resource_provider = "ping_failed_resource_provider";
+    public static final String missing_resource_provider_settings = "missing_resource_provider_settings";
 
     public static final String test_message = "test_message";
     public static final String test_message_with_1_arg = "test_message_with_1_arg";

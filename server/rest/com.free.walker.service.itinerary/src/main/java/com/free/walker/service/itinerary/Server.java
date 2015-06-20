@@ -35,6 +35,7 @@ import com.free.walker.service.itinerary.rest.AccountService;
 import com.free.walker.service.itinerary.rest.ItineraryService;
 import com.free.walker.service.itinerary.rest.PlatformService;
 import com.free.walker.service.itinerary.rest.ProductService;
+import com.free.walker.service.itinerary.rest.ResourceService;
 import com.free.walker.service.itinerary.rest.ServiceConfigurationProvider;
 import com.free.walker.service.itinerary.util.SystemConfigUtil;
 import com.ibm.icu.text.MessageFormat;
@@ -86,12 +87,14 @@ public class Server {
         List<Class<?>> classes = new ArrayList<Class<?>>();
         classes.add(ItineraryService.class);
         classes.add(ProductService.class);
+        classes.add(ResourceService.class);
         classes.add(PlatformService.class);
         if (accountSvr != null) classes.add(AccountService.class);
         List<ResourceProvider> providers = new ArrayList<ResourceProvider>();
         if (accountSvr != null) providers.add(new SingletonResourceProvider(accountSvr));
         providers.add(new SingletonResourceProvider(itinerarySvr));
         providers.add(new SingletonResourceProvider(productSvr));
+        providers.add(new SingletonResourceProvider(new ResourceService()));
         providers.add(new SingletonResourceProvider(new PlatformService()));
 
         sf.setResourceClasses(classes);

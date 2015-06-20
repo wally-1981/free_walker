@@ -1,5 +1,6 @@
 package com.free.walker.service.itinerary.dao.mapper;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -113,4 +114,9 @@ public interface BasicMapper {
     public List<Agency> getElectedAgencyCandidates4Proposal(@Param("proposalId") String proposalId);
 
     public List<Agency> getNotElectedAgencyCandidates4Proposal(@Param("proposalId") String proposalId);
+
+    public Date getLatestResourceSyncDate(@Param("providerId") String providerId);
+
+    public void setLatestResourceSyncDate(@Param("providerId") String providerId,
+        @Param("latestSyncTimestamp") long latestSyncTimestamp);
 }

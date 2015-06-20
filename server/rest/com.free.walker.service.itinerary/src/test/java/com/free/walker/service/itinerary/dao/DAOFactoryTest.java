@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import com.free.walker.service.itinerary.dao.db.ESTravelResourceDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelProductDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MyMongoSQLTravelRequirementDAOImpl;
 import com.free.walker.service.itinerary.dao.db.MySQLTravelBasicDAOImpl;
@@ -48,5 +49,12 @@ public class DAOFactoryTest {
             .getName());
         assertTrue(travelProductDAO instanceof MyMongoSQLTravelProductDAOImpl);
         assertTrue(travelProductDAO.pingPersistence());
+    }
+
+    @Test
+    public void testResourceDAOFactoryByDb() {
+        TravelResourceDAO travelResourceDAO = DAOFactory.getTravelResourceDAO();
+        assertTrue(travelResourceDAO instanceof ESTravelResourceDAOImpl);
+        assertTrue(travelResourceDAO.pingPersistence());
     }
 }

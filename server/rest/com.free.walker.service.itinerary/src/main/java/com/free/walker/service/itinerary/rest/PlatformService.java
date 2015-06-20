@@ -72,7 +72,7 @@ import com.ibm.icu.util.Calendar;
  * <b>PlatformService</b> provides fundamental data management capabilities. The
  * data managed by this service include data for agency, city, hotel, traffic,
  * resort, etc. The API consumers can add agency, associate agency locations for
- * sending or receiving tourists, retrive hotel or resort, etc. Typically, this
+ * sending or receiving tourists, retrieve hotel or resort, etc. Typically, this
  * service will be consumed by the user interface for system administration.<br>
  * <br>
  * This service supports consuming and producing data in below listed MIME

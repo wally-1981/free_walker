@@ -28,4 +28,4 @@ mv MyService.cer ./keystore
 mv MyClient.cer ./keystore
 
 # Launch the server
-java -jar ./com.free.walker.service.itinerary-0.0.13.jar -Devo
+java -jar ./com.free.walker.service.itinerary-0.0.14.jar -Devo

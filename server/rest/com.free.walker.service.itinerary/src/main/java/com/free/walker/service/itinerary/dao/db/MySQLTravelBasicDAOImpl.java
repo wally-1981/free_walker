@@ -3,6 +3,7 @@ package com.free.walker.service.itinerary.dao.db;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -775,6 +776,35 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
         try {
             BasicMapper basicMapper = session.getMapper(BasicMapper.class);
             return basicMapper.getNotElectedAgencyCandidates4Proposal(proposalId);
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public Date getLatestResourceSyncDate(String providerId) throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            return basicMapper.getLatestResourceSyncDate(providerId);
+        } catch (Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public void setLatestResourceSyncDate(String providerId, Date syncDate) throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            basicMapper.setLatestResourceSyncDate(providerId, syncDate.getTime() / 1000);
+
+            session.commit();
+            return;
         } catch (Exception e) {
             LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
             throw new DatabaseAccessException(e);
