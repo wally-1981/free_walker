@@ -103,6 +103,12 @@ public class Introspection {
         public static final String FREQUENCY = "frequency";
         public static final String PRODUCT_OWNER = "product_owner";
         public static final String PROPOSAL_OWNER = "proposal_owner";
+        public static final String SYNC_ADD = "sync_add";
+        public static final String SYNC_UPDATE = "sync_update";
+        public static final String SYNC_DELETE = "sync_delete";
+        public static final String SYNC_META = "sync_meta";
+        public static final String SYNC_DATE_BEFORE = "sync_date_before";
+        public static final String SYNC_DATE_AFTER = "sync_date_after";
 
         public static final String ERROR_CODE = "error_code";
         public static final String ERROR_TYPE = "error_type";

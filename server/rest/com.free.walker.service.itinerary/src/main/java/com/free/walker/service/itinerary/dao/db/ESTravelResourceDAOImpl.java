@@ -6,9 +6,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
+import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
@@ -22,6 +25,7 @@ import com.free.walker.service.itinerary.dao.DAOConstants;
 import com.free.walker.service.itinerary.dao.TravelResourceDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.DependencyException;
+import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.primitive.QueryTemplate;
 import com.free.walker.service.itinerary.res.ResourceProvider;
 import com.free.walker.service.itinerary.util.ElasticSearchClientBuilder;
@@ -125,12 +129,12 @@ public class ESTravelResourceDAOImpl implements TravelResourceDAO {
         return null;
     }
 
-    public boolean synchrinizeResources(String providerId, boolean exhausted, Calendar calendar)
+    public JsonObject synchrinizeResources(String providerId, boolean exhausted, Calendar calendar, boolean dryRun)
         throws DependencyException {
         ResourceProvider resourceProvider = resourceProviders.get(providerId);
         if (resourceProvider == null) {
-            LOG.warn(LocalMessages.getMessage(LocalMessages.not_found_resource_provider, providerId));
-            return false;
+            throw new DependencyException(LocalMessages.getMessage(LocalMessages.not_found_resource_provider,
+                providerId));
         }
 
         if (!resourceProvider.ping()) {
@@ -141,7 +145,13 @@ public class ESTravelResourceDAOImpl implements TravelResourceDAO {
             }
         }
 
-        return resourceProvider.sync(exhausted, calendar);
+        Vector<Integer> syncResult = resourceProvider.sync(exhausted, calendar, dryRun);
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        builder.add(Introspection.JSONKeys.SYNC_ADD, syncResult.get(0));
+        builder.add(Introspection.JSONKeys.SYNC_UPDATE, syncResult.get(1));
+        builder.add(Introspection.JSONKeys.SYNC_DELETE, syncResult.get(2));
+
+        return builder.build();
     }
 
     public ResourceProvider getResourceProvider(String providerId) {

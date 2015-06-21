@@ -41,7 +41,7 @@ public class LixingResourceProvider implements ResourceProvider {
     public static final String USER = "user";
     public static final String SIGN = "sign";
 
-    private static final String SYNC_METHOD = "method=getUpdateProductInfo";
+    private static final String METHOD_SYNC = "method=getUpdateProductInfo";
 
     private static final int BATCH_SIZE = 100;
 
@@ -113,16 +113,29 @@ public class LixingResourceProvider implements ResourceProvider {
         return SINCE_2014_01_01;
     }
 
-    public boolean sync(boolean exhausted, Calendar since) throws DependencyException {
-        int start = 1, end = BATCH_SIZE, count = 0;
+    public Vector<Integer> sync(boolean exhausted, Calendar since, boolean dryRun) throws DependencyException {
+        Vector<Integer> syncResult = new Vector<Integer>(3);
+        int start = 1, end = BATCH_SIZE, addCount = 0, updateCount = 0, deleteCount = 0;
         boolean completed = false;
         while (!completed) {
             Vector<ProductDetails> details = internalSync(start, end, since);
 
             for (int i = 0; i < details.size(); i++) {
-                System.out.println(details.get(i).toString());
+                ProductDetails productDetails = details.get(i);
+                if (UpdateAction.RELEASE.equals(productDetails.getAction())) {
+                    addCount++;
+                } else if (UpdateAction.OFF_SHELF.equals(productDetails.getAction())) {
+                    deleteCount++;
+                } else if (UpdateAction.UPDATE.equals(productDetails.getAction())) {
+                    updateCount++;
+                } else {
+                    ;
+                }
+
+                productDetails.getCode();
+                productDetails.getName();
+                productDetails.getUpdateTime();
             }
-            count += details.size();
 
             if (exhausted) {
                 if (details.size() == BATCH_SIZE) {
@@ -136,9 +149,11 @@ public class LixingResourceProvider implements ResourceProvider {
             }
         }
 
-        System.out.println("Total Count: " + count);
+        syncResult.add(addCount);
+        syncResult.add(updateCount);
+        syncResult.add(deleteCount);
 
-        return true;
+        return syncResult;
     }
 
     public boolean ping() throws DependencyException {
@@ -155,7 +170,7 @@ public class LixingResourceProvider implements ResourceProvider {
     private Vector<ProductDetails> internalSync(int start, int end, Calendar since) throws DependencyException {
         Vector<ProductDetails> result = new Vector<ProductDetails>();
 
-        String url = new StringBuilder(context.getContextAsString(URL, "")).append('?').append(SYNC_METHOD).toString();
+        String url = new StringBuilder(context.getContextAsString(URL, "")).append('?').append(METHOD_SYNC).toString();
         String sinceDateStr = new SimpleDateFormat("yyyy-MM-dd").format(since.getTime());
         String user = context.getContextAsString(USER, "");
         String payload = MessageFormat.format(GET_UPDATE_PRODUCT_INFO_PAYLOAD, sinceDateStr, start, end);
@@ -199,7 +214,7 @@ public class LixingResourceProvider implements ResourceProvider {
                         } else if ("last-update-time".equals(key)) {
                             detail.setUpdateTime(value);
                         } else if ("last-update-action".equals(key)) {
-                            detail.setAction(value);
+                            detail.setAction(UpdateAction.valueOf(value));
                         } else {
                             ;
                         }
@@ -230,7 +245,7 @@ public class LixingResourceProvider implements ResourceProvider {
         private String code;
         private String name;
         private String updateTime;
-        private String action;
+        private UpdateAction action;
         public String getCode() {
             return code;
         }
@@ -249,22 +264,15 @@ public class LixingResourceProvider implements ResourceProvider {
         public void setUpdateTime(String updateTime) {
             this.updateTime = updateTime;
         }
-        public String getAction() {
+        public UpdateAction getAction() {
             return action;
         }
-        public void setAction(String action) {
+        public void setAction(UpdateAction action) {
             this.action = action;
         }
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append(action);
-            sb.append("\t");
-            sb.append(code);
-            sb.append("\t");
-            sb.append(updateTime);
-            sb.append("\t");
-            sb.append(name);
-            return sb.toString();
-        }
+    }
+
+    private enum UpdateAction {
+        RELEASE, UPDATE, OFF_SHELF
     }
 }

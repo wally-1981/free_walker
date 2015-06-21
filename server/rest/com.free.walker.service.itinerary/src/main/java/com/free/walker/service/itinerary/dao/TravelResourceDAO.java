@@ -30,14 +30,15 @@ public interface TravelResourceDAO extends HealthyDAO {
      * @param providerId
      * @param exhausted
      * @param since
+     * @param dryRun
      * @return
      * @throws DependencyException
      */
-    public boolean synchrinizeResources(String providerId, boolean exhausted, Calendar since)
+    public JsonObject synchrinizeResources(String providerId, boolean exhausted, Calendar since, boolean dryRun)
         throws DependencyException;
 
     /**
-     * Get the resource provider.
+     * Get the resource provider by the given provider id.
      * 
      * @param providerId
      * @return

@@ -2,6 +2,7 @@ package com.free.walker.service.itinerary.res;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 import com.free.walker.service.itinerary.exp.DependencyException;
 import com.ibm.icu.util.Calendar;
@@ -11,7 +12,7 @@ public interface ResourceProvider {
 
     public boolean ping() throws DependencyException;
 
-    public boolean sync(boolean exhausted, Calendar since) throws DependencyException;
+    public Vector<Integer> sync(boolean exhausted, Calendar since, boolean dryRun) throws DependencyException;
 
     public boolean sanitize();
 

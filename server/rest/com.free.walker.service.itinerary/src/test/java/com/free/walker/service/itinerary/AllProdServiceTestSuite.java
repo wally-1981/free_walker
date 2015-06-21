@@ -9,10 +9,12 @@ import com.free.walker.service.itinerary.rest.ItineraryServiceProdTest;
 import com.free.walker.service.itinerary.rest.PlatformServiceProdTest;
 import com.free.walker.service.itinerary.rest.ProductServiceProdCustTest;
 import com.free.walker.service.itinerary.rest.ProductServiceProdTest;
+import com.free.walker.service.itinerary.rest.ResourceServiceProdTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     AccountServiceProdTest.class,
+    ResourceServiceProdTest.class,
     PlatformServiceProdTest.class,
     ItineraryServiceProdTest.class,
     ProductServiceProdTest.class,
