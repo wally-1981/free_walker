@@ -132,9 +132,11 @@ public class LixingResourceProvider implements ResourceProvider {
                     ;
                 }
 
-                productDetails.getCode();
-                productDetails.getName();
-                productDetails.getUpdateTime();
+                System.out.format("%8s | %16s | %10s | %s\n",
+                    productDetails.getCode(),
+                    productDetails.getUpdateTime(),
+                    productDetails.getAction().name(),
+                    productDetails.getName());
             }
 
             if (exhausted) {
@@ -148,6 +150,8 @@ public class LixingResourceProvider implements ResourceProvider {
                 break;
             }
         }
+
+        System.out.format("Add: %6s >>> Update: %6s >>> Delete: %6s\n", addCount, updateCount, deleteCount);
 
         syncResult.add(addCount);
         syncResult.add(updateCount);
