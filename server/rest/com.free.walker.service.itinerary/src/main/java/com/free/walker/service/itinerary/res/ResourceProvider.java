@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.json.JsonArray;
+
 import com.free.walker.service.itinerary.exp.DependencyException;
 import com.ibm.icu.util.Calendar;
 
@@ -12,7 +14,7 @@ public interface ResourceProvider {
 
     public boolean ping() throws DependencyException;
 
-    public Vector<Integer> sync(boolean exhausted, Calendar since, boolean dryRun) throws DependencyException;
+    public Vector<JsonArray> sync(boolean exhausted, Calendar since) throws DependencyException;
 
     public boolean sanitize();
 

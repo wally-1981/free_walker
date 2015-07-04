@@ -103,6 +103,9 @@ public class Introspection {
         public static final String FREQUENCY = "frequency";
         public static final String PRODUCT_OWNER = "product_owner";
         public static final String PROPOSAL_OWNER = "proposal_owner";
+        public static final String SYNC_ADD_NUMBER = "sync_add_number";
+        public static final String SYNC_UPDATE_NUMBER = "sync_update_number";
+        public static final String SYNC_DELETE_NUMBER = "sync_delete_number";
         public static final String SYNC_ADD = "sync_add";
         public static final String SYNC_UPDATE = "sync_update";
         public static final String SYNC_DELETE = "sync_delete";
@@ -125,6 +128,44 @@ public class Introspection {
         public static final String ACCESS = "access";
 
         public static final String ORIGINAL = "original";
+
+        public static class Resounce {
+            public static final String PROVIDER_ID = "provider_id";
+            public static final String PROVIDER_NAME = "provider_name";
+            public static final String LEVEL_1_CATEGORY = "level_1_category";
+            public static final String LEVEL_2_CATEGORY = "level_2_category";
+            public static final String CODE = "code";
+            public static final String NAME = "name";
+            public static final String LOCATION = "location";
+            public static final String LATITUDE = "latitude";
+            public static final String LONGITUDE = "longitude";
+            public static final String DEST_NAME = "dest_name";
+            public static final String DEPT_NAME = "dept_name";
+            public static final String SUMMARY = "summary";
+            public static final String DESCRIPTION = "description";
+            public static final String PHOTOS = "photos";
+            public static final String TAGS = "tags";
+            public static final String DURATION_TYPE = "duration_type";
+            public static final String DURATION_PRIMARY_PART = "duration_primary_part";
+            public static final String DURATION_SECONDARY_PART = "duration_secondary_part";
+            public static final String PICK_UP_REMARK = "pick_up_remark";
+            public static final String DROP_OFF_REMARK = "drop_off_remark";
+            public static final String HIGHLIGHTS = "highlights";
+            public static final String NET_PRICE = "net_price";
+            public static final String RETAIL_PRICE = "retail_price";
+            public static final String CURRENCY = "currency";
+            public static final String INCLUSION = "inclusion";
+            public static final String EXCLUSION = "exclusion";
+            public static final String ATTENTION = "attention";
+            public static final String SPECIFICATIONS = "specifications";
+            public static final String SPECIFICATION_TYPE = "specification_type";
+            public static final String CROWD_TYPE = "crowd_type";
+            public static final String MIN_AGE = "min_age";
+            public static final String MAX_AGE = "max_age";
+            public static final String UNIT = "unit";
+
+            public static final String SYNC_ACTION = "sync_action";
+        }
     }
 
     public static class JSONValues {

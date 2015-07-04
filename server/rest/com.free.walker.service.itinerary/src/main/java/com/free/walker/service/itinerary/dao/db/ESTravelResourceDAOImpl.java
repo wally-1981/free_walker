@@ -10,6 +10,7 @@ import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
@@ -145,11 +146,42 @@ public class ESTravelResourceDAOImpl implements TravelResourceDAO {
             }
         }
 
-        Vector<Integer> syncResult = resourceProvider.sync(exhausted, calendar, dryRun);
+        Vector<JsonArray> syncResult = resourceProvider.sync(exhausted, calendar);
         JsonObjectBuilder builder = Json.createObjectBuilder();
-        builder.add(Introspection.JSONKeys.SYNC_ADD, syncResult.get(0));
-        builder.add(Introspection.JSONKeys.SYNC_UPDATE, syncResult.get(1));
-        builder.add(Introspection.JSONKeys.SYNC_DELETE, syncResult.get(2));
+
+        JsonArray addedRes = syncResult.get(0);
+        for (int i = 0; !dryRun && i < addedRes.size(); i++) {
+            JsonObject resource = addedRes.getJsonObject(i);
+
+            LOG.info(LocalMessages.getMessage(LocalMessages.publish_added_resource,
+                resource.getString(Introspection.JSONKeys.Resounce.CODE), providerId));
+
+            // TODO: ES side update
+        }
+
+        JsonArray updatedRes = syncResult.get(1);
+        for (int i = 0; !dryRun && i < updatedRes.size(); i++) {
+            JsonObject resource = updatedRes.getJsonObject(i);
+
+            LOG.info(LocalMessages.getMessage(LocalMessages.publish_updated_resource,
+                resource.getString(Introspection.JSONKeys.Resounce.CODE), providerId));
+
+            // TODO: ES side update
+        }
+
+        JsonArray deletedRes = syncResult.get(2);
+        for (int i = 0; !dryRun && i < deletedRes.size(); i++) {
+            JsonObject resource = deletedRes.getJsonObject(i);
+
+            LOG.info(LocalMessages.getMessage(LocalMessages.publish_revoked_resource,
+                resource.getString(Introspection.JSONKeys.Resounce.CODE), providerId));
+
+            // TODO: ES side update
+        }
+
+        builder.add(Introspection.JSONKeys.SYNC_ADD_NUMBER, addedRes.size());
+        builder.add(Introspection.JSONKeys.SYNC_UPDATE_NUMBER, updatedRes.size());
+        builder.add(Introspection.JSONKeys.SYNC_DELETE_NUMBER, deletedRes.size());
 
         return builder.build();
     }

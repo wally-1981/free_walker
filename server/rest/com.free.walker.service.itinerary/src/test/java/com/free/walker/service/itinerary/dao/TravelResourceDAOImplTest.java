@@ -46,12 +46,12 @@ public class TravelResourceDAOImplTest {
         since.set(Calendar.MILLISECOND, 0);
         JsonObject syncResult = travelResourceDAO.synchrinizeResources("0000001", false, since, true);
         assertNotNull(syncResult);
-        assertNotNull(syncResult.getInt(Introspection.JSONKeys.SYNC_ADD));
-        assertNotNull(syncResult.getInt(Introspection.JSONKeys.SYNC_UPDATE));
-        assertNotNull(syncResult.getInt(Introspection.JSONKeys.SYNC_DELETE));
-        int add = syncResult.getInt(Introspection.JSONKeys.SYNC_ADD);
-        int update = syncResult.getInt(Introspection.JSONKeys.SYNC_UPDATE);
-        int delete = syncResult.getInt(Introspection.JSONKeys.SYNC_DELETE);
+        assertNotNull(syncResult.getInt(Introspection.JSONKeys.SYNC_ADD_NUMBER));
+        assertNotNull(syncResult.getInt(Introspection.JSONKeys.SYNC_UPDATE_NUMBER));
+        assertNotNull(syncResult.getInt(Introspection.JSONKeys.SYNC_DELETE_NUMBER));
+        int add = syncResult.getInt(Introspection.JSONKeys.SYNC_ADD_NUMBER);
+        int update = syncResult.getInt(Introspection.JSONKeys.SYNC_UPDATE_NUMBER);
+        int delete = syncResult.getInt(Introspection.JSONKeys.SYNC_DELETE_NUMBER);
         assertEquals(100, add + update + delete);
     }
 
@@ -67,12 +67,12 @@ public class TravelResourceDAOImplTest {
         since.set(Calendar.MILLISECOND, 0);
         JsonObject syncResult = travelResourceDAO.synchrinizeResources("0000001", true, since, true);
         assertNotNull(syncResult);
-        assertNotNull(syncResult.getInt(Introspection.JSONKeys.SYNC_ADD));
-        assertNotNull(syncResult.getInt(Introspection.JSONKeys.SYNC_UPDATE));
-        assertNotNull(syncResult.getInt(Introspection.JSONKeys.SYNC_DELETE));
-        int add = syncResult.getInt(Introspection.JSONKeys.SYNC_ADD);
-        int update = syncResult.getInt(Introspection.JSONKeys.SYNC_UPDATE);
-        int delete = syncResult.getInt(Introspection.JSONKeys.SYNC_DELETE);
+        assertNotNull(syncResult.getInt(Introspection.JSONKeys.SYNC_ADD_NUMBER));
+        assertNotNull(syncResult.getInt(Introspection.JSONKeys.SYNC_UPDATE_NUMBER));
+        assertNotNull(syncResult.getInt(Introspection.JSONKeys.SYNC_DELETE_NUMBER));
+        int add = syncResult.getInt(Introspection.JSONKeys.SYNC_ADD_NUMBER);
+        int update = syncResult.getInt(Introspection.JSONKeys.SYNC_UPDATE_NUMBER);
+        int delete = syncResult.getInt(Introspection.JSONKeys.SYNC_DELETE_NUMBER);
         assertEquals(900, add + update + delete);
     }
 

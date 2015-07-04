@@ -190,6 +190,10 @@ public class LocalMessages {
     public static final String not_found_resource_provider_impl = "not_found_resource_provider_impl";
     public static final String ping_failed_resource_provider = "ping_failed_resource_provider";
     public static final String missing_resource_provider_settings = "missing_resource_provider_settings";
+    public static final String publish_added_resource = "publish_added_resource";
+    public static final String publish_updated_resource = "publish_updated_resource";
+    public static final String publish_revoked_resource = "publish_revoked_resource";
+    public static final String full_sync_resource = "full_sync_resource";
 
     public static final String test_message = "test_message";
     public static final String test_message_with_1_arg = "test_message_with_1_arg";
