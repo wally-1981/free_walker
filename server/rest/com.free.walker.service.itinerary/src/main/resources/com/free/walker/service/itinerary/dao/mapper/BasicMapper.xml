@@ -298,7 +298,7 @@
 		(
 			<include refid="selectLocationsByDestinationUuid"/>
 			union
-			select convert(unhex(continent_id), binary(16)) as uuid from city where continent_id = #{destinationLocationUuid} limit 1
+			(select convert(unhex(continent_id), binary(16)) as uuid from city where continent_id = #{destinationLocationUuid} limit 1)
 			union
 			select associated_location_uuid as uuid from location_association where location_uuid = unhex(replace(#{destinationLocationUuid}, '-', ''))
 		) as location

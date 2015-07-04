@@ -285,6 +285,17 @@ public class LixingResourceProvider implements ResourceProvider {
                     InputSource inputSource = new InputSource(response.getEntity().getContent());
                     Document doc = docBuilder.parse(inputSource);
 
+                    TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                    Transformer transformer = transformerFactory.newTransformer();
+                    DOMSource source = new DOMSource(doc);
+
+                    File dir = new File(MessageFormat.format("/tmp/{0}/{1}/{2}", getProviderName(),
+                        simpleFind(doc, "category"), simpleFind(doc, "sub-category")));
+                    dir.mkdirs();
+                    StreamResult result = new StreamResult(new File(dir, MessageFormat.format("{1}.xml",
+                        getProviderName(), productSyncMeta.getCode())));
+                    transformer.transform(source, result);
+
                     LOG.info("************************************************************************************");
 
                     LOG.info(Introspection.JSONKeys.Resounce.PROVIDER_ID + ":" + getProviderId());
@@ -330,31 +341,24 @@ public class LixingResourceProvider implements ResourceProvider {
                     for (int j = 0; j < specifications.getLength(); j++) {
                         Node spec = specifications.item(j);
                         Node specType = spec.getFirstChild().getNextSibling();
-                        Node crowdType = specType.getNextSibling();
-                        Node specName = crowdType.getNextSibling().getNextSibling();
-                        Node minAge = specName.getNextSibling().getNextSibling();
-                        Node maxAge = minAge.getNextSibling();
-                        Node unit = maxAge.getNextSibling().getNextSibling();
-                        LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + specType.getTextContent());
-                        LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + crowdType.getTextContent());
-                        LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + specName.getTextContent());
-                        LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + minAge.getTextContent());
-                        LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + maxAge.getTextContent());
-                        LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + unit.getTextContent());
+                        if ("PERSON".equals(specType.getTextContent())) {
+                            Node crowdType = specType.getNextSibling();
+                            Node specName = crowdType.getNextSibling().getNextSibling();
+                            Node minAge = specName.getNextSibling().getNextSibling();
+                            Node maxAge = minAge.getNextSibling();
+                            Node unit = maxAge.getNextSibling().getNextSibling();
+                            LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + specType.getTextContent());
+                            LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + crowdType.getTextContent());
+                            LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + specName.getTextContent());
+                            LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + minAge.getTextContent());
+                            LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + maxAge.getTextContent());
+                            LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + unit.getTextContent());
+                        } else {
+                            ;
+                        }
                     }
 
                     LOG.info("************************************************************************************");
-
-                    TransformerFactory transformerFactory = TransformerFactory.newInstance();
-                    Transformer transformer = transformerFactory.newTransformer();
-                    DOMSource source = new DOMSource(doc);
-
-                    File dir = new File(MessageFormat.format("/tmp/{0}/{1}/{2}", getProviderName(),
-                        simpleFind(doc, "category"), simpleFind(doc, "sub-category")));
-                    dir.mkdirs();
-                    StreamResult result = new StreamResult(new File(dir, MessageFormat.format("{1}.xml",
-                        getProviderName(), productSyncMeta.getCode())));
-                    transformer.transform(source, result);
                 } else {
                     throw new DependencyException(IOUtils.toString(response.getEntity().getContent()));
                 }
