@@ -34,6 +34,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.shiro.codec.Hex;
 import org.eclipse.jetty.http.HttpStatus;
@@ -176,7 +177,9 @@ public class LixingResourceProvider implements ResourceProvider {
                 LocalMessages.missing_resource_provider_settings, providerId, Constants.providers_provider_sign));
         }
 
-        this.lixingRestClient = HttpClientBuilder.create().build();
+        this.lixingRestClient = HttpClientBuilder.create()
+            .setRetryHandler(new DefaultHttpRequestRetryHandler(3, true))
+            .build();
         this.context = context;
 
         return this;

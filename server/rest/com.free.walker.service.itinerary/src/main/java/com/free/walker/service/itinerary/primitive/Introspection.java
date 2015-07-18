@@ -106,9 +106,6 @@ public class Introspection {
         public static final String SYNC_ADD_NUMBER = "sync_add_number";
         public static final String SYNC_UPDATE_NUMBER = "sync_update_number";
         public static final String SYNC_DELETE_NUMBER = "sync_delete_number";
-        public static final String SYNC_ADD = "sync_add";
-        public static final String SYNC_UPDATE = "sync_update";
-        public static final String SYNC_DELETE = "sync_delete";
         public static final String SYNC_META = "sync_meta";
         public static final String SYNC_DATE_BEFORE = "sync_date_before";
         public static final String SYNC_DATE_AFTER = "sync_date_after";

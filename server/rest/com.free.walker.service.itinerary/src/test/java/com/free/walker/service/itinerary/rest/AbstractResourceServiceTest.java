@@ -77,9 +77,9 @@ public abstract class AbstractResourceServiceTest extends BaseConfigurationProvi
                     long before = syncMeta.getJsonNumber(Introspection.JSONKeys.SYNC_DATE_BEFORE).longValue();
                     long after = syncMeta.getJsonNumber(Introspection.JSONKeys.SYNC_DATE_AFTER).longValue();
                     assertTrue(before < after);
-                    assertTrue(syncResult.getInt(Introspection.JSONKeys.SYNC_ADD) >= 0);
-                    assertTrue(syncResult.getInt(Introspection.JSONKeys.SYNC_UPDATE) >= 0);
-                    assertTrue(syncResult.getInt(Introspection.JSONKeys.SYNC_DELETE) >= 0);
+                    assertTrue(syncResult.getInt(Introspection.JSONKeys.SYNC_ADD_NUMBER) >= 0);
+                    assertTrue(syncResult.getInt(Introspection.JSONKeys.SYNC_UPDATE_NUMBER) >= 0);
+                    assertTrue(syncResult.getInt(Introspection.JSONKeys.SYNC_DELETE_NUMBER) >= 0);
                 } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
                     LOG.error(IOUtils.toString(response.getEntity().getContent()));
                     assertTrue(false);
