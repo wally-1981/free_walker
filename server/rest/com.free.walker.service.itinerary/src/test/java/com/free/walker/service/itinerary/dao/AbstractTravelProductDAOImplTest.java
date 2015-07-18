@@ -737,7 +737,7 @@ public abstract class AbstractTravelProductDAOImplTest {
 
     @Test
     public void testSearchProductWithNullTemplateName() throws DatabaseAccessException {
-        Map<String, String> templateParams = new HashMap<String, String>();
+        Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("test_template_key", "test_template_value");
         thrown.expect(NullPointerException.class);
         travelProductDAO.searchProduct(null, templateParams);
@@ -757,7 +757,7 @@ public abstract class AbstractTravelProductDAOImplTest {
 
         Thread.sleep(3000);
 
-        Map<String, String> templateParams = new HashMap<String, String>();
+        Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put(DAOConstants.elasticsearch_from, String.valueOf(0 * 2));
         templateParams.put(DAOConstants.elasticsearch_size, String.valueOf(2));
         JsonObject products = travelProductDAO.searchProduct(QueryTemplate.TEST_TEMPLACE, templateParams);

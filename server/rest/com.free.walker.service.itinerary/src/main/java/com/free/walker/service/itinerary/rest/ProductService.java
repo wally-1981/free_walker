@@ -97,7 +97,7 @@ public class ProductService {
         if (criteria == null) {
             return Response.status(Status.BAD_REQUEST).entity(searchCriteria).build();
         } else {
-            Map<String, String> templageParams = new HashMap<String, String>();
+            Map<String, Object> templageParams = new HashMap<String, Object>();
             int from = criteria.getPageSize() * criteria.getPageNum();
             int size = criteria.getPageSize();
             templageParams.put(DAOConstants.elasticsearch_term, criteria.getSearchTerm());

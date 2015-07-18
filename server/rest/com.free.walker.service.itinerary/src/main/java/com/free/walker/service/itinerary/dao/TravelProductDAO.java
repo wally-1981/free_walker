@@ -224,7 +224,7 @@ public interface TravelProductDAO extends HealthyDAO {
      * @return
      * @throws DatabaseAccessException
      */
-    public JsonObject searchProduct(QueryTemplate queryTemplate, Map<String, String> templageParams)
+    public JsonObject searchProduct(QueryTemplate queryTemplate, Map<String, Object> templageParams)
         throws DatabaseAccessException;
 
     /**

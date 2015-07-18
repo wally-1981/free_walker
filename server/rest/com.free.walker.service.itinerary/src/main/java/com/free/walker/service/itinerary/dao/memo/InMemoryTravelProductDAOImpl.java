@@ -432,7 +432,7 @@ public class InMemoryTravelProductDAOImpl implements TravelProductDAO {
         return productId;
     }
 
-    public JsonObject searchProduct(QueryTemplate template, Map<String, String> templageParams)
+    public JsonObject searchProduct(QueryTemplate template, Map<String, Object> templageParams)
         throws DatabaseAccessException {
         if (template == null || templageParams == null) {
             throw new NullPointerException();

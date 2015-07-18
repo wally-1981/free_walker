@@ -423,7 +423,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
             }
             return result;
         } else {
-            Map<String, String> templageParams = new HashMap<String, String>();
+            Map<String, Object> templageParams = new HashMap<String, Object>();
             templageParams.put(DAOConstants.elasticsearch_product_status, String.valueOf(status.enumValue()));
             templageParams.put(DAOConstants.elasticsearch_from, String.valueOf(0));
             templageParams.put(DAOConstants.elasticsearch_sort_key, Introspection.JSONKeys.DEADLINE_DATETIME);
@@ -1007,7 +1007,7 @@ public class MyMongoSQLTravelProductDAOImpl implements TravelProductDAO {
         }
     }
 
-    public JsonObject searchProduct(QueryTemplate template, Map<String, String> templageParams)
+    public JsonObject searchProduct(QueryTemplate template, Map<String, Object> templageParams)
         throws DatabaseAccessException {
         if (template == null || templageParams == null) {
             throw new NullPointerException();
