@@ -1,6 +1,8 @@
 package com.free.walker.service.itinerary.rest;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -18,6 +20,8 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 
+import com.free.walker.service.itinerary.basic.SearchCriteria;
+import com.free.walker.service.itinerary.dao.DAOConstants;
 import com.free.walker.service.itinerary.dao.DAOFactory;
 import com.free.walker.service.itinerary.dao.TravelBasicDAO;
 import com.free.walker.service.itinerary.dao.TravelResourceDAO;
@@ -67,7 +71,26 @@ public class ResourceService {
     @Path("/resources/")
     @RequiresPermissions("RetrieveResource")
     public Response searchResources(JsonObject searchCriteria) {
-        return null;
+        SearchCriteria criteria = new SearchCriteria().fromJSON(searchCriteria);
+        if (criteria == null) {
+            return Response.status(Status.BAD_REQUEST).entity(searchCriteria).build();
+        } else {
+            Map<String, Object> templageParams = new HashMap<String, Object>();
+            int from = criteria.getPageSize() * criteria.getPageNum();
+            int size = criteria.getPageSize();
+            templageParams.put(DAOConstants.elasticsearch_term, criteria.getSearchTerm());
+            templageParams.put(DAOConstants.elasticsearch_from, String.valueOf(from));
+            templageParams.put(DAOConstants.elasticsearch_size, String.valueOf(size));
+            templageParams.put(DAOConstants.elasticsearch_sort_key, criteria.getSortKey());
+            templageParams.put(DAOConstants.elasticsearch_sort_order, criteria.getSortOrder().toString());
+            templageParams.put(DAOConstants.elasticsearch_sort_type, criteria.getSortType().nameValue());
+            try {
+                JsonObject results = travelResourceDAO.searchResource(criteria.getTemplate(), templageParams);
+                return Response.status(Status.OK).entity(results.toString()).build();
+            } catch (DatabaseAccessException e) {
+                return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+            }
+        }
     }
 
     /**
@@ -108,7 +131,7 @@ public class ResourceService {
         }
 
         try {
-            JsonObject syncResult = travelResourceDAO.synchrinizeResources(providerId, true, beforeSync, dryRun);
+            JsonObject syncResult = travelResourceDAO.synchrinizeResource(providerId, true, beforeSync, dryRun);
             travelBasicDAO.setLatestResourceSyncDate(providerId, Calendar.getInstance().getTime());
             afterSync.setTimeInMillis(travelBasicDAO.getLatestResourceSyncDate(providerId).getTime());
 

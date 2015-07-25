@@ -62,6 +62,7 @@ public class Introspection {
          * Primitive Keys
          */
         public static final String UUID = "uuid";
+        public static final String ID = "id";
         public static final String VIA = "via";
         public static final String OWNER = "owner";
         public static final String REF_UUID = "ref_uuid";
@@ -106,6 +107,9 @@ public class Introspection {
         public static final String SYNC_ADD_NUMBER = "sync_add_number";
         public static final String SYNC_UPDATE_NUMBER = "sync_update_number";
         public static final String SYNC_DELETE_NUMBER = "sync_delete_number";
+        public static final String SYNC_ADD = "sync_add";
+        public static final String SYNC_UPDATE = "sync_update";
+        public static final String SYNC_DELETE = "sync_delete";
         public static final String SYNC_META = "sync_meta";
         public static final String SYNC_DATE_BEFORE = "sync_date_before";
         public static final String SYNC_DATE_AFTER = "sync_date_after";
@@ -155,7 +159,7 @@ public class Introspection {
             public static final String EXCLUSION = "exclusion";
             public static final String ATTENTION = "attention";
             public static final String SPECIFICATIONS = "specifications";
-            public static final String SPECIFICATION_TYPE = "specification_type";
+            public static final String SPECIFICATION_NAME = "specification_name";
             public static final String CROWD_TYPE = "crowd_type";
             public static final String MIN_AGE = "min_age";
             public static final String MAX_AGE = "max_age";

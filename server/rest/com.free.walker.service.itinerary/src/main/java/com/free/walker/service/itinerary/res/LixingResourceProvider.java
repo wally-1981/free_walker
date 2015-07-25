@@ -301,65 +301,133 @@ public class LixingResourceProvider implements ResourceProvider {
 
                     LOG.info("************************************************************************************");
 
+                    String productCode = (String) PROD_CODE.evaluate(doc, XPathConstants.STRING);
+                    String productName = (String) PROD_NAME.evaluate(doc, XPathConstants.STRING);
+                    String location = (String) LOCATION.evaluate(doc, XPathConstants.STRING);
+                    double latitude = (double) LATITUDE.evaluate(doc, XPathConstants.NUMBER);
+                    double longitude = (double) LONGITUDE.evaluate(doc, XPathConstants.NUMBER);
+                    String destName = (String) DEST_NAME.evaluate(doc, XPathConstants.STRING);
+                    String deptName = (String) DEPT_NAME.evaluate(doc, XPathConstants.STRING);
+                    String summary = (String) SUMMARY.evaluate(doc, XPathConstants.STRING);
+                    String description = (String) DESCRIPTION.evaluate(doc, XPathConstants.STRING);
+                    String durationType = (String) DURATION_TYPE.evaluate(doc, XPathConstants.STRING);
+                    int durationPrimaryPart = (int) DURATION_PRIMARY_PART.evaluate(doc, XPathConstants.NUMBER);
+                    int durationSecondaryPart = (int) DURATION_SECONDARY_PART.evaluate(doc, XPathConstants.NUMBER);
+                    String pickUpRemark = (String) PICK_UP_REMARK.evaluate(doc, XPathConstants.STRING);
+                    String dropOffRemark = (String) DROP_OFF_REMARK.evaluate(doc, XPathConstants.STRING);
+                    float netPrice = (float) NET_PRICE.evaluate(doc, XPathConstants.NUMBER);
+                    float retailPrice = (float) RETAIL_PRICE.evaluate(doc, XPathConstants.NUMBER);
+                    String inclusion = (String) INCLUSION.evaluate(doc, XPathConstants.STRING);
+                    String exclusion = (String) EXCLUSION.evaluate(doc, XPathConstants.STRING);
+                    String attention = (String) ATTENTION.evaluate(doc, XPathConstants.STRING);
+                    
+                    resourceBuilder.add(Introspection.JSONKeys.ID, productCode + '@' + getProviderId());
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.PROVIDER_ID, getProviderId());
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.PROVIDER_NAME, getProviderName());
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.LOCATION, location);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.CODE, productCode);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.NAME, productName);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.LATITUDE, latitude);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.LONGITUDE, longitude);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.DEST_NAME, destName);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.DEPT_NAME, deptName);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.SUMMARY, summary);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.DESCRIPTION, description);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.DURATION_TYPE, durationType);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.DURATION_PRIMARY_PART, durationPrimaryPart);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.DURATION_SECONDARY_PART, durationSecondaryPart);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.PICK_UP_REMARK, pickUpRemark);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.DROP_OFF_REMARK, dropOffRemark);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.NET_PRICE, netPrice);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.RETAIL_PRICE, retailPrice);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.INCLUSION, inclusion);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.EXCLUSION, exclusion);
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.ATTENTION, attention);
+
                     LOG.info(Introspection.JSONKeys.Resounce.PROVIDER_ID + ":" + getProviderId());
                     LOG.info(Introspection.JSONKeys.Resounce.PROVIDER_NAME + ":" + getProviderName());
                     LOG.info(Introspection.JSONKeys.Resounce.LEVEL_1_CATEGORY + ":" + "");
                     LOG.info(Introspection.JSONKeys.Resounce.LEVEL_2_CATEGORY + ":" + "");
-                    LOG.info(Introspection.JSONKeys.Resounce.CODE + ":" + PROD_CODE.evaluate(doc, XPathConstants.STRING));
-                    LOG.info(Introspection.JSONKeys.Resounce.NAME + ":" + PROD_NAME.evaluate(doc, XPathConstants.STRING));
-                    LOG.info(Introspection.JSONKeys.Resounce.LOCATION + ":" + LOCATION.evaluate(doc, XPathConstants.STRING));
-                    LOG.info(Introspection.JSONKeys.Resounce.LATITUDE + ":" + LATITUDE.evaluate(doc, XPathConstants.NUMBER));
-                    LOG.info(Introspection.JSONKeys.Resounce.LONGITUDE + ":" + LONGITUDE.evaluate(doc, XPathConstants.NUMBER));
-                    LOG.info(Introspection.JSONKeys.Resounce.DEST_NAME + ":" + DEST_NAME.evaluate(doc, XPathConstants.STRING));
-                    LOG.info(Introspection.JSONKeys.Resounce.DEPT_NAME + ":" + DEPT_NAME.evaluate(doc, XPathConstants.STRING));
-                    LOG.info(Introspection.JSONKeys.Resounce.SUMMARY + ":" + SUMMARY.evaluate(doc, XPathConstants.STRING));
-                    LOG.info(Introspection.JSONKeys.Resounce.DESCRIPTION + ":" + DESCRIPTION.evaluate(doc, XPathConstants.STRING));
-                    LOG.info(Introspection.JSONKeys.Resounce.DURATION_TYPE + ":" + DURATION_TYPE.evaluate(doc, XPathConstants.STRING));
-                    LOG.info(Introspection.JSONKeys.Resounce.DURATION_PRIMARY_PART + ":" + DURATION_PRIMARY_PART.evaluate(doc, XPathConstants.NUMBER));
-                    LOG.info(Introspection.JSONKeys.Resounce.DURATION_SECONDARY_PART + ":" + DURATION_SECONDARY_PART.evaluate(doc, XPathConstants.NUMBER));
-                    LOG.info(Introspection.JSONKeys.Resounce.PICK_UP_REMARK + ":" + PICK_UP_REMARK.evaluate(doc, XPathConstants.STRING));
-                    LOG.info(Introspection.JSONKeys.Resounce.DROP_OFF_REMARK + ":" + DROP_OFF_REMARK.evaluate(doc, XPathConstants.STRING));
-                    LOG.info(Introspection.JSONKeys.Resounce.NET_PRICE + ":" + NET_PRICE.evaluate(doc, XPathConstants.NUMBER));
-                    LOG.info(Introspection.JSONKeys.Resounce.RETAIL_PRICE + ":" + RETAIL_PRICE.evaluate(doc, XPathConstants.NUMBER));
-                    LOG.info(Introspection.JSONKeys.Resounce.INCLUSION + ":" + INCLUSION.evaluate(doc, XPathConstants.STRING));
-                    LOG.info(Introspection.JSONKeys.Resounce.EXCLUSION + ":" + EXCLUSION.evaluate(doc, XPathConstants.STRING));
-                    LOG.info(Introspection.JSONKeys.Resounce.ATTENTION + ":" + ATTENTION.evaluate(doc, XPathConstants.STRING));
+                    LOG.info(Introspection.JSONKeys.Resounce.CODE + ":" + productCode);
+                    LOG.info(Introspection.JSONKeys.Resounce.NAME + ":" + productName);
+                    LOG.info(Introspection.JSONKeys.Resounce.LOCATION + ":" + location);
+                    LOG.info(Introspection.JSONKeys.Resounce.LATITUDE + ":" + latitude);
+                    LOG.info(Introspection.JSONKeys.Resounce.LONGITUDE + ":" + longitude);
+                    LOG.info(Introspection.JSONKeys.Resounce.DEST_NAME + ":" + destName);
+                    LOG.info(Introspection.JSONKeys.Resounce.DEPT_NAME + ":" + deptName);
+                    LOG.info(Introspection.JSONKeys.Resounce.SUMMARY + ":" + summary);
+                    LOG.info(Introspection.JSONKeys.Resounce.DESCRIPTION + ":" + description);
+                    LOG.info(Introspection.JSONKeys.Resounce.DURATION_TYPE + ":" + durationType);
+                    LOG.info(Introspection.JSONKeys.Resounce.DURATION_PRIMARY_PART + ":" + durationPrimaryPart);
+                    LOG.info(Introspection.JSONKeys.Resounce.DURATION_SECONDARY_PART + ":" + durationSecondaryPart);
+                    LOG.info(Introspection.JSONKeys.Resounce.PICK_UP_REMARK + ":" + pickUpRemark);
+                    LOG.info(Introspection.JSONKeys.Resounce.DROP_OFF_REMARK + ":" + dropOffRemark);
+                    LOG.info(Introspection.JSONKeys.Resounce.NET_PRICE + ":" + netPrice);
+                    LOG.info(Introspection.JSONKeys.Resounce.RETAIL_PRICE + ":" + retailPrice);
+                    LOG.info(Introspection.JSONKeys.Resounce.INCLUSION + ":" + inclusion);
+                    LOG.info(Introspection.JSONKeys.Resounce.EXCLUSION + ":" + exclusion);
+                    LOG.info(Introspection.JSONKeys.Resounce.ATTENTION + ":" + attention);
 
                     NodeList photoUrls = (NodeList) PHOTOS.evaluate(doc, XPathConstants.NODESET);
+                    JsonArrayBuilder photosBuilder = Json.createArrayBuilder();
                     for (int j = 0; j < photoUrls.getLength(); j++) {
-                        LOG.info(Introspection.JSONKeys.Resounce.PHOTOS + (j + 1) + ":" + photoUrls.item(j).getTextContent());
+                        String photoUrl = photoUrls.item(j).getTextContent();
+                        LOG.info(Introspection.JSONKeys.Resounce.PHOTOS + (j + 1) + ":" + photoUrl);
+                        photosBuilder.add(photoUrl);
                     }
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.PHOTOS, photosBuilder);
 
                     NodeList tags = (NodeList) TAGS.evaluate(doc, XPathConstants.NODESET);
+                    JsonArrayBuilder tagsBuilder = Json.createArrayBuilder();
                     for (int j = 0; j < tags.getLength(); j++) {
-                        LOG.info(Introspection.JSONKeys.Resounce.TAGS + (j + 1) + ":" + tags.item(j).getTextContent());
+                        String tag = tags.item(j).getTextContent();
+                        LOG.info(Introspection.JSONKeys.Resounce.TAGS + (j + 1) + ":" + tag);
+                        tagsBuilder.add(tag);
                     }
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.TAGS, tagsBuilder);
 
                     NodeList highlights = (NodeList) HIGHLIGHTS.evaluate(doc, XPathConstants.NODESET);
+                    JsonArrayBuilder highlightsBuilder = Json.createArrayBuilder();
                     for (int j = 0; j < highlights.getLength(); j++) {
-                        LOG.info(Introspection.JSONKeys.Resounce.HIGHLIGHTS + (j + 1) + ":" + highlights.item(j).getTextContent());
+                        String highlight = highlights.item(j).getTextContent();
+                        LOG.info(Introspection.JSONKeys.Resounce.HIGHLIGHTS + (j + 1) + ":" + highlight);
+                        highlightsBuilder.add(highlight);
                     }
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.HIGHLIGHTS, highlightsBuilder);
 
                     NodeList specifications = (NodeList) SPECIFICATIONS.evaluate(doc, XPathConstants.NODESET);
+                    JsonArrayBuilder specsBuilder = Json.createArrayBuilder();
                     for (int j = 0; j < specifications.getLength(); j++) {
                         Node spec = specifications.item(j);
                         Node specType = spec.getFirstChild().getNextSibling();
                         if ("PERSON".equals(specType.getTextContent())) {
+                            JsonObjectBuilder personSpec = Json.createObjectBuilder();
                             Node crowdType = specType.getNextSibling();
                             Node specName = crowdType.getNextSibling().getNextSibling();
                             Node minAge = specName.getNextSibling().getNextSibling();
                             Node maxAge = minAge.getNextSibling();
                             Node unit = maxAge.getNextSibling().getNextSibling();
-                            LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + specType.getTextContent());
-                            LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + crowdType.getTextContent());
-                            LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + specName.getTextContent());
-                            LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + minAge.getTextContent());
-                            LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + maxAge.getTextContent());
-                            LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + unit.getTextContent());
+                            String crowdTypeStr = crowdType.getTextContent();
+                            String specNameStr = specName.getTextContent();
+                            String minAgeStr = minAge.getTextContent();
+                            String maxAgeStr = maxAge.getTextContent();
+                            String unitStr = unit.getTextContent();
+                            LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + crowdTypeStr);
+                            LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + specNameStr);
+                            LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + minAgeStr);
+                            LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + maxAgeStr);
+                            LOG.info(Introspection.JSONKeys.Resounce.SPECIFICATIONS + (j + 1) + ":" + unitStr);
+                            personSpec.add(Introspection.JSONKeys.Resounce.CROWD_TYPE, crowdTypeStr);
+                            personSpec.add(Introspection.JSONKeys.Resounce.SPECIFICATION_NAME, specNameStr);
+                            personSpec.add(Introspection.JSONKeys.Resounce.MIN_AGE, minAgeStr);
+                            personSpec.add(Introspection.JSONKeys.Resounce.MAX_AGE, maxAgeStr);
+                            personSpec.add(Introspection.JSONKeys.Resounce.UNIT, unitStr);
+                            specsBuilder.add(personSpec);
                         } else {
                             ;
                         }
                     }
+                    resourceBuilder.add(Introspection.JSONKeys.Resounce.SPECIFICATIONS, specsBuilder);
 
                     LOG.info("************************************************************************************");
                 } else {
@@ -393,7 +461,12 @@ public class LixingResourceProvider implements ResourceProvider {
             } else if (UpdateAction.UPDATE.equals(productSyncMeta.getAction())) {
                 updatedRes.add(resourceBuilder.build());
                 continue;
+            } else if (UpdateAction.OFF_SHELF.equals(productSyncMeta.getAction())) {
+                deletedRes.add(resourceBuilder.build());
+                continue;
             } else {
+                LOG.warn(LocalMessages.getMessage(LocalMessages.full_sync_resource_invalid_action_type,
+                    productSyncMeta.getAction()));
                 continue;
             }
         }

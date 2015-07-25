@@ -28,7 +28,9 @@ public class DAOConstants {
     public static final String mongo_database_op_in = "$in";
 
     public static final String elasticsearch_product_index = "products";
+    public static final String elasticsearch_resource_index = "resources";
     public static final String elasticsearch_product_type = "product";
+    public static final String elasticsearch_resource_type = "resource";
     public static final String elasticsearch_term = "term";
     public static final String elasticsearch_product_status = "product_status";
     public static final String elasticsearch_proposal_owner = "proposal_owner";

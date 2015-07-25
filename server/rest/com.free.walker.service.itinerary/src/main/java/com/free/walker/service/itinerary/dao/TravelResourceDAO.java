@@ -19,7 +19,7 @@ public interface TravelResourceDAO extends HealthyDAO {
      * @return
      * @throws DatabaseAccessException
      */
-    public JsonObject searchResources(QueryTemplate queryTemplate, Map<String, String> templageParams)
+    public JsonObject searchResource(QueryTemplate queryTemplate, Map<String, Object> templageParams)
         throws DatabaseAccessException;
 
     /**
@@ -34,7 +34,7 @@ public interface TravelResourceDAO extends HealthyDAO {
      * @return
      * @throws DependencyException
      */
-    public JsonObject synchrinizeResources(String providerId, boolean exhausted, Calendar since, boolean dryRun)
+    public JsonObject synchrinizeResource(String providerId, boolean exhausted, Calendar since, boolean dryRun)
         throws DependencyException;
 
     /**

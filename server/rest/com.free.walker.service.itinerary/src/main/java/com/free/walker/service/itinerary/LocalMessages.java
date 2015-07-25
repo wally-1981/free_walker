@@ -167,6 +167,12 @@ public class LocalMessages {
     public static final String product_index_not_found = "product_index_not_found";
     public static final String product_index_searched = "product_index_searched";
     public static final String product_search_hit = "product_search_hit";
+    public static final String resource_index_created = "resource_index_created";
+    public static final String resource_index_updated = "resource_index_updated";
+    public static final String resource_index_deleted = "resource_index_deleted";
+    public static final String resource_index_not_found = "resource_index_not_found";
+    public static final String resource_index_searched = "resource_index_searched";
+    public static final String resource_search_hit = "resource_search_hit";
 
     public static final String invalid_term_invalid = "invalid_term_invalid";
     public static final String invalid_template_invalid = "invalid_template_invalid";
@@ -194,6 +200,7 @@ public class LocalMessages {
     public static final String publish_updated_resource = "publish_updated_resource";
     public static final String publish_revoked_resource = "publish_revoked_resource";
     public static final String full_sync_resource = "full_sync_resource";
+    public static final String full_sync_resource_invalid_action_type = "full_sync_resource_invalid_action_type";
 
     public static final String test_message = "test_message";
     public static final String test_message_with_1_arg = "test_message_with_1_arg";
