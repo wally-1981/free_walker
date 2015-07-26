@@ -5,10 +5,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
@@ -42,6 +44,7 @@ import com.free.walker.service.itinerary.Enumable;
 import com.free.walker.service.itinerary.Imaginable;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.Agency;
+import com.free.walker.service.itinerary.basic.City;
 import com.free.walker.service.itinerary.basic.Flight;
 import com.free.walker.service.itinerary.basic.Hotel;
 import com.free.walker.service.itinerary.basic.Resort;
@@ -389,6 +392,61 @@ public class PlatformService {
     @RequiresPermissions("ManagePlatform")
     public Response getCity() {
         return Response.ok().build();
+    }
+
+    @GET
+    @Path("/cities/")
+    @RequiresPermissions("ManagePlatform")
+    public Response getCities(@QueryParam("isDomestic") String isDomestic, @QueryParam("isHottest") boolean isHottest) {
+        try {
+            List<City> cities;
+            if ("Y".equalsIgnoreCase(isDomestic)) {
+                cities = travelBasicDAO.getDomesticCities();
+            } else if ("N".equalsIgnoreCase(isDomestic)) {
+                cities = travelBasicDAO.getInternationalCities();
+            } else {
+                cities = travelBasicDAO.getAllCities();
+            }
+
+            Set<City> sortedCities = new TreeSet<City>(new Comparator<City>() {
+                public int compare(City cityA, City cityB) {
+                    Character leadingCharA = new Character(Character.toUpperCase(cityA.getPinyinName().charAt(0)));
+                    Character leadingCharB = new Character(Character.toUpperCase(cityB.getPinyinName().charAt(0)));
+                    int sortResult = leadingCharA.compareTo(leadingCharB);
+                    return sortResult == 0 ? cityA.getPinyinName().compareTo(cityB.getPinyinName()) : sortResult;
+                }
+            });
+            sortedCities.addAll(cities);
+
+            JsonArrayBuilder citiesBuilder = Json.createArrayBuilder();
+
+            Iterator<City> sotredCityIter = sortedCities.iterator();
+            Character indexingKey = null;
+            JsonObjectBuilder cityIndexBuilder = null;
+            JsonArrayBuilder indexCitiesBuilder = null;
+            while (sotredCityIter.hasNext()) {
+                City city = sotredCityIter.next();
+                Character leadingChar = new Character(Character.toUpperCase(city.getPinyinName().charAt(0)));
+                if (!leadingChar.equals(indexingKey)) {
+                    citiesBuilder.add(cityIndexBuilder);
+                    cityIndexBuilder = Json.createObjectBuilder();
+                    indexCitiesBuilder = Json.createArrayBuilder();
+                    cityIndexBuilder.add(Introspection.JSONKeys.ABBR, indexingKey = leadingChar);
+                    cityIndexBuilder.add(Introspection.JSONKeys.CITY, indexCitiesBuilder);
+                }
+
+                JsonObjectBuilder indexCityBuilder = Json.createObjectBuilder();
+                indexCityBuilder.add(Introspection.JSONKeys.UUID, city.getUuid());
+                indexCityBuilder.add(Introspection.JSONKeys.NAME, city.getName());
+                indexCityBuilder.add(Introspection.JSONKeys.CHINESE_NAME, city.getChineseName());
+                indexCityBuilder.add(Introspection.JSONKeys.PINYIN_NAME, city.getPinyinName());
+                indexCitiesBuilder.add(indexCityBuilder);
+            }
+
+            return Response.ok(citiesBuilder.build()).build();
+        } catch (DatabaseAccessException e) {
+            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }
     }
 
     @POST

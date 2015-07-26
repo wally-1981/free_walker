@@ -22,6 +22,10 @@ public interface TravelBasicDAO extends HealthyDAO {
 
     public List<City> getAllCities() throws DatabaseAccessException;
 
+    public List<City> getDomesticCities() throws DatabaseAccessException;
+
+    public List<City> getInternationalCities() throws DatabaseAccessException;
+
     public List<StringTriple> getLocationIndexTermsByLocatoinIds(List<String> locationIds)
         throws DatabaseAccessException;
 

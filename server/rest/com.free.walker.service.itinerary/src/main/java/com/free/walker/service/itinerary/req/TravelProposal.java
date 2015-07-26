@@ -23,19 +23,24 @@ import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
 import com.free.walker.service.itinerary.util.UuidUtil;
+import com.ibm.icu.util.Calendar;
 
 public class TravelProposal extends BaseTravelRequirement implements TravelRequirement {
     private String authorAccountId;
     private String proposalTitle;
     private List<TravelRequirement> travelRequirements;
     private Set<String> proposalTags;
+    private int unit;
+    private Calendar arrivalDatetime;
+    private Calendar departureDatetime;
     private double budget;
 
     public TravelProposal() {
         this.travelRequirements = new ArrayList<TravelRequirement>();
         this.proposalTags = new HashSet<String>();
         this.proposalTitle = Constants.NEW_PROPOSAL;
-        this.budget = 1.8;
+        this.unit = 0;
+        this.budget = 0;
         this.authorAccountId = Constants.DEFAULT_USER_ACCOUNT.getUuid();
     }
 
@@ -54,7 +59,8 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
         this.travelRequirements.add(itineraryRequirement);
         this.proposalTags = new HashSet<String>();
         this.proposalTitle = proposalTitle;
-        this.budget = 1.8;
+        this.unit = 0;
+        this.budget = 0;
         this.authorAccountId = Constants.DEFAULT_USER_ACCOUNT.getUuid();
     }
 
@@ -99,7 +105,16 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
         resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL);
         resBuilder.add(Introspection.JSONKeys.AUTHOR, authorAccountId);
         resBuilder.add(Introspection.JSONKeys.TITLE, proposalTitle);
+        resBuilder.add(Introspection.JSONKeys.UNIT, unit);
         resBuilder.add(Introspection.JSONKeys.BUDGET, budget);
+
+        if (arrivalDatetime != null) {
+            resBuilder.add(Introspection.JSONKeys.ARRIVAL_DATETIME, arrivalDatetime.getTimeInMillis());
+        }
+
+        if (departureDatetime != null) {
+            resBuilder.add(Introspection.JSONKeys.DEPARTURE_DATETIME, departureDatetime.getTimeInMillis());
+        }
 
         JsonArrayBuilder requirements = Json.createArrayBuilder();
         for (TravelRequirement travelRequirement : travelRequirements) {
@@ -143,6 +158,23 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
                 Introspection.JSONKeys.TITLE, title));
         } else {
             proposalTitle = title;
+        }
+
+        JsonNumber unit = jsObject.getJsonNumber(Introspection.JSONKeys.UNIT);
+        if (unit != null) {
+            this.unit = unit.intValue();
+        }
+
+        JsonNumber departureDt = jsObject.getJsonNumber(Introspection.JSONKeys.DEPARTURE_DATETIME);
+        if (departureDt != null) {
+            this.arrivalDatetime = Calendar.getInstance();
+            this.arrivalDatetime.setTimeInMillis(departureDt.longValue());
+        }
+
+        JsonNumber arrivalDt = jsObject.getJsonNumber(Introspection.JSONKeys.ARRIVAL_DATETIME);
+        if (arrivalDt != null) {
+            this.arrivalDatetime = Calendar.getInstance();
+            this.arrivalDatetime.setTimeInMillis(arrivalDt.longValue());
         }
 
         JsonNumber budget = jsObject.getJsonNumber(Introspection.JSONKeys.BUDGET);

@@ -1,6 +1,7 @@
 package com.free.walker.service.itinerary.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -357,6 +358,52 @@ public class TravelBasicDAOImplTest {
         assertNotNull(last.getName());
         assertNotNull(last.getChineseName());
         assertNotNull(last.getPinyinName());
+    }
+
+    @Test
+    public void testGetDomesticCities() throws DatabaseAccessException {
+        List<City> domesticCities = travelBasicDAO.getDomesticCities();
+        assertNotNull(domesticCities);
+        assertFalse(domesticCities.isEmpty());
+
+        City first = domesticCities.get(0);
+        assertNotNull(first);
+        assertNotNull(first.getUuid());
+        assertNotNull(first.getName());
+        assertNotNull(first.getChineseName());
+        assertNotNull(first.getPinyinName());
+        assertEquals("af70a55c-eb4c-415c-8375-88081716f8b8", first.getCountryUuid());
+
+        City last = domesticCities.get(domesticCities.size() - 1);
+        assertNotNull(last);
+        assertNotNull(last.getUuid());
+        assertNotNull(last.getName());
+        assertNotNull(last.getChineseName());
+        assertNotNull(last.getPinyinName());
+        assertEquals("af70a55c-eb4c-415c-8375-88081716f8b8", last.getCountryUuid());
+    }
+
+    @Test
+    public void testGetInternationalCities() throws DatabaseAccessException {
+        List<City> internationalCities = travelBasicDAO.getInternationalCities();
+        assertNotNull(internationalCities);
+        assertFalse(internationalCities.isEmpty());
+
+        City first = internationalCities.get(0);
+        assertNotNull(first);
+        assertNotNull(first.getUuid());
+        assertNotNull(first.getName());
+        assertNotNull(first.getChineseName());
+        assertNotNull(first.getPinyinName());
+        assertNotEquals("af70a55c-eb4c-415c-8375-88081716f8b8", first.getCountryUuid());
+
+        City last = internationalCities.get(internationalCities.size() - 1);
+        assertNotNull(last);
+        assertNotNull(last.getUuid());
+        assertNotNull(last.getName());
+        assertNotNull(last.getChineseName());
+        assertNotNull(last.getPinyinName());
+        assertNotEquals("af70a55c-eb4c-415c-8375-88081716f8b8", last.getCountryUuid());
     }
 
     @Test

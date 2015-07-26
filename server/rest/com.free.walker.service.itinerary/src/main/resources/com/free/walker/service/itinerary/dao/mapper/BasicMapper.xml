@@ -113,6 +113,30 @@
 		from city
 	</select>
 
+	<select id="getDomesticCities" resultType="City">
+		select
+			<include refid="locationColumns" />,
+			hex(province_uuid) as provinceUuid,
+			hex(country_uuid) as countryUuid,
+			continent_id as continentId
+		from
+			city
+		where
+			country_uuid = unhex("af70a55ceb4c415c837588081716f8b8")
+	</select>
+
+	<select id="getInternationalCities" resultType="City">
+		select
+			<include refid="locationColumns" />,
+			hex(province_uuid) as provinceUuid,
+			hex(country_uuid) as countryUuid,
+			continent_id as continentId
+		from
+			city
+		where
+			country_uuid != unhex("af70a55ceb4c415c837588081716f8b8")
+	</select>
+
 	<select id="getRegion" resultType="Region">
 		select
 			<include refid="locationColumns"/>

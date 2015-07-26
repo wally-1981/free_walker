@@ -143,6 +143,34 @@ public class MySQLTravelBasicDAOImpl implements TravelBasicDAO {
         }
     }
 
+    public List<City> getDomesticCities() throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            List<City> cities = basicMapper.getDomesticCities();
+            return cities;
+        }  catch(Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
+    public List<City> getInternationalCities() throws DatabaseAccessException {
+        SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE);
+        try {
+            BasicMapper basicMapper = session.getMapper(BasicMapper.class);
+            List<City> cities = basicMapper.getInternationalCities();
+            return cities;
+        }  catch(Exception e) {
+            LOG.error(LocalMessages.getMessage(LocalMessages.dao_operation_failure), e);
+            throw new DatabaseAccessException(e);
+        } finally {
+            session.close();
+        }
+    }
+
     public List<StringTriple> getLocationIndexTermsByLocatoinIds(List<String> locationIds)
         throws DatabaseAccessException {
         if (locationIds == null) {

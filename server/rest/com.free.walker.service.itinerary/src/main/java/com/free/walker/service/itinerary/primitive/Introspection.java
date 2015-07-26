@@ -39,6 +39,7 @@ public class Introspection {
         public static final String TRAIN = "train";
         public static final String FLIGHT = "flight";
 
+        public static final String ABBR = "abbr";
         public static final String TERM = "term";
         public static final String TEMPLATE = "template";
         public static final String PAGE_NUM = "page_num";
@@ -76,6 +77,7 @@ public class Introspection {
         public static final String NAME = "name";
         public static final String TITLE = "title";
         public static final String BUDGET = "budget";
+        public static final String UNIT = "unit";
         public static final String SUMMARY = "summary";
         public static final String LOCATION = "location";
         public static final String DATE = "date";

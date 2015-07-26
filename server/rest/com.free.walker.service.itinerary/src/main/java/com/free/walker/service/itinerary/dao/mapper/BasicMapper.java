@@ -26,6 +26,10 @@ public interface BasicMapper {
 
     public List<City> getAllCities();
 
+    public List<City> getDomesticCities();
+
+    public List<City> getInternationalCities();
+
     public Region getRegion(@Param("uuid") String uuid);
 
     public Country getCountry(@Param("uuid") String uuid);
