@@ -1,6 +1,7 @@
 package com.free.walker.service.itinerary.rest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -166,8 +167,36 @@ public abstract class AbstractPlatformServiceTest extends BaseConfigurationProvi
                 HttpResponse response = adminClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
-                    JsonArray cities = Json.createReader(response.getEntity().getContent()).readArray();
-                    assertNotNull(cities);
+                    JsonArray cityGroups = Json.createReader(response.getEntity().getContent()).readArray();
+                    assertNotNull(cityGroups);
+                    assertTrue(cityGroups.size() <= 26);
+                    assertTrue(cityGroups.size() == 21);
+                    JsonObject firstGroup = (JsonObject) cityGroups.get(0);
+                    JsonObject lastGroup = (JsonObject) cityGroups.get(cityGroups.size() - 1);
+                    assertNotNull(firstGroup);
+                    assertNotNull(lastGroup);
+                    assertEquals("A", firstGroup.getString(Introspection.JSONKeys.ABBR));
+                    assertEquals("Y", lastGroup.getString(Introspection.JSONKeys.ABBR));
+                    JsonArray citiesWithLeadingA = firstGroup.getJsonArray(Introspection.JSONKeys.CITY);
+                    JsonArray citiesWithLeadingY = lastGroup.getJsonArray(Introspection.JSONKeys.CITY);
+                    assertNotNull(citiesWithLeadingA);
+                    assertNotNull(citiesWithLeadingY);
+                    assertEquals(20, citiesWithLeadingA.size());
+                    for (int i = 0; i < citiesWithLeadingA.size(); i++) {
+                        JsonObject city = citiesWithLeadingA.getJsonObject(i);
+                        String pinyinName = city.getString(Introspection.JSONKeys.PINYIN_NAME);
+                        String countryUuid = city.getString(Introspection.JSONKeys.COUNTRY);
+                        assertTrue(pinyinName.startsWith("A") || pinyinName.startsWith("a"));
+                        assertEquals("af70a55c-eb4c-415c-8375-88081716f8b8", countryUuid);
+                    }
+                    assertEquals(52, citiesWithLeadingY.size());
+                    for (int i = 0; i < citiesWithLeadingY.size(); i++) {
+                        JsonObject city = citiesWithLeadingY.getJsonObject(i);
+                        String pinyinName = city.getString(Introspection.JSONKeys.PINYIN_NAME);
+                        String countryUuid = city.getString(Introspection.JSONKeys.COUNTRY);
+                        assertTrue(pinyinName.startsWith("Y") || pinyinName.startsWith("y"));
+                        assertEquals("af70a55c-eb4c-415c-8375-88081716f8b8", countryUuid);
+                    }
                 } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
                     LOG.error(IOUtils.toString(response.getEntity().getContent()));
                     assertTrue(false);
@@ -193,8 +222,36 @@ public abstract class AbstractPlatformServiceTest extends BaseConfigurationProvi
                 HttpResponse response = adminClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
-                    JsonArray cities = Json.createReader(response.getEntity().getContent()).readArray();
-                    assertNotNull(cities);
+                    JsonArray cityGroups = Json.createReader(response.getEntity().getContent()).readArray();
+                    assertNotNull(cityGroups);
+                    assertTrue(cityGroups.size() <= 26);
+                    assertTrue(cityGroups.size() == 15);
+                    JsonObject firstGroup = (JsonObject) cityGroups.get(0);
+                    JsonObject lastGroup = (JsonObject) cityGroups.get(cityGroups.size() - 1);
+                    assertNotNull(firstGroup);
+                    assertNotNull(lastGroup);
+                    assertEquals("A", firstGroup.getString(Introspection.JSONKeys.ABBR));
+                    assertEquals("X", lastGroup.getString(Introspection.JSONKeys.ABBR));
+                    JsonArray citiesWithLeadingA = firstGroup.getJsonArray(Introspection.JSONKeys.CITY);
+                    JsonArray citiesWithLeadingX = lastGroup.getJsonArray(Introspection.JSONKeys.CITY);
+                    assertNotNull(citiesWithLeadingA);
+                    assertNotNull(citiesWithLeadingX);
+                    assertEquals(1, citiesWithLeadingA.size());
+                    for (int i = 0; i < citiesWithLeadingA.size(); i++) {
+                        JsonObject city = citiesWithLeadingA.getJsonObject(i);
+                        String pinyinName = city.getString(Introspection.JSONKeys.PINYIN_NAME);
+                        String countryUuid = city.getString(Introspection.JSONKeys.COUNTRY);
+                        assertTrue(pinyinName.startsWith("A") || pinyinName.startsWith("a"));
+                        assertNotEquals("af70a55c-eb4c-415c-8375-88081716f8b8", countryUuid);
+                    }
+                    assertEquals(1, citiesWithLeadingX.size());
+                    for (int i = 0; i < citiesWithLeadingX.size(); i++) {
+                        JsonObject city = citiesWithLeadingX.getJsonObject(i);
+                        String pinyinName = city.getString(Introspection.JSONKeys.PINYIN_NAME);
+                        String countryUuid = city.getString(Introspection.JSONKeys.COUNTRY);
+                        assertTrue(pinyinName.startsWith("X") || pinyinName.startsWith("x"));
+                        assertNotEquals("af70a55c-eb4c-415c-8375-88081716f8b8", countryUuid);
+                    }
                 } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
                     LOG.error(IOUtils.toString(response.getEntity().getContent()));
                     assertTrue(false);
@@ -220,8 +277,32 @@ public abstract class AbstractPlatformServiceTest extends BaseConfigurationProvi
                 HttpResponse response = adminClient.execute(get);
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK_200) {
-                    JsonArray cities = Json.createReader(response.getEntity().getContent()).readArray();
-                    assertNotNull(cities);
+                    JsonArray cityGroups = Json.createReader(response.getEntity().getContent()).readArray();
+                    assertNotNull(cityGroups);
+                    assertTrue(cityGroups.size() <= 26);
+                    assertTrue(cityGroups.size() == 21);
+                    JsonObject firstGroup = (JsonObject) cityGroups.get(0);
+                    JsonObject lastGroup = (JsonObject) cityGroups.get(cityGroups.size() - 1);
+                    assertNotNull(firstGroup);
+                    assertNotNull(lastGroup);
+                    assertEquals("A", firstGroup.getString(Introspection.JSONKeys.ABBR));
+                    assertEquals("Y", lastGroup.getString(Introspection.JSONKeys.ABBR));
+                    JsonArray citiesWithLeadingA = firstGroup.getJsonArray(Introspection.JSONKeys.CITY);
+                    JsonArray citiesWithLeadingY = lastGroup.getJsonArray(Introspection.JSONKeys.CITY);
+                    assertNotNull(citiesWithLeadingA);
+                    assertNotNull(citiesWithLeadingY);
+                    assertEquals(21, citiesWithLeadingA.size());
+                    for (int i = 0; i < citiesWithLeadingA.size(); i++) {
+                        JsonObject city = citiesWithLeadingA.getJsonObject(i);
+                        String pinyinName = city.getString(Introspection.JSONKeys.PINYIN_NAME);
+                        assertTrue(pinyinName.startsWith("A") || pinyinName.startsWith("a"));
+                    }
+                    assertEquals(53, citiesWithLeadingY.size());
+                    for (int i = 0; i < citiesWithLeadingY.size(); i++) {
+                        JsonObject city = citiesWithLeadingY.getJsonObject(i);
+                        String pinyinName = city.getString(Introspection.JSONKeys.PINYIN_NAME);
+                        assertTrue(pinyinName.startsWith("Y") || pinyinName.startsWith("y"));
+                    }
                 } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
                     LOG.error(IOUtils.toString(response.getEntity().getContent()));
                     assertTrue(false);

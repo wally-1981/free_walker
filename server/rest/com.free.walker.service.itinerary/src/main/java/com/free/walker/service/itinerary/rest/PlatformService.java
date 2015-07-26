@@ -428,11 +428,13 @@ public class PlatformService {
                 City city = sotredCityIter.next();
                 Character leadingChar = new Character(Character.toUpperCase(city.getPinyinName().charAt(0)));
                 if (!leadingChar.equals(indexingKey)) {
-                    citiesBuilder.add(cityIndexBuilder);
+                    if (cityIndexBuilder != null) {
+                        cityIndexBuilder.add(Introspection.JSONKeys.CITY, indexCitiesBuilder);
+                        citiesBuilder.add(cityIndexBuilder);
+                    }
                     cityIndexBuilder = Json.createObjectBuilder();
                     indexCitiesBuilder = Json.createArrayBuilder();
-                    cityIndexBuilder.add(Introspection.JSONKeys.ABBR, indexingKey = leadingChar);
-                    cityIndexBuilder.add(Introspection.JSONKeys.CITY, indexCitiesBuilder);
+                    cityIndexBuilder.add(Introspection.JSONKeys.ABBR, (indexingKey = leadingChar).toString());
                 }
 
                 JsonObjectBuilder indexCityBuilder = Json.createObjectBuilder();
@@ -440,6 +442,7 @@ public class PlatformService {
                 indexCityBuilder.add(Introspection.JSONKeys.NAME, city.getName());
                 indexCityBuilder.add(Introspection.JSONKeys.CHINESE_NAME, city.getChineseName());
                 indexCityBuilder.add(Introspection.JSONKeys.PINYIN_NAME, city.getPinyinName());
+                indexCityBuilder.add(Introspection.JSONKeys.COUNTRY, city.getCountryUuid());
                 indexCitiesBuilder.add(indexCityBuilder);
             }
 
