@@ -197,10 +197,10 @@ public class ESTravelResourceDAOImpl implements TravelResourceDAO {
         JsonArray addedRes = syncResult.get(0);
         for (int i = 0; !dryRun && i < addedRes.size(); i++) {
             JsonObject resource = addedRes.getJsonObject(i);
-            String resourceId = resource.getString(Introspection.JSONKeys.ID);
+            String resourceCode = resource.getString(Introspection.JSONKeys.Resounce.CODE);
+            String resourceId = resourceCode + '@' + providerId;
 
-            LOG.info(LocalMessages.getMessage(LocalMessages.publish_added_resource,
-                resource.getString(Introspection.JSONKeys.Resounce.CODE), providerId));
+            LOG.info(LocalMessages.getMessage(LocalMessages.publish_added_resource, resourceCode, providerId));
 
             IndexRequestBuilder requestBuilder = esClient.prepareIndex(DAOConstants.elasticsearch_resource_index,
                 DAOConstants.elasticsearch_resource_type, resourceId);
@@ -220,10 +220,10 @@ public class ESTravelResourceDAOImpl implements TravelResourceDAO {
         JsonArray updatedRes = syncResult.get(1);
         for (int i = 0; !dryRun && i < updatedRes.size(); i++) {
             JsonObject resource = updatedRes.getJsonObject(i);
-            String resourceId = resource.getString(Introspection.JSONKeys.ID);
+            String resourceCode = resource.getString(Introspection.JSONKeys.Resounce.CODE);
+            String resourceId = resourceCode + '@' + providerId;
 
-            LOG.info(LocalMessages.getMessage(LocalMessages.publish_updated_resource,
-                resource.getString(Introspection.JSONKeys.Resounce.CODE), providerId));
+            LOG.info(LocalMessages.getMessage(LocalMessages.publish_updated_resource, resourceCode, providerId));
 
             IndexRequestBuilder requestBuilder = esClient.prepareIndex(DAOConstants.elasticsearch_resource_index,
                 DAOConstants.elasticsearch_resource_type, resourceId);
@@ -243,10 +243,10 @@ public class ESTravelResourceDAOImpl implements TravelResourceDAO {
         JsonArray deletedRes = syncResult.get(2);
         for (int i = 0; !dryRun && i < deletedRes.size(); i++) {
             JsonObject resource = deletedRes.getJsonObject(i);
-            String resourceId = resource.getString(Introspection.JSONKeys.ID);
+            String resourceCode = resource.getString(Introspection.JSONKeys.Resounce.CODE);
+            String resourceId = resourceCode + '@' + providerId;
 
-            LOG.info(LocalMessages.getMessage(LocalMessages.publish_revoked_resource,
-                resource.getString(Introspection.JSONKeys.Resounce.CODE), providerId));
+            LOG.info(LocalMessages.getMessage(LocalMessages.publish_revoked_resource, resourceCode, providerId));
 
             DeleteRequestBuilder requestBuilder = esClient.prepareDelete(DAOConstants.elasticsearch_resource_index,
                 DAOConstants.elasticsearch_resource_type, resourceId);

@@ -311,17 +311,16 @@ public class LixingResourceProvider implements ResourceProvider {
                     String summary = (String) SUMMARY.evaluate(doc, XPathConstants.STRING);
                     String description = (String) DESCRIPTION.evaluate(doc, XPathConstants.STRING);
                     String durationType = (String) DURATION_TYPE.evaluate(doc, XPathConstants.STRING);
-                    int durationPrimaryPart = (int) DURATION_PRIMARY_PART.evaluate(doc, XPathConstants.NUMBER);
-                    int durationSecondaryPart = (int) DURATION_SECONDARY_PART.evaluate(doc, XPathConstants.NUMBER);
+                    double durationPrimaryPart = (double) DURATION_PRIMARY_PART.evaluate(doc, XPathConstants.NUMBER);
+                    double durationSecondaryPart = (double) DURATION_SECONDARY_PART.evaluate(doc, XPathConstants.NUMBER);
                     String pickUpRemark = (String) PICK_UP_REMARK.evaluate(doc, XPathConstants.STRING);
                     String dropOffRemark = (String) DROP_OFF_REMARK.evaluate(doc, XPathConstants.STRING);
-                    float netPrice = (float) NET_PRICE.evaluate(doc, XPathConstants.NUMBER);
-                    float retailPrice = (float) RETAIL_PRICE.evaluate(doc, XPathConstants.NUMBER);
+                    double netPrice = (double) NET_PRICE.evaluate(doc, XPathConstants.NUMBER);
+                    double retailPrice = (double) RETAIL_PRICE.evaluate(doc, XPathConstants.NUMBER);
                     String inclusion = (String) INCLUSION.evaluate(doc, XPathConstants.STRING);
                     String exclusion = (String) EXCLUSION.evaluate(doc, XPathConstants.STRING);
                     String attention = (String) ATTENTION.evaluate(doc, XPathConstants.STRING);
-                    
-                    resourceBuilder.add(Introspection.JSONKeys.ID, productCode + '@' + getProviderId());
+
                     resourceBuilder.add(Introspection.JSONKeys.Resounce.PROVIDER_ID, getProviderId());
                     resourceBuilder.add(Introspection.JSONKeys.Resounce.PROVIDER_NAME, getProviderName());
                     resourceBuilder.add(Introspection.JSONKeys.Resounce.LOCATION, location);
