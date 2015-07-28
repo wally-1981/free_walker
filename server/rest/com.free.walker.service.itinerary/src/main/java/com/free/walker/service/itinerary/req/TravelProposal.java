@@ -30,9 +30,11 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
     private String proposalTitle;
     private List<TravelRequirement> travelRequirements;
     private Set<String> proposalTags;
-    private int unit;
-    private Calendar arrivalDatetime;
+    private String departureLocation;
+    private String returnLocation;
     private Calendar departureDatetime;
+    private Calendar returnDatetime;
+    private int unit;
     private double budget;
 
     public TravelProposal() {
@@ -108,12 +110,20 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
         resBuilder.add(Introspection.JSONKeys.UNIT, unit);
         resBuilder.add(Introspection.JSONKeys.BUDGET, budget);
 
-        if (arrivalDatetime != null) {
-            resBuilder.add(Introspection.JSONKeys.ARRIVAL_DATETIME, arrivalDatetime.getTimeInMillis());
-        }
-
         if (departureDatetime != null) {
             resBuilder.add(Introspection.JSONKeys.DEPARTURE_DATETIME, departureDatetime.getTimeInMillis());
+        }
+
+        if (returnDatetime != null) {
+            resBuilder.add(Introspection.JSONKeys.RETURN_DATETIME, returnDatetime.getTimeInMillis());
+        }
+
+        if (departureLocation != null) {
+            resBuilder.add(Introspection.JSONKeys.DEPARTURE, departureLocation);
+        }
+
+        if (returnLocation != null) {
+            resBuilder.add(Introspection.JSONKeys.RETURN, returnLocation);
         }
 
         JsonArrayBuilder requirements = Json.createArrayBuilder();
@@ -165,16 +175,26 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
             this.unit = unit.intValue();
         }
 
-        JsonNumber departureDt = jsObject.getJsonNumber(Introspection.JSONKeys.DEPARTURE_DATETIME);
-        if (departureDt != null) {
-            this.arrivalDatetime = Calendar.getInstance();
-            this.arrivalDatetime.setTimeInMillis(departureDt.longValue());
+        String departureLocation = jsObject.getString(Introspection.JSONKeys.DEPARTURE, null);
+        if (departureLocation != null) {
+            this.departureLocation = departureLocation;
         }
 
-        JsonNumber arrivalDt = jsObject.getJsonNumber(Introspection.JSONKeys.ARRIVAL_DATETIME);
-        if (arrivalDt != null) {
-            this.arrivalDatetime = Calendar.getInstance();
-            this.arrivalDatetime.setTimeInMillis(arrivalDt.longValue());
+        JsonNumber departureDt = jsObject.getJsonNumber(Introspection.JSONKeys.DEPARTURE_DATETIME);
+        if (departureDt != null) {
+            this.returnDatetime = Calendar.getInstance();
+            this.returnDatetime.setTimeInMillis(departureDt.longValue());
+        }
+
+        String returnLocation = jsObject.getString(Introspection.JSONKeys.RETURN, null);
+        if (returnLocation != null) {
+            this.returnLocation = returnLocation;
+        }
+
+        JsonNumber returnDt = jsObject.getJsonNumber(Introspection.JSONKeys.RETURN_DATETIME);
+        if (returnDt != null) {
+            this.returnDatetime = Calendar.getInstance();
+            this.returnDatetime.setTimeInMillis(returnDt.longValue());
         }
 
         JsonNumber budget = jsObject.getJsonNumber(Introspection.JSONKeys.BUDGET);
