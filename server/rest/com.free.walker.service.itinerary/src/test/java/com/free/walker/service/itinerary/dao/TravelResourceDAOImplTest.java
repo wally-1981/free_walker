@@ -95,7 +95,7 @@ public class TravelResourceDAOImplTest {
         since.set(Calendar.MINUTE, 0);
         since.set(Calendar.SECOND, 0);
         since.set(Calendar.MILLISECOND, 0);
-        JsonObject syncResult = travelResourceDAO.synchrinizeResource("0000001", true, since, true);
+        JsonObject syncResult = travelResourceDAO.synchrinizeResource("0000001", true, since, false);
         assertNotNull(syncResult);
         assertNotNull(syncResult.getInt(Introspection.JSONKeys.SYNC_ADD_NUMBER));
         assertNotNull(syncResult.getInt(Introspection.JSONKeys.SYNC_UPDATE_NUMBER));
@@ -133,19 +133,19 @@ public class TravelResourceDAOImplTest {
     @Test
     public void testSearchResourceWithNullTemplateParams() throws DatabaseAccessException {
         thrown.expect(NullPointerException.class);
-        travelResourceDAO.searchResource(QueryTemplate.TEST_TEMPLACE, null);
+        travelResourceDAO.searchResource(QueryTemplate.TEST_TEMPLATE, null);
     }
 
     @Test
     public void testSearchResource() throws DatabaseAccessException, InterruptedException {
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put(DAOConstants.elasticsearch_from, String.valueOf(0 * 2));
-        templateParams.put(DAOConstants.elasticsearch_size, String.valueOf(2));
-        JsonObject resources = travelResourceDAO.searchResource(QueryTemplate.TEST_TEMPLACE, templateParams);
+        templateParams.put(DAOConstants.elasticsearch_from, String.valueOf(0 * 150));
+        templateParams.put(DAOConstants.elasticsearch_size, String.valueOf(150));
+        JsonObject resources = travelResourceDAO.searchResource(QueryTemplate.RESOURCE, templateParams);
         assertNotNull(resources);
         assertTrue(resources.containsKey(Introspection.JSONKeys.TOTAL_HITS_NUMBER));
         assertTrue(resources.containsKey(Introspection.JSONKeys.HITS));
-        assertTrue(resources.getJsonArray(Introspection.JSONKeys.HITS).size() > 0);
+        assertTrue(resources.getJsonArray(Introspection.JSONKeys.HITS).size() == 150);
     }
 
     @After

@@ -11,11 +11,12 @@ public class QueryTemplate implements Enumable {
     private static final Map<String, QueryTemplate> TEMPLATES_1 = new HashMap<String, QueryTemplate>();
     private static final Map<Integer, QueryTemplate> TEMPLATES_2 = new HashMap<Integer, QueryTemplate>();
 
-    public static final QueryTemplate TEST_TEMPLACE = new QueryTemplate(1, "test_template");
+    public static final QueryTemplate TEST_TEMPLATE = new QueryTemplate(1, "test_template");
     public static final QueryTemplate PRODUCT_DEPARTURE = new QueryTemplate(2, "product_departure");
     public static final QueryTemplate PRODUCT_DESTINATION = new QueryTemplate(3, "product_destination");
     public static final QueryTemplate PRODUCT_OWNER = new QueryTemplate(4, "product_owner");
     public static final QueryTemplate PROPOSAL_OWNER = new QueryTemplate(5, "proposal_owner");
+    public static final QueryTemplate RESOURCE = new QueryTemplate(6, "resource");
 
     public static boolean isValid(String templateName) {
         return TEMPLATES_1.containsKey(templateName) && TEMPLATES_1.get(templateName) != null;

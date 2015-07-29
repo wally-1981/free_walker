@@ -746,7 +746,7 @@ public abstract class AbstractTravelProductDAOImplTest {
     @Test
     public void testSearchProductWithNullTemplateParams() throws DatabaseAccessException {
         thrown.expect(NullPointerException.class);
-        travelProductDAO.searchProduct(QueryTemplate.TEST_TEMPLACE, null);
+        travelProductDAO.searchProduct(QueryTemplate.TEST_TEMPLATE, null);
     }
 
     @Test
@@ -760,7 +760,7 @@ public abstract class AbstractTravelProductDAOImplTest {
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put(DAOConstants.elasticsearch_from, String.valueOf(0 * 2));
         templateParams.put(DAOConstants.elasticsearch_size, String.valueOf(2));
-        JsonObject products = travelProductDAO.searchProduct(QueryTemplate.TEST_TEMPLACE, templateParams);
+        JsonObject products = travelProductDAO.searchProduct(QueryTemplate.TEST_TEMPLATE, templateParams);
         assertNotNull(products);
         assertTrue(products.containsKey(Introspection.JSONKeys.TOTAL_HITS_NUMBER));
         assertTrue(products.containsKey(Introspection.JSONKeys.HITS));

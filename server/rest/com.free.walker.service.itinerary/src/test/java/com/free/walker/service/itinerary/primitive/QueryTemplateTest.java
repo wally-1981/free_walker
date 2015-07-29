@@ -13,6 +13,9 @@ public class QueryTemplateTest {
         assertTrue(QueryTemplate.isValid("test_template"));
         assertTrue(QueryTemplate.isValid("product_departure"));
         assertTrue(QueryTemplate.isValid("product_destination"));
+        assertTrue(QueryTemplate.isValid("proposal_owner"));
+        assertTrue(QueryTemplate.isValid("product_owner"));
+        assertTrue(QueryTemplate.isValid("resource"));
     }
 
     @Test
@@ -24,24 +27,27 @@ public class QueryTemplateTest {
         assertTrue(QueryTemplate.isValid(3));
         assertTrue(QueryTemplate.isValid(4));
         assertTrue(QueryTemplate.isValid(5));
-        assertFalse(QueryTemplate.isValid(6));
+        assertTrue(QueryTemplate.isValid(6));
+        assertFalse(QueryTemplate.isValid(7));
     }
 
     @Test
     public void testGetEnum() {
-        assertEquals(1, QueryTemplate.TEST_TEMPLACE.enumValue());
+        assertEquals(1, QueryTemplate.TEST_TEMPLATE.enumValue());
         assertEquals(2, QueryTemplate.PRODUCT_DEPARTURE.enumValue());
         assertEquals(3, QueryTemplate.PRODUCT_DESTINATION.enumValue());
         assertEquals(4, QueryTemplate.PRODUCT_OWNER.enumValue());
         assertEquals(5, QueryTemplate.PROPOSAL_OWNER.enumValue());
+        assertEquals(6, QueryTemplate.RESOURCE.enumValue());
     }
 
     @Test
     public void testGetName() {
-        assertEquals("test_template", QueryTemplate.TEST_TEMPLACE.nameValue());
+        assertEquals("test_template", QueryTemplate.TEST_TEMPLATE.nameValue());
         assertEquals("product_departure", QueryTemplate.PRODUCT_DEPARTURE.nameValue());
         assertEquals("product_destination", QueryTemplate.PRODUCT_DESTINATION.nameValue());
         assertEquals("product_owner", QueryTemplate.PRODUCT_OWNER.nameValue());
         assertEquals("proposal_owner", QueryTemplate.PROPOSAL_OWNER.nameValue());
+        assertEquals("resource", QueryTemplate.RESOURCE.nameValue());
     }
 }

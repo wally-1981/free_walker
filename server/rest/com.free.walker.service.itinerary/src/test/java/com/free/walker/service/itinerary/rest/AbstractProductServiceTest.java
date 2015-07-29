@@ -1467,7 +1467,7 @@ public abstract class AbstractProductServiceTest extends BaseConfigurationProvid
         {
             JsonObjectBuilder searchCriteria = Json.createObjectBuilder();
             searchCriteria.add(Introspection.JSONKeys.TERM, "*");
-            searchCriteria.add(Introspection.JSONKeys.TEMPLATE, Introspection.JSONValues.TEST_TEMPLACE_AS_INT);
+            searchCriteria.add(Introspection.JSONKeys.TEMPLATE, Introspection.JSONValues.TEST_TEMPLATE_AS_INT);
             searchCriteria.add(Introspection.JSONKeys.PAGE_NUM, 0);
             searchCriteria.add(Introspection.JSONKeys.PAGE_SIZE, 2);
 

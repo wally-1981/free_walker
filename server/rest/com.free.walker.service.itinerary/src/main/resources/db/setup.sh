@@ -13,3 +13,5 @@ curl -X POST -d @query_template/product_destination.mustache http://localhost:92
 curl -X POST -d @query_template/product_owner.mustache http://localhost:9200/_search/template/product_owner --header "content-type:application/json"
 
 curl -X POST -d @query_template/proposal_owner.mustache http://localhost:9200/_search/template/proposal_owner --header "content-type:application/json"
+
+curl -X POST -d @query_template/resource.mustache http://localhost:9200/_search/template/resource --header "content-type:application/json"

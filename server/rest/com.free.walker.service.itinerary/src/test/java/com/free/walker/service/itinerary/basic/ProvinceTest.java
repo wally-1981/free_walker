@@ -44,7 +44,7 @@ public class ProvinceTest {
     }
 
     @Test
-    public void testNewCountryFromUUID() throws InvalidTravelReqirementException {
+    public void testNewProvinceFromUUID() throws InvalidTravelReqirementException {
         UUID provinceUuid = UuidUtil.fromCmpUuidStr("03161e050c2448378eb863bfcbe744f3");
         Province hubei = new Province(provinceUuid);
         assertNotNull(hubei);

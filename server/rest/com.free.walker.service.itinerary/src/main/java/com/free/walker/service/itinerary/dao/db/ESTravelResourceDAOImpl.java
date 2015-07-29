@@ -204,7 +204,7 @@ public class ESTravelResourceDAOImpl implements TravelResourceDAO {
 
             IndexRequestBuilder requestBuilder = esClient.prepareIndex(DAOConstants.elasticsearch_resource_index,
                 DAOConstants.elasticsearch_resource_type, resourceId);
-            IndexResponse response = requestBuilder.setSource(resource).execute().actionGet();
+            IndexResponse response = requestBuilder.setSource(resource.toString()).execute().actionGet();
 
             LOG.info(LocalMessages.getMessage(response.isCreated() ? LocalMessages.resource_index_created
                 : LocalMessages.resource_index_updated, resourceId, response.getIndex(), response.getType(), response
@@ -227,7 +227,7 @@ public class ESTravelResourceDAOImpl implements TravelResourceDAO {
 
             IndexRequestBuilder requestBuilder = esClient.prepareIndex(DAOConstants.elasticsearch_resource_index,
                 DAOConstants.elasticsearch_resource_type, resourceId);
-            IndexResponse response = requestBuilder.setSource(resource).execute().actionGet();
+            IndexResponse response = requestBuilder.setSource(resource.toString()).execute().actionGet();
 
             LOG.info(LocalMessages.getMessage(response.isCreated() ? LocalMessages.resource_index_created
                 : LocalMessages.resource_index_updated, resourceId, response.getIndex(), response.getType(), response
