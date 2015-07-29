@@ -1,5 +1,7 @@
 package com.free.walker.service.itinerary.basic;
 
+import java.util.UUID;
+
 import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
@@ -8,6 +10,7 @@ import javax.json.JsonValue;
 
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.Serializable;
+import com.free.walker.service.itinerary.primitive.ContinentID;
 import com.free.walker.service.itinerary.primitive.Introspection;
 
 public class TravelLocation implements Serializable {
@@ -17,8 +20,38 @@ public class TravelLocation implements Serializable {
     private Region region;
     private Continent continent;
 
+    public enum LocationType {
+        CITY, PROVINCE, COUNTRY, REGION, CONTINENT
+    }
+
     public TravelLocation() {
         ;
+    }
+
+    public TravelLocation(int continentID) {
+        if (!ContinentID.isValid(continentID)) {
+            throw new IllegalArgumentException();
+        }
+
+        this.continent = Continent.getContinent(continentID);
+    }
+
+    public TravelLocation(UUID locationuUuid, final LocationType locationType) {
+        if (locationuUuid == null || locationType == null) {
+            throw new NullPointerException();
+        }
+
+        if (LocationType.CITY.equals(locationType)) {
+            this.city = new City(locationuUuid);
+        } else if (LocationType.PROVINCE.equals(locationType)) {
+            this.province = new Province(locationuUuid);
+        } else if (LocationType.COUNTRY.equals(locationType)) {
+            this.country = new Country(locationuUuid);
+        } else if (LocationType.REGION.equals(locationType)) {
+            this.region = new Region(locationuUuid);
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     public TravelLocation(City city) {
@@ -168,5 +201,25 @@ public class TravelLocation implements Serializable {
 
     public ValueType getValueType() {
         return JsonValue.ValueType.NULL;
+    }
+
+    public boolean isCity() {
+        return this.city != null;
+    }
+
+    public boolean isProvince() {
+        return this.province != null;
+    }
+
+    public boolean isCountry() {
+        return this.country != null;
+    }
+
+    public boolean isRegion() {
+        return this.region != null;
+    }
+
+    public boolean isContinent() {
+        return this.continent != null;
     }
 }

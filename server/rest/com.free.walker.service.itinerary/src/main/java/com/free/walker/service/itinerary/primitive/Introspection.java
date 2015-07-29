@@ -80,6 +80,7 @@ public class Introspection {
         public static final String UNIT = "unit";
         public static final String SUMMARY = "summary";
         public static final String LOCATION = "location";
+        public static final String LOCATION_TYPE = "location_type";
         public static final String DATE = "date";
         public static final String CHINESE_NAME = "chinese_name";
         public static final String PINYIN_NAME = "pinyin_name";

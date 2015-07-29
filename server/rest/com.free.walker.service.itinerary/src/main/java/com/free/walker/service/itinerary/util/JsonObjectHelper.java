@@ -15,6 +15,7 @@ import com.free.walker.service.itinerary.product.TrafficItem;
 import com.free.walker.service.itinerary.product.TravelProduct;
 import com.free.walker.service.itinerary.product.TravelProductItem;
 import com.free.walker.service.itinerary.product.TrivItem;
+import com.free.walker.service.itinerary.req.DestinationRequirement;
 import com.free.walker.service.itinerary.req.HotelRequirement;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.ResortRequirement;
@@ -65,6 +66,9 @@ public class JsonObjectHelper {
                 return strict ? (TrafficToolSeatRequirement) new TrafficToolSeatRequirement()
                     .fromJSON(travelRequirement) : (TrafficToolSeatRequirement) new TrafficToolSeatRequirement()
                     .newFromJSON(travelRequirement);
+            } else if (DestinationRequirement.SUB_TYPE.equals(requirementSubType)) {
+                return strict ? (DestinationRequirement) new DestinationRequirement().fromJSON(travelRequirement)
+                    : (DestinationRequirement) new DestinationRequirement().newFromJSON(travelRequirement);
             } else {
                 throw new InvalidTravelReqirementException(LocalMessages.getMessage(
                     LocalMessages.invalid_parameter_with_value, Introspection.JSONKeys.TYPE + ":"

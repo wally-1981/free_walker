@@ -38,6 +38,23 @@ public class Province  implements Serializable, Loadable {
         travelBasicDAO = DAOFactory.getTravelBasicDAO();
     }
 
+    public Province(UUID uuid) {
+        this();
+
+        if (!this.load()) throw new IllegalStateException();
+
+        Province province = provinces.get(uuid);
+
+        if (province != null) {
+            this.uuid = province.uuid;
+            this.name = province.name;
+            this.chineseName = province.chineseName;
+            this.pinyinName = province.pinyinName;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, uuid.toString());

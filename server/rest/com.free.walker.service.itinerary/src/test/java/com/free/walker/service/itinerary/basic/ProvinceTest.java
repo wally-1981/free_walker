@@ -1,6 +1,7 @@
 package com.free.walker.service.itinerary.basic;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.UUID;
 
@@ -40,6 +41,17 @@ public class ProvinceTest {
         assertEquals("Hubei", provinceObj.getString(Introspection.JSONKeys.NAME));
         assertEquals("湖北", provinceObj.getString(Introspection.JSONKeys.CHINESE_NAME));
         assertEquals("hubei", provinceObj.getString(Introspection.JSONKeys.PINYIN_NAME));
+    }
+
+    @Test
+    public void testNewCountryFromUUID() throws InvalidTravelReqirementException {
+        UUID provinceUuid = UuidUtil.fromCmpUuidStr("03161e050c2448378eb863bfcbe744f3");
+        Province hubei = new Province(provinceUuid);
+        assertNotNull(hubei);
+        assertEquals(provinceUuid.toString(), hubei.getUuid().toString());
+        assertEquals("Hubei", hubei.getName());
+        assertEquals("湖北", hubei.getChineseName());
+        assertEquals("hubei", hubei.getPinyinName());
     }
 
     @Test

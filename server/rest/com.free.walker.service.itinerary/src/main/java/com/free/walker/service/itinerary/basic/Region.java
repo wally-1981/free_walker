@@ -38,6 +38,23 @@ public class Region implements Serializable, Loadable {
         travelBasicDAO = DAOFactory.getTravelBasicDAO();
     }
 
+    public Region(UUID uuid) {
+        this();
+
+        if (!this.load()) throw new IllegalStateException();
+
+        Region region = regions.get(uuid);
+
+        if (region != null) {
+            this.uuid = region.uuid;
+            this.name = region.name;
+            this.chineseName = region.chineseName;
+            this.pinyinName = region.pinyinName;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, uuid.toString());

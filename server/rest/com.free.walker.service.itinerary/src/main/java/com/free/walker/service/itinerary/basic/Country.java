@@ -38,6 +38,23 @@ public class Country implements Serializable, Loadable {
         travelBasicDAO = DAOFactory.getTravelBasicDAO();
     }
 
+    public Country(UUID uuid) {
+        this();
+
+        if (!this.load()) throw new IllegalStateException();
+
+        Country country = countries.get(uuid);
+
+        if (country != null) {
+            this.uuid = country.uuid;
+            this.name = country.name;
+            this.chineseName = country.chineseName;
+            this.pinyinName = country.pinyinName;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public JsonObject toJSON() throws JsonException {
         JsonObjectBuilder resBuilder = Json.createObjectBuilder();
         resBuilder.add(Introspection.JSONKeys.UUID, uuid.toString());
