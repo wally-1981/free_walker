@@ -311,8 +311,8 @@ public class LixingResourceProvider implements ResourceProvider {
                     String summary = (String) SUMMARY.evaluate(doc, XPathConstants.STRING);
                     String description = (String) DESCRIPTION.evaluate(doc, XPathConstants.STRING);
                     String durationType = (String) DURATION_TYPE.evaluate(doc, XPathConstants.STRING);
-                    Double durationPrimaryPart = (double) DURATION_PRIMARY_PART.evaluate(doc, XPathConstants.NUMBER);
-                    Double durationSecondaryPart = (double) DURATION_SECONDARY_PART.evaluate(doc, XPathConstants.NUMBER);
+                    Double durationPrimaryPart = (Double) DURATION_PRIMARY_PART.evaluate(doc, XPathConstants.NUMBER);
+                    Double durationSecondaryPart = (Double) DURATION_SECONDARY_PART.evaluate(doc, XPathConstants.NUMBER);
                     String pickUpRemark = (String) PICK_UP_REMARK.evaluate(doc, XPathConstants.STRING);
                     String dropOffRemark = (String) DROP_OFF_REMARK.evaluate(doc, XPathConstants.STRING);
                     Double netPrice = (Double) NET_PRICE.evaluate(doc, XPathConstants.NUMBER);
