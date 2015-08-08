@@ -54,7 +54,7 @@ import com.free.walker.service.itinerary.util.UuidUtil;
 /**
  * <b>ProductService</b> provides support for travel product and product item
  * management. A travel product is consist of product items for hotel, traffic,
- * resort as well as trivival items. Besides that, a travel product will also
+ * resort as well as trivial items. Besides that, a travel product will also
  * contain a bidding, and product items in a product with valid bidding can not
  * be modified.<br>
  * <br>

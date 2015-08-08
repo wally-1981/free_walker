@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -63,6 +64,94 @@ public abstract class AbstractPlatformServiceTest extends BaseConfigurationProvi
 
     @Test
     public void testAll() throws URISyntaxException {
+        /*
+         * CORS Support with HTTP
+         */
+        {
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(platformServiceUrlStr + "introspection/"));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader("Origin", "http://localhost");
+            try {
+                HttpResponse response = anonymousClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                assertEquals(HttpStatus.OK_200, statusCode);
+                assertEquals("true", response.getFirstHeader("Access-Control-Allow-Credentials").getValue());
+                assertEquals("http://localhost", response.getFirstHeader("Access-Control-Allow-Origin").getValue());
+                assertFalse(IOUtils.toString(response.getEntity().getContent()).isEmpty());
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
+        }
+
+        /*
+         * CORS Support with HTTPS
+         */
+        {
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(platformServiceUrlStr + "introspection/"));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader("Origin", "https://localhost");
+            try {
+                HttpResponse response = anonymousClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                assertEquals(HttpStatus.OK_200, statusCode);
+                assertEquals("true", response.getFirstHeader("Access-Control-Allow-Credentials").getValue());
+                assertEquals("https://localhost", response.getFirstHeader("Access-Control-Allow-Origin").getValue());
+                assertFalse(IOUtils.toString(response.getEntity().getContent()).isEmpty());
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
+        }
+
+        /*
+         * CORS Support with HTTP and PORT (Rejection Expected)
+         */
+        {
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(platformServiceUrlStr + "introspection/"));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader("Origin", "http://localhost:8080");
+            try {
+                HttpResponse response = anonymousClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                assertEquals(HttpStatus.OK_200, statusCode);
+                assertNull(response.getFirstHeader("Access-Control-Allow-Credentials"));
+                assertNull(response.getFirstHeader("Access-Control-Allow-Origin"));
+                assertFalse(IOUtils.toString(response.getEntity().getContent()).isEmpty());
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
+        }
+
+        /*
+         * CORS Support with HTTPS and PORT (Rejection Expected)
+         */
+        {
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(platformServiceUrlStr + "introspection/"));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            get.setHeader("Origin", "https://localhost:8080");
+            try {
+                HttpResponse response = anonymousClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                assertEquals(HttpStatus.OK_200, statusCode);
+                assertNull(response.getFirstHeader("Access-Control-Allow-Credentials"));
+                assertNull(response.getFirstHeader("Access-Control-Allow-Origin"));
+                assertFalse(IOUtils.toString(response.getEntity().getContent()).isEmpty());
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
+        }
+
         /*
          * 未认证用户访问公开服务
          */

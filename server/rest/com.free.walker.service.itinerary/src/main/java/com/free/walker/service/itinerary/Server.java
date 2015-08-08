@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.cxf.Bus;
@@ -13,6 +14,7 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
 import org.apache.cxf.jaxrs.provider.jsrjsonp.JsrJsonpProvider;
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
@@ -90,16 +92,22 @@ public class Server {
         classes.add(ResourceService.class);
         classes.add(PlatformService.class);
         if (accountSvr != null) classes.add(AccountService.class);
-        List<ResourceProvider> providers = new ArrayList<ResourceProvider>();
-        if (accountSvr != null) providers.add(new SingletonResourceProvider(accountSvr));
-        providers.add(new SingletonResourceProvider(itinerarySvr));
-        providers.add(new SingletonResourceProvider(productSvr));
-        providers.add(new SingletonResourceProvider(new ResourceService()));
-        providers.add(new SingletonResourceProvider(new PlatformService()));
+        List<ResourceProvider> resourceProviders = new ArrayList<ResourceProvider>();
+        if (accountSvr != null) resourceProviders.add(new SingletonResourceProvider(accountSvr));
+        resourceProviders.add(new SingletonResourceProvider(itinerarySvr));
+        resourceProviders.add(new SingletonResourceProvider(productSvr));
+        resourceProviders.add(new SingletonResourceProvider(new ResourceService()));
+        resourceProviders.add(new SingletonResourceProvider(new PlatformService()));
+
+        CrossOriginResourceSharingFilter corsFilter = new CrossOriginResourceSharingFilter();
+        corsFilter.setMaxAge(60);
+        corsFilter.setAllowCredentials(true);
+        corsFilter.setAllowOrigins(Arrays.asList(ServiceConfigurationProvider.ALLOWED_ORIGINS));
 
         sf.setResourceClasses(classes);
-        sf.setResourceProviders(providers);
+        sf.setResourceProviders(resourceProviders);
         sf.setProvider(new JsrJsonpProvider());
+        sf.setProvider(corsFilter);
 
         String localIp = InetAddress.getLocalHost().getHostAddress();
         String protocol = isSecure ? HttpSchemes.HTTPS : HttpSchemes.HTTP;

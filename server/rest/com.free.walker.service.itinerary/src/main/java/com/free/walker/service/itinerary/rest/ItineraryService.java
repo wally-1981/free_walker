@@ -48,15 +48,15 @@ import com.ibm.icu.util.Calendar;
 
 /**
  * <b>ItineraryService</b> provides data access for travel proposal, itinerary
- * as well as requirment. A proposal can be added and composed by this serice by
- * adding or inserting itinerary or requirment into the proposal and updating an
+ * as well as requirement. A proposal can be added and composed by this service by
+ * adding or inserting itinerary or requirement into the proposal and updating an
  * existing requirement.<br>
  * <br>
  * Besides data access, this service can serve proposal submission, and the
  * submitted proposals can be retrieved by an agency candidate or the proposal
  * owner for grabbing or checking my proposal list. The agencies grabbed the
  * proposal will be further elected by the system automatically in the back-end.
- * Finally, by this service, the elected agencies can retrive their proposals
+ * Finally, by this service, the elected agencies can retrieve their proposals
  * for product design and then join the bidding with other elected agencies.<br>
  * <br>
  * This service supports consuming and producing data in below listed MIME

@@ -32,9 +32,48 @@ import org.eclipse.jetty.http.HttpSchemes;
 import org.eclipse.jetty.http.HttpStatus;
 
 import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.util.LocalNetworkInterfaceUtil;
+import com.ibm.icu.text.MessageFormat;
 
 public abstract class BaseConfigurationProvider implements ServiceConfigurationProvider {
     private static final Map<String, String> CREDENTIALS = new HashMap<String, String>();
+
+    private static final String PLATFORM_PROD_LOCAL_URL = MessageFormat.format("http://{0}:{1}/service/platform/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), PROD_PORT);
+    private static final String PLATFORM_PROD_LOCAL_SEC_URL = MessageFormat.format("https://{0}:{1}/service/platform/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), PROD_SEC_PORT);
+    private static final String PLATFORM_DEVO_LOCAL_URL = MessageFormat.format("http://{0}:{1}/service/platform/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), DEVO_PORT);
+    private static final String PLATFORM_DEVO_LOCAL_SEC_URL = MessageFormat.format("https://{0}:{1}/service/platform/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), DEVO_SEC_PORT);
+
+    private static final String ITINERARY_PROD_LOCAL_URL = MessageFormat.format("http://{0}:{1}/service/itinerary/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), PROD_PORT);
+    private static final String ITINERARY_PROD_LOCAL_SEC_URL = MessageFormat.format("https://{0}:{1}/service/itinerary/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), PROD_SEC_PORT);
+    private static final String ITINERARY_DEVO_LOCAL_URL = MessageFormat.format("http://{0}:{1}/service/itinerary/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), DEVO_PORT);
+    private static final String ITINERARY_DEVO_LOCAL_SEC_URL = MessageFormat.format("https://{0}:{1}/service/itinerary/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), DEVO_SEC_PORT);
+
+    private static final String PRODUCT_PROD_LOCAL_URL = MessageFormat.format("http://{0}:{1}/service/product/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), PROD_PORT);
+    private static final String PRODUCT_PROD_LOCAL_SEC_URL = MessageFormat.format("https://{0}:{1}/service/product/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), PROD_SEC_PORT);
+    private static final String PRODUCT_DEVO_LOCAL_URL = MessageFormat.format("http://{0}:{1}/service/product/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), DEVO_PORT);
+    private static final String PRODUCT_DEVO_LOCAL_SEC_URL = MessageFormat.format("https://{0}:{1}/service/product/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), DEVO_SEC_PORT);
+
+    private static final String ACCOUNT_PROD_LOCAL_URL = MessageFormat.format("http://{0}:{1}/service/account/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), PROD_PORT);
+    private static final String ACCOUNT_PROD_LOCAL_SEC_URL = MessageFormat.format("https://{0}:{1}/service/account/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), PROD_SEC_PORT);
+
+    private static final String RESOURCE_PROD_LOCAL_URL = MessageFormat.format("http://{0}:{1}/service/resource/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), PROD_PORT);
+    private static final String RESOURCE_PROD_LOCAL_SEC_URL = MessageFormat.format("https://{0}:{1}/service/resource/",
+        LocalNetworkInterfaceUtil.getLocalIPAddress(), PROD_SEC_PORT);
 
     static {
         CREDENTIALS.put(Introspection.DefaultAccounts.ADMIN_ACCOUNT, "passw0rd");
@@ -126,15 +165,15 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
 
     public String getProdServiceUrl(Class<?> aClass) {
         if (ProductService.class.equals(aClass)) {
-            return ServiceConfigurationProvider.PRODUCT_PROD_LOCAL_URL;
+            return PRODUCT_PROD_LOCAL_URL;
         } else if (ItineraryService.class.equals(aClass)) {
-            return ServiceConfigurationProvider.ITINERARY_PROD_LOCAL_URL;
+            return ITINERARY_PROD_LOCAL_URL;
         } else if (PlatformService.class.equals(aClass)) {
-            return ServiceConfigurationProvider.PLATFORM_PROD_LOCAL_URL;
+            return PLATFORM_PROD_LOCAL_URL;
         } else if (AccountService.class.equals(aClass)) {
-            return ServiceConfigurationProvider.ACCOUNT_PROD_LOCAL_URL;
+            return ACCOUNT_PROD_LOCAL_URL;
         } else if (ResourceService.class.equals(aClass)) {
-            return ServiceConfigurationProvider.RESOURCE_PROD_LOCAL_URL;
+            return RESOURCE_PROD_LOCAL_URL;
         } else {
             throw new IllegalArgumentException();
         }
@@ -142,11 +181,11 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
 
     public String getDevoServiceUrl(Class<?> aClass) {
         if (ProductService.class.equals(aClass)) {
-            return ServiceConfigurationProvider.PRODUCT_DEVO_LOCAL_URL;
+            return PRODUCT_DEVO_LOCAL_URL;
         } else if (ItineraryService.class.equals(aClass)) {
-            return ServiceConfigurationProvider.ITINERARY_DEVO_LOCAL_URL;
+            return ITINERARY_DEVO_LOCAL_URL;
         } else if (PlatformService.class.equals(aClass)) {
-            return ServiceConfigurationProvider.PLATFORM_DEVO_LOCAL_URL;
+            return PLATFORM_DEVO_LOCAL_URL;
         } else {
             throw new IllegalArgumentException();
         }
@@ -154,15 +193,15 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
 
     public String getProdSecureServiceUrl(Class<?> aClass) {
         if (ProductService.class.equals(aClass)) {
-            return ServiceConfigurationProvider.PRODUCT_PROD_LOCAL_SEC_URL;
+            return PRODUCT_PROD_LOCAL_SEC_URL;
         } else if (ItineraryService.class.equals(aClass)) {
-            return ServiceConfigurationProvider.ITINERARY_PROD_LOCAL_SEC_URL;
+            return ITINERARY_PROD_LOCAL_SEC_URL;
         } else if (PlatformService.class.equals(aClass)) {
-            return ServiceConfigurationProvider.PLATFORM_PROD_LOCAL_SEC_URL;
+            return PLATFORM_PROD_LOCAL_SEC_URL;
         } else if (AccountService.class.equals(aClass)) {
-            return ServiceConfigurationProvider.ACCOUNT_PROD_LOCAL_SEC_URL;
+            return ACCOUNT_PROD_LOCAL_SEC_URL;
         } else if (ResourceService.class.equals(aClass)) {
-            return ServiceConfigurationProvider.RESOURCE_PROD_LOCAL_SEC_URL;
+            return RESOURCE_PROD_LOCAL_SEC_URL;
         } else {
             throw new IllegalArgumentException();
         }
@@ -170,11 +209,11 @@ public abstract class BaseConfigurationProvider implements ServiceConfigurationP
 
     public String getDevoSecureServiceUrl(Class<?> aClass) {
         if (ProductService.class.equals(aClass)) {
-            return ServiceConfigurationProvider.PRODUCT_DEVO_LOCAL_SEC_URL;
+            return PRODUCT_DEVO_LOCAL_SEC_URL;
         } else if (ItineraryService.class.equals(aClass)) {
-            return ServiceConfigurationProvider.ITINERARY_DEVO_LOCAL_SEC_URL;
+            return ITINERARY_DEVO_LOCAL_SEC_URL;
         } else if (PlatformService.class.equals(aClass)) {
-            return ServiceConfigurationProvider.PLATFORM_DEVO_LOCAL_SEC_URL;
+            return PLATFORM_DEVO_LOCAL_SEC_URL;
         } else {
             throw new IllegalArgumentException();
         }
