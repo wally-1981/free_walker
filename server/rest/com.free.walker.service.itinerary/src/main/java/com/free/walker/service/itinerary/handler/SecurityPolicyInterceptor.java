@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.SecurityPolicy;
+import com.free.walker.service.itinerary.rest.ServiceConfigurationProvider;
 import com.free.walker.service.itinerary.util.UriUtil;
 
 public class SecurityPolicyInterceptor extends AbstractPhaseInterceptor<Message> {
@@ -32,6 +33,10 @@ public class SecurityPolicyInterceptor extends AbstractPhaseInterceptor<Message>
     }
 
     public void handleMessage(Message message) throws Fault {
+        if (!ServiceConfigurationProvider.ENABLE_ENFORCED_SECURITY) {
+            return;
+        }
+
         HttpServletRequest request = (HttpServletRequest) message.get(AbstractHTTPDestination.HTTP_REQUEST);
         HttpServletResponse response = (HttpServletResponse) message.get(AbstractHTTPDestination.HTTP_RESPONSE);
         Method serviceMethod = (Method) message.get(Constants.SERVICE_METHOD_KEY);
