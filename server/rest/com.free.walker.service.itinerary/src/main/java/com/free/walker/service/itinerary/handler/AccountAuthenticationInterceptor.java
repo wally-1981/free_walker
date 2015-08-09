@@ -73,11 +73,11 @@ public class AccountAuthenticationInterceptor extends AbstractPhaseInterceptor<M
                 throw fault;
             }
 
-            if (HttpSchemes.HTTP.equalsIgnoreCase(serviceUri.getScheme())
-                && ServiceConfigurationProvider.ENABLE_ENFORCED_SECURITY) {
+            if (HttpSchemes.HTTP.equalsIgnoreCase(serviceUri.getScheme())) {
                 String secureServiceUri;
                 try {
-                    secureServiceUri = UriUtil.ensureSecureUri(serviceUri).toString();
+                    secureServiceUri = UriUtil.ensureSecureUri(serviceUri,
+                        ServiceConfigurationProvider.ENABLE_ENFORCED_SECURITY).toString();
                 } catch (URISyntaxException e) {
                     Fault fault = new Fault(e);
                     fault.setStatusCode(Status.BAD_REQUEST.getStatusCode());

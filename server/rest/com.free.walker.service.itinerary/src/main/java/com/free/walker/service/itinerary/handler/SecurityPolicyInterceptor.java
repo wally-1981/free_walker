@@ -33,10 +33,6 @@ public class SecurityPolicyInterceptor extends AbstractPhaseInterceptor<Message>
     }
 
     public void handleMessage(Message message) throws Fault {
-        if (!ServiceConfigurationProvider.ENABLE_ENFORCED_SECURITY) {
-            return;
-        }
-
         HttpServletRequest request = (HttpServletRequest) message.get(AbstractHTTPDestination.HTTP_REQUEST);
         HttpServletResponse response = (HttpServletResponse) message.get(AbstractHTTPDestination.HTTP_RESPONSE);
         Method serviceMethod = (Method) message.get(Constants.SERVICE_METHOD_KEY);
@@ -56,7 +52,8 @@ public class SecurityPolicyInterceptor extends AbstractPhaseInterceptor<Message>
             if (HttpSchemes.HTTP.equalsIgnoreCase(serviceUri.getScheme())) {
                 String secureServiceUri;
                 try {
-                    secureServiceUri = UriUtil.ensureSecureUri(serviceUri).toString();
+                    secureServiceUri = UriUtil.ensureSecureUri(serviceUri,
+                        ServiceConfigurationProvider.ENABLE_ENFORCED_SECURITY).toString();
                 } catch (URISyntaxException e) {
                     Fault fault = new Fault(e);
                     fault.setStatusCode(Status.BAD_REQUEST.getStatusCode());
