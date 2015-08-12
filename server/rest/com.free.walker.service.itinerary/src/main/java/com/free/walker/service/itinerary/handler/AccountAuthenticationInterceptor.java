@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
-import com.free.walker.service.itinerary.rest.ServiceConfigurationProvider;
 import com.free.walker.service.itinerary.util.UriUtil;
 
 public class AccountAuthenticationInterceptor extends AbstractPhaseInterceptor<Message> {
@@ -76,8 +75,7 @@ public class AccountAuthenticationInterceptor extends AbstractPhaseInterceptor<M
             if (HttpSchemes.HTTP.equalsIgnoreCase(serviceUri.getScheme())) {
                 String secureServiceUri;
                 try {
-                    secureServiceUri = UriUtil.ensureSecureUri(serviceUri,
-                        ServiceConfigurationProvider.ENABLE_ENFORCED_SECURITY).toString();
+                    secureServiceUri = UriUtil.ensureSecureUri(serviceUri).toString();
                 } catch (URISyntaxException e) {
                     Fault fault = new Fault(e);
                     fault.setStatusCode(Status.BAD_REQUEST.getStatusCode());

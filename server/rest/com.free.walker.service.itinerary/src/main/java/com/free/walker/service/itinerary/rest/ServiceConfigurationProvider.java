@@ -9,8 +9,6 @@ public interface ServiceConfigurationProvider {
     public static final String DEVO_PORT = "9010";
     public static final String DEVO_SEC_PORT = "9011";
 
-    public static final boolean ENABLE_ENFORCED_SECURITY = false;
-
     public static final String[] ALLOWED_ORIGINS = new String[] {
         "http://localhost",
         "https://localhost"

@@ -984,7 +984,7 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
 
     @After
     public void after() {
-        for (int i = 0; i < agencyIds.size(); i++) {
+        for (int i = 0; agencyIds != null && i < agencyIds.size(); i++) {
             HttpDelete delete = new HttpDelete();
 
             try {

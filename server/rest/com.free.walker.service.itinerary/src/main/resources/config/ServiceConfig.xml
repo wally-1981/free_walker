@@ -14,20 +14,20 @@
         <httpj:engine port="9001">
             <httpj:tlsServerParameters>
                 <sec:keyManagers keyPassword="skpass">
-                <sec:keyStore type="JKS" password="sspass" file="keystore/ServiceKeystore.jks"/>
-            </sec:keyManagers>
-            <sec:trustManagers>
-                <sec:keyStore type="JKS" password="sspass" file="keystore/ServiceKeystore.jks"/>
-            </sec:trustManagers>
-            <sec:cipherSuitesFilter>
-                <sec:include>.*_EXPORT_.*</sec:include>
-                <sec:include>.*_EXPORT1024_.*</sec:include>
-                <sec:include>.*_WITH_DES_.*</sec:include>
-                <sec:include>.*_WITH_AES_.*</sec:include>
-                <sec:include>.*_WITH_NULL_.*</sec:include>
-                <sec:exclude>.*_DH_anon_.*</sec:exclude>
-            </sec:cipherSuitesFilter>
-            <sec:clientAuthentication want="true" required="true"/>
+                    <sec:keyStore type="JKS" password="sspass" file="keystore/ServiceKeystore.jks"/>
+                </sec:keyManagers>
+                <sec:trustManagers>
+                    <sec:keyStore type="JKS" password="sspass" file="keystore/ServiceKeystore.jks"/>
+                </sec:trustManagers>
+                <sec:cipherSuitesFilter>
+                    <sec:include>.*_EXPORT_.*</sec:include>
+                    <sec:include>.*_EXPORT1024_.*</sec:include>
+                    <sec:include>.*_WITH_DES_.*</sec:include>
+                    <sec:include>.*_WITH_AES_.*</sec:include>
+                    <sec:include>.*_WITH_NULL_.*</sec:include>
+                    <sec:exclude>.*_DH_anon_.*</sec:exclude>
+                </sec:cipherSuitesFilter>
+                <sec:clientAuthentication want="false" required="false"/>
             </httpj:tlsServerParameters>
         </httpj:engine>
     </httpj:engine-factory>
@@ -36,20 +36,20 @@
         <httpj:engine port="9011">
             <httpj:tlsServerParameters>
                 <sec:keyManagers keyPassword="skpass">
-                <sec:keyStore type="JKS" password="sspass" file="keystore/ServiceKeystore.jks"/>
-            </sec:keyManagers>
-            <sec:trustManagers>
-                <sec:keyStore type="JKS" password="sspass" file="keystore/ServiceKeystore.jks"/>
-            </sec:trustManagers>
-            <sec:cipherSuitesFilter>
-                <sec:include>.*_EXPORT_.*</sec:include>
-                <sec:include>.*_EXPORT1024_.*</sec:include>
-                <sec:include>.*_WITH_DES_.*</sec:include>
-                <sec:include>.*_WITH_AES_.*</sec:include>
-                <sec:include>.*_WITH_NULL_.*</sec:include>
-                <sec:exclude>.*_DH_anon_.*</sec:exclude>
-            </sec:cipherSuitesFilter>
-            <sec:clientAuthentication want="true" required="true"/>
+                    <sec:keyStore type="JKS" password="sspass" file="keystore/ServiceKeystore.jks"/>
+                </sec:keyManagers>
+                <sec:trustManagers>
+                    <sec:keyStore type="JKS" password="sspass" file="keystore/ServiceKeystore.jks"/>
+                </sec:trustManagers>
+                <sec:cipherSuitesFilter>
+                    <sec:include>.*_EXPORT_.*</sec:include>
+                    <sec:include>.*_EXPORT1024_.*</sec:include>
+                    <sec:include>.*_WITH_DES_.*</sec:include>
+                    <sec:include>.*_WITH_AES_.*</sec:include>
+                    <sec:include>.*_WITH_NULL_.*</sec:include>
+                    <sec:exclude>.*_DH_anon_.*</sec:exclude>
+                </sec:cipherSuitesFilter>
+                <sec:clientAuthentication want="false" required="false"/>
             </httpj:tlsServerParameters>
         </httpj:engine>
     </httpj:engine-factory>
