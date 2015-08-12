@@ -26,6 +26,7 @@ public class Introspection {
         public static final String ITEMS = "items";
         public static final String TAGS = "tags";
         public static final String AGENCIES = "agencies";
+        public static final String CITIES = "cities";
 
         public static final String STATUS = "status";
         public static final String CITY = "city";

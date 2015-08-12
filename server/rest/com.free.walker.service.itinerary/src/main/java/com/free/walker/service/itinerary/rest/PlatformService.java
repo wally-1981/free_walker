@@ -429,7 +429,7 @@ public class PlatformService {
                 Character leadingChar = new Character(Character.toUpperCase(city.getPinyinName().charAt(0)));
                 if (!leadingChar.equals(indexingKey)) {
                     if (cityIndexBuilder != null) {
-                        cityIndexBuilder.add(Introspection.JSONKeys.CITY, indexCitiesBuilder);
+                        cityIndexBuilder.add(Introspection.JSONKeys.CITIES, indexCitiesBuilder);
                         citiesBuilder.add(cityIndexBuilder);
                     }
                     cityIndexBuilder = Json.createObjectBuilder();
