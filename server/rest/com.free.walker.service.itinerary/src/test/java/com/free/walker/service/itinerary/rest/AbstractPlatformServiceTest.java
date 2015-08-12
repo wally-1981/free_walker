@@ -266,8 +266,8 @@ public abstract class AbstractPlatformServiceTest extends BaseConfigurationProvi
                     assertNotNull(lastGroup);
                     assertEquals("A", firstGroup.getString(Introspection.JSONKeys.ABBR));
                     assertEquals("Y", lastGroup.getString(Introspection.JSONKeys.ABBR));
-                    JsonArray citiesWithLeadingA = firstGroup.getJsonArray(Introspection.JSONKeys.CITY);
-                    JsonArray citiesWithLeadingY = lastGroup.getJsonArray(Introspection.JSONKeys.CITY);
+                    JsonArray citiesWithLeadingA = firstGroup.getJsonArray(Introspection.JSONKeys.CITIES);
+                    JsonArray citiesWithLeadingY = lastGroup.getJsonArray(Introspection.JSONKeys.CITIES);
                     assertNotNull(citiesWithLeadingA);
                     assertNotNull(citiesWithLeadingY);
                     assertEquals(20, citiesWithLeadingA.size());
@@ -321,8 +321,8 @@ public abstract class AbstractPlatformServiceTest extends BaseConfigurationProvi
                     assertNotNull(lastGroup);
                     assertEquals("A", firstGroup.getString(Introspection.JSONKeys.ABBR));
                     assertEquals("X", lastGroup.getString(Introspection.JSONKeys.ABBR));
-                    JsonArray citiesWithLeadingA = firstGroup.getJsonArray(Introspection.JSONKeys.CITY);
-                    JsonArray citiesWithLeadingX = lastGroup.getJsonArray(Introspection.JSONKeys.CITY);
+                    JsonArray citiesWithLeadingA = firstGroup.getJsonArray(Introspection.JSONKeys.CITIES);
+                    JsonArray citiesWithLeadingX = lastGroup.getJsonArray(Introspection.JSONKeys.CITIES);
                     assertNotNull(citiesWithLeadingA);
                     assertNotNull(citiesWithLeadingX);
                     assertEquals(1, citiesWithLeadingA.size());
@@ -376,8 +376,8 @@ public abstract class AbstractPlatformServiceTest extends BaseConfigurationProvi
                     assertNotNull(lastGroup);
                     assertEquals("A", firstGroup.getString(Introspection.JSONKeys.ABBR));
                     assertEquals("Y", lastGroup.getString(Introspection.JSONKeys.ABBR));
-                    JsonArray citiesWithLeadingA = firstGroup.getJsonArray(Introspection.JSONKeys.CITY);
-                    JsonArray citiesWithLeadingY = lastGroup.getJsonArray(Introspection.JSONKeys.CITY);
+                    JsonArray citiesWithLeadingA = firstGroup.getJsonArray(Introspection.JSONKeys.CITIES);
+                    JsonArray citiesWithLeadingY = lastGroup.getJsonArray(Introspection.JSONKeys.CITIES);
                     assertNotNull(citiesWithLeadingA);
                     assertNotNull(citiesWithLeadingY);
                     assertEquals(21, citiesWithLeadingA.size());
