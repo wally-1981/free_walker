@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -258,6 +259,58 @@ public class PlatformService {
             requirementSampleDataBuilder.add(trafficRequirementC.toJSON());
             requirementSampleDataBuilder.add(trafficRequirementD.toJSON());
             requirementSampleDataBuilder.add(trafficRequirementE.toJSON());
+
+            {
+                JsonObjectBuilder departureBuilder = Json.createObjectBuilder();
+                JsonObjectBuilder deptCityBuilder = Json.createObjectBuilder();
+                deptCityBuilder.add(Introspection.JSONKeys.UUID, "84844276-3036-47dd-90e0-f095cfa98da5");
+                departureBuilder.add(Introspection.JSONKeys.CITY, deptCityBuilder);
+
+                JsonObjectBuilder returnBuilder = Json.createObjectBuilder();
+                JsonObjectBuilder retnCityBuilder = Json.createObjectBuilder();
+                retnCityBuilder.add(Introspection.JSONKeys.UUID, "02515d41-f141-4175-9a11-9e68b9cfe687");
+                returnBuilder.add(Introspection.JSONKeys.CITY, retnCityBuilder);
+
+                JsonObjectBuilder proposalBuilder = Json.createObjectBuilder();
+                proposalBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL);
+                proposalBuilder.add(Introspection.JSONKeys.AUTHOR, "3b3e4dcf-e353-4418-adfb-3c9af7a54992");
+                proposalBuilder.add(Introspection.JSONKeys.TITLE, "世界游（测试）");
+                proposalBuilder.add(Introspection.JSONKeys.UNIT, 5);
+                proposalBuilder.add(Introspection.JSONKeys.NOTE, "旅行偏好");
+                proposalBuilder.add(Introspection.JSONKeys.DEPARTURE, departureBuilder);
+                proposalBuilder.add(Introspection.JSONKeys.RETURN, returnBuilder);
+                proposalBuilder.add(Introspection.JSONKeys.DEPARTURE_DATETIME, new Date().getTime());
+                proposalBuilder.add(Introspection.JSONKeys.RETURN_DATETIME, new Date().getTime());
+
+                JsonArrayBuilder requirementsBuilder = Json.createArrayBuilder();
+                JsonObjectBuilder requirementBuilder1 = Json.createObjectBuilder();
+                JsonObjectBuilder requirementBuilder2 = Json.createObjectBuilder();
+                {
+                    requirementBuilder1.add(Introspection.JSONKeys.TYPE,
+                        Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT);
+                    requirementBuilder1.add(Introspection.JSONKeys.SUB_TYPE,
+                        Introspection.JSONValues.SUB_TYPE_DESTINATION);
+                    JsonObjectBuilder destinationBuilder = Json.createObjectBuilder();
+                    JsonObjectBuilder destCityBuilder = Json.createObjectBuilder();
+                    destCityBuilder.add(Introspection.JSONKeys.UUID, "b4cef473-1ad7-46cd-8ea5-d50bfa3ca033");
+                    destinationBuilder.add(Introspection.JSONKeys.CITY, destCityBuilder);
+                    requirementBuilder1.add(Introspection.JSONKeys.DESTINATION, destinationBuilder);
+
+                    requirementBuilder2.add(Introspection.JSONKeys.TYPE,
+                        Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT);
+                    requirementBuilder2.add(Introspection.JSONKeys.SUB_TYPE,
+                        Introspection.JSONValues.SUB_TYPE_DESTINATION);
+                    destinationBuilder.add(Introspection.JSONKeys.LOCATION, "b4cef473-1ad7-46cd-8ea5-d50bfa3ca033");
+                    destinationBuilder.add(Introspection.JSONKeys.LOCATION_TYPE, Introspection.JSONValues.CITY);
+                    requirementBuilder2.add(Introspection.JSONKeys.DESTINATION, destinationBuilder);
+                }
+                requirementsBuilder.add(requirementBuilder1);
+                requirementsBuilder.add(requirementBuilder2);
+
+                proposalBuilder.add(Introspection.JSONKeys.REQUIREMENTS, requirementsBuilder);
+
+                requirementSampleDataBuilder.add(proposalBuilder);
+            }
 
             if (section == null) {
                 resBuilder.add("requirement_sample_data", requirementSampleDataBuilder.build());

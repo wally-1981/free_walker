@@ -26,8 +26,10 @@ public class DestinationRequirementTest {
         assertNotNull(jo.getString(Introspection.JSONKeys.UUID));
         assertEquals(Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT, jo.getString(Introspection.JSONKeys.TYPE));
         assertEquals(DestinationRequirement.SUB_TYPE, jo.getString(Introspection.JSONKeys.SUB_TYPE));
-        assertEquals(uuid.toString(), jo.getString(Introspection.JSONKeys.LOCATION));
-        assertEquals(LocationType.CITY.name(), jo.getString(Introspection.JSONKeys.LOCATION_TYPE));
+        assertNotNull(jo.getJsonObject(Introspection.JSONKeys.DESTINATION));
+        JsonObject destination = jo.getJsonObject(Introspection.JSONKeys.DESTINATION);
+        assertEquals(uuid.toString(), destination.getString(Introspection.JSONKeys.LOCATION));
+        assertEquals(LocationType.CITY.name(), destination.getString(Introspection.JSONKeys.LOCATION_TYPE));
         assertEquals(false, destinationRequirement.isItinerary());
         assertEquals(false, destinationRequirement.isProposal());
     }
@@ -40,8 +42,10 @@ public class DestinationRequirementTest {
         requirement.add(Introspection.JSONKeys.UUID, uuid.toString());
         requirement.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT);
         requirement.add(Introspection.JSONKeys.SUB_TYPE, DestinationRequirement.SUB_TYPE);
-        requirement.add(Introspection.JSONKeys.LOCATION, location.toString());
-        requirement.add(Introspection.JSONKeys.LOCATION_TYPE, LocationType.CITY.name());
+        JsonObjectBuilder destination = Json.createObjectBuilder();
+        destination.add(Introspection.JSONKeys.LOCATION, location.toString());
+        destination.add(Introspection.JSONKeys.LOCATION_TYPE, LocationType.CITY.name());
+        requirement.add(Introspection.JSONKeys.DESTINATION, destination);
         DestinationRequirement destinationRequirement = new DestinationRequirement().fromJSON(requirement.build());
         assertNotNull(destinationRequirement);
         assertEquals(uuid, destinationRequirement.getUUID());

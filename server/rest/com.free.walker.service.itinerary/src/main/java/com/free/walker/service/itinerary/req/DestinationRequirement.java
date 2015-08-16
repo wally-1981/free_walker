@@ -42,18 +42,21 @@ public class DestinationRequirement extends BaseTravelRequirement implements Tra
         resBuilder.add(Introspection.JSONKeys.UUID, getUUID().toString());
         resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT);
         resBuilder.add(Introspection.JSONKeys.SUB_TYPE, SUB_TYPE);
-        resBuilder.add(Introspection.JSONKeys.LOCATION, travelLocation.getUuid());
+
+        JsonObjectBuilder destinationBuilder = Json.createObjectBuilder();
+        destinationBuilder.add(Introspection.JSONKeys.LOCATION, travelLocation.getUuid());
         if (travelLocation.isCity()) {
-            resBuilder.add(Introspection.JSONKeys.LOCATION_TYPE, LocationType.CITY.name());
+            destinationBuilder.add(Introspection.JSONKeys.LOCATION_TYPE, LocationType.CITY.name());
         } else if (travelLocation.isProvince()) {
-            resBuilder.add(Introspection.JSONKeys.PROVINCE, LocationType.PROVINCE.name());
+            destinationBuilder.add(Introspection.JSONKeys.PROVINCE, LocationType.PROVINCE.name());
         } else if (travelLocation.isCountry()) {
-            resBuilder.add(Introspection.JSONKeys.COUNTRY, LocationType.COUNTRY.name());
+            destinationBuilder.add(Introspection.JSONKeys.COUNTRY, LocationType.COUNTRY.name());
         } else if (travelLocation.isContinent()) {
-            resBuilder.add(Introspection.JSONKeys.CONTINENT, LocationType.CONTINENT.name());
+            destinationBuilder.add(Introspection.JSONKeys.CONTINENT, LocationType.CONTINENT.name());
         } else {
             ;
         }
+        resBuilder.add(Introspection.JSONKeys.DESTINATION, destinationBuilder);
 
         return resBuilder.build();
     }

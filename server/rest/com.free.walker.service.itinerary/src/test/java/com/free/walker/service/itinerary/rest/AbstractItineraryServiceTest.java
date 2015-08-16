@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Calendar;
+import java.util.Date;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -1003,8 +1003,8 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
         proposalBuilder.add(Introspection.JSONKeys.NOTE, "旅行偏好");
         proposalBuilder.add(Introspection.JSONKeys.DEPARTURE, departureBuilder);
         proposalBuilder.add(Introspection.JSONKeys.RETURN, returnBuilder);
-        proposalBuilder.add(Introspection.JSONKeys.DEPARTURE_DATETIME, Calendar.getInstance().getTime().getTime());
-        proposalBuilder.add(Introspection.JSONKeys.RETURN_DATETIME, Calendar.getInstance().getTime().getTime());
+        proposalBuilder.add(Introspection.JSONKeys.DEPARTURE_DATETIME, new Date().getTime());
+        proposalBuilder.add(Introspection.JSONKeys.RETURN_DATETIME, new Date().getTime());
 
         JsonArrayBuilder requirementsBuilder = Json.createArrayBuilder();
         JsonObjectBuilder requirementBuilder1 = Json.createObjectBuilder();
