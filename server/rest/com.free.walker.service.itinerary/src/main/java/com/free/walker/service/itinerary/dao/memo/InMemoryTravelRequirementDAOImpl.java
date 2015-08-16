@@ -71,6 +71,13 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
             if (itineraryRequirements.get(i).isItinerary()) {
                 requirements.add(itineraryRequirements.get(i));
                 travelRequirements.put(itineraryRequirements.get(i).getUUID(), itineraryRequirements.get(i));
+            } else {
+                if (itineraryRequirements.get(i).isProposalRequirement()) {
+                    requirements.add(itineraryRequirements.get(i));
+                    travelRequirements.put(itineraryRequirements.get(i).getUUID(), itineraryRequirements.get(i));
+                } else {
+                    continue;
+                }
             }
         }
         itineraryRequirements.clear();

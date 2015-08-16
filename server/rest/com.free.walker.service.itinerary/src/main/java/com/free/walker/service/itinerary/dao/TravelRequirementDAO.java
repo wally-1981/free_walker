@@ -80,9 +80,9 @@ public interface TravelRequirementDAO extends HealthyDAO {
 
     /**
      * Add the requirement to the specified proposal. The requirement can be an
-     * itinernary or an ordinary requirement. If the requirement is an
+     * itinerary or an ordinary requirement. If the requirement is an
      * itinerary, it will be made as the last itinerary of the proposal. If the
-     * requiremnt is an ordinary requirement, it will be made as an ordinary
+     * requirement is an ordinary requirement, it will be made as an ordinary
      * requirement to the latest itinerary.
      * 
      * @param travelProposalId

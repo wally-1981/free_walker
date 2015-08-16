@@ -98,8 +98,8 @@ public class ItineraryService {
      * Retrieve proposals submitted by the current requester within one week.<br>
      * <br>
      * The requester can specify <i>?pastDays=n</i> for retrieving old proposals
-     * submitted by him/her. The max n can be set to two weeks, aka 14 days; or
-     * the query will be falled back to 7 days.<br>
+     * submitted by him/her. The max n can be set to 14 days; or the query will
+     * fell back to 7 days.<br>
      */
     @GET
     @Context
@@ -174,7 +174,7 @@ public class ItineraryService {
     /**
      * <b>POST</b><br>
      * <br>
-     * Submit the porposal by the given proposal identifier in terms of the
+     * Submit the proposal by the given proposal identifier in terms of the
      * requester. The proposal will be submitted to server for agency election,
      * after which the proposal will be open for bidding for elected agencies
      * only, and only the agencies in the first group will be opened by the

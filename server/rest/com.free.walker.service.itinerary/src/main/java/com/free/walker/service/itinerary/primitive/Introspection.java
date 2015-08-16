@@ -4,11 +4,13 @@ import org.elasticsearch.search.sort.SortOrder;
 
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
+import com.free.walker.service.itinerary.basic.TravelLocation.LocationType;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.product.HotelItem;
 import com.free.walker.service.itinerary.product.ResortItem;
 import com.free.walker.service.itinerary.product.TrafficItem;
 import com.free.walker.service.itinerary.product.TrivItem;
+import com.free.walker.service.itinerary.req.DestinationRequirement;
 import com.free.walker.service.itinerary.req.HotelRequirement;
 import com.free.walker.service.itinerary.req.ResortRequirement;
 import com.free.walker.service.itinerary.req.TrafficRequirement;
@@ -79,6 +81,7 @@ public class Introspection {
         public static final String TITLE = "title";
         public static final String BUDGET = "budget";
         public static final String UNIT = "unit";
+        public static final String NOTE = "note";
         public static final String SUMMARY = "summary";
         public static final String LOCATION = "location";
         public static final String LOCATION_TYPE = "location_type";
@@ -220,9 +223,16 @@ public class Introspection {
         public static final ProductStatus ING_PRODUCT = ProductStatus.ING_PRODUCT;
         public static final ProductStatus ARCHIVED_PRODUCT = ProductStatus.ARCHIVED_PRODUCT;
 
+        public static final String CITY = LocationType.CITY.name();
+        public static final String PROVINCE = LocationType.PROVINCE.name();
+        public static final String COUNTRY = LocationType.COUNTRY.name();
+        public static final String REGION = LocationType.REGION.name();
+        public static final String CONTINENT = LocationType.CONTINENT.name();
+
         public static final String SUB_TYPE_HOTEL = HotelRequirement.SUB_TYPE;
         public static final String SUB_TYPE_TRAFFIC = TrafficRequirement.SUB_TYPE;
         public static final String SUB_TYPE_RESORT = ResortRequirement.SUB_TYPE;
+        public static final String SUB_TYPE_DESTINATION = DestinationRequirement.SUB_TYPE;
 
         public static final String SUB_TYPE_HOTEL_ITEM = HotelItem.SUB_TYPE;
         public static final String SUB_TYPE_TRAFFIC_ITEM = TrafficItem.SUB_TYPE;

@@ -84,20 +84,29 @@ public class DestinationRequirement extends BaseTravelRequirement implements Tra
                 Introspection.JSONKeys.SUB_TYPE, subType));
         }
 
-        String location = jsObject.getString(Introspection.JSONKeys.LOCATION);
-        String locationTypeStr = jsObject.getString(Introspection.JSONKeys.LOCATION_TYPE);
-        LocationType locationType = LocationType.valueOf(locationTypeStr);
-        if (location != null && locationType != null) {
-            if (LocationType.CONTINENT.equals(locationType)) {
-                this.travelLocation = new TravelLocation(Integer.valueOf(location));
+        JsonObject destination = jsObject.getJsonObject(Introspection.JSONKeys.DESTINATION);
+        if (destination != null) {
+            String location = destination.getString(Introspection.JSONKeys.LOCATION, null);
+            String locationTypeStr = destination.getString(Introspection.JSONKeys.LOCATION_TYPE, null);
+            if (location != null && locationTypeStr != null) {
+                LocationType locationType = LocationType.valueOf(locationTypeStr);
+                if (LocationType.CONTINENT.equals(locationType)) {
+                    this.travelLocation = new TravelLocation(Integer.valueOf(location));
+                } else {
+                    this.travelLocation = new TravelLocation(UuidUtil.fromUuidStr(location), locationType);
+                }
             } else {
-                this.travelLocation = new TravelLocation(UuidUtil.fromUuidStr(location), locationType);
-            }
+                this.travelLocation = new TravelLocation().fromJSON(destination);
+            }            
         } else {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
-                Introspection.JSONKeys.LOCATION, location + ":" + locationTypeStr));
+                Introspection.JSONKeys.DESTINATION, destination));
         }
 
         return this;
+    }
+
+    public boolean isProposalRequirement() {
+        return true;
     }
 }

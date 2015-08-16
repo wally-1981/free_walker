@@ -10,5 +10,7 @@ public interface TravelRequirement extends Serializable, Renewable {
 
     public boolean isProposal();
 
+    public boolean isProposalRequirement();
+
     public UUID getUUID();
 }

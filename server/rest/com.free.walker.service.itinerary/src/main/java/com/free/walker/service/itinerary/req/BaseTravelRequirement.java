@@ -19,6 +19,10 @@ public abstract class BaseTravelRequirement implements TravelRequirement {
         return false;
     }
 
+    public boolean isProposalRequirement() {
+        return false;
+    }
+
     public UUID getUUID() {
         return requirementId;
     }
