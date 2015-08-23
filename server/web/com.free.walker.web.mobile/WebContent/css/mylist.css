@@ -1,0 +1,61 @@
+#mylist-frame{
+    background-color: whitesmoke;
+    font-size : 15px;
+}
+#mylist-frame .info-heading{
+    height: 35px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    font-size: 15px;
+}
+
+div.fixed-height-content{
+    height: 45px;
+    padding: 13px;
+    background-color: white;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+#mylist-profile{
+    height: 90px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: white;
+}
+
+#mylist-profile img{
+    height: 80px;
+    width: 80px;
+}
+
+.itineraries {
+	background-color: white;
+}
+
+
+.upsidedown {
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+
+.menu-place-holder {
+	height: 45px;
+}
+
+hr {
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
+
+.highlighted {
+	color: rgb(245, 146, 63);
+}

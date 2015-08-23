@@ -1,0 +1,88 @@
+<header class="container">
+    <div id="wl-input-search-dest" class="relative row">
+        <div class="col-xs-12">
+            <input type="text" placeholder="{{search_placeHolder}}" data-ng-model="destination" class="form-control" data-ng-focus="showSearch(true)">
+            <div data-ng-click="showSearch(false)"><i class="fa fa-search"></i></div>
+        </div>
+    </div>
+</header>
+<div id="recommendation_wrapper" data-ng-show="!searchShown">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <carousel interval="carousel.interval">
+                    <slide ng-repeat="slide in carousel.slides" active="slide.active">
+                        <img ng-src="{{slide.image}}" style="margin:auto;">
+                    </slide>
+                </carousel>
+            </div>
+        </div>
+    </div>
+    <div id="recommendation" class="container">
+        <div class="border-decoration"><span>欧美</span></div>
+        <div class="row">
+            <div class="col-xs-12">
+                <a href="#/preProduct?type=enrolling" class="thumbnail">
+                    <img src="images/Eiffel.jpeg" alt="...">
+                    <div class="thumbnail-desc">
+                        埃菲尔<br/>
+                        <span class="bar"></span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="border-decoration">日韩</div>
+        <div class="row">
+            <div class="col-xs-12">
+                <a href="#/preProduct?type=enrolling" class="thumbnail">
+                    <img src="images/Eiffel.jpeg" alt="...">
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="search" data-ng-show="searchShown">
+    <div id="searchWrapper">
+        <div class="container hotSpot">
+            <div class="border-decoration" style="float:left"><span>热门地区</span></div>
+            <div class="float-right" data-ng-click="showCity">更多城市<span class="border-decoration" style="margin-left:3px"></span></div>
+            <div class="row text-center" style="clear:both">
+                <div data-ng-repeat="hotCity in hotCities" class="col-xs-4"><span>{{hotCity.cityName}}</span></div>
+            </div>
+        </div>
+        <div class="container moreCondition">
+            <div class="border-decoration">出发时间</div>
+            <div class="row">
+                <div class="col-xs-4">
+                    <select class="form-control selectBox">
+                        <option value="2015">2015</option>
+                    </select>
+                </div>
+                <div class="col-xs-4">
+                    <select class="form-control selectBox">
+                        <option value="08">8</option>
+                    </select>
+                </div>
+                <div class="col-xs-4">
+                    <select class="form-control selectBox">
+                        <option value="1st">上旬</option>
+                        <option value="2nd">中旬</option>
+                        <option value="3rd">下旬</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="container searchHistory">
+            <div class="border-decoration"><span>搜索历史</span></div>
+            <ul class="row">
+                <li class="col-xs-12">厦门</li>
+            </ul>
+        </div>
+    </div>
+    <div data-ng-include="citySlector" data-ng-show="false">
+
+    </div>
+</div>
+<div class="footer_placeHolder"></div>
+
+<link rel="stylesheet" href="css/recommend.css"/>

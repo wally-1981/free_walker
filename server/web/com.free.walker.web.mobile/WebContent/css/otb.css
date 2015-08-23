@@ -1,0 +1,164 @@
+header{
+    position: fixed;
+    padding-top: 1px;
+    padding-bottom: 3px;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 1001;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 33px;
+    height: 40px;
+    color: white;
+    background-color: sandybrown;
+}
+
+header > div.row > div > i{
+    font-size: 23px;
+}
+
+footer{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height :42px;
+    z-index: 1001;
+    color: white;
+    background-color: sandybrown;
+}
+
+footer > div.row > div.nav_selected{
+    background-color: rgb(245, 146, 63);
+}
+
+footer div.row div[class*="col"] *{
+    text-align: center;
+    display: block;
+}
+
+footer div.row div[class*="col"] i:first-child{
+    font-size: 30px;
+}
+
+footer div.row div[class*="col"] span:last-child{
+    font-size: 11px;
+    line-height: 1em;
+    font-weight: lighter;
+}
+
+div.footer_placeHolder{
+    height: 62px;
+}
+
+.section-first{
+    margin-top: 40px;
+}
+
+.relative{
+    position: relative;
+}
+
+.info-heading{
+    height: 60px;
+    padding-top: 23px;
+    padding-bottom: 20px;
+    text-align: center;
+    font-size: 17px;
+    line-height: 1em;
+}
+
+.info-content{
+    height: 45px;
+    padding: 12px;
+    background-color: white;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.float-right{
+    float: right;
+}
+
+.thumbnail{
+    position: relative;
+    margin-bottom: 3px;
+}
+
+.thumbnail-desc{
+    font-style: italic;
+    color: white;
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+    height: 35%;
+    font-weight: bold;
+    background-color: hsla(203,3%,22%,0.6);
+    padding: 10px;
+}
+
+select.selectBox{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding-right: 20px;
+    background: url("../images/icon/icon_dropdown_arrow.png") right center no-repeat;
+    background-size: 20px 20px;
+    border:1px solid #e3e3e3;
+    border-top:1px solid #BABABA;
+}
+
+.bar{
+    border: 3px solid white;
+    height: 6px;
+    display: inline-block;
+    width: 100%;
+    padding:0px 8px;
+    position: relative;
+}
+
+.bar::before{
+    border: 6px solid white;
+    border-radius: 6px;
+    position: absolute;
+    left: -6px;
+    top: -6px;
+    content:'';
+}
+
+.bar::after{
+    border:6px;
+    border-left: 8px;
+    border-right: 8px;
+    border-style: solid;
+    border-color: transparent transparent transparent white;
+    position: absolute;
+    content: '';
+    right: -14px;
+    top: -6px;
+}
+
+div.statusTag{
+    position: absolute;
+    width:71px;
+    font-size:12px;
+    line-height:14px;
+    text-align:center;
+    color: white;
+    top: 14px;
+    right: -15px;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+    background-color: green;
+}
+
+ul {
+    list-style: none !important;
+    -webkit-padding-start: 0px;
+}

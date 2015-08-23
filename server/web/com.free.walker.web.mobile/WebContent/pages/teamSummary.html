@@ -1,0 +1,50 @@
+<header class="container" lh-34>
+    <div class="row text-center">
+        <div class="col-xs-12">全团汇总</div>
+    </div>
+</header>
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <a class="thumbnail">
+                <img src="images/Eiffel.jpeg" alt="...">
+                <div class="thumbnail-desc">
+                    <span>埃菲尔</span>
+                    <span class="float-right">该团总额2,5000元，佣金5%</span>
+                    <span class="bar"></span>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 info-heading">
+            <i class="fa fa-list"></i>&nbsp;项目及人员清单
+        </div>
+        <div class="col-xs-12">
+            <div class="panel-group" ng-model="product.options.activeOption" role="tablist" aria-multiselectable="true" bs-collapse>
+                <div class="panel panel-default" ng-repeat="option in product.options">
+                    <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
+                            <div bs-collapse-toggle>
+                                {{option.content}} <span class="float-right">{{option.price}}&times;{{option.quantity}}</span>
+                            </div>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse" role="tabpanel" bs-collapse-target>
+                        <div class="panel-body">
+                            <ul>
+                                <li class="member" data-ng-repeat="person in option.members">
+                                    <span style="width:5%;text-align:right">{{person.name}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <span style="width:40%;text-align:left">{{person.identifier}}</span>
+                                    <span class="float-right">{{person.quantity}}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer_placeHolder"></div>
+</div>
+<link rel="stylesheet" href="css/teamSummary.css"/>

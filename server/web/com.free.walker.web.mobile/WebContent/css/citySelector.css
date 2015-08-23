@@ -1,0 +1,91 @@
+
+div.region-switch{
+    position: fixed;
+    top: 40px;
+    left: 0px;
+    right: 0px;
+    padding-top: 5px;
+    margin-bottom: 10px;
+    background-color: whitesmoke;
+    font-size: 16px;
+    z-index: 1001;
+}
+
+div.region-switch > .row > .col-xs-12 > div > .region{
+    width:49%;
+    float: left;
+    text-align: center;
+    border: 1px solid sandybrown;
+    border-collapse: collapse;
+}
+
+div.region-switch > .row > .col-xs-12 > div > .region:first-child{
+    border-radius:8px 0px 0px 8px;
+}
+
+div.region-switch > .row > .col-xs-12 > div > .region:last-child{
+    border-radius:0px 8px 8px 0px;
+}
+
+div.region-switch > .row > .col-xs-12 > div > .region.selected{
+    background-color: sandybrown;
+    color: white;
+}
+
+div.region-switch + .section-second{
+    margin-top: 69px;
+}
+
+#domesticCities > ul{
+    list-style: none;
+    margin-bottom: 0px;
+}
+
+#domesticCities > ul > li{
+    list-style: none;
+    margin-left: 15px;
+    line-height: 35px;
+    padding-right: 5px;
+}
+
+#domesticCities > ul > div:first-child{
+    background-color: whitesmoke;
+    margin:0px -15px;
+    padding-left: 30px;
+    border: none;
+}
+
+#domesticCities > ul > li + li{
+    border-top: 1px solid whitesmoke;
+}
+
+#domesticCities > ul > li > label{
+    margin-bottom: 0px;
+    font-weight: 200;
+}
+
+#domesticCities > ul > li > i{
+    font-size: 20px;
+    line-height: 35px;
+    color: green;
+}
+
+aside#cityIndexes{
+    position: fixed;
+    width:35px;
+    right:0px;
+    top: 100px;
+    height: 200px;
+    border: none;
+}
+
+aside#cityIndexes > .cityIndex{
+    text-decoration: none;
+    border: none;
+    width: 35px;
+    display: block;
+    font-size: 12px;
+    text-align: center;
+    font-weight: bold;
+    color: sandybrown;
+}

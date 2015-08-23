@@ -1,0 +1,78 @@
+#postpay-frame{
+    background-color: whitesmoke;
+    font-size : 15px;
+}
+#postpay-frame .info-heading{
+    height: 35px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    font-size: 15px;
+}
+
+#postpay-summary-inner{
+    height: 115px;
+    padding: 13px;
+    margin-bottom: 5px;
+}
+
+#postpay-summary-inner .roundCornerBox{
+	height: 65px;
+}
+
+.itineraries {
+	 -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.itiSummary{
+	height: 60px;
+	line-height: 40px;
+}
+
+.upsidedown {
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+
+.mirror {
+    -webkit-transform: rotate(270deg);
+    -moz-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    -o-transform: rotate(270deg);
+    transform: rotate(270deg);
+}
+
+.menu-place-holder {
+	height: 45px;
+}
+
+hr {
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
+
+.roundCornerBox {
+	-webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    background-color: white;
+    padding:10px;
+    margin-bottom:5px;
+}
+
+.shadowBox{  
+  -webkit-box-shadow: 3px 3px 3px #CCC; 
+  -moz-box-shadow: 3px 3px 3px #CCC; 
+  box-shadow: 3px 3px 3px #CCC; 
+}
+
+.wrapBox {
+	word-wrap:break-word; 
+	word-break:break-all;
+	white-space:normal;
+}
+

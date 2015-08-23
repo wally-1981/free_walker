@@ -1,0 +1,31 @@
+ul.categories li{
+    line-height: 30px;
+    border-radius: 5px;
+    border: 1px solid sandybrown;
+    margin-top: 8px;
+    text-align: center;
+}
+
+div.item-list{
+    margin-top: 8px;
+    border-left: 3px solid sandybrown;
+}
+
+div.reqList{
+    background-color: whitesmoke;
+}
+
+div.reqList > div.reqItem{
+    border: 1px solid sandybrown;
+    position: relative;
+    border-radius: 8px;
+    margin: 10px 5px;
+    background-color: white;
+    width: 50%;
+    line-height: 30px;
+}
+
+ul.categories > li.active{
+    background-color: sandybrown;
+    color: white;
+}
