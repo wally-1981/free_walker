@@ -28,8 +28,10 @@ public class DestinationRequirementTest {
         assertEquals(DestinationRequirement.SUB_TYPE, jo.getString(Introspection.JSONKeys.SUB_TYPE));
         assertNotNull(jo.getJsonObject(Introspection.JSONKeys.DESTINATION));
         JsonObject destination = jo.getJsonObject(Introspection.JSONKeys.DESTINATION);
-        assertEquals(uuid.toString(), destination.getString(Introspection.JSONKeys.LOCATION));
-        assertEquals(LocationType.CITY.name(), destination.getString(Introspection.JSONKeys.LOCATION_TYPE));
+        JsonObject destinationCity = destination.getJsonObject(Introspection.JSONKeys.CITY);
+        assertNotNull(destinationCity);
+        String destinationUuid = destinationCity.getJsonArray(Introspection.JSONKeys.UUID).getString(0);
+        assertEquals(uuid.toString(), destinationUuid);
         assertEquals(false, destinationRequirement.isItinerary());
         assertEquals(false, destinationRequirement.isProposal());
     }

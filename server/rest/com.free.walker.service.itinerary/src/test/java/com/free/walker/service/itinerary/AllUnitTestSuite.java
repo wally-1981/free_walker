@@ -28,6 +28,7 @@ import com.free.walker.service.itinerary.primitive.QueryTemplateTest;
 import com.free.walker.service.itinerary.primitive.SortTypeTest;
 import com.free.walker.service.itinerary.product.BiddingTest;
 import com.free.walker.service.itinerary.product.TravelProductTest;
+import com.free.walker.service.itinerary.req.DestinationRequirementTest;
 import com.free.walker.service.itinerary.req.HotelRequirementTest;
 import com.free.walker.service.itinerary.req.ItineraryRequirementTest;
 import com.free.walker.service.itinerary.req.ResortRequirementTest;
@@ -79,6 +80,7 @@ import com.free.walker.service.itinerary.util.UuidUtilTest;
     ResortRequirementTest.class,
     TrafficRequirementTest.class,
     TrafficToolSeatRequirementTest.class,
+    DestinationRequirementTest.class,
 
     ItineraryRequirementTest.class,
     TravelProposalTest.class,
