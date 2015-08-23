@@ -36,6 +36,7 @@ import com.free.walker.service.itinerary.dao.TravelRequirementDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
+import com.free.walker.service.itinerary.req.DestinationRequirement;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.TravelProposal;
 import com.free.walker.service.itinerary.req.TravelRequirement;
@@ -48,9 +49,9 @@ import com.ibm.icu.util.Calendar;
 
 /**
  * <b>ItineraryService</b> provides data access for travel proposal, itinerary
- * as well as requirement. A proposal can be added and composed by this service by
- * adding or inserting itinerary or requirement into the proposal and updating an
- * existing requirement.<br>
+ * as well as requirement. A proposal can be added and composed by this service
+ * by adding or inserting itinerary or requirement into the proposal and
+ * updating an existing requirement.<br>
  * <br>
  * Besides data access, this service can serve proposal submission, and the
  * submitted proposals can be retrieved by an agency candidate or the proposal
@@ -111,10 +112,11 @@ public class ItineraryService {
         UUID acntId = UuidUtil.fromUuidStr(acnt.getUuid());
 
         Calendar daysAgo = Calendar.getInstance();
-        daysAgo.add(Calendar.DATE, -(Math.abs(n) > 14 || Math.abs(n) == 0 ? 7 : Math.abs(n)));
+        n = Math.abs(n) > 14 || Math.abs(n) == 0 ? 7 : Math.abs(n);
+        daysAgo.add(Calendar.DATE, -n);
 
         try {
-            List<TravelProposal> proposals = travelRequirementDAO.getTravelProposalsByAccount(acntId, daysAgo, 7);
+            List<TravelProposal> proposals = travelRequirementDAO.getTravelProposalsByAccount(acntId, daysAgo, n);
 
             if (proposals.isEmpty()) {
                 JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, acntId.toString()).build();
@@ -151,8 +153,8 @@ public class ItineraryService {
         weekAgo.add(Calendar.DATE, -7);
 
         try {
-            List<TravelProposal> proposals = travelRequirementDAO.getTravelProposalsByAgency(
-                UuidUtil.fromUuidStr(agencyId), weekAgo, 7);
+            List<TravelProposal> proposals = travelRequirementDAO
+                .getTravelProposalsByAgency(UuidUtil.fromUuidStr(agencyId), weekAgo, 7);
 
             if (proposals.isEmpty()) {
                 JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, agencyId).build();
@@ -195,22 +197,41 @@ public class ItineraryService {
         try {
             Account acnt = (Account) msgCntx.getContent(Account.class);
             travelRequirementDAO.startProposalBid(UuidUtil.fromUuidStr(proposalId), acnt);
-            List<TravelRequirement> itineraries = travelRequirementDAO.getItineraryRequirements(UuidUtil
-                .fromUuidStr(proposalId));
-            if (itineraries.size() == 1) {
+            List<TravelRequirement> itineraries = travelRequirementDAO
+                .getItineraryRequirements(UuidUtil.fromUuidStr(proposalId));
+            if (itineraries.size() == 0) {
+                List<TravelRequirement> requirements = travelRequirementDAO
+                    .getRequirements(UuidUtil.fromUuidStr(proposalId), DestinationRequirement.SUB_TYPE);
+                if (requirements.size() == 0) {
+                    return Response.status(Status.CONFLICT).build();
+                } else {
+                    TravelProposal travelProposal = (TravelProposal) travelRequirementDAO.getRequirement(
+                        UuidUtil.fromUuidStr(proposalId), Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL);
+                    if (requirements.size() == 1) {
+                        DestinationRequirement destRequirement = (DestinationRequirement) requirements.get(0);
+                        MRRoutine agencyElectionRoutine = new AgencyElectionRoutine(proposalId, travelBasicDAO,
+                            travelRequirementDAO, travelProposal.getDeparture(), destRequirement.getDestination());
+                        AgencyElectionTask.schedule(agencyElectionRoutine, proposalId, delayMins, travelBasicDAO,
+                            travelRequirementDAO);
+                    } else {
+                        MRRoutine agencyElectionRoutine = new AgencyElectionRoutine(proposalId, travelBasicDAO,
+                            travelRequirementDAO, travelProposal.getDeparture());
+                        AgencyElectionTask.schedule(agencyElectionRoutine, proposalId, delayMins, travelBasicDAO,
+                            travelRequirementDAO);
+                    }
+                }
+            } else if (itineraries.size() == 1) {
                 ItineraryRequirement itinerary = (ItineraryRequirement) itineraries.get(0);
                 MRRoutine agencyElectionRoutine = new AgencyElectionRoutine(proposalId, travelBasicDAO,
                     travelRequirementDAO, itinerary.getDeparture(), itinerary.getDestination());
                 AgencyElectionTask.schedule(agencyElectionRoutine, proposalId, delayMins, travelBasicDAO,
                     travelRequirementDAO);
-            } else if (itineraries.size() > 1) {
+            } else {
                 ItineraryRequirement itinerary = (ItineraryRequirement) itineraries.get(0);
                 MRRoutine agencyElectionRoutine = new AgencyElectionRoutine(proposalId, travelBasicDAO,
                     travelRequirementDAO, itinerary.getDeparture());
                 AgencyElectionTask.schedule(agencyElectionRoutine, proposalId, delayMins, travelBasicDAO,
                     travelRequirementDAO);
-            } else {
-                return Response.status(Status.CONFLICT).build();
             }
             return Response.status(Status.ACCEPTED).build();
         } catch (CancellationException e) {
@@ -244,8 +265,8 @@ public class ItineraryService {
     @RequiresPermissions("SubmitProposal")
     public Response resubmitProposal(@PathParam("proposalId") String proposalId) {
         try {
-            List<TravelRequirement> itineraries = travelRequirementDAO.getItineraryRequirements(UuidUtil
-                .fromUuidStr(proposalId));
+            List<TravelRequirement> itineraries = travelRequirementDAO
+                .getItineraryRequirements(UuidUtil.fromUuidStr(proposalId));
             if (itineraries.size() == 1) {
                 ItineraryRequirement itinerary = (ItineraryRequirement) itineraries.get(0);
                 MRRoutine agencyElectionRoutine = new AgencyElectionReduceRoutine(proposalId, travelBasicDAO,
@@ -360,8 +381,8 @@ public class ItineraryService {
             if (proposal.isProposal()) {
                 return Response.ok(proposal.toJSON()).build();
             } else {
-                throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.proposal_not_found,
-                    propId), propId);
+                throw new InvalidTravelReqirementException(
+                    LocalMessages.getMessage(LocalMessages.proposal_not_found, propId), propId);
             }
         } catch (InvalidTravelReqirementException e) {
             return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
@@ -374,14 +395,14 @@ public class ItineraryService {
      * <b>GET</b><br>
      * <br>
      * Retrieve the itineraries by the given requirement identifier and the
-     * given reqirement type in <i>?requirementType=itinerary</i> or
+     * given requirement type in <i>?requirementType=itinerary</i> or
      * <i>?requirementType=proposal</i> for the identified itinerary or all
      * itineraries in the proposal.<br>
      */
     @GET
     @Path("/itineraries/{requirementId}/")
     @RequiresPermissions("RetrieveProposal")
-    public Response getItinerary(@PathParam("requirementId") String requirementId,
+    public Response getItineraries(@PathParam("requirementId") String requirementId,
         @QueryParam("requirementType") String requirementType) {
         if (Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL.equals(requirementType)) {
             List<TravelRequirement> itineraries;
@@ -416,8 +437,8 @@ public class ItineraryService {
                 if (itinerary.isItinerary()) {
                     return Response.ok(itinerary.toJSON()).build();
                 } else {
-                    throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                        LocalMessages.itinerary_not_found, reqId), reqId);
+                    throw new InvalidTravelReqirementException(
+                        LocalMessages.getMessage(LocalMessages.itinerary_not_found, reqId), reqId);
                 }
             } catch (InvalidTravelReqirementException e) {
                 return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
@@ -437,26 +458,52 @@ public class ItineraryService {
     @GET
     @Path("/requirements/{requirementId}/")
     @RequiresPermissions("RetrieveProposal")
-    public Response getRequirement(@PathParam("requirementId") String requirementId) {
-        TravelRequirement requirement;
-        try {
-            UUID reqId = UuidUtil.fromUuidStr(requirementId);
-            requirement = travelRequirementDAO.getRequirement(reqId,
-                Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT);
-            if (requirement == null) {
-                return Response.status(Status.NOT_FOUND).build();
-            }
+    public Response getRequirements(@PathParam("requirementId") String requirementId,
+        @QueryParam("requirementType") String requirementType,
+        @QueryParam("requirementSubType") String requirementSubType) {
+        if (Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL.equals(requirementType)) {
+            List<TravelRequirement> requirements;
+            try {
+                UUID reqId = UuidUtil.fromUuidStr(requirementId);
+                requirements = travelRequirementDAO.getRequirements(reqId, requirementSubType);
+                if (requirements.isEmpty()) {
+                    JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, requirementId).build();
+                    return Response.status(Status.NOT_FOUND).entity(res).build();
+                }
 
-            if (!requirement.isProposal() && !requirement.isItinerary()) {
-                return Response.ok(requirement.toJSON()).build();
-            } else {
-                throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                    LocalMessages.requirement_not_found, reqId), reqId);
+                JsonArrayBuilder resBuilder = Json.createArrayBuilder();
+                for (int i = 0; i < requirements.size(); i++) {
+                    resBuilder.add(requirements.get(i).toJSON());
+                }
+                return Response.ok(resBuilder.build()).build();
+            } catch (InvalidTravelReqirementException e) {
+                return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+            } catch (DatabaseAccessException e) {
+                return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
             }
-        } catch (InvalidTravelReqirementException e) {
-            return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
-        } catch (DatabaseAccessException e) {
-            return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+        }  else if (Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT.equals(requirementType)) {
+            TravelRequirement requirement;
+            try {
+                UUID reqId = UuidUtil.fromUuidStr(requirementId);
+                requirement = travelRequirementDAO.getRequirement(reqId,
+                    Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT);
+                if (requirement == null) {
+                    return Response.status(Status.NOT_FOUND).build();
+                }
+
+                if (!requirement.isProposal() && !requirement.isItinerary()) {
+                    return Response.ok(requirement.toJSON()).build();
+                } else {
+                    throw new InvalidTravelReqirementException(
+                        LocalMessages.getMessage(LocalMessages.requirement_not_found, reqId), reqId);
+                }
+            } catch (InvalidTravelReqirementException e) {
+                return Response.status(Status.BAD_REQUEST).entity(e.toJSON()).build();
+            } catch (DatabaseAccessException e) {
+                return Response.status(Status.SERVICE_UNAVAILABLE).entity(e.toJSON()).build();
+            }
+        } else {
+            return Response.status(Status.BAD_REQUEST).entity(Json.createObjectBuilder().build()).build();
         }
     }
 
@@ -495,7 +542,7 @@ public class ItineraryService {
     /**
      * <b>DELETE</b><br>
      * <br>
-     * Remove the requirment by the given requirement and proposal identifers.<br>
+     * Remove the requirement by the given requirement and proposal identifiers.<br>
      */
     @DELETE
     @Path("/requirements/{proposalId}/{requirementId}/")
@@ -713,8 +760,9 @@ public class ItineraryService {
         @PathParam("itineraryId") String itineraryId, JsonObject travelRequirement) {
         try {
             TravelRequirement requirement = JsonObjectHelper.toRequirement(travelRequirement);
-            String addedRequirementId = travelRequirementDAO.addRequirement(UuidUtil.fromUuidStr(proposalId),
-                UuidUtil.fromUuidStr(itineraryId), requirement).toString();
+            String addedRequirementId = travelRequirementDAO
+                .addRequirement(UuidUtil.fromUuidStr(proposalId), UuidUtil.fromUuidStr(itineraryId), requirement)
+                .toString();
             JsonObject res = Json.createObjectBuilder().add(Introspection.JSONKeys.UUID, addedRequirementId).build();
             return Response.ok(res).build();
         } catch (InvalidTravelReqirementException e) {

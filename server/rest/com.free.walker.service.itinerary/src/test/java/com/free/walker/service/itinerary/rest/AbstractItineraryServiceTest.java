@@ -153,7 +153,8 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             try {
                 InputStream is = Thread.currentThread().getContextClassLoader()
                     .getResourceAsStream("com/free/walker/service/itinerary/rest/agencies.json");
-                post.setEntity(new StringEntity(Json.createReader(is).readObject().toString(), ContentType.APPLICATION_JSON));
+                String agencies = Json.createReader(is).readObject().toString();
+                post.setEntity(new StringEntity(agencies, ContentType.APPLICATION_JSON));
                 post.setURI(new URI(platformServiceUrlStr + "agencies?batch=true"));
                 post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
                 HttpResponse response = adminClient.execute(post);
@@ -261,7 +262,7 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
                     JsonObject itineraryRequirement = itineries.getJsonObject(0);
                     assertNotNull(itineraryRequirement);
                     itineraryId1st = itineraryRequirement.getString(Introspection.JSONKeys.UUID);
-                    
+
                     JsonObject departure = itineraryRequirement.getJsonObject(Introspection.JSONKeys.DEPARTURE);
                     assertNotNull(departure);
                     JsonObject departureCity = departure.getJsonObject(Introspection.JSONKeys.CITY);
@@ -269,7 +270,7 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
                     assertEquals("Barcelona", departureCity.getString(Introspection.JSONKeys.NAME));
                     assertEquals("巴塞罗纳", departureCity.getString(Introspection.JSONKeys.CHINESE_NAME));
                     assertEquals("basailuona", departureCity.getString(Introspection.JSONKeys.PINYIN_NAME));
-                    
+
                     JsonObject destination = itineraryRequirement.getJsonObject(Introspection.JSONKeys.DESTINATION);
                     assertNotNull(destination);
                     JsonObject destinationCity = destination.getJsonObject(Introspection.JSONKeys.CITY);
@@ -326,7 +327,8 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
          */
         {
             HttpGet get = new HttpGet();
-            get.setURI(new URI(itineraryServiceUrlStr + "itineraries/" + itineraryId2nd + "?requirementType=itinerary"));
+            String uriStr = itineraryServiceUrlStr + "itineraries/" + itineraryId2nd + "?requirementType=itinerary";
+            get.setURI(new URI(uriStr));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             try {
                 HttpResponse response = userClient.execute(get);
@@ -402,7 +404,9 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
          */
         {
             HttpGet get = new HttpGet();
-            get.setURI(new URI(itineraryServiceUrlStr + "requirements/" + requirementId1st));
+            String uriStr = itineraryServiceUrlStr + "requirements/" + requirementId1st
+                + "?requirementType=requirement";
+            get.setURI(new URI(uriStr));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             try {
                 HttpResponse response = userClient.execute(get);
@@ -539,7 +543,9 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
          */
         {
             HttpGet get = new HttpGet();
-            get.setURI(new URI(itineraryServiceUrlStr + "requirements/" + requirementId2nd));
+            String uriStr = itineraryServiceUrlStr + "requirements/" + requirementId2nd
+                + "?requirementType=requirement";
+            get.setURI(new URI(uriStr));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             try {
                 HttpResponse response = userClient.execute(get);
@@ -681,7 +687,9 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
          */
         {
             HttpGet get = new HttpGet();
-            get.setURI(new URI(itineraryServiceUrlStr + "requirements/" + requirementId1st));
+            String uriStr = itineraryServiceUrlStr + "requirements/" + requirementId1st
+                + "?requirementType=requirement";
+            get.setURI(new URI(uriStr));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             try {
                 HttpResponse response = userClient.execute(get);
@@ -826,8 +834,9 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
          */
         {
             HttpGet get = new HttpGet();
-            get.setURI(new URI(itineraryServiceUrlStr + "proposals/agencies/selected/"
-                + agencyIds.getString(agencyIds.size() - 2)));
+            String uriStr = itineraryServiceUrlStr + "proposals/agencies/selected/"
+                + agencyIds.getString(agencyIds.size() - 2);
+            get.setURI(new URI(uriStr));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             try {
                 HttpResponse response = agencyClient.execute(get);
@@ -882,8 +891,9 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
          */
         {
             HttpGet get = new HttpGet();
-            get.setURI(new URI(itineraryServiceUrlStr + "proposals/agencies/selected/"
-                + agencyIds.getString(agencyIds.size() - 2)));
+            String uriStr = itineraryServiceUrlStr + "proposals/agencies/selected/"
+                + agencyIds.getString(agencyIds.size() - 2);
+            get.setURI(new URI(uriStr));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             try {
                 HttpResponse response = agencyClient.execute(get);
@@ -920,8 +930,8 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
          */
         {
             HttpGet get = new HttpGet();
-            get.setURI(new URI(itineraryServiceUrlStr + "proposals/agencies/"
-                + agencyIds.getString(agencyIds.size() - 2)));
+            String uriStr = itineraryServiceUrlStr + "proposals/agencies/" + agencyIds.getString(agencyIds.size() - 2);
+            get.setURI(new URI(uriStr));
             get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
             try {
                 HttpResponse response = agencyClient.execute(get);
@@ -986,19 +996,17 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
     @Test
     public void testMore() throws URISyntaxException {
         JsonObjectBuilder departureBuilder = Json.createObjectBuilder();
-        JsonObjectBuilder deptCityBuilder = Json.createObjectBuilder();
-        deptCityBuilder.add(Introspection.JSONKeys.UUID, "84844276-3036-47dd-90e0-f095cfa98da5");
-        departureBuilder.add(Introspection.JSONKeys.CITY, deptCityBuilder);
+        departureBuilder.add(Introspection.JSONKeys.LOCATION, "84844276-3036-47dd-90e0-f095cfa98da5");
+        departureBuilder.add(Introspection.JSONKeys.LOCATION_TYPE, Introspection.JSONValues.CITY);
 
         JsonObjectBuilder returnBuilder = Json.createObjectBuilder();
-        JsonObjectBuilder retnCityBuilder = Json.createObjectBuilder();
-        retnCityBuilder.add(Introspection.JSONKeys.UUID, "02515d41-f141-4175-9a11-9e68b9cfe687");
-        returnBuilder.add(Introspection.JSONKeys.CITY, retnCityBuilder);
+        returnBuilder.add(Introspection.JSONKeys.LOCATION, "02515d41-f141-4175-9a11-9e68b9cfe687");
+        returnBuilder.add(Introspection.JSONKeys.LOCATION_TYPE, Introspection.JSONValues.CITY);
 
         JsonObjectBuilder proposalBuilder = Json.createObjectBuilder();
         proposalBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL);
         proposalBuilder.add(Introspection.JSONKeys.AUTHOR, "3b3e4dcf-e353-4418-adfb-3c9af7a54992");
-        proposalBuilder.add(Introspection.JSONKeys.TITLE, "世界游（测试）");
+        proposalBuilder.add(Introspection.JSONKeys.TITLE, "环球旅行");
         proposalBuilder.add(Introspection.JSONKeys.UNIT, 5);
         proposalBuilder.add(Introspection.JSONKeys.NOTE, "旅行偏好");
         proposalBuilder.add(Introspection.JSONKeys.DEPARTURE, departureBuilder);
@@ -1020,7 +1028,7 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
 
             requirementBuilder2.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT);
             requirementBuilder2.add(Introspection.JSONKeys.SUB_TYPE, Introspection.JSONValues.SUB_TYPE_DESTINATION);
-            destinationBuilder.add(Introspection.JSONKeys.LOCATION, "b4cef473-1ad7-46cd-8ea5-d50bfa3ca033");
+            destinationBuilder.add(Introspection.JSONKeys.LOCATION, "79fd8642-a11d-4811-887d-ec4268097a82");
             destinationBuilder.add(Introspection.JSONKeys.LOCATION_TYPE, Introspection.JSONValues.CITY);
             requirementBuilder2.add(Introspection.JSONKeys.DESTINATION, destinationBuilder);
         }
@@ -1030,11 +1038,21 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
         proposalBuilder.add(Introspection.JSONKeys.REQUIREMENTS, requirementsBuilder);
         proposal = proposalBuilder.build();
 
+        /*
+         * [POST]
+         * http://<hostname.domainname>:<port>/service/itinerary/proposals/
+         */
         {
             HttpPost post = new HttpPost();
             post.setEntity(new StringEntity(proposal.toString(), ContentType.APPLICATION_JSON));
             post.setURI(new URI(itineraryServiceUrlStr + "proposals/"));
             post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+
+            LOG.info(">>>>>>>>>>>>>>>> Create Proposal");
+            LOG.info(post.getURI().toString());
+            LOG.info(post.getMethod());
+            LOG.info(proposal.toString());
+
             try {
                 HttpResponse response = userClient.execute(post);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -1055,6 +1073,201 @@ public abstract class AbstractItineraryServiceTest extends BaseConfigurationProv
             } finally {
                 post.abort();
             }
+
+            LOG.info("================");
+            LOG.info(proposalId);
+            LOG.info("<<<<<<<<<<<<<<<< Create Proposal");
+        }
+
+        /*
+         * [GET]
+         * http://<hostname.domainname>:<port>/service/itinerary/proposals/fb699d5b-3f03-44fa-9341-070f91088dd4
+         */
+        {
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(itineraryServiceUrlStr + "proposals/" + proposalId));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+
+            LOG.info(">>>>>>>>>>>>>>>> Get Proposal by ID");
+            LOG.info(get.getURI().toString());
+            LOG.info(get.getMethod());
+            LOG.info(proposalId);
+
+            try {
+                HttpResponse response = userClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    proposal = Json.createReader(response.getEntity().getContent()).readObject();
+                    assertNotNull(proposal);
+                    assertEquals(proposalId, proposal.getString(Introspection.JSONKeys.UUID));
+                    assertEquals(Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL,
+                        proposal.getString(Introspection.JSONKeys.TYPE));
+
+                    JsonArray requirements = proposal.getJsonArray(Introspection.JSONKeys.REQUIREMENTS);
+                    assertEquals(0, requirements.size());
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
+
+            LOG.info("================");
+            LOG.info(proposal.toString());
+            LOG.info("<<<<<<<<<<<<<<<< Get Proposal by ID");
+        }
+
+        /*
+         * [GET]
+         * http://<hostname.domainname>:<port>/service/itinerary/requirements/fb699d5b-3f03-44fa-9341-070f91088dd4?requirementType=proposal&requirementSubType=destination
+         */
+        {
+            JsonArray proposalRequirements = Json.createArrayBuilder().build();
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(itineraryServiceUrlStr + "requirements/" + proposalId
+                + "?requirementType=proposal&requirementSubType=destination"));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+
+            LOG.info(">>>>>>>>>>>>>>>> Get Destination Requirements by ID");
+            LOG.info(get.getURI().toString());
+            LOG.info(get.getMethod());
+            LOG.info(proposalId);
+
+            try {
+                HttpResponse response = userClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    proposalRequirements = Json.createReader(response.getEntity().getContent()).readArray();
+                    assertNotNull(proposalRequirements);
+                    assertEquals(2, proposalRequirements.size());
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
+
+            LOG.info("================");
+            LOG.info(proposalRequirements.toString());
+            LOG.info("<<<<<<<<<<<<<<<< Get Destination Requirements by ID");
+        }
+
+        /*
+         * [POST]
+         * http://<hostname.domainname>:<port>/service/itinerary/proposals/agencies/fb699d5b-3f03-44fa-9341-070f91088dd4
+         */
+        {
+            HttpPost post = new HttpPost();
+            post.setURI(new URI(itineraryServiceUrlStr + "proposals/agencies/" + proposalId + "?delayMins=1"));
+            post.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+
+            LOG.info(">>>>>>>>>>>>>>>> Submit Proposal for Agency Election");
+            LOG.info(post.getURI().toString());
+            LOG.info(post.getMethod());
+            LOG.info(proposalId);
+
+            try {
+                HttpResponse response = userClient.execute(post);
+                int statusCode = response.getStatusLine().getStatusCode();
+                assertEquals(HttpStatus.NO_CONTENT_204, statusCode);
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                post.abort();
+            }
+
+            LOG.info("<<<<<<<<<<<<<<<< Submit Proposal for Agency Election");
+        }
+
+        /*
+         * [GET]
+         * http://<hostname.domainname>:<port>/service/itinerary/proposals/my?pastDays=14
+         */
+        {
+            JsonArray proposals = null;
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(itineraryServiceUrlStr + "proposals/my"));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+
+            LOG.info(">>>>>>>>>>>>>>>> Get Proposals for Me");
+            LOG.info(get.getURI().toString());
+            LOG.info(get.getMethod());
+
+            try {
+                HttpResponse response = userClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    proposals = Json.createReader(response.getEntity().getContent()).readArray();
+                    assertNotNull(proposals);
+                    assertTrue(proposals.size() > 0);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
+
+            LOG.info("================");
+            LOG.info(proposals.toString());
+            LOG.info("<<<<<<<<<<<<<<<< Create Proposals for Me");
+        }
+
+        /*
+         * [GET]
+         * http://<hostname.domainname>:<port>/service/itinerary/requirements/fb699d5b-3f03-44fa-9341-070f91088dd4?requirementType=proposal
+         */
+        {
+            JsonArray proposalRequirements = Json.createArrayBuilder().build();
+            HttpGet get = new HttpGet();
+            get.setURI(new URI(itineraryServiceUrlStr + "requirements/" + proposalId + "?requirementType=proposal"));
+            get.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+
+            LOG.info(">>>>>>>>>>>>>>>> Get Proposal Requirements by ID");
+            LOG.info(get.getURI().toString());
+            LOG.info(get.getMethod());
+            LOG.info(proposalId);
+
+            try {
+                HttpResponse response = userClient.execute(get);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.OK_200) {
+                    proposalRequirements = Json.createReader(response.getEntity().getContent()).readArray();
+                    assertNotNull(proposalRequirements);
+                    assertEquals(2, proposalRequirements.size());
+                } else if (statusCode == HttpStatus.UNAUTHORIZED_401) {
+                    LOG.error(IOUtils.toString(response.getEntity().getContent()));
+                    assertTrue(false);
+                } else {
+                    JsonObject error = Json.createReader(response.getEntity().getContent()).readObject();
+                    throw new ProcessingException(error.toString());
+                }
+            } catch (IOException e) {
+                throw new ProcessingException(e);
+            } finally {
+                get.abort();
+            }
+
+            LOG.info("================");
+            LOG.info(proposalRequirements.toString());
+            LOG.info("<<<<<<<<<<<<<<<< Get Proposal Requirements by ID");
         }
     }
 

@@ -8,12 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.Account;
 import com.free.walker.service.itinerary.dao.TravelRequirementDAO;
 import com.free.walker.service.itinerary.exp.DatabaseAccessException;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
+import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.req.ItineraryRequirement;
 import com.free.walker.service.itinerary.req.TravelProposal;
 import com.free.walker.service.itinerary.req.TravelRequirement;
@@ -50,16 +53,18 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
         }
 
         if (travelRequirements.containsKey(travelProposal.getUUID())) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.existed_travel_requirement, travelProposal.getUUID()), travelProposal.getUUID());
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.existed_travel_requirement, travelProposal.getUUID()),
+                travelProposal.getUUID());
         }
 
         List<TravelRequirement> itineraryRequirements = travelProposal.getTravelRequirements();
         for (int i = 0; i < itineraryRequirements.size(); i++) {
             TravelRequirement requirment = itineraryRequirements.get(i);
             if (travelRequirements.containsKey(requirment.getUUID())) {
-                throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                    LocalMessages.existed_travel_requirement, requirment.getUUID()), travelProposal.getUUID());
+                throw new InvalidTravelReqirementException(
+                    LocalMessages.getMessage(LocalMessages.existed_travel_requirement, requirment.getUUID()),
+                    travelProposal.getUUID());
             }
         }
 
@@ -87,21 +92,21 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
         return travelProposal.getUUID();
     }
 
-    public UUID startProposalBid(UUID travelProposalId, Account account) throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public UUID startProposalBid(UUID travelProposalId, Account account)
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         if (travelProposalId == null || account == null) {
             throw new NullPointerException();
         }
 
         TravelRequirement proposal = travelRequirements.get(travelProposalId);
         if (proposal == null || !proposal.isProposal()) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         if (!account.equals(proposalOwners.get(travelProposalId))) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.illegal_submit_proposal_operation, travelProposalId, account.getUuid()),
+            throw new InvalidTravelReqirementException(LocalMessages
+                .getMessage(LocalMessages.illegal_submit_proposal_operation, travelProposalId, account.getUuid()),
                 travelProposalId);
         }
 
@@ -113,16 +118,16 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
         }
     }
 
-    public UUID joinProposalBid(UUID travelProposalId, UUID agencyId) throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public UUID joinProposalBid(UUID travelProposalId, UUID agencyId)
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         if (travelProposalId == null || agencyId == null) {
             throw new NullPointerException();
         }
 
         TravelRequirement proposal = travelRequirements.get(travelProposalId);
         if (proposal == null || !proposal.isProposal()) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         if (proposalAgencies.containsKey(travelProposalId)) {
@@ -136,8 +141,9 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
             }
             return agencyId;
         } else {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.missing_travel_proposal_bidding, travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal_bidding, travelProposalId),
+                travelProposalId);
         }
     }
 
@@ -149,26 +155,27 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
 
         TravelRequirement proposal = travelRequirements.get(travelProposalId);
         if (proposal == null || !proposal.isProposal()) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         TravelRequirement itinerary = travelRequirements.get(itineraryRequirementId);
         if (itinerary == null || !itinerary.isItinerary()) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_itinerary,
-                itineraryRequirementId), itineraryRequirementId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_itinerary, itineraryRequirementId),
+                itineraryRequirementId);
         }
 
         if (travelRequirements.containsKey(itineraryRequirement.getUUID())) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.existed_travel_requirement, itineraryRequirement.getUUID()),
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.existed_travel_requirement, itineraryRequirement.getUUID()),
                 itineraryRequirement.getUUID());
         }
 
         List<TravelRequirement> requirements = travelProposals.get(travelProposalId);
         if (requirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         for (int i = 0; i < requirements.size(); i++) {
@@ -191,8 +198,9 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
             }
 
             if (i + 1 == requirements.size()) {
-                throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                    LocalMessages.missing_travel_itinerary, itineraryRequirementId), itineraryRequirementId);
+                throw new InvalidTravelReqirementException(
+                    LocalMessages.getMessage(LocalMessages.missing_travel_itinerary, itineraryRequirementId),
+                    itineraryRequirementId);
             }
         }
 
@@ -207,19 +215,21 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
 
         TravelRequirement proposal = travelRequirements.get(travelProposalId);
         if (proposal == null || !proposal.isProposal()) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         TravelRequirement itinerary = travelRequirements.get(itineraryRequirementId);
         if (itinerary == null || !itinerary.isItinerary()) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_itinerary,
-                itineraryRequirementId), itineraryRequirementId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_itinerary, itineraryRequirementId),
+                itineraryRequirementId);
         }
 
         if (travelRequirements.containsKey(travelRequirement.getUUID())) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.existed_travel_requirement, travelRequirement.getUUID()), travelRequirement.getUUID());
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.existed_travel_requirement, travelRequirement.getUUID()),
+                travelRequirement.getUUID());
         }
 
         if (travelRequirement.isProposal()) {
@@ -236,8 +246,8 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
 
         List<TravelRequirement> requirements = travelProposals.get(travelProposalId);
         if (requirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         for (int i = 0; i < requirements.size(); i++) {
@@ -251,8 +261,9 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
             }
 
             if (i + 1 == requirements.size()) {
-                throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                    LocalMessages.missing_travel_itinerary, itineraryRequirementId), itineraryRequirementId);
+                throw new InvalidTravelReqirementException(
+                    LocalMessages.getMessage(LocalMessages.missing_travel_itinerary, itineraryRequirementId),
+                    itineraryRequirementId);
             }
         }
 
@@ -267,13 +278,14 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
 
         TravelRequirement proposal = travelRequirements.get(travelProposalId);
         if (proposal == null || !proposal.isProposal()) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         if (travelRequirements.containsKey(travelRequirement.getUUID())) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.existed_travel_requirement, travelRequirement.getUUID()), travelRequirement.getUUID());
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.existed_travel_requirement, travelRequirement.getUUID()),
+                travelRequirement.getUUID());
         }
 
         if (travelRequirement.isProposal()) {
@@ -284,8 +296,8 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
 
         List<TravelRequirement> requirements = travelProposals.get(travelProposalId);
         if (requirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         requirements.add(travelRequirement);
@@ -294,26 +306,34 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
         return travelRequirement.getUUID();
     }
 
-    public List<TravelRequirement> getRequirements(UUID travelProposalId) throws InvalidTravelReqirementException {
+    public List<TravelRequirement> getRequirements(UUID travelProposalId, String requirementSubType)
+        throws InvalidTravelReqirementException {
         if (travelProposalId == null) {
             throw new NullPointerException();
         }
 
         TravelRequirement proposal = travelRequirements.get(travelProposalId);
         if (proposal == null || !proposal.isProposal()) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         List<TravelRequirement> requirements = travelProposals.get(travelProposalId);
         if (requirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
-        requirements.retainAll(travelRequirements.values());
+        List<TravelRequirement> result = new ArrayList<TravelRequirement>();
+        for (int i = 0; i < requirements.size(); i++) {
+            TravelRequirement requirement = requirements.get(i);
+            String subType = requirement.toJSON().getString(Introspection.JSONKeys.SUB_TYPE, null);
+            if (StringUtils.isEmpty(requirementSubType) || requirementSubType.equals(subType)) {
+                result.add(requirement);
+            }
+        }
 
-        return new LinkedList<TravelRequirement>(requirements);
+        return new LinkedList<TravelRequirement>(result);
     }
 
     public List<TravelRequirement> getItineraryRequirements(UUID travelProposalId)
@@ -324,14 +344,14 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
 
         TravelRequirement proposal = travelRequirements.get(travelProposalId);
         if (proposal == null || !proposal.isProposal()) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         List<TravelRequirement> requirements = travelProposals.get(travelProposalId);
         if (requirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         requirements.retainAll(travelRequirements.values());
@@ -357,20 +377,21 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
 
         TravelRequirement proposal = travelRequirements.get(travelProposalId);
         if (proposal == null || !proposal.isProposal()) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         TravelRequirement itinerary = travelRequirements.get(itineraryRequirementId);
         if (itinerary == null || !itinerary.isItinerary()) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_itinerary,
-                itineraryRequirementId), itineraryRequirementId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_itinerary, itineraryRequirementId),
+                itineraryRequirementId);
         }
 
         List<TravelRequirement> requirements = travelProposals.get(travelProposalId);
         if (requirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         requirements.retainAll(travelRequirements.values());
@@ -403,20 +424,21 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
 
         TravelRequirement proposal = travelRequirements.get(travelProposalId);
         if (proposal == null || !proposal.isProposal()) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         TravelRequirement requirement = travelRequirements.get(travelRequirementId);
         if (requirement == null || requirement.isProposal()) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.missing_travel_requirement, travelRequirementId), travelRequirementId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_requirement, travelRequirementId),
+                travelRequirementId);
         }
 
         List<TravelRequirement> requirements = travelProposals.get(travelProposalId);
         if (requirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         requirements.retainAll(travelRequirements.values());
@@ -442,20 +464,21 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
 
         TravelRequirement proposal = travelRequirements.get(travelProposalId);
         if (proposal == null || !proposal.isProposal()) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         TravelRequirement itinerary = travelRequirements.get(travelRequirementId);
         if (itinerary == null || itinerary.isProposal()) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.missing_travel_requirement, travelRequirementId), travelRequirementId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_requirement, travelRequirementId),
+                travelRequirementId);
         }
 
         List<TravelRequirement> requirements = travelProposals.get(travelProposalId);
         if (requirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         requirements.retainAll(travelRequirements.values());
@@ -534,20 +557,21 @@ public class InMemoryTravelRequirementDAOImpl implements TravelRequirementDAO {
 
         TravelRequirement proposal = travelRequirements.get(travelProposalId);
         if (proposal == null || !proposal.isProposal()) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         List<TravelRequirement> requirements = travelProposals.get(travelProposalId);
         if (requirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         List<TravelRequirement> itineraries = getItineraryRequirements(travelProposalId);
         if (itineraries.size() == 1) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.illegal_delete_travel_requirement_operation, travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.illegal_delete_travel_requirement_operation, travelProposalId),
+                travelProposalId);
         }
 
         TravelRequirement travelRequirement = travelRequirements.get(travelRequirementId);

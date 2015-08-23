@@ -43,20 +43,9 @@ public class DestinationRequirement extends BaseTravelRequirement implements Tra
         resBuilder.add(Introspection.JSONKeys.TYPE, Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT);
         resBuilder.add(Introspection.JSONKeys.SUB_TYPE, SUB_TYPE);
 
-        JsonObjectBuilder destinationBuilder = Json.createObjectBuilder();
-        destinationBuilder.add(Introspection.JSONKeys.LOCATION, travelLocation.getUuid());
-        if (travelLocation.isCity()) {
-            destinationBuilder.add(Introspection.JSONKeys.LOCATION_TYPE, LocationType.CITY.name());
-        } else if (travelLocation.isProvince()) {
-            destinationBuilder.add(Introspection.JSONKeys.PROVINCE, LocationType.PROVINCE.name());
-        } else if (travelLocation.isCountry()) {
-            destinationBuilder.add(Introspection.JSONKeys.COUNTRY, LocationType.COUNTRY.name());
-        } else if (travelLocation.isContinent()) {
-            destinationBuilder.add(Introspection.JSONKeys.CONTINENT, LocationType.CONTINENT.name());
-        } else {
-            ;
+        if (travelLocation != null) {
+            resBuilder.add(Introspection.JSONKeys.DESTINATION, travelLocation.toJSON());
         }
-        resBuilder.add(Introspection.JSONKeys.DESTINATION, destinationBuilder);
 
         return resBuilder.build();
     }
@@ -100,13 +89,17 @@ public class DestinationRequirement extends BaseTravelRequirement implements Tra
                 }
             } else {
                 this.travelLocation = new TravelLocation().fromJSON(destination);
-            }            
+            }
         } else {
             throw new JsonException(LocalMessages.getMessage(LocalMessages.invalid_parameter_with_value,
                 Introspection.JSONKeys.DESTINATION, destination));
         }
 
         return this;
+    }
+
+    public TravelLocation getDestination() {
+        return travelLocation;
     }
 
     public boolean isProposalRequirement() {

@@ -18,6 +18,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,8 +59,13 @@ import com.mongodb.util.JSON;
 
 public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO {
     private static final Logger LOG = LoggerFactory.getLogger(MyMongoSQLTravelRequirementDAOImpl.class);
-    private static final DBObject ID_FIELD = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk, true).get();
-    private static final DBObject OWNER_FIELD = new BasicDBObjectBuilder().add(Introspection.JSONKeys.OWNER, true).get();
+    private static final DBObject ID_FIELD;
+    private static final DBObject OWNER_FIELD;
+
+    static {
+        ID_FIELD = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk, true).get();
+        OWNER_FIELD = new BasicDBObjectBuilder().add(Introspection.JSONKeys.OWNER, true).get();
+    }
 
     private MongoClient mdbClient;
     private String itineraryMongoDbUrl;
@@ -114,8 +120,8 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         }
     }
 
-    public UUID createProposal(Account account, TravelProposal travelProposal) throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public UUID createProposal(Account account, TravelProposal travelProposal)
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         if (account == null || travelProposal == null) {
             throw new NullPointerException();
         }
@@ -140,8 +146,9 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
 
         DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
         if (proposalColls.findOne(travelProposal.getUUID().toString(), ID_FIELD) != null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.existed_travel_requirement, travelProposal.getUUID()), travelProposal.getUUID());
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.existed_travel_requirement, travelProposal.getUUID()),
+                travelProposal.getUUID());
         }
 
         JsonArrayBuilder requirementIdsJs = Json.createArrayBuilder();
@@ -155,11 +162,12 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
             requirementIdsJs.add(requirementId);
         }
 
-        DBObject itinerariesQuery = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk,
-            new BasicDBObject(DAOConstants.mongo_database_op_in, itineraryIds)).get();
-        if (itineraryColls.findOne(itinerariesQuery, ID_FIELD) != null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.existed_travel_requirement, itineraryIds.toString()), travelProposal.getUUID());
+        BasicDBObjectBuilder itinerariesQuery = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk,
+            new BasicDBObject(DAOConstants.mongo_database_op_in, itineraryIds));
+        if (itineraryColls.findOne(itinerariesQuery.get(), ID_FIELD) != null) {
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.existed_travel_requirement, itineraryIds.toString()),
+                travelProposal.getUUID());
         }
 
         DBCollection requirementColls = itineraryDb.getCollection(DAOConstants.REQUIREMENT_COLL_NAME);
@@ -171,11 +179,12 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
             requirementIdsJs.add(requirementId);
         }
 
-        DBObject requirementsQuery = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk,
-            new BasicDBObject(DAOConstants.mongo_database_op_in, requirementIds)).get();
-        if (requirementColls.findOne(requirementsQuery, ID_FIELD) != null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.existed_travel_requirement, requirementIds.toString()), travelProposal.getUUID());
+        BasicDBObjectBuilder requirementsQuery = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk,
+            new BasicDBObject(DAOConstants.mongo_database_op_in, requirementIds));
+        if (requirementColls.findOne(requirementsQuery.get(), ID_FIELD) != null) {
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.existed_travel_requirement, requirementIds.toString()),
+                travelProposal.getUUID());
         }
 
         /*
@@ -219,8 +228,8 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         return travelProposal.getUUID();
     }
 
-    public UUID startProposalBid(UUID travelProposalId, Account account) throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public UUID startProposalBid(UUID travelProposalId, Account account)
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         if (travelProposalId == null || account == null) {
             throw new NullPointerException();
         }
@@ -228,8 +237,8 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
         DBObject proposal = proposalColls.findOne(travelProposalId.toString(), OWNER_FIELD);
         if (proposal == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         if (!account.getUuid().equals(proposal.get(Introspection.JSONKeys.OWNER))) {
@@ -246,23 +255,24 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         return travelProposalId;
     }
 
-    public UUID joinProposalBid(UUID travelProposalId, UUID agencyId) throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public UUID joinProposalBid(UUID travelProposalId, UUID agencyId)
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         if (travelProposalId == null || agencyId == null) {
             throw new NullPointerException();
         }
 
         DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
         if (proposalColls.findOne(travelProposalId.toString(), ID_FIELD) == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         DBCollection proposalAgencyColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_SUBMISSION_COLL_NAME);
         DBObject proposalAgency = proposalAgencyColls.findOne(travelProposalId.toString());
         if (proposalAgency == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.missing_travel_proposal_bidding, travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal_bidding, travelProposalId),
+                travelProposalId);
         } else {
             Object agenciesBs = proposalAgency.get(Introspection.JSONKeys.AGENCIES);
             Object ownerBs = proposalAgency.get(Introspection.JSONKeys.OWNER);
@@ -292,27 +302,28 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         ItineraryRequirement itineraryRequirement) throws InvalidTravelReqirementException {
         DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
         if (proposalColls.findOne(travelProposalId.toString(), ID_FIELD) == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         DBCollection itineraryColls = itineraryDb.getCollection(DAOConstants.ITINERARY_COLL_NAME);
         if (itineraryColls.findOne(itineraryRequirementId.toString(), ID_FIELD) == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_itinerary,
-                itineraryRequirementId), itineraryRequirementId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_itinerary, itineraryRequirementId),
+                itineraryRequirementId);
         }
 
         if (itineraryColls.findOne(itineraryRequirement.getUUID().toString(), ID_FIELD) != null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.existed_travel_requirement, itineraryRequirement.getUUID()),
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.existed_travel_requirement, itineraryRequirement.getUUID()),
                 itineraryRequirement.getUUID());
         }
 
         DBCollection proposalRequirementColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_REQUIREMENT_COLL_NAME);
         DBObject proposalRequirements = proposalRequirementColls.findOne(travelProposalId.toString());
         if (proposalRequirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         boolean foundItinerary = false;
@@ -331,8 +342,9 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
             foundItinerary = requirementId.equals(itineraryRequirementId.toString());
 
             if (i + 1 == requirements.size() && !foundItinerary) {
-                throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                    LocalMessages.missing_travel_itinerary, itineraryRequirementId), itineraryRequirementId);
+                throw new InvalidTravelReqirementException(
+                    LocalMessages.getMessage(LocalMessages.missing_travel_itinerary, itineraryRequirementId),
+                    itineraryRequirementId);
             }
         }
 
@@ -363,20 +375,22 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         throws InvalidTravelReqirementException {
         DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
         if (proposalColls.findOne(travelProposalId.toString(), ID_FIELD) == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         DBCollection itineraryColls = itineraryDb.getCollection(DAOConstants.ITINERARY_COLL_NAME);
         if (itineraryColls.findOne(itineraryRequirementId.toString(), ID_FIELD) == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_itinerary,
-                itineraryRequirementId), itineraryRequirementId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_itinerary, itineraryRequirementId),
+                itineraryRequirementId);
         }
 
         DBCollection requirementColls = itineraryDb.getCollection(DAOConstants.REQUIREMENT_COLL_NAME);
         if (requirementColls.findOne(travelRequirement.getUUID().toString(), ID_FIELD) != null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.existed_travel_requirement, travelRequirement.getUUID()), travelRequirement.getUUID());
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.existed_travel_requirement, travelRequirement.getUUID()),
+                travelRequirement.getUUID());
         }
 
         if (travelRequirement.isProposal()) {
@@ -394,8 +408,8 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         DBCollection proposalRequirementColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_REQUIREMENT_COLL_NAME);
         DBObject proposalRequirements = proposalRequirementColls.findOne(travelProposalId.toString());
         if (proposalRequirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         boolean foundItinerary = false;
@@ -413,8 +427,9 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
             }
 
             if (i + 1 == requirements.size() && !foundItinerary) {
-                throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                    LocalMessages.missing_travel_itinerary, itineraryRequirementId), itineraryRequirementId);
+                throw new InvalidTravelReqirementException(
+                    LocalMessages.getMessage(LocalMessages.missing_travel_itinerary, itineraryRequirementId),
+                    itineraryRequirementId);
             }
         }
 
@@ -449,8 +464,8 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
 
         DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
         if (proposalColls.findOne(travelProposalId.toString(), ID_FIELD) == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         DBCollection requirementColls = itineraryDb.getCollection(DAOConstants.REQUIREMENT_COLL_NAME);
@@ -470,8 +485,8 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         DBCollection proposalRequirementColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_REQUIREMENT_COLL_NAME);
         DBObject proposalRequirements = proposalRequirementColls.findOne(travelProposalId.toString());
         if (proposalRequirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         JsonArrayBuilder requirementsBuilder = Json.createArrayBuilder();
@@ -515,22 +530,23 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         return travelRequirement.getUUID();
     }
 
-    public List<TravelRequirement> getRequirements(UUID travelProposalId) throws InvalidTravelReqirementException {
+    public List<TravelRequirement> getRequirements(UUID travelProposalId, String requirementSubType)
+        throws InvalidTravelReqirementException {
         if (travelProposalId == null) {
             throw new NullPointerException();
         }
 
         DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
         if (proposalColls.findOne(travelProposalId.toString(), ID_FIELD) == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         DBCollection proposalRequirementColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_REQUIREMENT_COLL_NAME);
         DBObject proposalRequirements = proposalRequirementColls.findOne(travelProposalId.toString());
         if (proposalRequirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         Map<String, TravelRequirement> requirementsMap = new HashMap<String, TravelRequirement>();
@@ -542,36 +558,56 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
             requirementIds.add(requirementId);
         }
 
-        DBCollection itineraryColls = itineraryDb.getCollection(DAOConstants.ITINERARY_COLL_NAME);
-        DBObject itinerariesQuery = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk,
-            new BasicDBObject(DAOConstants.mongo_database_op_in, requirementIds)).get();
-        DBCursor itineraryCursor = itineraryColls.find(itinerariesQuery);
-        try {
-            Iterator<DBObject> itinerariesBsIter = itineraryCursor.iterator();
-            while (itinerariesBsIter.hasNext()) {
-                DBObject itineraryBs = itinerariesBsIter.next();
-                JsonObject itinerary = Json.createReader(new StringReader(itineraryBs.toString())).readObject();
-                requirementsMap.put(itinerary.getString(DAOConstants.mongo_database_pk),
-                    new ItineraryRequirement().fromJSON(itinerary));
+        if (StringUtils.isEmpty(requirementSubType)) {
+            DBCollection itineraryColls = itineraryDb.getCollection(DAOConstants.ITINERARY_COLL_NAME);
+            BasicDBObjectBuilder itinerariesQuery = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk,
+                new BasicDBObject(DAOConstants.mongo_database_op_in, requirementIds));
+            DBCursor itineraryCursor = itineraryColls.find(itinerariesQuery.get());
+            try {
+                Iterator<DBObject> itinerariesBsIter = itineraryCursor.iterator();
+                while (itinerariesBsIter.hasNext()) {
+                    DBObject itineraryBs = itinerariesBsIter.next();
+                    JsonObject itinerary = Json.createReader(new StringReader(itineraryBs.toString())).readObject();
+                    requirementsMap.put(itinerary.getString(DAOConstants.mongo_database_pk),
+                        new ItineraryRequirement().fromJSON(itinerary));
+                }
+            } finally {
+                itineraryCursor.close();
             }
-        } finally {
-            itineraryCursor.close();
-        }
 
-        DBCollection requirementColls = itineraryDb.getCollection(DAOConstants.REQUIREMENT_COLL_NAME);
-        DBObject requirementsQuery = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk,
-            new BasicDBObject(DAOConstants.mongo_database_op_in, requirementIds)).get();
-        DBCursor requirementCursor = requirementColls.find(requirementsQuery);
-        try {
-            Iterator<DBObject> requirementsBsIter = requirementCursor.iterator();
-            while (requirementsBsIter.hasNext()) {
-                DBObject requirementBs = requirementsBsIter.next();
-                JsonObject requirement = Json.createReader(new StringReader(requirementBs.toString())).readObject();
-                requirementsMap.put(requirement.getString(DAOConstants.mongo_database_pk),
-                    JsonObjectHelper.toRequirement(requirement, true));
+            DBCollection requirementColls = itineraryDb.getCollection(DAOConstants.REQUIREMENT_COLL_NAME);
+            BasicDBObjectBuilder requirementsQuery = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk,
+                new BasicDBObject(DAOConstants.mongo_database_op_in, requirementIds));
+            DBCursor requirementCursor = requirementColls.find(requirementsQuery.get());
+            try {
+                Iterator<DBObject> requirementsBsIter = requirementCursor.iterator();
+                while (requirementsBsIter.hasNext()) {
+                    DBObject requirementBs = requirementsBsIter.next();
+                    JsonObject requirement = Json.createReader(new StringReader(requirementBs.toString())).readObject();
+                    requirementsMap.put(requirement.getString(DAOConstants.mongo_database_pk),
+                        JsonObjectHelper.toRequirement(requirement, true));
+                }
+            } finally {
+                requirementCursor.close();
             }
-        } finally {
-            requirementCursor.close();
+        } else {
+            DBCollection requirementColls = itineraryDb.getCollection(DAOConstants.REQUIREMENT_COLL_NAME);
+            BasicDBObject query1 = new BasicDBObject(DAOConstants.mongo_database_pk,
+                new BasicDBObject(DAOConstants.mongo_database_op_in, requirementIds));
+            BasicDBObject query2 = new BasicDBObject(Introspection.JSONKeys.SUB_TYPE, requirementSubType);
+            BasicDBObject query = new BasicDBObject("$and", new BasicDBObject[] { query1, query2 });
+            DBCursor requirementCursor = requirementColls.find(query);
+            try {
+                Iterator<DBObject> requirementsBsIter = requirementCursor.iterator();
+                while (requirementsBsIter.hasNext()) {
+                    DBObject requirementBs = requirementsBsIter.next();
+                    JsonObject requirement = Json.createReader(new StringReader(requirementBs.toString())).readObject();
+                    requirementsMap.put(requirement.getString(DAOConstants.mongo_database_pk),
+                        JsonObjectHelper.toRequirement(requirement, true));
+                }
+            } finally {
+                requirementCursor.close();
+            }
         }
 
         List<TravelRequirement> requirementsList = new ArrayList<TravelRequirement>();
@@ -591,15 +627,15 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
 
         DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
         if (proposalColls.findOne(travelProposalId.toString(), ID_FIELD) == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         DBCollection proposalRequirementColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_REQUIREMENT_COLL_NAME);
         DBObject proposalRequirements = proposalRequirementColls.findOne(travelProposalId.toString());
         if (proposalRequirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         Object requirementsBs = proposalRequirements.get(Introspection.JSONKeys.REQUIREMENTS);
@@ -612,9 +648,9 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
 
         Map<String, TravelRequirement> itinerariesMap = new HashMap<String, TravelRequirement>();
         DBCollection itineraryColls = itineraryDb.getCollection(DAOConstants.ITINERARY_COLL_NAME);
-        DBObject itinerariesQuery = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk,
-            new BasicDBObject(DAOConstants.mongo_database_op_in, requirementIds)).get();
-        DBCursor itineraryCursor = itineraryColls.find(itinerariesQuery);
+        BasicDBObjectBuilder itinerariesQuery = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk,
+            new BasicDBObject(DAOConstants.mongo_database_op_in, requirementIds));
+        DBCursor itineraryCursor = itineraryColls.find(itinerariesQuery.get());
         try {
             Iterator<DBObject> itinerariesBsIter = itineraryCursor.iterator();
             while (itinerariesBsIter.hasNext()) {
@@ -644,21 +680,22 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
 
         DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
         if (proposalColls.findOne(travelProposalId.toString(), ID_FIELD) == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         DBCollection itineraryColls = itineraryDb.getCollection(DAOConstants.ITINERARY_COLL_NAME);
         if (itineraryColls.findOne(itineraryRequirementId.toString(), ID_FIELD) == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_itinerary,
-                itineraryRequirementId), itineraryRequirementId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_itinerary, itineraryRequirementId),
+                itineraryRequirementId);
         }
 
         DBCollection proposalRequirementColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_REQUIREMENT_COLL_NAME);
         DBObject proposalRequirements = proposalRequirementColls.findOne(travelProposalId.toString());
         if (proposalRequirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         Object requirementsBs = proposalRequirements.get(Introspection.JSONKeys.REQUIREMENTS);
@@ -670,9 +707,9 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         }
 
         Map<String, Boolean> itinerariesMap = new HashMap<String, Boolean>();
-        DBObject itinerariesQuery = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk,
-            new BasicDBObject(DAOConstants.mongo_database_op_in, requirementIds)).get();
-        DBCursor itinerariesCursor = itineraryColls.find(itinerariesQuery, ID_FIELD);
+        BasicDBObjectBuilder itinerariesQuery = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk,
+            new BasicDBObject(DAOConstants.mongo_database_op_in, requirementIds));
+        DBCursor itinerariesCursor = itineraryColls.find(itinerariesQuery.get(), ID_FIELD);
         try {
             Iterator<DBObject> requirementsBsIter = itinerariesCursor.iterator();
             while (requirementsBsIter.hasNext()) {
@@ -739,23 +776,24 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
 
         DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
         if (proposalColls.findOne(travelProposalId.toString(), ID_FIELD) == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         DBCollection itineraryColls = itineraryDb.getCollection(DAOConstants.ITINERARY_COLL_NAME);
         DBCollection requirementColls = itineraryDb.getCollection(DAOConstants.REQUIREMENT_COLL_NAME);
         if (itineraryColls.findOne(travelRequirementId.toString(), ID_FIELD) == null
             && requirementColls.findOne(travelRequirementId.toString(), ID_FIELD) == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.missing_travel_requirement, travelRequirementId), travelRequirementId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_requirement, travelRequirementId),
+                travelRequirementId);
         }
 
         DBCollection proposalRequirementColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_REQUIREMENT_COLL_NAME);
         DBObject proposalRequirements = proposalRequirementColls.findOne(travelProposalId.toString());
         if (proposalRequirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         Object requirementsBs = proposalRequirements.get(Introspection.JSONKeys.REQUIREMENTS);
@@ -767,9 +805,9 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         }
 
         Map<String, Boolean> itinerariesMap = new HashMap<String, Boolean>();
-        DBObject itinerariesQuery = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk,
-            new BasicDBObject(DAOConstants.mongo_database_op_in, requirementIds)).get();
-        DBCursor itineraryCursor = itineraryColls.find(itinerariesQuery, ID_FIELD);
+        BasicDBObjectBuilder itinerariesQuery = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk,
+            new BasicDBObject(DAOConstants.mongo_database_op_in, requirementIds));
+        DBCursor itineraryCursor = itineraryColls.find(itinerariesQuery.get(), ID_FIELD);
         try {
             Iterator<DBObject> itinerariesBsIter = itineraryCursor.iterator();
             while (itinerariesBsIter.hasNext()) {
@@ -812,23 +850,24 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
 
         DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
         if (proposalColls.findOne(travelProposalId.toString(), ID_FIELD) == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         DBCollection itineraryColls = itineraryDb.getCollection(DAOConstants.ITINERARY_COLL_NAME);
         DBCollection requirementColls = itineraryDb.getCollection(DAOConstants.REQUIREMENT_COLL_NAME);
         if (itineraryColls.findOne(travelRequirementId.toString(), ID_FIELD) == null
             && requirementColls.findOne(travelRequirementId.toString(), ID_FIELD) == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(
-                LocalMessages.missing_travel_requirement, travelRequirementId), travelRequirementId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_requirement, travelRequirementId),
+                travelRequirementId);
         }
 
         DBCollection proposalRequirementColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_REQUIREMENT_COLL_NAME);
         DBObject proposalRequirements = proposalRequirementColls.findOne(travelProposalId.toString());
         if (proposalRequirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         Object requirementsBs = proposalRequirements.get(Introspection.JSONKeys.REQUIREMENTS);
@@ -840,9 +879,9 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
         }
 
         Map<String, Boolean> itinerariesMap = new HashMap<String, Boolean>();
-        DBObject itinerariesQuery = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk,
-            new BasicDBObject(DAOConstants.mongo_database_op_in, requirementIds)).get();
-        DBCursor itineraryCursor = itineraryColls.find(itinerariesQuery, ID_FIELD);
+        BasicDBObjectBuilder itinerariesQuery = new BasicDBObjectBuilder().add(DAOConstants.mongo_database_pk,
+            new BasicDBObject(DAOConstants.mongo_database_op_in, requirementIds));
+        DBCursor itineraryCursor = itineraryColls.find(itinerariesQuery.get(), ID_FIELD);
         try {
             Iterator<DBObject> itinerariesBsIter = itineraryCursor.iterator();
             while (itinerariesBsIter.hasNext()) {
@@ -983,15 +1022,15 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
 
         DBCollection proposalColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_COLL_NAME);
         if (proposalColls.findOne(travelProposalId.toString(), ID_FIELD) == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         DBCollection proposalRequirementColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_REQUIREMENT_COLL_NAME);
         DBObject proposalRequirements = proposalRequirementColls.findOne(travelProposalId.toString());
         if (proposalRequirements == null) {
-            throw new InvalidTravelReqirementException(LocalMessages.getMessage(LocalMessages.missing_travel_proposal,
-                travelProposalId), travelProposalId);
+            throw new InvalidTravelReqirementException(
+                LocalMessages.getMessage(LocalMessages.missing_travel_proposal, travelProposalId), travelProposalId);
         }
 
         {
@@ -1052,7 +1091,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
             }
 
             /*
-             * Transactoin Start
+             * Transaction Start
              */
             if (removing) {
                 try {
@@ -1065,8 +1104,8 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
 
             try {
                 String[] ids = requirementIds.toArray(new String[requirementIds.size()]);
-                BasicDBObjectBuilder requirementIdsBuilder = new BasicDBObjectBuilder().add(
-                    DAOConstants.mongo_database_pk, new BasicDBObject(DAOConstants.mongo_database_op_in, ids));
+                BasicDBObjectBuilder requirementIdsBuilder = new BasicDBObjectBuilder()
+                    .add(DAOConstants.mongo_database_pk, new BasicDBObject(DAOConstants.mongo_database_op_in, ids));
                 WriteResult wr = requirementColls.remove(requirementIdsBuilder.get());
                 LOG.debug(LocalMessages.getMessage(LocalMessages.mongodb_remove_record, wr.toString()));
             } catch (MongoException e) {
@@ -1081,7 +1120,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
                 throw new InvalidTravelReqirementException(travelRequirementId, e);
             }
             /*
-             * Transactoin End
+             * Transaction End
              */
 
             return travelRequirementId;
@@ -1101,7 +1140,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
             }
 
             /*
-             * Transactoin Start
+             * Transaction Start
              */
             if (removing) {
                 try {
@@ -1120,7 +1159,7 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
                 throw new InvalidTravelReqirementException(travelRequirementId, e);
             }
             /*
-             * Transactoin End
+             * Transaction End
              */
 
             return travelRequirementId;
@@ -1143,10 +1182,10 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
 
         List<TravelProposal> result = new ArrayList<TravelProposal>();
         DBCollection proposalSubmissionColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_SUBMISSION_COLL_NAME);
-        BasicDBObject query1 = new BasicDBObject(Introspection.JSONKeys.DATE, new BasicDBObject("$gte",
-            since.getTimeInMillis()).append("$lte", until.getTimeInMillis()));
-        BasicDBObject query2 = new BasicDBObject(Introspection.JSONKeys.AGENCIES, new BasicDBObject("$in",
-            new String[] { agencyId.toString() }));
+        BasicDBObject query1 = new BasicDBObject(Introspection.JSONKeys.DATE,
+            new BasicDBObject("$gte", since.getTimeInMillis()).append("$lte", until.getTimeInMillis()));
+        BasicDBObject query2 = new BasicDBObject(Introspection.JSONKeys.AGENCIES,
+            new BasicDBObject("$in", new String[] { agencyId.toString() }));
         BasicDBObject query = new BasicDBObject("$and", new BasicDBObject[] { query1, query2 });
         DBCursor submissionsCr = proposalSubmissionColls.find(query);
         List<String> proposalIds = new ArrayList<String>();
@@ -1191,8 +1230,8 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
 
         List<TravelProposal> result = new ArrayList<TravelProposal>();
         DBCollection proposalSubmissionColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_SUBMISSION_COLL_NAME);
-        BasicDBObject query1 = new BasicDBObject(Introspection.JSONKeys.DATE, new BasicDBObject("$gte",
-            since.getTimeInMillis()).append("$lte", until.getTimeInMillis()));
+        BasicDBObject query1 = new BasicDBObject(Introspection.JSONKeys.DATE,
+            new BasicDBObject("$gte", since.getTimeInMillis()).append("$lte", until.getTimeInMillis()));
         BasicDBObject query2 = new BasicDBObject(new BasicDBObject(Introspection.JSONKeys.OWNER, accountId.toString()));
         BasicDBObject query = new BasicDBObject("$and", new BasicDBObject[] { query1, query2 });
         DBCursor submissionsCr = proposalSubmissionColls.find(query);
@@ -1334,8 +1373,8 @@ public class MyMongoSQLTravelRequirementDAOImpl implements TravelRequirementDAO 
 
         DBCollection proposalBidColls = itineraryDb.getCollection(DAOConstants.PROPOSAL_SUBMISSION_COLL_NAME);
         QueryBuilder proposalQuery = QueryBuilder.start(DAOConstants.mongo_database_pk).is(proposalId.toString());
-        QueryBuilder agencySizeQuery = QueryBuilder.start(Introspection.JSONKeys.AGENCIES).size(
-            agencies.isEmpty() ? 0 : agencies.size() - 1);
+        QueryBuilder agencySizeQuery = QueryBuilder.start(Introspection.JSONKeys.AGENCIES)
+            .size(agencies.isEmpty() ? 0 : agencies.size() - 1);
         DBObject query = QueryBuilder.start().and(proposalQuery.get(), agencySizeQuery.get()).get();
         if (agencies.isEmpty()) {
             return proposalBidColls.insert(bidBs, WriteConcern.MAJORITY);

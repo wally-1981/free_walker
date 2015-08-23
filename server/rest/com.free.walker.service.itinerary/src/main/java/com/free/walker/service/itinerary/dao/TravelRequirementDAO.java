@@ -22,8 +22,8 @@ public interface TravelRequirementDAO extends HealthyDAO {
      * @throws InvalidTravelReqirementException
      * @throws DatabaseAccessException
      */
-    public UUID createProposal(Account account, TravelProposal travelProposal) throws InvalidTravelReqirementException,
-        DatabaseAccessException;
+    public UUID createProposal(Account account, TravelProposal travelProposal)
+        throws InvalidTravelReqirementException, DatabaseAccessException;
 
     /**
      * Publish the specified proposal, so that travel agency could start join
@@ -35,8 +35,8 @@ public interface TravelRequirementDAO extends HealthyDAO {
      * @throws InvalidTravelReqirementException
      * @throws DatabaseAccessException
      */
-    public UUID startProposalBid(UUID travelProposalId, Account account) throws InvalidTravelReqirementException,
-        DatabaseAccessException;
+    public UUID startProposalBid(UUID travelProposalId, Account account)
+        throws InvalidTravelReqirementException, DatabaseAccessException;
 
     /**
      * Bid for the specified proposal by the specified agency.
@@ -47,8 +47,8 @@ public interface TravelRequirementDAO extends HealthyDAO {
      * @throws InvalidTravelReqirementException
      * @throws DatabaseAccessException
      */
-    public UUID joinProposalBid(UUID travelProposalId, UUID agencyId) throws InvalidTravelReqirementException,
-        DatabaseAccessException;
+    public UUID joinProposalBid(UUID travelProposalId, UUID agencyId)
+        throws InvalidTravelReqirementException, DatabaseAccessException;
 
     /**
      * Add the itinerary to the specified proposal and make it as the next of
@@ -80,10 +80,10 @@ public interface TravelRequirementDAO extends HealthyDAO {
 
     /**
      * Add the requirement to the specified proposal. The requirement can be an
-     * itinerary or an ordinary requirement. If the requirement is an
-     * itinerary, it will be made as the last itinerary of the proposal. If the
-     * requirement is an ordinary requirement, it will be made as an ordinary
-     * requirement to the latest itinerary.
+     * itinerary or an ordinary requirement. If the requirement is an itinerary,
+     * it will be made as the last itinerary of the proposal. If the requirement
+     * is an ordinary requirement, it will be made as an ordinary requirement to
+     * the latest itinerary.
      * 
      * @param travelProposalId
      * @param travelRequirement
@@ -100,13 +100,17 @@ public interface TravelRequirementDAO extends HealthyDAO {
      * The ordinary requirements of an itinerary will follow its itinerary until
      * the next itinerary or the end of the list.
      * 
+     * The requirement sub-type can be specified to retrieve the requirements of
+     * the given sub-type only.
+     * 
      * @param travelProposalId
+     * @param requirementSubType
      * @return
      * @throws InvalidTravelReqirementException
      * @throws DatabaseAccessException
      */
-    public List<TravelRequirement> getRequirements(UUID travelProposalId) throws InvalidTravelReqirementException,
-        DatabaseAccessException;
+    public List<TravelRequirement> getRequirements(UUID travelProposalId, String requirementSubType)
+        throws InvalidTravelReqirementException, DatabaseAccessException;
 
     /**
      * Retrieve all itineraries of the specified proposal, and all itineraries
@@ -136,7 +140,7 @@ public interface TravelRequirementDAO extends HealthyDAO {
     /**
      * Retrieve the previous itinerary of the specified proposal and
      * requirement. The requirement id must not point to a proposal. null will
-     * be retunred if there is no more itinerary backwards;
+     * be returned if there is no more itinerary backwards;
      * 
      * @param travelProposalId
      * @param travelRequirementId
@@ -149,7 +153,7 @@ public interface TravelRequirementDAO extends HealthyDAO {
 
     /**
      * Retrieve the next itinerary of the specified proposal and requirement.
-     * The requirement id must not point to a proposal. null will be retunred if
+     * The requirement id must not point to a proposal. null will be returned if
      * there is no more itinerary forwards.
      * 
      * @param travelProposalId
@@ -186,8 +190,8 @@ public interface TravelRequirementDAO extends HealthyDAO {
      * @throws InvalidTravelReqirementException
      * @throws DatabaseAccessException
      */
-    public UUID updateRequirement(TravelRequirement travelRequirement) throws InvalidTravelReqirementException,
-        DatabaseAccessException;
+    public UUID updateRequirement(TravelRequirement travelRequirement)
+        throws InvalidTravelReqirementException, DatabaseAccessException;
 
     /**
      * Remove the specified requirement by identifier. Removing an itinerary

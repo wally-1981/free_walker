@@ -20,6 +20,7 @@ import javax.json.JsonValue;
 import com.free.walker.service.itinerary.Constants;
 import com.free.walker.service.itinerary.LocalMessages;
 import com.free.walker.service.itinerary.basic.TravelLocation;
+import com.free.walker.service.itinerary.basic.TravelLocation.LocationType;
 import com.free.walker.service.itinerary.exp.InvalidTravelReqirementException;
 import com.free.walker.service.itinerary.primitive.Introspection;
 import com.free.walker.service.itinerary.util.JsonObjectHelper;
@@ -92,6 +93,10 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
 
     public String getTitle() {
         return proposalTitle;
+    }
+
+    public TravelLocation getDeparture() {
+        return departureLocation;
     }
 
     public List<TravelRequirement> getTravelRequirements() {
@@ -178,7 +183,18 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
 
         JsonObject departureLocation = jsObject.getJsonObject(Introspection.JSONKeys.DEPARTURE);
         if (departureLocation != null) {
-            this.departureLocation = new TravelLocation().fromJSON(departureLocation);
+            String location = departureLocation.getString(Introspection.JSONKeys.LOCATION, null);
+            String locationTypeStr = departureLocation.getString(Introspection.JSONKeys.LOCATION_TYPE, null);
+            if (location != null && locationTypeStr != null) {
+                LocationType locationType = LocationType.valueOf(locationTypeStr);
+                if (LocationType.CONTINENT.equals(locationType)) {
+                    this.departureLocation = new TravelLocation(Integer.valueOf(location));
+                } else {
+                    this.departureLocation = new TravelLocation(UuidUtil.fromUuidStr(location), locationType);
+                }
+            } else {
+                this.departureLocation = new TravelLocation().fromJSON(departureLocation);
+            }
         }
 
         JsonNumber departureDt = jsObject.getJsonNumber(Introspection.JSONKeys.DEPARTURE_DATETIME);
@@ -189,7 +205,18 @@ public class TravelProposal extends BaseTravelRequirement implements TravelRequi
 
         JsonObject returnLocation = jsObject.getJsonObject(Introspection.JSONKeys.RETURN);
         if (returnLocation != null) {
-            this.returnLocation = new TravelLocation().fromJSON(returnLocation);
+            String location = returnLocation.getString(Introspection.JSONKeys.LOCATION, null);
+            String locationTypeStr = returnLocation.getString(Introspection.JSONKeys.LOCATION_TYPE, null);
+            if (location != null && locationTypeStr != null) {
+                LocationType locationType = LocationType.valueOf(locationTypeStr);
+                if (LocationType.CONTINENT.equals(locationType)) {
+                    this.returnLocation = new TravelLocation(Integer.valueOf(location));
+                } else {
+                    this.returnLocation = new TravelLocation(UuidUtil.fromUuidStr(location), locationType);
+                }
+            } else {
+                this.returnLocation = new TravelLocation().fromJSON(returnLocation);
+            }
         }
 
         JsonNumber returnDt = jsObject.getJsonNumber(Introspection.JSONKeys.RETURN_DATETIME);

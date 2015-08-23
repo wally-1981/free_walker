@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -30,6 +31,8 @@ import com.free.walker.service.itinerary.util.UuidUtil;
 import com.ibm.icu.util.Calendar;
 
 public abstract class AbstractTravelRequirementDAOImplTest {
+    private static String EMPTY_STR = StringUtils.EMPTY;
+
     protected TravelRequirementDAO travelRequirementDAO;
 
     @Rule
@@ -41,15 +44,15 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testCreateTravelProposalWithNullAccount() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testCreateTravelProposalWithNullAccount()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         thrown.expect(NullPointerException.class);
         travelRequirementDAO.createProposal(null, null);
     }
 
     @Test
-    public void testCreateTravelProposalWithNullProposal() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testCreateTravelProposalWithNullProposal()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         thrown.expect(NullPointerException.class);
         travelRequirementDAO.createProposal(Constants.DEFAULT_USER_ACCOUNT, null);
     }
@@ -65,8 +68,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         assertNotNull(proposalId);
 
         thrown.expect(InvalidTravelReqirementException.class);
-        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.existed_travel_requirement,
-            travelProposal.getUUID()));
+        thrown.expectMessage(
+            LocalMessages.getMessage(LocalMessages.existed_travel_requirement, travelProposal.getUUID()));
         travelRequirementDAO.createProposal(Constants.DEFAULT_USER_ACCOUNT, travelProposal);
     }
 
@@ -79,8 +82,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
 
         UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_USER_ACCOUNT, travelProposal);
 
-        assertNotNull(travelRequirementDAO.getRequirement(proposalId,
-            Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL));
+        assertNotNull(
+            travelRequirementDAO.getRequirement(proposalId, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL));
         assertNotNull(travelRequirementDAO.getRequirement(itineraryRequirement.getUUID(),
             Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY));
 
@@ -90,15 +93,15 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         assertNotNull(travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()));
         assertEquals(0, travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()).size());
 
-        assertEquals(1, travelRequirementDAO.getRequirements(proposalId).size());
+        assertEquals(1, travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).size());
 
         assertNull(travelRequirementDAO.getNextItineraryRequirement(proposalId, itineraryRequirement.getUUID()));
         assertNull(travelRequirementDAO.getPrevItineraryRequirement(proposalId, itineraryRequirement.getUUID()));
     }
 
     @Test
-    public void testAddTravelRequirementWithNullProposal() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testAddTravelRequirementWithNullProposal()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -108,8 +111,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testAddTravelRequirementWithNullRequirement() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testAddTravelRequirementWithNullRequirement()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -122,8 +125,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testAddTravelRequirementWithWrongProposalId() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testAddTravelRequirementWithWrongProposalId()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -142,8 +145,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testAddTravelRequirementWithDuplicateRequirement() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testAddTravelRequirementWithDuplicateRequirement()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -152,14 +155,14 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_USER_ACCOUNT, travelProposal);
 
         thrown.expect(InvalidTravelReqirementException.class);
-        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.existed_travel_requirement,
-            itineraryRequirement.getUUID()));
+        thrown.expectMessage(
+            LocalMessages.getMessage(LocalMessages.existed_travel_requirement, itineraryRequirement.getUUID()));
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement);
     }
 
     @Test
-    public void testAddTravelRequirementWithNewItineraryRequirement() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testAddTravelRequirementWithNewItineraryRequirement()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -173,8 +176,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
 
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement2);
 
-        assertNotNull(travelRequirementDAO.getRequirement(proposalId,
-            Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL));
+        assertNotNull(
+            travelRequirementDAO.getRequirement(proposalId, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL));
         assertNotNull(travelRequirementDAO.getRequirement(itineraryRequirement.getUUID(),
             Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY));
         assertNotNull(travelRequirementDAO.getRequirement(itineraryRequirement2.getUUID(),
@@ -190,17 +193,17 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         assertNotNull(travelRequirementDAO.getRequirements(proposalId, itineraryRequirement2.getUUID()));
         assertEquals(0, travelRequirementDAO.getRequirements(proposalId, itineraryRequirement2.getUUID()).size());
 
-        assertEquals(2, travelRequirementDAO.getRequirements(proposalId).size());
-        assertTrue(travelRequirementDAO.getRequirements(proposalId).get(0) instanceof ItineraryRequirement);
-        assertTrue(travelRequirementDAO.getRequirements(proposalId).get(1) instanceof ItineraryRequirement);
+        assertEquals(2, travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).size());
+        assertTrue(travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).get(0) instanceof ItineraryRequirement);
+        assertTrue(travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).get(1) instanceof ItineraryRequirement);
 
         assertNotNull(travelRequirementDAO.getNextItineraryRequirement(proposalId, itineraryRequirement.getUUID()));
         assertNotNull(travelRequirementDAO.getPrevItineraryRequirement(proposalId, itineraryRequirement2.getUUID()));
     }
 
     @Test
-    public void testAddTravelRequirementWithNewTravelRequirement() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testAddTravelRequirementWithNewTravelRequirement()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -212,8 +215,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
 
         travelRequirementDAO.addRequirement(proposalId, hotelRequirement);
 
-        assertNotNull(travelRequirementDAO.getRequirement(proposalId,
-            Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL));
+        assertNotNull(
+            travelRequirementDAO.getRequirement(proposalId, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL));
         assertNotNull(travelRequirementDAO.getRequirement(itineraryRequirement.getUUID(),
             Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY));
         assertNotNull(travelRequirementDAO.getRequirement(hotelRequirement.getUUID(),
@@ -226,17 +229,17 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         assertNotNull(travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()));
         assertEquals(1, travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()).size());
 
-        assertEquals(2, travelRequirementDAO.getRequirements(proposalId).size());
-        assertTrue(travelRequirementDAO.getRequirements(proposalId).get(0) instanceof ItineraryRequirement);
-        assertTrue(travelRequirementDAO.getRequirements(proposalId).get(1) instanceof HotelRequirement);
+        assertEquals(2, travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).size());
+        assertTrue(travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).get(0) instanceof ItineraryRequirement);
+        assertTrue(travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).get(1) instanceof HotelRequirement);
 
         assertNull(travelRequirementDAO.getNextItineraryRequirement(proposalId, itineraryRequirement.getUUID()));
         assertNull(travelRequirementDAO.getPrevItineraryRequirement(proposalId, itineraryRequirement.getUUID()));
     }
 
     @Test
-    public void testInsertTravelRequirementWithNullProposal() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testInsertTravelRequirementWithNullProposal()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -248,8 +251,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testInsertTravelRequirementWithNullItinerary() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testInsertTravelRequirementWithNullItinerary()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -264,8 +267,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testInsertTravelRequirementWithNullRequirement() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testInsertTravelRequirementWithNullRequirement()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -278,8 +281,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testInsertTravelRequirementWithWrongProposalId() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testInsertTravelRequirementWithWrongProposalId()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -296,8 +299,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testInsertTravelRequirementWithWrongRequirementId() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testInsertTravelRequirementWithWrongRequirementId()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -318,8 +321,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testInsertTravelRequirementWithDuplicateRequirement() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testInsertTravelRequirementWithDuplicateRequirement()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -331,14 +334,14 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement.getUUID(), hotelRequirement);
 
         thrown.expect(InvalidTravelReqirementException.class);
-        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.existed_travel_requirement,
-            hotelRequirement.getUUID()));
+        thrown.expectMessage(
+            LocalMessages.getMessage(LocalMessages.existed_travel_requirement, hotelRequirement.getUUID()));
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement.getUUID(), hotelRequirement);
     }
 
     @Test
-    public void testInsertTravelRequirementWithItineraryRequirement() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testInsertTravelRequirementWithItineraryRequirement()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -369,8 +372,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
 
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement.getUUID(), hotelRequirement);
 
-        assertNotNull(travelRequirementDAO.getRequirement(proposalId,
-            Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL));
+        assertNotNull(
+            travelRequirementDAO.getRequirement(proposalId, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL));
         assertNotNull(travelRequirementDAO.getRequirement(itineraryRequirement.getUUID(),
             Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY));
         assertNotNull(travelRequirementDAO.getRequirement(hotelRequirement.getUUID(),
@@ -383,17 +386,17 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         assertNotNull(travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()));
         assertEquals(1, travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()).size());
 
-        assertEquals(2, travelRequirementDAO.getRequirements(proposalId).size());
-        assertTrue(travelRequirementDAO.getRequirements(proposalId).get(0) instanceof ItineraryRequirement);
-        assertTrue(travelRequirementDAO.getRequirements(proposalId).get(1) instanceof HotelRequirement);
+        assertEquals(2, travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).size());
+        assertTrue(travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).get(0) instanceof ItineraryRequirement);
+        assertTrue(travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).get(1) instanceof HotelRequirement);
 
         assertNull(travelRequirementDAO.getNextItineraryRequirement(proposalId, itineraryRequirement.getUUID()));
         assertNull(travelRequirementDAO.getPrevItineraryRequirement(proposalId, itineraryRequirement.getUUID()));
     }
 
     @Test
-    public void testInsertTravelRequirementInTheMiddle() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testInsertTravelRequirementInTheMiddle()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -414,8 +417,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
             Introspection.JSONValues.TRAFFIC_TOOL_SEAT_CLASS_1ST);
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement.getUUID(), trafficToolRequirement);
 
-        assertNotNull(travelRequirementDAO.getRequirement(proposalId,
-            Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL));
+        assertNotNull(
+            travelRequirementDAO.getRequirement(proposalId, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL));
         assertNotNull(travelRequirementDAO.getRequirement(itineraryRequirement.getUUID(),
             Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY));
         assertNotNull(travelRequirementDAO.getRequirement(hotelRequirement.getUUID(),
@@ -437,12 +440,13 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         assertNotNull(travelRequirementDAO.getRequirements(proposalId, itineraryRequirement2.getUUID()));
         assertEquals(1, travelRequirementDAO.getRequirements(proposalId, itineraryRequirement2.getUUID()).size());
 
-        assertEquals(5, travelRequirementDAO.getRequirements(proposalId).size());
-        assertTrue(travelRequirementDAO.getRequirements(proposalId).get(0) instanceof ItineraryRequirement);
-        assertTrue(travelRequirementDAO.getRequirements(proposalId).get(2) instanceof HotelRequirement);
-        assertTrue(travelRequirementDAO.getRequirements(proposalId).get(1) instanceof TrafficToolSeatRequirement);
-        assertTrue(travelRequirementDAO.getRequirements(proposalId).get(3) instanceof ItineraryRequirement);
-        assertTrue(travelRequirementDAO.getRequirements(proposalId).get(4) instanceof HotelRequirement);
+        assertEquals(5, travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).size());
+        assertTrue(travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).get(0) instanceof ItineraryRequirement);
+        assertTrue(travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).get(2) instanceof HotelRequirement);
+        assertTrue(
+            travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).get(1) instanceof TrafficToolSeatRequirement);
+        assertTrue(travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).get(3) instanceof ItineraryRequirement);
+        assertTrue(travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).get(4) instanceof HotelRequirement);
 
         assertNotNull(travelRequirementDAO.getNextItineraryRequirement(proposalId, itineraryRequirement.getUUID()));
         assertNotNull(travelRequirementDAO.getPrevItineraryRequirement(proposalId, itineraryRequirement2.getUUID()));
@@ -451,28 +455,29 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     @Test
     public void testGetRequirementsWithNullProposal() throws InvalidTravelReqirementException, DatabaseAccessException {
         thrown.expect(NullPointerException.class);
-        travelRequirementDAO.getRequirements(null);
+        travelRequirementDAO.getRequirements(null, EMPTY_STR);
     }
 
     @Test
-    public void testGetRequirementsWithWrongProposal() throws InvalidTravelReqirementException, DatabaseAccessException {
+    public void testGetRequirementsWithWrongProposal()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         UUID proposalId = UUID.randomUUID();
 
         thrown.expect(InvalidTravelReqirementException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_proposal, proposalId));
-        travelRequirementDAO.getRequirements(proposalId);
+        travelRequirementDAO.getRequirements(proposalId, EMPTY_STR);
     }
 
     @Test
-    public void testGetItineraryRequirementsWithNullProposal() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testGetItineraryRequirementsWithNullProposal()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         thrown.expect(NullPointerException.class);
         travelRequirementDAO.getItineraryRequirements(null);
     }
 
     @Test
-    public void testGetItineraryRequirementsWithWrongProposal() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testGetItineraryRequirementsWithWrongProposal()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         UUID wrongProposalId = UUID.randomUUID();
 
         thrown.expect(InvalidTravelReqirementException.class);
@@ -481,22 +486,23 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testGetRequirementsByItineraryWithNullProposal() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testGetRequirementsByItineraryWithNullProposal()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         thrown.expect(NullPointerException.class);
         travelRequirementDAO.getRequirements(null, UUID.randomUUID());
     }
 
     @Test
-    public void testGetRequirementsByItineraryWithNullItinerary() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testGetRequirementsByItineraryWithNullItinerary()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
+        UUID nullUuid = null;
         thrown.expect(NullPointerException.class);
-        travelRequirementDAO.getRequirements(UUID.randomUUID(), null);
+        travelRequirementDAO.getRequirements(UUID.randomUUID(), nullUuid);
     }
 
     @Test
-    public void testGetRequirementsByItineraryWithWrongProposal() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testGetRequirementsByItineraryWithWrongProposal()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         UUID proposalId = UUID.randomUUID();
 
         thrown.expect(InvalidTravelReqirementException.class);
@@ -505,8 +511,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testGetRequirementsByItineraryWithWrongItinerary() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testGetRequirementsByItineraryWithWrongItinerary()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -522,8 +528,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testGetPrevItineraryRequirementWithNull() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testGetPrevItineraryRequirementWithNull()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         thrown.expect(NullPointerException.class);
         travelRequirementDAO.getPrevItineraryRequirement(null, UUID.randomUUID());
 
@@ -532,8 +538,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testGetPrevItineraryRequirementWithWrongProposal() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testGetPrevItineraryRequirementWithWrongProposal()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         UUID proposalId = UUID.randomUUID();
 
         thrown.expect(InvalidTravelReqirementException.class);
@@ -542,8 +548,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testGetPrevItineraryRequirementWithWrongRequirement() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testGetPrevItineraryRequirementWithWrongRequirement()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -559,8 +565,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testGetNextItineraryRequirementWithNull() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testGetNextItineraryRequirementWithNull()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         thrown.expect(NullPointerException.class);
         travelRequirementDAO.getPrevItineraryRequirement(null, UUID.randomUUID());
 
@@ -569,8 +575,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testGetNextItineraryRequirementWithWrongProposal() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testGetNextItineraryRequirementWithWrongProposal()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         UUID proposalId = UUID.randomUUID();
 
         thrown.expect(InvalidTravelReqirementException.class);
@@ -579,8 +585,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testGetNextItineraryRequirementWithWrongRequirement() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testGetNextItineraryRequirementWithWrongRequirement()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -596,15 +602,15 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testGetTravelRequirementWithNullRequirment() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testGetTravelRequirementWithNullRequirment()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         thrown.expect(NullPointerException.class);
         travelRequirementDAO.getRequirement(null, null);
     }
 
     @Test
-    public void testGetTravelRequirementWithWrongRequirment() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testGetTravelRequirementWithWrongRequirment()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         UUID requirementId = UUID.randomUUID();
 
         assertNull(travelRequirementDAO.getRequirement(requirementId, null));
@@ -617,8 +623,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testUpdateTravelRequirementWithItinerary() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testUpdateTravelRequirementWithItinerary()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -630,8 +636,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testUpdateTravelRequirementWithProposal() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testUpdateTravelRequirementWithProposal()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -644,13 +650,13 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testUpdateTravelRequirementWithWrongRequirement() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testUpdateTravelRequirementWithWrongRequirement()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelRequirement hotelRequirement = new HotelRequirement(2);
 
         thrown.expect(InvalidTravelReqirementException.class);
-        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_requirement, hotelRequirement
-            .getUUID().toString()));
+        thrown.expectMessage(
+            LocalMessages.getMessage(LocalMessages.missing_travel_requirement, hotelRequirement.getUUID().toString()));
         travelRequirementDAO.updateRequirement(hotelRequirement);
     }
 
@@ -667,12 +673,12 @@ public abstract class AbstractTravelRequirementDAOImplTest {
 
         UUID requirementId = travelRequirementDAO.updateRequirement(hotelRequirement);
 
-        assertNotNull(travelRequirementDAO.getRequirement(proposalId,
-            Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL));
+        assertNotNull(
+            travelRequirementDAO.getRequirement(proposalId, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL));
         assertNotNull(travelRequirementDAO.getRequirement(itineraryRequirement.getUUID(),
             Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY));
-        assertNotNull(travelRequirementDAO.getRequirement(requirementId,
-            Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT));
+        assertNotNull(
+            travelRequirementDAO.getRequirement(requirementId, Introspection.JSONValues.REQUIREMENT_TYPE_REQUIREMENT));
 
         assertNotNull(travelRequirementDAO.getItineraryRequirements(proposalId));
         assertEquals(1, travelRequirementDAO.getItineraryRequirements(proposalId).size());
@@ -681,24 +687,24 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         assertNotNull(travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()));
         assertEquals(1, travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()).size());
 
-        assertEquals(2, travelRequirementDAO.getRequirements(proposalId).size());
-        assertTrue(travelRequirementDAO.getRequirements(proposalId).get(0) instanceof ItineraryRequirement);
-        assertTrue(travelRequirementDAO.getRequirements(proposalId).get(1) instanceof HotelRequirement);
+        assertEquals(2, travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).size());
+        assertTrue(travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).get(0) instanceof ItineraryRequirement);
+        assertTrue(travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).get(1) instanceof HotelRequirement);
 
         assertNull(travelRequirementDAO.getNextItineraryRequirement(proposalId, itineraryRequirement.getUUID()));
         assertNull(travelRequirementDAO.getPrevItineraryRequirement(proposalId, itineraryRequirement.getUUID()));
     }
 
     @Test
-    public void testRemoveTravelRequirementWithNullProposal() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testRemoveTravelRequirementWithNullProposal()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         thrown.expect(NullPointerException.class);
         travelRequirementDAO.removeRequirement(null, null);
     }
 
     @Test
-    public void testRemoveTravelRequirementWithWrongProposal() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testRemoveTravelRequirementWithWrongProposal()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         UUID wrongProposalId = UUID.randomUUID();
         thrown.expect(InvalidTravelReqirementException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_proposal, wrongProposalId));
@@ -706,8 +712,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testRemoveTravelRequirementWithNullRequirment() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testRemoveTravelRequirementWithNullRequirment()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -720,8 +726,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testRemoveTravelRequirementWithWrongRequirment() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testRemoveTravelRequirementWithWrongRequirment()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         UUID wrongRequirementId = UUID.randomUUID();
 
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
@@ -740,8 +746,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testRemoveTravelRequirementWithProposal() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testRemoveTravelRequirementWithProposal()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -750,14 +756,14 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_USER_ACCOUNT, travelProposal);
 
         thrown.expect(InvalidTravelReqirementException.class);
-        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_delete_travel_requirement_operation,
-            proposalId));
+        thrown.expectMessage(
+            LocalMessages.getMessage(LocalMessages.illegal_delete_travel_requirement_operation, proposalId));
         travelRequirementDAO.removeRequirement(proposalId, proposalId);
     }
 
     @Test
-    public void testRemoveTravelRequirementLastItinerary() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testRemoveTravelRequirementLastItinerary()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -766,8 +772,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         UUID proposalId = travelRequirementDAO.createProposal(Constants.DEFAULT_USER_ACCOUNT, travelProposal);
 
         thrown.expect(InvalidTravelReqirementException.class);
-        thrown.expectMessage(LocalMessages.getMessage(LocalMessages.illegal_delete_travel_requirement_operation,
-            proposalId));
+        thrown.expectMessage(
+            LocalMessages.getMessage(LocalMessages.illegal_delete_travel_requirement_operation, proposalId));
         travelRequirementDAO.removeRequirement(proposalId, itineraryRequirement.getUUID());
     }
 
@@ -790,8 +796,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement.getUUID(), hotelRequirement);
         travelRequirementDAO.removeRequirement(proposalId, hotelRequirement.getUUID());
 
-        assertNotNull(travelRequirementDAO.getRequirement(proposalId,
-            Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL));
+        assertNotNull(
+            travelRequirementDAO.getRequirement(proposalId, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL));
         assertNotNull(travelRequirementDAO.getRequirement(itineraryRequirement.getUUID(),
             Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY));
         assertNotNull(travelRequirementDAO.getRequirement(itineraryRequirement2.getUUID(),
@@ -807,9 +813,9 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         assertNotNull(travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()));
         assertEquals(0, travelRequirementDAO.getRequirements(proposalId, itineraryRequirement.getUUID()).size());
 
-        assertEquals(2, travelRequirementDAO.getRequirements(proposalId).size());
-        assertTrue(travelRequirementDAO.getRequirements(proposalId).get(0) instanceof ItineraryRequirement);
-        assertTrue(travelRequirementDAO.getRequirements(proposalId).get(1) instanceof ItineraryRequirement);
+        assertEquals(2, travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).size());
+        assertTrue(travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).get(0) instanceof ItineraryRequirement);
+        assertTrue(travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).get(1) instanceof ItineraryRequirement);
 
         assertNotNull(travelRequirementDAO.getNextItineraryRequirement(proposalId, itineraryRequirement.getUUID()));
         assertNotNull(travelRequirementDAO.getPrevItineraryRequirement(proposalId, itineraryRequirement2.getUUID()));
@@ -834,8 +840,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         travelRequirementDAO.addRequirement(proposalId, itineraryRequirement2);
         travelRequirementDAO.removeRequirement(proposalId, itineraryRequirement.getUUID());
 
-        assertNotNull(travelRequirementDAO.getRequirement(proposalId,
-            Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL));
+        assertNotNull(
+            travelRequirementDAO.getRequirement(proposalId, Introspection.JSONValues.REQUIREMENT_TYPE_PROPOSAL));
         assertNull(travelRequirementDAO.getRequirement(itineraryRequirement.getUUID(),
             Introspection.JSONValues.REQUIREMENT_TYPE_ITINERARY));
         assertNotNull(travelRequirementDAO.getRequirement(itineraryRequirement2.getUUID(),
@@ -850,15 +856,16 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         assertNotNull(travelRequirementDAO.getRequirements(proposalId, itineraryRequirement2.getUUID()));
         assertEquals(0, travelRequirementDAO.getRequirements(proposalId, itineraryRequirement2.getUUID()).size());
 
-        assertEquals(1, travelRequirementDAO.getRequirements(proposalId).size());
-        assertTrue(travelRequirementDAO.getRequirements(proposalId).get(0) instanceof ItineraryRequirement);
+        assertEquals(1, travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).size());
+        assertTrue(travelRequirementDAO.getRequirements(proposalId, EMPTY_STR).get(0) instanceof ItineraryRequirement);
 
         assertNull(travelRequirementDAO.getNextItineraryRequirement(proposalId, itineraryRequirement2.getUUID()));
         assertNull(travelRequirementDAO.getPrevItineraryRequirement(proposalId, itineraryRequirement2.getUUID()));
     }
 
     @Test
-    public void testStartProposalBidWithNullProposal() throws InvalidTravelReqirementException, DatabaseAccessException {
+    public void testStartProposalBidWithNullProposal()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         thrown.expect(NullPointerException.class);
         travelRequirementDAO.startProposalBid(null, null);
     }
@@ -870,8 +877,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testStartProposalBidWithWrongProposal() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testStartProposalBidWithWrongProposal()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         UUID wrongProposalId = UUID.randomUUID();
         thrown.expect(InvalidTravelReqirementException.class);
         thrown.expectMessage(LocalMessages.getMessage(LocalMessages.missing_travel_proposal, wrongProposalId));
@@ -891,8 +898,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testStartProposalBidTwice() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testStartProposalBidTwice() throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -907,8 +913,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testStartProposalBidAfterJoin() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testStartProposalBidAfterJoin() throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -926,8 +931,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testStartProposalBidWithDifferentAccount() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testStartProposalBidWithDifferentAccount()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -991,8 +996,7 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testJoinProposalBidTwice() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testJoinProposalBidTwice() throws InvalidTravelReqirementException, DatabaseAccessException {
         TravelLocation destination = new TravelLocation(Constants.TAIBEI);
         TravelLocation departure = new TravelLocation(Constants.BARCELONA);
         ItineraryRequirement itineraryRequirement = new ItineraryRequirement(destination, departure);
@@ -1047,8 +1051,8 @@ public abstract class AbstractTravelRequirementDAOImplTest {
     }
 
     @Test
-    public void testGetProposalsByAccountIdWithNullAccount() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testGetProposalsByAccountIdWithNullAccount()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         thrown.expect(NullPointerException.class);
         travelRequirementDAO.getTravelProposalsByAccount(null, Calendar.getInstance(), 1);
     }
@@ -1080,15 +1084,15 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         Calendar since = Calendar.getInstance();
         since.add(Calendar.SECOND, -5);
 
-        List<TravelProposal> travelProposals = travelRequirementDAO.getTravelProposalsByAccount(
-            UuidUtil.fromUuidStr(Constants.ADMIN_ACCOUNT.getUuid()), since, 0);
+        List<TravelProposal> travelProposals = travelRequirementDAO
+            .getTravelProposalsByAccount(UuidUtil.fromUuidStr(Constants.ADMIN_ACCOUNT.getUuid()), since, 0);
         assertNotNull(travelProposals);
         assertEquals(2, travelProposals.size());
     }
 
     @Test
-    public void testGetProposalsByAgencyIdWithNullAgency() throws InvalidTravelReqirementException,
-        DatabaseAccessException {
+    public void testGetProposalsByAgencyIdWithNullAgency()
+        throws InvalidTravelReqirementException, DatabaseAccessException {
         thrown.expect(NullPointerException.class);
         travelRequirementDAO.getTravelProposalsByAgency(null, Calendar.getInstance(), 1);
     }
@@ -1127,10 +1131,10 @@ public abstract class AbstractTravelRequirementDAOImplTest {
         Calendar since = Calendar.getInstance();
         since.add(Calendar.DATE, -1);
 
-        List<TravelProposal> travelProposals4Agency1 = travelRequirementDAO.getTravelProposalsByAgency(agencyId1,
-            since, 1);
-        List<TravelProposal> travelProposals4Agency2 = travelRequirementDAO.getTravelProposalsByAgency(agencyId2,
-            since, 1);
+        List<TravelProposal> travelProposals4Agency1 = travelRequirementDAO.getTravelProposalsByAgency(agencyId1, since,
+            1);
+        List<TravelProposal> travelProposals4Agency2 = travelRequirementDAO.getTravelProposalsByAgency(agencyId2, since,
+            1);
 
         assertNotNull(travelProposals4Agency1);
         assertEquals(2, travelProposals4Agency1.size());
