@@ -19,14 +19,12 @@ $(document).ready(function() {
         }
     });
 
-    /*
-     * 
-     */
     var navigatable_nav_item = {
         'a#home_sec' : 'div#home',
         'a#customize_sec' : 'div#customize',
         'a#mine_sec' : 'div#mine'
     };
+
     _.each(_.keys(navigatable_nav_item), function(element, index, list) {
         $(element).click(function() {
             _.each(list, function(element) {
@@ -34,7 +32,7 @@ $(document).ready(function() {
                 $(navigatable_nav_item[element]).addClass('hidden');
             });
 
-            $(this).parent().addClass('active');
+            $(element).parent().addClass('active');
             $(navigatable_nav_item[element]).removeClass('hidden');
         });
     });
