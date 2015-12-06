@@ -2,14 +2,19 @@
  * Globals
  */
 
-/* Links */
+
+/*
+ * Links
+ */
 a,
 a:focus,
 a:hover {
   color: #fff;
 }
 
-/* Custom default button */
+/*
+ * Custom default button
+ */
 .btn-default,
 .btn-default:hover,
 .btn-default:focus {
@@ -19,11 +24,9 @@ a:hover {
   border: 1px solid #fff;
 }
 
-
 /*
  * Base structure
  */
-
 html,
 body {
   height: 100%;
@@ -35,7 +38,9 @@ body {
   text-shadow: 0 1px 3px rgba(0,0,0,.5);
 }
 
-/* Extra markup and styles for table-esque vertical and horizontal centering */
+/*
+ * Extra markup and styles for table-esque vertical and horizontal centering
+ */
 .site-wrapper {
   display: table;
   width: 100%;
@@ -57,7 +62,6 @@ body {
 .inner {
   padding: 30px;
 }
-
 
 /*
  * Header
@@ -104,11 +108,25 @@ body {
   }
 }
 
+.search-bar {
+  position: relative;
+  text-align: center;
+  background-color: inherit;
+  color: #fff;
+  margin-bottom: 0;
+}
+
+.search-bar .fa {
+  position: absolute;
+  right: 32px;
+  top: 7px;
+  color: #eee;
+  font-size: 18px;
+}
 
 /*
  * Cover
  */
-
 .cover {
   padding: 0 20px;
 }
@@ -117,21 +135,17 @@ body {
   font-weight: bold;
 }
 
-
 /*
  * Footer
  */
-
 .mastfoot {
   color: #999; /* IE8 proofing */
   color: rgba(255,255,255,.5);
 }
 
-
 /*
  * Affix and center
  */
-
 @media (min-width: 768px) {
   /* Pull out the header and footer */
   .masthead {

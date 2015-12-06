@@ -5,5 +5,10 @@ export default {
         'search_title': '搜索',
         'customize_title': '定制',
         'mine_title': '我的'
+    },
+
+    'search': {
+        'search_hint': '向往的地方...'
     }
 };
+

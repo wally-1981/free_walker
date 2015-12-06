@@ -5,5 +5,10 @@ export default {
         'search_title': 'Home',
         'customize_title': 'Customize',
         'mine_title': 'Mine'
+    },
+
+    'search': {
+        'search_hint': 'Your dreaming place...'
     }
 };
+
