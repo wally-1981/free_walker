@@ -16,3 +16,10 @@ App = Ember.Application.extend({
 loadInitializers(App, config.modulePrefix);
 
 export default App;
+
+/*
+ * extend jQuery for common tasks.
+ */
+$.fn.exists = function () {
+    return this.length !== 0;
+};
