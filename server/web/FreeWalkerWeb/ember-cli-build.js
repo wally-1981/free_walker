@@ -19,8 +19,18 @@ module.exports = function(defaults) {
   // modules that you would like to import into your application
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
+
+  app.import("bower_components/jquery/dist/jquery.min.js");
+  app.import("bower_components/bootstrap/dist/js/bootstrap.min.js");
+
   app.import("bower_components/bootstrap/dist/css/bootstrap.min.css");
-  app.import("bower_components/components-font-awesome/css/font-awesome.css");
+  app.import("bower_components/components-font-awesome/css/font-awesome.min.css");
+
+  app.import("bower_components/bootstrap/fonts/glyphicons-halflings-regular.eot", { destDir: "fonts" });
+  app.import("bower_components/bootstrap/fonts/glyphicons-halflings-regular.svg", { destDir: "fonts" });
+  app.import("bower_components/bootstrap/fonts/glyphicons-halflings-regular.ttf", { destDir: "fonts" });
+  app.import("bower_components/bootstrap/fonts/glyphicons-halflings-regular.woff", { destDir: "fonts" });
+  app.import("bower_components/bootstrap/fonts/glyphicons-halflings-regular.woff2", { destDir: "fonts" });
   app.import("bower_components/components-font-awesome/fonts/fontawesome-webfont.eot", { destDir: "fonts" });
   app.import("bower_components/components-font-awesome/fonts/fontawesome-webfont.svg", { destDir: "fonts" });
   app.import("bower_components/components-font-awesome/fonts/fontawesome-webfont.ttf", { destDir: "fonts" });

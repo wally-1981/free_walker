@@ -1,8 +1,36 @@
 <div class="inner cover search-bar">
     <form class="" role="search">
         <div class="form-group">
-            <input type="text" class="form-control search clearable" placeholder="{{t 'search.search_hint'}}">
+            <input type="text" class="form-control" placeholder="{{t 'search.search_hint'}}">
             <i class="fa fa-search"></i>
         </div>
     </form>
+
+    <div id="adsCarousel" class="carousel slide" data-ride="carousel">
+        <!-- Carousel indicators -->
+        <ol class="carousel-indicators">
+            <li data-target="#adsCarousel" data-slide-to="0" class="active"></li>
+            <li data-target="#adsCarousel" data-slide-to="1"></li>
+            <li data-target="#adsCarousel" data-slide-to="2"></li>
+        </ol>
+        <!-- Wrapper for carousel items -->
+        <div class="carousel-inner">
+            <div class="item active">
+                <img src="./images/ads_img_1st.png" alt="First Slide">
+            </div>
+            <div class="item">
+                <img src="./images/ads_img_2nd.png" alt="Second Slide">
+            </div>
+            <div class="item">
+                <img src="./images/ads_img_3rd.png" alt="Third Slide">
+            </div>
+        </div>
+        <!-- Carousel controls -->
+        <a class="carousel-control left" href="#adsCarousel" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </a>
+        <a class="carousel-control right" href="#adsCarousel" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </a>
+    </div>
 </div>
