@@ -60,6 +60,7 @@ body {
 
 /* Padding for spacing */
 .inner {
+  margin-top: 20px;
   padding: 30px;
 }
 
@@ -108,6 +109,41 @@ body {
   }
 }
 
+.cover {
+  padding: 0 20px;
+}
+.cover .btn-lg {
+  padding: 10px 20px;
+  font-weight: bold;
+}
+
+.mastfoot {
+  color: #999; /* IE8 proofing */
+  color: rgba(255,255,255,.5);
+}
+
+@media (min-width: 768px) {
+  .site-wrapper-inner {
+    vertical-align: middle;
+  }
+  .masthead,
+  .mastfoot,
+  .cover-container {
+    width: 100%; /* Must be percentage or pixels for horizontal alignment */
+  }
+}
+
+@media (min-width: 992px) {
+  .site-wrapper-inner {
+    vertical-align: middle;
+  }
+  .masthead,
+  .mastfoot,
+  .cover-container {
+    width: 100%;
+  }
+}
+
 .search-bar {
   position: relative;
   text-align: center;
@@ -124,54 +160,40 @@ body {
   font-size: 18px;
 }
 
-/*
- * Cover
- */
-.cover {
-  padding: 0 20px;
-}
-.cover .btn-lg {
-  padding: 10px 20px;
-  font-weight: bold;
+.product-list-container {
+    width: 100%;
+    margin-top: 30px;
+    padding-left: 0px;
+    padding-right: 0px;
 }
 
-/*
- * Footer
- */
-.mastfoot {
-  color: #999; /* IE8 proofing */
-  color: rgba(255,255,255,.5);
+.products h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
 }
 
-/*
- * Affix and center
- */
-@media (min-width: 768px) {
-  /* Pull out the header and footer */
-  .masthead {
-    position: fixed;
-    top: 0;
-  }
-  .mastfoot {
-    position: fixed;
-    bottom: 0;
-  }
-  /* Start the vertical centering */
-  .site-wrapper-inner {
-    vertical-align: middle;
-  }
-  /* Handle the widths */
-  .masthead,
-  .mastfoot,
-  .cover-container {
-    width: 100%; /* Must be percentage or pixels for horizontal alignment */
-  }
+.products .product {
+    text-align: left;
+    text-shadow: none;
 }
 
-@media (min-width: 992px) {
-  .masthead,
-  .mastfoot,
-  .cover-container {
-    width: 700px;
-  }
+.products .product-title {
+    margin-bottom: 10px;
+    text-align: left;
 }
+
+.products .product-capacity {
+    font-size: 12px;
+    text-align: right;
+    color: #aaa;
+}
+
+.products .product-description {
+    color: #777;
+    margin-top: 30px;
+}
+
+.products .product-img {
+}
+

@@ -1,5 +1,23 @@
-<ul>
-    {{#each model as |product|}}
-    <li><a>{{product.title}}: {{product.capacity}}</a></li>
+<div class="list-group products">
+    {{#each products as |product|}}
+        <a href="/product/{{product.uuid}}" class="list-group-item product">
+           <div class="row">
+               <div class="col-xs-8 col-sm-8 col-md-9 col-lg-9">
+                   <h4 class="product-title">{{product.title}}</h4>
+               </div>
+               <div class="col-xs-4 col-sm-4 col-md-3 col-lg-3 product-capacity">
+                   <span><i class="fa fa-star"></i>{{product.capacity}}</span>
+               </div>
+               <div class="col-md-12 col-lg-12">
+                   <p class="product-description">{{product.description}}</p>
+               </div>
+               <div class="col-md-12 col-lg-12">
+                   <a href="/product/{{product.uuid}}" class="thumbnail product-img">
+                       <img src="./images/ads_img_2nd.png">
+                   </a>
+               </div>
+           </div>
+        </a>
     {{/each}}
-</ul>
+</div>
+
