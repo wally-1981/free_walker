@@ -10,7 +10,7 @@ public class QueryTemplateTest {
     @Test
     public void testIsValid4String() {
         assertFalse(QueryTemplate.isValid("missing_template"));
-        assertTrue(QueryTemplate.isValid("test_template"));
+        assertTrue(QueryTemplate.isValid("product"));
         assertTrue(QueryTemplate.isValid("product_departure"));
         assertTrue(QueryTemplate.isValid("product_destination"));
         assertTrue(QueryTemplate.isValid("proposal_owner"));
@@ -33,7 +33,7 @@ public class QueryTemplateTest {
 
     @Test
     public void testGetEnum() {
-        assertEquals(1, QueryTemplate.TEST_TEMPLATE.enumValue());
+        assertEquals(1, QueryTemplate.PRODUCT_TEMPLATE.enumValue());
         assertEquals(2, QueryTemplate.PRODUCT_DEPARTURE.enumValue());
         assertEquals(3, QueryTemplate.PRODUCT_DESTINATION.enumValue());
         assertEquals(4, QueryTemplate.PRODUCT_OWNER.enumValue());
@@ -43,7 +43,7 @@ public class QueryTemplateTest {
 
     @Test
     public void testGetName() {
-        assertEquals("test_template", QueryTemplate.TEST_TEMPLATE.nameValue());
+        assertEquals("product", QueryTemplate.PRODUCT_TEMPLATE.nameValue());
         assertEquals("product_departure", QueryTemplate.PRODUCT_DEPARTURE.nameValue());
         assertEquals("product_destination", QueryTemplate.PRODUCT_DESTINATION.nameValue());
         assertEquals("product_owner", QueryTemplate.PRODUCT_OWNER.nameValue());

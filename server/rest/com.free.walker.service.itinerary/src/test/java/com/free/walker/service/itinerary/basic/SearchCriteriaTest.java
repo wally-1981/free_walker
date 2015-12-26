@@ -84,43 +84,43 @@ public class SearchCriteriaTest {
     public void testValidateWithInvalidSortType() {
         JsonObjectBuilder jsBuilder2 = Json.createObjectBuilder();
         jsBuilder2.add(Introspection.JSONKeys.TERM, "find me");
-        jsBuilder2.add(Introspection.JSONKeys.TEMPLATE, "test_template");
+        jsBuilder2.add(Introspection.JSONKeys.TEMPLATE, "product");
         jsBuilder2.add(Introspection.JSONKeys.SORT_TYPE, "");
         assertFalse(SearchCriteria.validate(jsBuilder2.build()));
 
         JsonObjectBuilder jsBuilder3 = Json.createObjectBuilder();
         jsBuilder3.add(Introspection.JSONKeys.TERM, "find me");
-        jsBuilder3.add(Introspection.JSONKeys.TEMPLATE, "test_template");
+        jsBuilder3.add(Introspection.JSONKeys.TEMPLATE, "product");
         jsBuilder3.add(Introspection.JSONKeys.SORT_TYPE, " ");
         assertFalse(SearchCriteria.validate(jsBuilder3.build()));
 
         JsonObjectBuilder jsBuilder4 = Json.createObjectBuilder();
         jsBuilder4.add(Introspection.JSONKeys.TERM, "find me");
-        jsBuilder4.add(Introspection.JSONKeys.TEMPLATE, "test_template");
+        jsBuilder4.add(Introspection.JSONKeys.TEMPLATE, "product");
         jsBuilder4.add(Introspection.JSONKeys.SORT_TYPE, "\t");
         assertFalse(SearchCriteria.validate(jsBuilder4.build()));
 
         JsonObjectBuilder jsBuilder5 = Json.createObjectBuilder();
         jsBuilder5.add(Introspection.JSONKeys.TERM, "find me");
-        jsBuilder5.add(Introspection.JSONKeys.TEMPLATE, "test_template");
+        jsBuilder5.add(Introspection.JSONKeys.TEMPLATE, "product");
         jsBuilder5.add(Introspection.JSONKeys.SORT_TYPE, -1);
         assertFalse(SearchCriteria.validate(jsBuilder5.build()));
 
         JsonObjectBuilder jsBuilder6 = Json.createObjectBuilder();
         jsBuilder6.add(Introspection.JSONKeys.TERM, "find me");
-        jsBuilder6.add(Introspection.JSONKeys.TEMPLATE, "test_template");
+        jsBuilder6.add(Introspection.JSONKeys.TEMPLATE, "product");
         jsBuilder6.add(Introspection.JSONKeys.SORT_TYPE, 0);
         assertFalse(SearchCriteria.validate(jsBuilder6.build()));
 
         JsonObjectBuilder jsBuilder7 = Json.createObjectBuilder();
         jsBuilder7.add(Introspection.JSONKeys.TERM, "find me");
-        jsBuilder7.add(Introspection.JSONKeys.TEMPLATE, "test_template");
+        jsBuilder7.add(Introspection.JSONKeys.TEMPLATE, "product");
         jsBuilder7.add(Introspection.JSONKeys.SORT_TYPE, 5);
         assertFalse(SearchCriteria.validate(jsBuilder7.build()));
 
         JsonObjectBuilder jsBuilder8 = Json.createObjectBuilder();
         jsBuilder8.add(Introspection.JSONKeys.TERM, "find me");
-        jsBuilder8.add(Introspection.JSONKeys.TEMPLATE, "test_template");
+        jsBuilder8.add(Introspection.JSONKeys.TEMPLATE, "product");
         jsBuilder8.add(Introspection.JSONKeys.SORT_TYPE, "Long");
         assertFalse(SearchCriteria.validate(jsBuilder8.build()));
     }
@@ -129,7 +129,7 @@ public class SearchCriteriaTest {
     public void testValidate() {
         JsonObjectBuilder jsBuilder1 = Json.createObjectBuilder();
         jsBuilder1.add(Introspection.JSONKeys.TERM, "find me");
-        jsBuilder1.add(Introspection.JSONKeys.TEMPLATE, "test_template");
+        jsBuilder1.add(Introspection.JSONKeys.TEMPLATE, "product");
         jsBuilder1.add(Introspection.JSONKeys.SORT_TYPE, "long");
         assertTrue(SearchCriteria.validate(jsBuilder1.build()));
 
@@ -145,7 +145,7 @@ public class SearchCriteriaTest {
         {
             JsonObjectBuilder jsBuilder1 = Json.createObjectBuilder();
             jsBuilder1.add(Introspection.JSONKeys.TERM, "find me");
-            jsBuilder1.add(Introspection.JSONKeys.TEMPLATE, "test_template");
+            jsBuilder1.add(Introspection.JSONKeys.TEMPLATE, "product");
             jsBuilder1.add(Introspection.JSONKeys.PAGE_SIZE, 60);
             jsBuilder1.add(Introspection.JSONKeys.PAGE_NUM, 2);
             jsBuilder1.add(Introspection.JSONKeys.SORT_KEY, "sort by me");
@@ -153,7 +153,7 @@ public class SearchCriteriaTest {
             jsBuilder1.add(Introspection.JSONKeys.SORT_TYPE, "long");
             SearchCriteria criteria = new SearchCriteria().fromJSON(jsBuilder1.build());
             assertEquals("find me", criteria.getSearchTerm());
-            assertEquals(QueryTemplate.TEST_TEMPLATE, criteria.getTemplate());
+            assertEquals(QueryTemplate.PRODUCT_TEMPLATE, criteria.getTemplate());
             assertEquals(60, criteria.getPageSize());
             assertEquals(2, criteria.getPageNum());
             assertEquals("sort by me", criteria.getSortKey());
@@ -172,7 +172,7 @@ public class SearchCriteriaTest {
             jsBuilder1.add(Introspection.JSONKeys.SORT_TYPE, 2);
             SearchCriteria criteria = new SearchCriteria().fromJSON(jsBuilder1.build());
             assertEquals("find me", criteria.getSearchTerm());
-            assertEquals(QueryTemplate.TEST_TEMPLATE, criteria.getTemplate());
+            assertEquals(QueryTemplate.PRODUCT_TEMPLATE, criteria.getTemplate());
             assertEquals(60, criteria.getPageSize());
             assertEquals(2, criteria.getPageNum());
             assertEquals("sort by me", criteria.getSortKey());

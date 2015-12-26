@@ -8,10 +8,10 @@ import org.apache.commons.lang3.StringUtils;
 import com.free.walker.service.itinerary.Enumable;
 
 public class QueryTemplate implements Enumable {
-    private static final Map<String, QueryTemplate> TEMPLATES_1 = new HashMap<String, QueryTemplate>();
-    private static final Map<Integer, QueryTemplate> TEMPLATES_2 = new HashMap<Integer, QueryTemplate>();
+    private static final Map<String, QueryTemplate> TEMPLATES_NAME_IDX = new HashMap<String, QueryTemplate>();
+    private static final Map<Integer, QueryTemplate> TEMPLATES_ID_IDX = new HashMap<Integer, QueryTemplate>();
 
-    public static final QueryTemplate TEST_TEMPLATE = new QueryTemplate(1, "test_template");
+    public static final QueryTemplate PRODUCT_TEMPLATE = new QueryTemplate(1, "product");
     public static final QueryTemplate PRODUCT_DEPARTURE = new QueryTemplate(2, "product_departure");
     public static final QueryTemplate PRODUCT_DESTINATION = new QueryTemplate(3, "product_destination");
     public static final QueryTemplate PRODUCT_OWNER = new QueryTemplate(4, "product_owner");
@@ -19,19 +19,19 @@ public class QueryTemplate implements Enumable {
     public static final QueryTemplate RESOURCE = new QueryTemplate(6, "resource");
 
     public static boolean isValid(String templateName) {
-        return TEMPLATES_1.containsKey(templateName) && TEMPLATES_1.get(templateName) != null;
+        return TEMPLATES_NAME_IDX.containsKey(templateName) && TEMPLATES_NAME_IDX.get(templateName) != null;
     }
 
     public static boolean isValid(int templateId) {
-        return TEMPLATES_2.containsKey(templateId) && TEMPLATES_2.get(templateId) != null;
+        return TEMPLATES_ID_IDX.containsKey(templateId) && TEMPLATES_ID_IDX.get(templateId) != null;
     }
 
     public static QueryTemplate getQueryTemplate(String templateName) {
-        return TEMPLATES_1.get(templateName);
+        return TEMPLATES_NAME_IDX.get(templateName);
     }
 
     public static QueryTemplate getQueryTemplate(int templateId) {
-        return TEMPLATES_2.get(templateId);
+        return TEMPLATES_ID_IDX.get(templateId);
     }
 
     private int enumValue = 0;
@@ -53,8 +53,8 @@ public class QueryTemplate implements Enumable {
         this.enumValue = enumValue;
         this.templateName = templateName;
 
-        TEMPLATES_1.put(templateName, this);
-        TEMPLATES_2.put(enumValue, this);
+        TEMPLATES_NAME_IDX.put(templateName, this);
+        TEMPLATES_ID_IDX.put(enumValue, this);
     }
 
     public int enumValue() {

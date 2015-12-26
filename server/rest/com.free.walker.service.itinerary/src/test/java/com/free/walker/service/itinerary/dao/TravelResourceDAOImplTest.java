@@ -133,7 +133,7 @@ public class TravelResourceDAOImplTest {
     @Test
     public void testSearchResourceWithNullTemplateParams() throws DatabaseAccessException {
         thrown.expect(NullPointerException.class);
-        travelResourceDAO.searchResource(QueryTemplate.TEST_TEMPLATE, null);
+        travelResourceDAO.searchResource(QueryTemplate.PRODUCT_TEMPLATE, null);
     }
 
     @Test
