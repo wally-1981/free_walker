@@ -10,7 +10,7 @@ public interface ServiceConfigurationProvider {
     public static final String DEVO_SEC_PORT = "9011";
 
     public static final String DEVO_CLIENT_PORT = "4200";
-    public static final String DEVO_CLIENT_SEC_PORT = "4200";
+    public static final String DEVO_CLIENT_SEC_PORT = "4300";
 
     public static final String[] ALLOWED_ORIGINS = new String[] {
         "http://localhost",
