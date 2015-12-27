@@ -9,9 +9,14 @@ public interface ServiceConfigurationProvider {
     public static final String DEVO_PORT = "9010";
     public static final String DEVO_SEC_PORT = "9011";
 
+    public static final String DEVO_CLIENT_PORT = "4200";
+    public static final String DEVO_CLIENT_SEC_PORT = "4200";
+
     public static final String[] ALLOWED_ORIGINS = new String[] {
         "http://localhost",
-        "https://localhost"
+        "https://localhost",
+        "http://localhost:" + DEVO_CLIENT_PORT,
+        "https://localhost:" + DEVO_CLIENT_SEC_PORT
     };
 
     public abstract String getProdServiceUrl(Class<?> aClass);
