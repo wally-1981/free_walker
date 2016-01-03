@@ -18,12 +18,16 @@ export default Ember.Component.extend({
     }),
 
     click(e) {
-        $('ul#nav-list').children().each(function(index, item) {
-            $(item).removeClass('active');
-        });
-        $(e.target).parent().addClass('active');
+        var target = Ember.$(e.target)[0];
+        if (!target.href) {
+            return;
+        }
 
-        var target = $(e.target)[0];
+        Ember.$('ul#nav-list').children().each(function(index, item) {
+            Ember.$(item).removeClass('active');
+        });
+        Ember.$(e.target).parent().addClass('active');
+
         if (target.href.match(this.get('searchRoute'))) {
             this.didSearchElementInserted();
         } else if (target.href.match(this.get('customizeRoute'))) {
@@ -36,9 +40,9 @@ export default Ember.Component.extend({
     },
 
     didInsertElement() {
-        $('div#application-root').unwrap();
+        Ember.$('div#application-root').unwrap();
 
-        if (this.get('isSearchActive')) this.hookEventListeners4Search();
+        if (this.get('isSearchActive')) { this.hookEventListeners4Search(); }
     },
 
     didSearchElementInserted() {
@@ -54,12 +58,16 @@ export default Ember.Component.extend({
     },
 
     hookEventListeners4Search() {
-        var ham = new Hammer($('div#adsCarousel').get(0));
+        if (Ember.$('div#adsCarousel').length === 0) {
+            return;
+        }
+
+        var ham = new Hammer(Ember.$('div#adsCarousel').get(0));
         ham.on('swipeleft', function() {
-            $('div#adsCarousel').carousel('next');
+            Ember.$('div#adsCarousel').carousel('next');
         });
         ham.on('swiperight', function() {
-            $('div#adsCarousel').carousel('prev');
+            Ember.$('div#adsCarousel').carousel('prev');
         });
     },
 

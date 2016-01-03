@@ -20,6 +20,6 @@ export default App;
 /*
  * extend jQuery for common tasks.
  */
-$.fn.exists = function () {
+Ember.$.fn.exists = function () {
     return this.length !== 0;
 };
